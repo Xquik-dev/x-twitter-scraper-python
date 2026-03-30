@@ -17,5 +17,3 @@ jobs:
       - name: Check release environment
         run: |
           bash ./bin/check-release-environment
-        env:
-          PYPI_TOKEN: ${{ secrets.X_TWITTER_SCRAPER_PYPI_TOKEN || secrets.PYPI_TOKEN }}
