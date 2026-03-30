@@ -16,12 +16,9 @@ The REST API documentation can be found on [xquik.com](https://xquik.com). The f
 ## Installation
 
 ```sh
-# install from the production repo
-pip install git+ssh://git@github.com/Xquik-dev/x-twitter-scraper-python.git
+# install from PyPI
+pip install x_twitter_scraper
 ```
-
-> [!NOTE]
-> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install x_twitter_scraper`
 
 ## Usage
 
@@ -81,8 +78,8 @@ By default, the async client uses `httpx` for HTTP requests. However, for improv
 You can enable this by installing `aiohttp`:
 
 ```sh
-# install from the production repo
-pip install 'x_twitter_scraper[aiohttp] @ git+ssh://git@github.com/Xquik-dev/x-twitter-scraper-python.git'
+# install from PyPI
+pip install x_twitter_scraper[aiohttp]
 ```
 
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
