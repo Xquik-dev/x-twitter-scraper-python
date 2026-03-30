@@ -3,6 +3,7 @@
 from typing import List
 
 from ..._models import BaseModel
+from ..x.user_profile import UserProfile
 
 __all__ = ["PaginatedUsers"]
 
@@ -12,4 +13,4 @@ class PaginatedUsers(BaseModel):
 
     next_cursor: str
 
-    users: List[object]
+    users: List[UserProfile]
