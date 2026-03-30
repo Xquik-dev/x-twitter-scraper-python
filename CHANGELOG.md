@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.1.2 (2026-03-30)
+
+Full Changelog: [v0.1.1...v0.1.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.1.1...v0.1.2)
+
+### Chores
+
+* resolve merge conflict, accept codegen changes ([ee87c63](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/ee87c630b5ab9e343dbf5f76a1ed3654339e7080))
+* update SDK settings ([8ff770f](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/8ff770f05d0a8d2c21785d5c0a39d6c1cb70fd40))
+* update SDK settings ([80207f7](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/80207f74d3d1e3dd8900bf4ad029231f603d1b3a))
+
 ## 0.1.1 (2026-03-30)
 
 Full Changelog: [v0.1.0...v0.1.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.1.0...v0.1.1)
