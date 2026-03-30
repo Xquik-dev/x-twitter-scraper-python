@@ -35,7 +35,6 @@ from ._base_client import (
 if TYPE_CHECKING:
     from .resources import (
         x,
-        bot,
         draws,
         radar,
         drafts,
@@ -61,7 +60,6 @@ if TYPE_CHECKING:
     from .resources.styles import StylesResource, AsyncStylesResource
     from .resources.trends import TrendsResource, AsyncTrendsResource
     from .resources.account import AccountResource, AsyncAccountResource
-    from .resources.bot.bot import BotResource, AsyncBotResource
     from .resources.compose import ComposeResource, AsyncComposeResource
     from .resources.credits import CreditsResource, AsyncCreditsResource
     from .resources.api_keys import APIKeysResource, AsyncAPIKeysResource
@@ -247,13 +245,6 @@ class XTwitterScraper(SyncAPIClient):
         from .resources.trends import TrendsResource
 
         return TrendsResource(self)
-
-    @cached_property
-    def bot(self) -> BotResource:
-        """Telegram bot service endpoints"""
-        from .resources.bot import BotResource
-
-        return BotResource(self)
 
     @cached_property
     def support(self) -> SupportResource:
@@ -575,13 +566,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         return AsyncTrendsResource(self)
 
     @cached_property
-    def bot(self) -> AsyncBotResource:
-        """Telegram bot service endpoints"""
-        from .resources.bot import AsyncBotResource
-
-        return AsyncBotResource(self)
-
-    @cached_property
     def support(self) -> AsyncSupportResource:
         from .resources.support import AsyncSupportResource
 
@@ -848,13 +832,6 @@ class XTwitterScraperWithRawResponse:
         return TrendsResourceWithRawResponse(self._client.trends)
 
     @cached_property
-    def bot(self) -> bot.BotResourceWithRawResponse:
-        """Telegram bot service endpoints"""
-        from .resources.bot import BotResourceWithRawResponse
-
-        return BotResourceWithRawResponse(self._client.bot)
-
-    @cached_property
     def support(self) -> support.SupportResourceWithRawResponse:
         from .resources.support import SupportResourceWithRawResponse
 
@@ -978,13 +955,6 @@ class AsyncXTwitterScraperWithRawResponse:
         from .resources.trends import AsyncTrendsResourceWithRawResponse
 
         return AsyncTrendsResourceWithRawResponse(self._client.trends)
-
-    @cached_property
-    def bot(self) -> bot.AsyncBotResourceWithRawResponse:
-        """Telegram bot service endpoints"""
-        from .resources.bot import AsyncBotResourceWithRawResponse
-
-        return AsyncBotResourceWithRawResponse(self._client.bot)
 
     @cached_property
     def support(self) -> support.AsyncSupportResourceWithRawResponse:
@@ -1112,13 +1082,6 @@ class XTwitterScraperWithStreamedResponse:
         return TrendsResourceWithStreamingResponse(self._client.trends)
 
     @cached_property
-    def bot(self) -> bot.BotResourceWithStreamingResponse:
-        """Telegram bot service endpoints"""
-        from .resources.bot import BotResourceWithStreamingResponse
-
-        return BotResourceWithStreamingResponse(self._client.bot)
-
-    @cached_property
     def support(self) -> support.SupportResourceWithStreamingResponse:
         from .resources.support import SupportResourceWithStreamingResponse
 
@@ -1242,13 +1205,6 @@ class AsyncXTwitterScraperWithStreamedResponse:
         from .resources.trends import AsyncTrendsResourceWithStreamingResponse
 
         return AsyncTrendsResourceWithStreamingResponse(self._client.trends)
-
-    @cached_property
-    def bot(self) -> bot.AsyncBotResourceWithStreamingResponse:
-        """Telegram bot service endpoints"""
-        from .resources.bot import AsyncBotResourceWithStreamingResponse
-
-        return AsyncBotResourceWithStreamingResponse(self._client.bot)
 
     @cached_property
     def support(self) -> support.AsyncSupportResourceWithStreamingResponse:

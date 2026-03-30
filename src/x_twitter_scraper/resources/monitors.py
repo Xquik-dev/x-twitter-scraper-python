@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from typing import List
-from typing_extensions import Literal
 
 import httpx
 
@@ -19,10 +18,10 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.monitor import Monitor
+from ..types.shared.event_type import EventType
 from ..types.monitor_list_response import MonitorListResponse
 from ..types.monitor_create_response import MonitorCreateResponse
-from ..types.monitor_update_response import MonitorUpdateResponse
-from ..types.monitor_retrieve_response import MonitorRetrieveResponse
 from ..types.monitor_deactivate_response import MonitorDeactivateResponse
 
 __all__ = ["MonitorsResource", "AsyncMonitorsResource"]
@@ -53,9 +52,7 @@ class MonitorsResource(SyncAPIResource):
     def create(
         self,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ],
+        event_types: List[EventType],
         username: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -103,7 +100,7 @@ class MonitorsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> MonitorRetrieveResponse:
+    ) -> Monitor:
         """
         Get monitor
 
@@ -123,17 +120,14 @@ class MonitorsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=MonitorRetrieveResponse,
+            cast_to=Monitor,
         )
 
     def update(
         self,
         id: str,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ]
-        | Omit = omit,
+        event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -141,7 +135,7 @@ class MonitorsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> MonitorUpdateResponse:
+    ) -> Monitor:
         """
         Update monitor
 
@@ -168,7 +162,7 @@ class MonitorsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=MonitorUpdateResponse,
+            cast_to=Monitor,
         )
 
     def list(
@@ -249,9 +243,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
     async def create(
         self,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ],
+        event_types: List[EventType],
         username: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -299,7 +291,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> MonitorRetrieveResponse:
+    ) -> Monitor:
         """
         Get monitor
 
@@ -319,17 +311,14 @@ class AsyncMonitorsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=MonitorRetrieveResponse,
+            cast_to=Monitor,
         )
 
     async def update(
         self,
         id: str,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ]
-        | Omit = omit,
+        event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -337,7 +326,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> MonitorUpdateResponse:
+    ) -> Monitor:
         """
         Update monitor
 
@@ -364,7 +353,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=MonitorUpdateResponse,
+            cast_to=Monitor,
         )
 
     async def list(

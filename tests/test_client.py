@@ -948,20 +948,20 @@ class TestXTwitterScraper:
     @mock.patch("x_twitter_scraper._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retrying_timeout_errors_doesnt_leak(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
-        respx_mock.get("/account").mock(side_effect=httpx.TimeoutException("Test timeout error"))
+        respx_mock.get("/x/tweets/search").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            client.account.with_streaming_response.retrieve().__enter__()
+            client.x.tweets.with_streaming_response.search(q="q").__enter__()
 
         assert _get_open_connections(client) == 0
 
     @mock.patch("x_twitter_scraper._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
     @pytest.mark.respx(base_url=base_url)
     def test_retrying_status_errors_doesnt_leak(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
-        respx_mock.get("/account").mock(return_value=httpx.Response(500))
+        respx_mock.get("/x/tweets/search").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            client.account.with_streaming_response.retrieve().__enter__()
+            client.x.tweets.with_streaming_response.search(q="q").__enter__()
         assert _get_open_connections(client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -988,9 +988,9 @@ class TestXTwitterScraper:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/account").mock(side_effect=retry_handler)
+        respx_mock.get("/x/tweets/search").mock(side_effect=retry_handler)
 
-        response = client.account.with_raw_response.retrieve()
+        response = client.x.tweets.with_raw_response.search(q="q")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -1012,9 +1012,9 @@ class TestXTwitterScraper:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/account").mock(side_effect=retry_handler)
+        respx_mock.get("/x/tweets/search").mock(side_effect=retry_handler)
 
-        response = client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": Omit()})
+        response = client.x.tweets.with_raw_response.search(q="q", extra_headers={"x-stainless-retry-count": Omit()})
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
@@ -1035,9 +1035,9 @@ class TestXTwitterScraper:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/account").mock(side_effect=retry_handler)
+        respx_mock.get("/x/tweets/search").mock(side_effect=retry_handler)
 
-        response = client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
+        response = client.x.tweets.with_raw_response.search(q="q", extra_headers={"x-stainless-retry-count": "42"})
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 
@@ -1942,10 +1942,10 @@ class TestAsyncXTwitterScraper:
     async def test_retrying_timeout_errors_doesnt_leak(
         self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper
     ) -> None:
-        respx_mock.get("/account").mock(side_effect=httpx.TimeoutException("Test timeout error"))
+        respx_mock.get("/x/tweets/search").mock(side_effect=httpx.TimeoutException("Test timeout error"))
 
         with pytest.raises(APITimeoutError):
-            await async_client.account.with_streaming_response.retrieve().__aenter__()
+            await async_client.x.tweets.with_streaming_response.search(q="q").__aenter__()
 
         assert _get_open_connections(async_client) == 0
 
@@ -1954,10 +1954,10 @@ class TestAsyncXTwitterScraper:
     async def test_retrying_status_errors_doesnt_leak(
         self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper
     ) -> None:
-        respx_mock.get("/account").mock(return_value=httpx.Response(500))
+        respx_mock.get("/x/tweets/search").mock(return_value=httpx.Response(500))
 
         with pytest.raises(APIStatusError):
-            await async_client.account.with_streaming_response.retrieve().__aenter__()
+            await async_client.x.tweets.with_streaming_response.search(q="q").__aenter__()
         assert _get_open_connections(async_client) == 0
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
@@ -1984,9 +1984,9 @@ class TestAsyncXTwitterScraper:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/account").mock(side_effect=retry_handler)
+        respx_mock.get("/x/tweets/search").mock(side_effect=retry_handler)
 
-        response = await client.account.with_raw_response.retrieve()
+        response = await client.x.tweets.with_raw_response.search(q="q")
 
         assert response.retries_taken == failures_before_success
         assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
@@ -2008,9 +2008,11 @@ class TestAsyncXTwitterScraper:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/account").mock(side_effect=retry_handler)
+        respx_mock.get("/x/tweets/search").mock(side_effect=retry_handler)
 
-        response = await client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": Omit()})
+        response = await client.x.tweets.with_raw_response.search(
+            q="q", extra_headers={"x-stainless-retry-count": Omit()}
+        )
 
         assert len(response.http_request.headers.get_list("x-stainless-retry-count")) == 0
 
@@ -2031,9 +2033,11 @@ class TestAsyncXTwitterScraper:
                 return httpx.Response(500)
             return httpx.Response(200)
 
-        respx_mock.get("/account").mock(side_effect=retry_handler)
+        respx_mock.get("/x/tweets/search").mock(side_effect=retry_handler)
 
-        response = await client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
+        response = await client.x.tweets.with_raw_response.search(
+            q="q", extra_headers={"x-stainless-retry-count": "42"}
+        )
 
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 

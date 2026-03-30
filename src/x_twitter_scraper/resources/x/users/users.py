@@ -35,11 +35,9 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
-from ....types.x.user_retrieve_response import UserRetrieveResponse
-from ....types.x.user_retrieve_likes_response import UserRetrieveLikesResponse
-from ....types.x.user_retrieve_media_response import UserRetrieveMediaResponse
-from ....types.x.user_retrieve_tweets_response import UserRetrieveTweetsResponse
-from ....types.x.user_retrieve_followers_you_know_response import UserRetrieveFollowersYouKnowResponse
+from ....types.x.user_profile import UserProfile
+from ....types.shared.paginated_users import PaginatedUsers
+from ....types.shared.paginated_tweets import PaginatedTweets
 
 __all__ = ["UsersResource", "AsyncUsersResource"]
 
@@ -81,7 +79,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveResponse:
+    ) -> UserProfile:
         """
         Look up X user
 
@@ -101,7 +99,7 @@ class UsersResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=UserRetrieveResponse,
+            cast_to=UserProfile,
         )
 
     def retrieve_batch(
@@ -203,7 +201,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveFollowersYouKnowResponse:
+    ) -> PaginatedUsers:
         """
         Get followers you know for a user
 
@@ -231,7 +229,7 @@ class UsersResource(SyncAPIResource):
                     {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
                 ),
             ),
-            cast_to=UserRetrieveFollowersYouKnowResponse,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_following(
@@ -295,7 +293,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveLikesResponse:
+    ) -> PaginatedTweets:
         """
         Get tweets liked by a user
 
@@ -321,7 +319,7 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams),
             ),
-            cast_to=UserRetrieveLikesResponse,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_media(
@@ -335,7 +333,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveMediaResponse:
+    ) -> PaginatedTweets:
         """
         Get media tweets by a user
 
@@ -361,7 +359,7 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams),
             ),
-            cast_to=UserRetrieveMediaResponse,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_mentions(
@@ -478,7 +476,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveTweetsResponse:
+    ) -> PaginatedTweets:
         """
         Get recent tweets by a user
 
@@ -515,7 +513,7 @@ class UsersResource(SyncAPIResource):
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
             ),
-            cast_to=UserRetrieveTweetsResponse,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_verified_followers(
@@ -599,7 +597,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveResponse:
+    ) -> UserProfile:
         """
         Look up X user
 
@@ -619,7 +617,7 @@ class AsyncUsersResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=UserRetrieveResponse,
+            cast_to=UserProfile,
         )
 
     async def retrieve_batch(
@@ -721,7 +719,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveFollowersYouKnowResponse:
+    ) -> PaginatedUsers:
         """
         Get followers you know for a user
 
@@ -749,7 +747,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
                 ),
             ),
-            cast_to=UserRetrieveFollowersYouKnowResponse,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_following(
@@ -813,7 +811,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveLikesResponse:
+    ) -> PaginatedTweets:
         """
         Get tweets liked by a user
 
@@ -841,7 +839,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     {"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams
                 ),
             ),
-            cast_to=UserRetrieveLikesResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_media(
@@ -855,7 +853,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveMediaResponse:
+    ) -> PaginatedTweets:
         """
         Get media tweets by a user
 
@@ -883,7 +881,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     {"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams
                 ),
             ),
-            cast_to=UserRetrieveMediaResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_mentions(
@@ -1000,7 +998,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveTweetsResponse:
+    ) -> PaginatedTweets:
         """
         Get recent tweets by a user
 
@@ -1037,7 +1035,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
             ),
-            cast_to=UserRetrieveTweetsResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_verified_followers(

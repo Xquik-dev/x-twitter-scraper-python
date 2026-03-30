@@ -9,7 +9,7 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper.types.x import FollowerRetrieveCheckResponse
+from x_twitter_scraper.types.x import FollowerCheckResponse
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -19,17 +19,17 @@ class TestFollowers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_method_retrieve_check(self, client: XTwitterScraper) -> None:
-        follower = client.x.followers.retrieve_check(
+    def test_method_check(self, client: XTwitterScraper) -> None:
+        follower = client.x.followers.check(
             source="source",
             target="target",
         )
-        assert_matches_type(FollowerRetrieveCheckResponse, follower, path=["response"])
+        assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_raw_response_retrieve_check(self, client: XTwitterScraper) -> None:
-        response = client.x.followers.with_raw_response.retrieve_check(
+    def test_raw_response_check(self, client: XTwitterScraper) -> None:
+        response = client.x.followers.with_raw_response.check(
             source="source",
             target="target",
         )
@@ -37,12 +37,12 @@ class TestFollowers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         follower = response.parse()
-        assert_matches_type(FollowerRetrieveCheckResponse, follower, path=["response"])
+        assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_streaming_response_retrieve_check(self, client: XTwitterScraper) -> None:
-        with client.x.followers.with_streaming_response.retrieve_check(
+    def test_streaming_response_check(self, client: XTwitterScraper) -> None:
+        with client.x.followers.with_streaming_response.check(
             source="source",
             target="target",
         ) as response:
@@ -50,7 +50,7 @@ class TestFollowers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             follower = response.parse()
-            assert_matches_type(FollowerRetrieveCheckResponse, follower, path=["response"])
+            assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -62,17 +62,17 @@ class TestAsyncFollowers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_method_retrieve_check(self, async_client: AsyncXTwitterScraper) -> None:
-        follower = await async_client.x.followers.retrieve_check(
+    async def test_method_check(self, async_client: AsyncXTwitterScraper) -> None:
+        follower = await async_client.x.followers.check(
             source="source",
             target="target",
         )
-        assert_matches_type(FollowerRetrieveCheckResponse, follower, path=["response"])
+        assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_raw_response_retrieve_check(self, async_client: AsyncXTwitterScraper) -> None:
-        response = await async_client.x.followers.with_raw_response.retrieve_check(
+    async def test_raw_response_check(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.followers.with_raw_response.check(
             source="source",
             target="target",
         )
@@ -80,12 +80,12 @@ class TestAsyncFollowers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         follower = await response.parse()
-        assert_matches_type(FollowerRetrieveCheckResponse, follower, path=["response"])
+        assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_streaming_response_retrieve_check(self, async_client: AsyncXTwitterScraper) -> None:
-        async with async_client.x.followers.with_streaming_response.retrieve_check(
+    async def test_streaming_response_check(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.followers.with_streaming_response.check(
             source="source",
             target="target",
         ) as response:
@@ -93,6 +93,6 @@ class TestAsyncFollowers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             follower = await response.parse()
-            assert_matches_type(FollowerRetrieveCheckResponse, follower, path=["response"])
+            assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
         assert cast(Any, response.is_closed) is True

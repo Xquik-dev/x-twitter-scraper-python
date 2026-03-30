@@ -9,7 +9,7 @@ import httpx
 from ..._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
 from ..._utils import extract_files, maybe_transform, deepcopy_minimal, async_maybe_transform
 from ..._compat import cached_property
-from ...types.x import profile_patch_all_params, profile_update_avatar_params, profile_update_banner_params
+from ...types.x import profile_update_params, profile_update_avatar_params, profile_update_banner_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
     to_raw_response_wrapper,
@@ -18,7 +18,7 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.x.profile_patch_all_response import ProfilePatchAllResponse
+from ...types.x.profile_update_response import ProfileUpdateResponse
 from ...types.x.profile_update_avatar_response import ProfileUpdateAvatarResponse
 from ...types.x.profile_update_banner_response import ProfileUpdateBannerResponse
 
@@ -47,7 +47,7 @@ class ProfileResource(SyncAPIResource):
         """
         return ProfileResourceWithStreamingResponse(self)
 
-    def patch_all(
+    def update(
         self,
         *,
         account: str,
@@ -61,7 +61,7 @@ class ProfileResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ProfilePatchAllResponse:
+    ) -> ProfileUpdateResponse:
         """
         Update X profile
 
@@ -92,12 +92,12 @@ class ProfileResource(SyncAPIResource):
                     "name": name,
                     "url": url,
                 },
-                profile_patch_all_params.ProfilePatchAllParams,
+                profile_update_params.ProfileUpdateParams,
             ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=ProfilePatchAllResponse,
+            cast_to=ProfileUpdateResponse,
         )
 
     def update_avatar(
@@ -221,7 +221,7 @@ class AsyncProfileResource(AsyncAPIResource):
         """
         return AsyncProfileResourceWithStreamingResponse(self)
 
-    async def patch_all(
+    async def update(
         self,
         *,
         account: str,
@@ -235,7 +235,7 @@ class AsyncProfileResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ProfilePatchAllResponse:
+    ) -> ProfileUpdateResponse:
         """
         Update X profile
 
@@ -266,12 +266,12 @@ class AsyncProfileResource(AsyncAPIResource):
                     "name": name,
                     "url": url,
                 },
-                profile_patch_all_params.ProfilePatchAllParams,
+                profile_update_params.ProfileUpdateParams,
             ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=ProfilePatchAllResponse,
+            cast_to=ProfileUpdateResponse,
         )
 
     async def update_avatar(
@@ -377,8 +377,8 @@ class ProfileResourceWithRawResponse:
     def __init__(self, profile: ProfileResource) -> None:
         self._profile = profile
 
-        self.patch_all = to_raw_response_wrapper(
-            profile.patch_all,
+        self.update = to_raw_response_wrapper(
+            profile.update,
         )
         self.update_avatar = to_raw_response_wrapper(
             profile.update_avatar,
@@ -392,8 +392,8 @@ class AsyncProfileResourceWithRawResponse:
     def __init__(self, profile: AsyncProfileResource) -> None:
         self._profile = profile
 
-        self.patch_all = async_to_raw_response_wrapper(
-            profile.patch_all,
+        self.update = async_to_raw_response_wrapper(
+            profile.update,
         )
         self.update_avatar = async_to_raw_response_wrapper(
             profile.update_avatar,
@@ -407,8 +407,8 @@ class ProfileResourceWithStreamingResponse:
     def __init__(self, profile: ProfileResource) -> None:
         self._profile = profile
 
-        self.patch_all = to_streamed_response_wrapper(
-            profile.patch_all,
+        self.update = to_streamed_response_wrapper(
+            profile.update,
         )
         self.update_avatar = to_streamed_response_wrapper(
             profile.update_avatar,
@@ -422,8 +422,8 @@ class AsyncProfileResourceWithStreamingResponse:
     def __init__(self, profile: AsyncProfileResource) -> None:
         self._profile = profile
 
-        self.patch_all = async_to_streamed_response_wrapper(
-            profile.patch_all,
+        self.update = async_to_streamed_response_wrapper(
+            profile.update,
         )
         self.update_avatar = async_to_streamed_response_wrapper(
             profile.update_avatar,

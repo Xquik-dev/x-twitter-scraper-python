@@ -5,7 +5,7 @@ description = "The official Python library for the x-twitter-scraper API"
 dynamic = ["readme"]
 license = "Apache-2.0"
 authors = [
-{ name = "X Twitter Scraper", email = "" },
+{ name = "X Twitter Scraper", email = "support@xquik.com" },
 ]
 
 dependencies = [
