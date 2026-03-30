@@ -13,6 +13,9 @@ jobs:
     name: publish
     runs-on: ubuntu-latest
     environment: pypi
+    permissions:
+      contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v6
@@ -25,5 +28,3 @@ jobs:
       - name: Publish to PyPI
         run: |
           bash ./bin/publish-pypi
-        env:
-          PYPI_TOKEN: ${{ secrets.X_TWITTER_SCRAPER_PYPI_TOKEN || secrets.PYPI_TOKEN }}
