@@ -19,11 +19,10 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.integration import Integration
+from ..types.shared.event_type import EventType
 from ..types.integration_list_response import IntegrationListResponse
-from ..types.integration_create_response import IntegrationCreateResponse
 from ..types.integration_delete_response import IntegrationDeleteResponse
-from ..types.integration_update_response import IntegrationUpdateResponse
-from ..types.integration_retrieve_response import IntegrationRetrieveResponse
 from ..types.integration_send_test_response import IntegrationSendTestResponse
 from ..types.integration_list_deliveries_response import IntegrationListDeliveriesResponse
 
@@ -56,9 +55,7 @@ class IntegrationsResource(SyncAPIResource):
         self,
         *,
         config: integration_create_params.Config,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ],
+        event_types: List[EventType],
         name: str,
         type: Literal["telegram"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -67,7 +64,7 @@ class IntegrationsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> IntegrationCreateResponse:
+    ) -> Integration:
         """Create integration
 
         Args:
@@ -97,7 +94,7 @@ class IntegrationsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=IntegrationCreateResponse,
+            cast_to=Integration,
         )
 
     def retrieve(
@@ -110,7 +107,7 @@ class IntegrationsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> IntegrationRetrieveResponse:
+    ) -> Integration:
         """
         Get integration details
 
@@ -130,17 +127,14 @@ class IntegrationsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=IntegrationRetrieveResponse,
+            cast_to=Integration,
         )
 
     def update(
         self,
         id: str,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ]
-        | Omit = omit,
+        event_types: List[EventType] | Omit = omit,
         filters: Dict[str, object] | Omit = omit,
         is_active: bool | Omit = omit,
         message_template: Dict[str, object] | Omit = omit,
@@ -153,7 +147,7 @@ class IntegrationsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> IntegrationUpdateResponse:
+    ) -> Integration:
         """
         Update integration
 
@@ -185,7 +179,7 @@ class IntegrationsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=IntegrationUpdateResponse,
+            cast_to=Integration,
         )
 
     def list(
@@ -340,9 +334,7 @@ class AsyncIntegrationsResource(AsyncAPIResource):
         self,
         *,
         config: integration_create_params.Config,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ],
+        event_types: List[EventType],
         name: str,
         type: Literal["telegram"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -351,7 +343,7 @@ class AsyncIntegrationsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> IntegrationCreateResponse:
+    ) -> Integration:
         """Create integration
 
         Args:
@@ -381,7 +373,7 @@ class AsyncIntegrationsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=IntegrationCreateResponse,
+            cast_to=Integration,
         )
 
     async def retrieve(
@@ -394,7 +386,7 @@ class AsyncIntegrationsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> IntegrationRetrieveResponse:
+    ) -> Integration:
         """
         Get integration details
 
@@ -414,17 +406,14 @@ class AsyncIntegrationsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=IntegrationRetrieveResponse,
+            cast_to=Integration,
         )
 
     async def update(
         self,
         id: str,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ]
-        | Omit = omit,
+        event_types: List[EventType] | Omit = omit,
         filters: Dict[str, object] | Omit = omit,
         is_active: bool | Omit = omit,
         message_template: Dict[str, object] | Omit = omit,
@@ -437,7 +426,7 @@ class AsyncIntegrationsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> IntegrationUpdateResponse:
+    ) -> Integration:
         """
         Update integration
 
@@ -469,7 +458,7 @@ class AsyncIntegrationsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=IntegrationUpdateResponse,
+            cast_to=Integration,
         )
 
     async def list(

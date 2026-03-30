@@ -1,25 +1,13 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from typing import List, Optional
-from datetime import datetime
 
 from pydantic import Field as FieldInfo
 
+from .draft import Draft
 from .._models import BaseModel
 
-__all__ = ["DraftListResponse", "Draft"]
-
-
-class Draft(BaseModel):
-    id: str
-
-    created_at: datetime = FieldInfo(alias="createdAt")
-
-    text: str
-
-    goal: Optional[str] = None
-
-    topic: Optional[str] = None
+__all__ = ["DraftListResponse"]
 
 
 class DraftListResponse(BaseModel):

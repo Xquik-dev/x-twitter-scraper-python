@@ -10,7 +10,7 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
-    ProfilePatchAllResponse,
+    ProfileUpdateResponse,
     ProfileUpdateAvatarResponse,
     ProfileUpdateBannerResponse,
 )
@@ -23,47 +23,47 @@ class TestProfile:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_method_patch_all(self, client: XTwitterScraper) -> None:
-        profile = client.x.profile.patch_all(
+    def test_method_update(self, client: XTwitterScraper) -> None:
+        profile = client.x.profile.update(
             account="account",
         )
-        assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+        assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_method_patch_all_with_all_params(self, client: XTwitterScraper) -> None:
-        profile = client.x.profile.patch_all(
+    def test_method_update_with_all_params(self, client: XTwitterScraper) -> None:
+        profile = client.x.profile.update(
             account="account",
             description="description",
             location="location",
             name="name",
             url="url",
         )
-        assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+        assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_raw_response_patch_all(self, client: XTwitterScraper) -> None:
-        response = client.x.profile.with_raw_response.patch_all(
+    def test_raw_response_update(self, client: XTwitterScraper) -> None:
+        response = client.x.profile.with_raw_response.update(
             account="account",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         profile = response.parse()
-        assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+        assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_streaming_response_patch_all(self, client: XTwitterScraper) -> None:
-        with client.x.profile.with_streaming_response.patch_all(
+    def test_streaming_response_update(self, client: XTwitterScraper) -> None:
+        with client.x.profile.with_streaming_response.update(
             account="account",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             profile = response.parse()
-            assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+            assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -149,47 +149,47 @@ class TestAsyncProfile:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_method_patch_all(self, async_client: AsyncXTwitterScraper) -> None:
-        profile = await async_client.x.profile.patch_all(
+    async def test_method_update(self, async_client: AsyncXTwitterScraper) -> None:
+        profile = await async_client.x.profile.update(
             account="account",
         )
-        assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+        assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_method_patch_all_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
-        profile = await async_client.x.profile.patch_all(
+    async def test_method_update_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        profile = await async_client.x.profile.update(
             account="account",
             description="description",
             location="location",
             name="name",
             url="url",
         )
-        assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+        assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_raw_response_patch_all(self, async_client: AsyncXTwitterScraper) -> None:
-        response = await async_client.x.profile.with_raw_response.patch_all(
+    async def test_raw_response_update(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.profile.with_raw_response.update(
             account="account",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         profile = await response.parse()
-        assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+        assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_streaming_response_patch_all(self, async_client: AsyncXTwitterScraper) -> None:
-        async with async_client.x.profile.with_streaming_response.patch_all(
+    async def test_streaming_response_update(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.profile.with_streaming_response.update(
             account="account",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             profile = await response.parse()
-            assert_matches_type(ProfilePatchAllResponse, profile, path=["response"])
+            assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

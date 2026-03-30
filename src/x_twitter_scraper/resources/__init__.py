@@ -8,14 +8,6 @@ from .x import (
     XResourceWithStreamingResponse,
     AsyncXResourceWithStreamingResponse,
 )
-from .bot import (
-    BotResource,
-    AsyncBotResource,
-    BotResourceWithRawResponse,
-    AsyncBotResourceWithRawResponse,
-    BotResourceWithStreamingResponse,
-    AsyncBotResourceWithStreamingResponse,
-)
 from .draws import (
     DrawsResource,
     AsyncDrawsResource,
@@ -236,12 +228,6 @@ __all__ = [
     "AsyncTrendsResourceWithRawResponse",
     "TrendsResourceWithStreamingResponse",
     "AsyncTrendsResourceWithStreamingResponse",
-    "BotResource",
-    "AsyncBotResource",
-    "BotResourceWithRawResponse",
-    "AsyncBotResourceWithRawResponse",
-    "BotResourceWithStreamingResponse",
-    "AsyncBotResourceWithStreamingResponse",
     "SupportResource",
     "AsyncSupportResource",
     "SupportResourceWithRawResponse",

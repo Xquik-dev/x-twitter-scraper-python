@@ -7,7 +7,7 @@ import httpx
 from ..._types import Body, Query, Headers, NotGiven, not_given
 from ..._utils import maybe_transform, async_maybe_transform
 from ..._compat import cached_property
-from ...types.x import follower_retrieve_check_params
+from ...types.x import follower_check_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
     to_raw_response_wrapper,
@@ -16,7 +16,7 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.x.follower_retrieve_check_response import FollowerRetrieveCheckResponse
+from ...types.x.follower_check_response import FollowerCheckResponse
 
 __all__ = ["FollowersResource", "AsyncFollowersResource"]
 
@@ -43,7 +43,7 @@ class FollowersResource(SyncAPIResource):
         """
         return FollowersResourceWithStreamingResponse(self)
 
-    def retrieve_check(
+    def check(
         self,
         *,
         source: str,
@@ -54,7 +54,7 @@ class FollowersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> FollowerRetrieveCheckResponse:
+    ) -> FollowerCheckResponse:
         """
         Check follow relationship
 
@@ -83,10 +83,10 @@ class FollowersResource(SyncAPIResource):
                         "source": source,
                         "target": target,
                     },
-                    follower_retrieve_check_params.FollowerRetrieveCheckParams,
+                    follower_check_params.FollowerCheckParams,
                 ),
             ),
-            cast_to=FollowerRetrieveCheckResponse,
+            cast_to=FollowerCheckResponse,
         )
 
 
@@ -112,7 +112,7 @@ class AsyncFollowersResource(AsyncAPIResource):
         """
         return AsyncFollowersResourceWithStreamingResponse(self)
 
-    async def retrieve_check(
+    async def check(
         self,
         *,
         source: str,
@@ -123,7 +123,7 @@ class AsyncFollowersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> FollowerRetrieveCheckResponse:
+    ) -> FollowerCheckResponse:
         """
         Check follow relationship
 
@@ -152,10 +152,10 @@ class AsyncFollowersResource(AsyncAPIResource):
                         "source": source,
                         "target": target,
                     },
-                    follower_retrieve_check_params.FollowerRetrieveCheckParams,
+                    follower_check_params.FollowerCheckParams,
                 ),
             ),
-            cast_to=FollowerRetrieveCheckResponse,
+            cast_to=FollowerCheckResponse,
         )
 
 
@@ -163,8 +163,8 @@ class FollowersResourceWithRawResponse:
     def __init__(self, followers: FollowersResource) -> None:
         self._followers = followers
 
-        self.retrieve_check = to_raw_response_wrapper(
-            followers.retrieve_check,
+        self.check = to_raw_response_wrapper(
+            followers.check,
         )
 
 
@@ -172,8 +172,8 @@ class AsyncFollowersResourceWithRawResponse:
     def __init__(self, followers: AsyncFollowersResource) -> None:
         self._followers = followers
 
-        self.retrieve_check = async_to_raw_response_wrapper(
-            followers.retrieve_check,
+        self.check = async_to_raw_response_wrapper(
+            followers.check,
         )
 
 
@@ -181,8 +181,8 @@ class FollowersResourceWithStreamingResponse:
     def __init__(self, followers: FollowersResource) -> None:
         self._followers = followers
 
-        self.retrieve_check = to_streamed_response_wrapper(
-            followers.retrieve_check,
+        self.check = to_streamed_response_wrapper(
+            followers.check,
         )
 
 
@@ -190,6 +190,6 @@ class AsyncFollowersResourceWithStreamingResponse:
     def __init__(self, followers: AsyncFollowersResource) -> None:
         self._followers = followers
 
-        self.retrieve_check = async_to_streamed_response_wrapper(
-            followers.retrieve_check,
+        self.check = async_to_streamed_response_wrapper(
+            followers.check,
         )
