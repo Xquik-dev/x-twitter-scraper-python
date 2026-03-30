@@ -28,5 +28,3 @@ jobs:
       - name: Publish to PyPI
         run: |
           bash ./bin/publish-pypi
-        env:
-          PYPI_TOKEN: ${{ secrets.X_TWITTER_SCRAPER_PYPI_TOKEN || secrets.PYPI_TOKEN }}
