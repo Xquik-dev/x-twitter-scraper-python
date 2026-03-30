@@ -13,9 +13,6 @@ jobs:
     name: publish
     runs-on: ubuntu-latest
     environment: pypi
-    permissions:
-      contents: read
-      id-token: write
 
     steps:
       - uses: actions/checkout@v6
