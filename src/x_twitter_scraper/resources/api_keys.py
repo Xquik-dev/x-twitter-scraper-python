@@ -76,7 +76,7 @@ class APIKeysResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=APIKeyCreateResponse,
         )
@@ -99,7 +99,7 @@ class APIKeysResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=APIKeyListResponse,
         )
@@ -136,7 +136,7 @@ class APIKeysResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=APIKeyRevokeResponse,
         )
@@ -195,7 +195,7 @@ class AsyncAPIKeysResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=APIKeyCreateResponse,
         )
@@ -218,7 +218,7 @@ class AsyncAPIKeysResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=APIKeyListResponse,
         )
@@ -255,7 +255,7 @@ class AsyncAPIKeysResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=APIKeyRevokeResponse,
         )
