@@ -101,7 +101,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountCreateResponse,
         )
@@ -138,7 +138,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountRetrieveResponse,
         )
@@ -161,7 +161,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountListResponse,
         )
@@ -198,7 +198,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -248,7 +248,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountReauthResponse,
         )
@@ -330,7 +330,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountCreateResponse,
         )
@@ -367,7 +367,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountRetrieveResponse,
         )
@@ -390,7 +390,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountListResponse,
         )
@@ -427,7 +427,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -477,7 +477,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountReauthResponse,
         )

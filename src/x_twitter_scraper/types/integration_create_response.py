@@ -15,6 +15,7 @@ class IntegrationCreateResponse(BaseModel):
     id: str
 
     config: Dict[str, object]
+    """Integration config — shape varies by type (JSON)"""
 
     created_at: datetime = FieldInfo(alias="createdAt")
 
@@ -29,6 +30,7 @@ class IntegrationCreateResponse(BaseModel):
     type: Literal["telegram"]
 
     filters: Optional[Dict[str, object]] = None
+    """Event filter rules (JSON)"""
 
     message_template: Optional[str] = FieldInfo(alias="messageTemplate", default=None)
 

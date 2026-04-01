@@ -17,10 +17,12 @@ class IntegrationUpdateParams(TypedDict, total=False):
     ]
 
     filters: Dict[str, object]
+    """Event filter rules (JSON)"""
 
     is_active: Annotated[bool, PropertyInfo(alias="isActive")]
 
     message_template: Annotated[Dict[str, object], PropertyInfo(alias="messageTemplate")]
+    """Custom message template (JSON)"""
 
     name: str
 
