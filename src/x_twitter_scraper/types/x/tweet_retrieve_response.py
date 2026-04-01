@@ -2,14 +2,46 @@
 
 from typing import Optional
 
-from ..._models import BaseModel
-from .tweet_author import TweetAuthor
-from .tweet_detail import TweetDetail
+from pydantic import Field as FieldInfo
 
-__all__ = ["TweetRetrieveResponse"]
+from ..._models import BaseModel
+
+__all__ = ["TweetRetrieveResponse", "Tweet", "Author"]
+
+
+class Tweet(BaseModel):
+    id: str
+
+    bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    like_count: int = FieldInfo(alias="likeCount")
+
+    quote_count: int = FieldInfo(alias="quoteCount")
+
+    reply_count: int = FieldInfo(alias="replyCount")
+
+    retweet_count: int = FieldInfo(alias="retweetCount")
+
+    text: str
+
+    view_count: int = FieldInfo(alias="viewCount")
+
+    created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
+
+
+class Author(BaseModel):
+    id: str
+
+    followers: int
+
+    username: str
+
+    verified: bool
+
+    profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
 
 
 class TweetRetrieveResponse(BaseModel):
-    tweet: TweetDetail
+    tweet: Tweet
 
-    author: Optional[TweetAuthor] = None
+    author: Optional[Author] = None

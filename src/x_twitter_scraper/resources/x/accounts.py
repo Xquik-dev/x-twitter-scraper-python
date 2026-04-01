@@ -16,11 +16,11 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.x.x_account_detail import XAccountDetail
 from ...types.x.account_list_response import AccountListResponse
 from ...types.x.account_create_response import AccountCreateResponse
 from ...types.x.account_delete_response import AccountDeleteResponse
 from ...types.x.account_reauth_response import AccountReauthResponse
+from ...types.x.account_retrieve_response import AccountRetrieveResponse
 
 __all__ = ["AccountsResource", "AsyncAccountsResource"]
 
@@ -116,7 +116,7 @@ class AccountsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> XAccountDetail:
+    ) -> AccountRetrieveResponse:
         """
         Get X account details
 
@@ -140,7 +140,7 @@ class AccountsResource(SyncAPIResource):
                 timeout=timeout,
                 security={},
             ),
-            cast_to=XAccountDetail,
+            cast_to=AccountRetrieveResponse,
         )
 
     def list(
@@ -345,7 +345,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> XAccountDetail:
+    ) -> AccountRetrieveResponse:
         """
         Get X account details
 
@@ -369,7 +369,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 timeout=timeout,
                 security={},
             ),
-            cast_to=XAccountDetail,
+            cast_to=AccountRetrieveResponse,
         )
 
     async def list(

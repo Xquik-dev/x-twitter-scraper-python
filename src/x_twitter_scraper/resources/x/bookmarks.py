@@ -16,7 +16,7 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.shared.paginated_tweets import PaginatedTweets
+from ...types.x.bookmark_list_response import BookmarkListResponse
 from ...types.x.bookmark_retrieve_folders_response import BookmarkRetrieveFoldersResponse
 
 __all__ = ["BookmarksResource", "AsyncBookmarksResource"]
@@ -55,7 +55,7 @@ class BookmarksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> BookmarkListResponse:
         """
         Get bookmarked tweets
 
@@ -87,7 +87,7 @@ class BookmarksResource(SyncAPIResource):
                     bookmark_list_params.BookmarkListParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=BookmarkListResponse,
         )
 
     def retrieve_folders(
@@ -143,7 +143,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> BookmarkListResponse:
         """
         Get bookmarked tweets
 
@@ -175,7 +175,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
                     bookmark_list_params.BookmarkListParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=BookmarkListResponse,
         )
 
     async def retrieve_folders(

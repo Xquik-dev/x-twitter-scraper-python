@@ -7,10 +7,10 @@ from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
-__all__ = ["XAccountDetail"]
+__all__ = ["AccountRetrieveResponse"]
 
 
-class XAccountDetail(BaseModel):
+class AccountRetrieveResponse(BaseModel):
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")

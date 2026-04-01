@@ -10,9 +10,10 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types import (
-    Monitor,
     MonitorListResponse,
     MonitorCreateResponse,
+    MonitorUpdateResponse,
+    MonitorRetrieveResponse,
     MonitorDeactivateResponse,
 )
 
@@ -65,7 +66,7 @@ class TestMonitors:
         monitor = client.monitors.retrieve(
             "id",
         )
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorRetrieveResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -77,7 +78,7 @@ class TestMonitors:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         monitor = response.parse()
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorRetrieveResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -89,7 +90,7 @@ class TestMonitors:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             monitor = response.parse()
-            assert_matches_type(Monitor, monitor, path=["response"])
+            assert_matches_type(MonitorRetrieveResponse, monitor, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -107,7 +108,7 @@ class TestMonitors:
         monitor = client.monitors.update(
             id="id",
         )
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -117,7 +118,7 @@ class TestMonitors:
             event_types=["tweet.new"],
             is_active=True,
         )
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -129,7 +130,7 @@ class TestMonitors:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         monitor = response.parse()
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -141,7 +142,7 @@ class TestMonitors:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             monitor = response.parse()
-            assert_matches_type(Monitor, monitor, path=["response"])
+            assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -272,7 +273,7 @@ class TestAsyncMonitors:
         monitor = await async_client.monitors.retrieve(
             "id",
         )
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorRetrieveResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -284,7 +285,7 @@ class TestAsyncMonitors:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         monitor = await response.parse()
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorRetrieveResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -296,7 +297,7 @@ class TestAsyncMonitors:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             monitor = await response.parse()
-            assert_matches_type(Monitor, monitor, path=["response"])
+            assert_matches_type(MonitorRetrieveResponse, monitor, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -314,7 +315,7 @@ class TestAsyncMonitors:
         monitor = await async_client.monitors.update(
             id="id",
         )
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -324,7 +325,7 @@ class TestAsyncMonitors:
             event_types=["tweet.new"],
             is_active=True,
         )
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -336,7 +337,7 @@ class TestAsyncMonitors:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         monitor = await response.parse()
-        assert_matches_type(Monitor, monitor, path=["response"])
+        assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -348,7 +349,7 @@ class TestAsyncMonitors:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             monitor = await response.parse()
-            assert_matches_type(Monitor, monitor, path=["response"])
+            assert_matches_type(MonitorUpdateResponse, monitor, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

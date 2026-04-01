@@ -44,11 +44,15 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
-from ....types.shared.paginated_users import PaginatedUsers
-from ....types.shared.paginated_tweets import PaginatedTweets
 from ....types.x.tweet_create_response import TweetCreateResponse
 from ....types.x.tweet_delete_response import TweetDeleteResponse
+from ....types.x.tweet_search_response import TweetSearchResponse
 from ....types.x.tweet_retrieve_response import TweetRetrieveResponse
+from ....types.x.tweet_get_quotes_response import TweetGetQuotesResponse
+from ....types.x.tweet_get_thread_response import TweetGetThreadResponse
+from ....types.x.tweet_get_replies_response import TweetGetRepliesResponse
+from ....types.x.tweet_get_favoriters_response import TweetGetFavoritersResponse
+from ....types.x.tweet_get_retweeters_response import TweetGetRetweetersResponse
 
 __all__ = ["TweetsResource", "AsyncTweetsResource"]
 
@@ -253,7 +257,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedUsers:
+    ) -> TweetGetFavoritersResponse:
         """
         Get users who liked a tweet
 
@@ -279,7 +283,7 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, tweet_get_favoriters_params.TweetGetFavoritersParams),
             ),
-            cast_to=PaginatedUsers,
+            cast_to=TweetGetFavoritersResponse,
         )
 
     def get_quotes(
@@ -296,7 +300,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetGetQuotesResponse:
         """
         Get quote tweets of a tweet
 
@@ -336,7 +340,7 @@ class TweetsResource(SyncAPIResource):
                     tweet_get_quotes_params.TweetGetQuotesParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetQuotesResponse,
         )
 
     def get_replies(
@@ -352,7 +356,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetGetRepliesResponse:
         """
         Get replies to a tweet
 
@@ -389,7 +393,7 @@ class TweetsResource(SyncAPIResource):
                     tweet_get_replies_params.TweetGetRepliesParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetRepliesResponse,
         )
 
     def get_retweeters(
@@ -403,7 +407,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedUsers:
+    ) -> TweetGetRetweetersResponse:
         """
         Get users who retweeted a tweet
 
@@ -429,7 +433,7 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, tweet_get_retweeters_params.TweetGetRetweetersParams),
             ),
-            cast_to=PaginatedUsers,
+            cast_to=TweetGetRetweetersResponse,
         )
 
     def get_thread(
@@ -443,7 +447,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetGetThreadResponse:
         """
         Get thread context for a tweet
 
@@ -469,7 +473,7 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, tweet_get_thread_params.TweetGetThreadParams),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetThreadResponse,
         )
 
     def search(
@@ -487,7 +491,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetSearchResponse:
         """
         Search tweets
 
@@ -531,7 +535,7 @@ class TweetsResource(SyncAPIResource):
                     tweet_search_params.TweetSearchParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetSearchResponse,
         )
 
 
@@ -735,7 +739,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedUsers:
+    ) -> TweetGetFavoritersResponse:
         """
         Get users who liked a tweet
 
@@ -763,7 +767,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     {"cursor": cursor}, tweet_get_favoriters_params.TweetGetFavoritersParams
                 ),
             ),
-            cast_to=PaginatedUsers,
+            cast_to=TweetGetFavoritersResponse,
         )
 
     async def get_quotes(
@@ -780,7 +784,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetGetQuotesResponse:
         """
         Get quote tweets of a tweet
 
@@ -820,7 +824,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     tweet_get_quotes_params.TweetGetQuotesParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetQuotesResponse,
         )
 
     async def get_replies(
@@ -836,7 +840,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetGetRepliesResponse:
         """
         Get replies to a tweet
 
@@ -873,7 +877,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     tweet_get_replies_params.TweetGetRepliesParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetRepliesResponse,
         )
 
     async def get_retweeters(
@@ -887,7 +891,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedUsers:
+    ) -> TweetGetRetweetersResponse:
         """
         Get users who retweeted a tweet
 
@@ -915,7 +919,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     {"cursor": cursor}, tweet_get_retweeters_params.TweetGetRetweetersParams
                 ),
             ),
-            cast_to=PaginatedUsers,
+            cast_to=TweetGetRetweetersResponse,
         )
 
     async def get_thread(
@@ -929,7 +933,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetGetThreadResponse:
         """
         Get thread context for a tweet
 
@@ -955,7 +959,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform({"cursor": cursor}, tweet_get_thread_params.TweetGetThreadParams),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetThreadResponse,
         )
 
     async def search(
@@ -973,7 +977,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> TweetSearchResponse:
         """
         Search tweets
 
@@ -1017,7 +1021,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     tweet_search_params.TweetSearchParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetSearchResponse,
         )
 
 

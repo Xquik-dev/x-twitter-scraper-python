@@ -8,10 +8,10 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["MonitorListResponse", "Monitor"]
+__all__ = ["MonitorRetrieveResponse"]
 
 
-class Monitor(BaseModel):
+class MonitorRetrieveResponse(BaseModel):
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")
@@ -25,9 +25,3 @@ class Monitor(BaseModel):
     username: str
 
     x_user_id: str = FieldInfo(alias="xUserId")
-
-
-class MonitorListResponse(BaseModel):
-    monitors: List[Monitor]
-
-    total: int

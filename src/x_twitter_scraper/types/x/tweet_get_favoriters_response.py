@@ -6,7 +6,7 @@ from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
-__all__ = ["PaginatedUsers", "User"]
+__all__ = ["TweetGetFavoritersResponse", "User"]
 
 
 class User(BaseModel):
@@ -33,7 +33,7 @@ class User(BaseModel):
     verified: Optional[bool] = None
 
 
-class PaginatedUsers(BaseModel):
+class TweetGetFavoritersResponse(BaseModel):
     has_next_page: bool
 
     next_cursor: str
