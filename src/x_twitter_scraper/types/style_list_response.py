@@ -1,12 +1,24 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from typing import List
+from datetime import datetime
+
+from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
-from .style_profile_summary import StyleProfileSummary
 
-__all__ = ["StyleListResponse"]
+__all__ = ["StyleListResponse", "Style"]
+
+
+class Style(BaseModel):
+    fetched_at: datetime = FieldInfo(alias="fetchedAt")
+
+    is_own_account: bool = FieldInfo(alias="isOwnAccount")
+
+    tweet_count: int = FieldInfo(alias="tweetCount")
+
+    x_username: str = FieldInfo(alias="xUsername")
 
 
 class StyleListResponse(BaseModel):
-    styles: List[StyleProfileSummary]
+    styles: List[Style]

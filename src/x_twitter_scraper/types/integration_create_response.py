@@ -1,6 +1,6 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import Dict, List, Optional
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -8,11 +8,13 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["MonitorListResponse", "Monitor"]
+__all__ = ["IntegrationCreateResponse"]
 
 
-class Monitor(BaseModel):
+class IntegrationCreateResponse(BaseModel):
     id: str
+
+    config: Dict[str, object]
 
     created_at: datetime = FieldInfo(alias="createdAt")
 
@@ -22,12 +24,14 @@ class Monitor(BaseModel):
 
     is_active: bool = FieldInfo(alias="isActive")
 
-    username: str
+    name: str
 
-    x_user_id: str = FieldInfo(alias="xUserId")
+    type: Literal["telegram"]
 
+    filters: Optional[Dict[str, object]] = None
 
-class MonitorListResponse(BaseModel):
-    monitors: List[Monitor]
+    message_template: Optional[str] = FieldInfo(alias="messageTemplate", default=None)
 
-    total: int
+    scope_all_monitors: Optional[bool] = FieldInfo(alias="scopeAllMonitors", default=None)
+
+    silent_push: Optional[bool] = FieldInfo(alias="silentPush", default=None)

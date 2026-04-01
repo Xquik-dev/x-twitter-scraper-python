@@ -5,9 +5,8 @@ from typing import List, Optional
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
-from .x.tweet_author import TweetAuthor
 
-__all__ = ["XGetArticleResponse", "Article", "ArticleContent"]
+__all__ = ["XGetArticleResponse", "Article", "ArticleContent", "Author"]
 
 
 class ArticleContent(BaseModel):
@@ -47,7 +46,19 @@ class Article(BaseModel):
     view_count: Optional[int] = FieldInfo(alias="viewCount", default=None)
 
 
+class Author(BaseModel):
+    id: str
+
+    followers: int
+
+    username: str
+
+    verified: bool
+
+    profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
+
+
 class XGetArticleResponse(BaseModel):
     article: Article
 
-    author: Optional[TweetAuthor] = None
+    author: Optional[Author] = None

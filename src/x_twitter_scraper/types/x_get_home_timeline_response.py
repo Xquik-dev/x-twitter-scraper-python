@@ -4,9 +4,9 @@ from typing import List, Optional
 
 from pydantic import Field as FieldInfo
 
-from ..._models import BaseModel
+from .._models import BaseModel
 
-__all__ = ["PaginatedTweets", "Tweet", "TweetAuthor"]
+__all__ = ["XGetHomeTimelineResponse", "Tweet", "TweetAuthor"]
 
 
 class TweetAuthor(BaseModel):
@@ -41,7 +41,7 @@ class Tweet(BaseModel):
     view_count: Optional[int] = FieldInfo(alias="viewCount", default=None)
 
 
-class PaginatedTweets(BaseModel):
+class XGetHomeTimelineResponse(BaseModel):
     has_next_page: bool
 
     next_cursor: str

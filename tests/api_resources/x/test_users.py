@@ -10,9 +10,12 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
-    UserProfile,
+    UserRetrieveResponse,
+    UserRetrieveLikesResponse,
+    UserRetrieveMediaResponse,
+    UserRetrieveTweetsResponse,
+    UserRetrieveFollowersYouKnowResponse,
 )
-from x_twitter_scraper.types.shared import PaginatedUsers, PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -26,7 +29,7 @@ class TestUsers:
         user = client.x.users.retrieve(
             "username",
         )
-        assert_matches_type(UserProfile, user, path=["response"])
+        assert_matches_type(UserRetrieveResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -38,7 +41,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(UserProfile, user, path=["response"])
+        assert_matches_type(UserRetrieveResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -50,7 +53,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(UserProfile, user, path=["response"])
+            assert_matches_type(UserRetrieveResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -154,7 +157,7 @@ class TestUsers:
         user = client.x.users.retrieve_followers_you_know(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -163,7 +166,7 @@ class TestUsers:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -175,7 +178,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -187,7 +190,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -257,7 +260,7 @@ class TestUsers:
         user = client.x.users.retrieve_likes(
             id="id",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -266,7 +269,7 @@ class TestUsers:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -278,7 +281,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -290,7 +293,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(PaginatedTweets, user, path=["response"])
+            assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -308,7 +311,7 @@ class TestUsers:
         user = client.x.users.retrieve_media(
             id="id",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -317,7 +320,7 @@ class TestUsers:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -329,7 +332,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -341,7 +344,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(PaginatedTweets, user, path=["response"])
+            assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -455,7 +458,7 @@ class TestUsers:
         user = client.x.users.retrieve_tweets(
             id="id",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -466,7 +469,7 @@ class TestUsers:
             include_parent_tweet=True,
             include_replies=True,
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -478,7 +481,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -490,7 +493,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(PaginatedTweets, user, path=["response"])
+            assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -565,7 +568,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve(
             "username",
         )
-        assert_matches_type(UserProfile, user, path=["response"])
+        assert_matches_type(UserRetrieveResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -577,7 +580,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(UserProfile, user, path=["response"])
+        assert_matches_type(UserRetrieveResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -589,7 +592,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(UserProfile, user, path=["response"])
+            assert_matches_type(UserRetrieveResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -693,7 +696,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_followers_you_know(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -702,7 +705,7 @@ class TestAsyncUsers:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -714,7 +717,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -726,7 +729,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveFollowersYouKnowResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -796,7 +799,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_likes(
             id="id",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -805,7 +808,7 @@ class TestAsyncUsers:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -817,7 +820,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -829,7 +832,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(PaginatedTweets, user, path=["response"])
+            assert_matches_type(UserRetrieveLikesResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -847,7 +850,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_media(
             id="id",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -856,7 +859,7 @@ class TestAsyncUsers:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -868,7 +871,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -880,7 +883,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(PaginatedTweets, user, path=["response"])
+            assert_matches_type(UserRetrieveMediaResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -994,7 +997,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_tweets(
             id="id",
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1005,7 +1008,7 @@ class TestAsyncUsers:
             include_parent_tweet=True,
             include_replies=True,
         )
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1017,7 +1020,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(PaginatedTweets, user, path=["response"])
+        assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1029,7 +1032,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(PaginatedTweets, user, path=["response"])
+            assert_matches_type(UserRetrieveTweetsResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
