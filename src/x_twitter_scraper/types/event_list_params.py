@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import Annotated, TypedDict
+from typing_extensions import Literal, Annotated, TypedDict
 
 from .._utils import PropertyInfo
-from .shared.event_type import EventType
 
 __all__ = ["EventListParams"]
 
@@ -14,7 +13,10 @@ class EventListParams(TypedDict, total=False):
     after: str
     """Cursor for pagination"""
 
-    event_type: Annotated[EventType, PropertyInfo(alias="eventType")]
+    event_type: Annotated[
+        Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"],
+        PropertyInfo(alias="eventType"),
+    ]
 
     limit: int
 

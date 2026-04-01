@@ -99,7 +99,7 @@ from .communities.communities import (
     AsyncCommunitiesResourceWithStreamingResponse,
 )
 from ...types.x_get_article_response import XGetArticleResponse
-from ...types.shared.paginated_tweets import PaginatedTweets
+from ...types.x_get_home_timeline_response import XGetHomeTimelineResponse
 from ...types.x_get_notifications_response import XGetNotificationsResponse
 
 __all__ = ["XResource", "AsyncXResource"]
@@ -218,7 +218,7 @@ class XResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> XGetHomeTimelineResponse:
         """
         Get home timeline
 
@@ -250,7 +250,7 @@ class XResource(SyncAPIResource):
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=XGetHomeTimelineResponse,
         )
 
     def get_notifications(
@@ -433,7 +433,7 @@ class AsyncXResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> XGetHomeTimelineResponse:
         """
         Get home timeline
 
@@ -465,7 +465,7 @@ class AsyncXResource(AsyncAPIResource):
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=XGetHomeTimelineResponse,
         )
 
     async def get_notifications(

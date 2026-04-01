@@ -3,16 +3,18 @@
 from __future__ import annotations
 
 from typing import Dict, List
-from typing_extensions import Annotated, TypedDict
+from typing_extensions import Literal, Annotated, TypedDict
 
 from .._utils import PropertyInfo
-from .shared.event_type import EventType
 
 __all__ = ["IntegrationUpdateParams"]
 
 
 class IntegrationUpdateParams(TypedDict, total=False):
-    event_types: Annotated[List[EventType], PropertyInfo(alias="eventTypes")]
+    event_types: Annotated[
+        List[Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]],
+        PropertyInfo(alias="eventTypes"),
+    ]
 
     filters: Dict[str, object]
 

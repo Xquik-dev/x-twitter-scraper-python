@@ -1,11 +1,44 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
+
+from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
-from ..x.search_tweet import SearchTweet
 
-__all__ = ["PaginatedTweets"]
+__all__ = ["PaginatedTweets", "Tweet", "TweetAuthor"]
+
+
+class TweetAuthor(BaseModel):
+    id: str
+
+    name: str
+
+    username: str
+
+    verified: Optional[bool] = None
+
+
+class Tweet(BaseModel):
+    id: str
+
+    text: str
+
+    author: Optional[TweetAuthor] = None
+
+    bookmark_count: Optional[int] = FieldInfo(alias="bookmarkCount", default=None)
+
+    created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
+
+    like_count: Optional[int] = FieldInfo(alias="likeCount", default=None)
+
+    quote_count: Optional[int] = FieldInfo(alias="quoteCount", default=None)
+
+    reply_count: Optional[int] = FieldInfo(alias="replyCount", default=None)
+
+    retweet_count: Optional[int] = FieldInfo(alias="retweetCount", default=None)
+
+    view_count: Optional[int] = FieldInfo(alias="viewCount", default=None)
 
 
 class PaginatedTweets(BaseModel):
@@ -13,4 +46,4 @@ class PaginatedTweets(BaseModel):
 
     next_cursor: str
 
-    tweets: List[SearchTweet]
+    tweets: List[Tweet]

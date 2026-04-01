@@ -18,9 +18,11 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
-from ..types.style_profile import StyleProfile
 from ..types.style_list_response import StyleListResponse
+from ..types.style_update_response import StyleUpdateResponse
+from ..types.style_analyze_response import StyleAnalyzeResponse
 from ..types.style_compare_response import StyleCompareResponse
+from ..types.style_retrieve_response import StyleRetrieveResponse
 from ..types.style_get_performance_response import StyleGetPerformanceResponse
 
 __all__ = ["StylesResource", "AsyncStylesResource"]
@@ -58,7 +60,7 @@ class StylesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleProfile:
+    ) -> StyleRetrieveResponse:
         """
         Get cached style profile
 
@@ -78,7 +80,7 @@ class StylesResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleProfile,
+            cast_to=StyleRetrieveResponse,
         )
 
     def update(
@@ -93,7 +95,7 @@ class StylesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleProfile:
+    ) -> StyleUpdateResponse:
         """
         Save style profile with custom tweets
 
@@ -124,7 +126,7 @@ class StylesResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleProfile,
+            cast_to=StyleUpdateResponse,
         )
 
     def list(
@@ -190,7 +192,7 @@ class StylesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleProfile:
+    ) -> StyleAnalyzeResponse:
         """
         Analyze writing style from recent tweets
 
@@ -211,7 +213,7 @@ class StylesResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleProfile,
+            cast_to=StyleAnalyzeResponse,
         )
 
     def compare(
@@ -326,7 +328,7 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleProfile:
+    ) -> StyleRetrieveResponse:
         """
         Get cached style profile
 
@@ -346,7 +348,7 @@ class AsyncStylesResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleProfile,
+            cast_to=StyleRetrieveResponse,
         )
 
     async def update(
@@ -361,7 +363,7 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleProfile:
+    ) -> StyleUpdateResponse:
         """
         Save style profile with custom tweets
 
@@ -392,7 +394,7 @@ class AsyncStylesResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleProfile,
+            cast_to=StyleUpdateResponse,
         )
 
     async def list(
@@ -458,7 +460,7 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleProfile:
+    ) -> StyleAnalyzeResponse:
         """
         Analyze writing style from recent tweets
 
@@ -479,7 +481,7 @@ class AsyncStylesResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleProfile,
+            cast_to=StyleAnalyzeResponse,
         )
 
     async def compare(

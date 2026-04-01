@@ -2,16 +2,16 @@
 
 from typing import Dict, Optional
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
-from .shared.event_type import EventType
 
-__all__ = ["EventDetail"]
+__all__ = ["EventRetrieveResponse"]
 
 
-class EventDetail(BaseModel):
+class EventRetrieveResponse(BaseModel):
     id: str
 
     data: Dict[str, object]
@@ -20,7 +20,7 @@ class EventDetail(BaseModel):
 
     occurred_at: datetime = FieldInfo(alias="occurredAt")
 
-    type: EventType
+    type: Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
 
     username: str
 

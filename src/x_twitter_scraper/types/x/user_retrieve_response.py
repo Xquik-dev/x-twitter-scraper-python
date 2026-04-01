@@ -6,10 +6,10 @@ from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
-__all__ = ["UserProfile"]
+__all__ = ["UserRetrieveResponse"]
 
 
-class UserProfile(BaseModel):
+class UserRetrieveResponse(BaseModel):
     id: str
 
     name: str

@@ -10,9 +10,11 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types import (
-    Integration,
     IntegrationListResponse,
+    IntegrationCreateResponse,
     IntegrationDeleteResponse,
+    IntegrationUpdateResponse,
+    IntegrationRetrieveResponse,
     IntegrationSendTestResponse,
     IntegrationListDeliveriesResponse,
 )
@@ -32,7 +34,7 @@ class TestIntegrations:
             name="name",
             type="telegram",
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -47,7 +49,7 @@ class TestIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = response.parse()
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -62,7 +64,7 @@ class TestIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = response.parse()
-            assert_matches_type(Integration, integration, path=["response"])
+            assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -72,7 +74,7 @@ class TestIntegrations:
         integration = client.integrations.retrieve(
             "id",
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -84,7 +86,7 @@ class TestIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = response.parse()
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -96,7 +98,7 @@ class TestIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = response.parse()
-            assert_matches_type(Integration, integration, path=["response"])
+            assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -114,7 +116,7 @@ class TestIntegrations:
         integration = client.integrations.update(
             id="id",
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -129,7 +131,7 @@ class TestIntegrations:
             scope_all_monitors=True,
             silent_push=True,
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -141,7 +143,7 @@ class TestIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = response.parse()
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -153,7 +155,7 @@ class TestIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = response.parse()
-            assert_matches_type(Integration, integration, path=["response"])
+            assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -343,7 +345,7 @@ class TestAsyncIntegrations:
             name="name",
             type="telegram",
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -358,7 +360,7 @@ class TestAsyncIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = await response.parse()
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -373,7 +375,7 @@ class TestAsyncIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = await response.parse()
-            assert_matches_type(Integration, integration, path=["response"])
+            assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -383,7 +385,7 @@ class TestAsyncIntegrations:
         integration = await async_client.integrations.retrieve(
             "id",
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -395,7 +397,7 @@ class TestAsyncIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = await response.parse()
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -407,7 +409,7 @@ class TestAsyncIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = await response.parse()
-            assert_matches_type(Integration, integration, path=["response"])
+            assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -425,7 +427,7 @@ class TestAsyncIntegrations:
         integration = await async_client.integrations.update(
             id="id",
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -440,7 +442,7 @@ class TestAsyncIntegrations:
             scope_all_monitors=True,
             silent_push=True,
         )
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -452,7 +454,7 @@ class TestAsyncIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = await response.parse()
-        assert_matches_type(Integration, integration, path=["response"])
+        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -464,7 +466,7 @@ class TestAsyncIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = await response.parse()
-            assert_matches_type(Integration, integration, path=["response"])
+            assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

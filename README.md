@@ -32,11 +32,11 @@ client = XTwitterScraper(
     api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # This is the default and can be omitted
 )
 
-paginated_tweets = client.x.tweets.search(
+response = client.x.tweets.search(
     q="from:elonmusk",
     limit=10,
 )
-print(paginated_tweets.has_next_page)
+print(response.has_next_page)
 ```
 
 While you can provide an `api_key` keyword argument,
@@ -59,11 +59,11 @@ client = AsyncXTwitterScraper(
 
 
 async def main() -> None:
-    paginated_tweets = await client.x.tweets.search(
+    response = await client.x.tweets.search(
         q="from:elonmusk",
         limit=10,
     )
-    print(paginated_tweets.has_next_page)
+    print(response.has_next_page)
 
 
 asyncio.run(main())
@@ -98,11 +98,11 @@ async def main() -> None:
         ),  # This is the default and can be omitted
         http_client=DefaultAioHttpClient(),
     ) as client:
-        paginated_tweets = await client.x.tweets.search(
+        response = await client.x.tweets.search(
             q="from:elonmusk",
             limit=10,
         )
-        print(paginated_tweets.has_next_page)
+        print(response.has_next_page)
 
 
 asyncio.run(main())
