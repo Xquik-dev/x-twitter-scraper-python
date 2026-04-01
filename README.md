@@ -16,9 +16,12 @@ The REST API documentation can be found on [xquik.com](https://xquik.com). The f
 ## Installation
 
 ```sh
-# install from PyPI
-pip install x_twitter_scraper
+# install from this staging repo
+pip install git+ssh://git@github.com/stainless-sdks/x-twitter-scraper-python.git
 ```
+
+> [!NOTE]
+> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install x_twitter_scraper`
 
 ## Usage
 
@@ -78,8 +81,8 @@ By default, the async client uses `httpx` for HTTP requests. However, for improv
 You can enable this by installing `aiohttp`:
 
 ```sh
-# install from PyPI
-pip install x_twitter_scraper[aiohttp]
+# install from this staging repo
+pip install 'x_twitter_scraper[aiohttp] @ git+ssh://git@github.com/stainless-sdks/x-twitter-scraper-python.git'
 ```
 
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
@@ -295,9 +298,9 @@ tweet = response.parse()  # get the object that `x.tweets.search()` would have r
 print(tweet.has_next_page)
 ```
 
-These methods return an [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) object.
+These methods return an [`APIResponse`](https://github.com/stainless-sdks/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) object.
 
-The async client returns an [`AsyncAPIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
+The async client returns an [`AsyncAPIResponse`](https://github.com/stainless-sdks/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
 
 #### `.with_streaming_response`
 
@@ -404,7 +407,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-python/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/x-twitter-scraper-python/issues) with questions, bugs, or suggestions.
 
 ### Determining the installed version
 
