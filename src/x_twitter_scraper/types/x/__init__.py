@@ -7,7 +7,6 @@ from .dm_send_response import DmSendResponse as DmSendResponse
 from .tweet_list_params import TweetListParams as TweetListParams
 from .media_upload_params import MediaUploadParams as MediaUploadParams
 from .tweet_create_params import TweetCreateParams as TweetCreateParams
-from .tweet_delete_params import TweetDeleteParams as TweetDeleteParams
 from .tweet_search_params import TweetSearchParams as TweetSearchParams
 from .bookmark_list_params import BookmarkListParams as BookmarkListParams
 from .account_create_params import AccountCreateParams as AccountCreateParams
@@ -18,10 +17,8 @@ from .media_download_params import MediaDownloadParams as MediaDownloadParams
 from .media_upload_response import MediaUploadResponse as MediaUploadResponse
 from .profile_update_params import ProfileUpdateParams as ProfileUpdateParams
 from .tweet_create_response import TweetCreateResponse as TweetCreateResponse
-from .tweet_delete_response import TweetDeleteResponse as TweetDeleteResponse
 from .tweet_search_response import TweetSearchResponse as TweetSearchResponse
 from .bookmark_list_response import BookmarkListResponse as BookmarkListResponse
-from .user_retrieve_response import UserRetrieveResponse as UserRetrieveResponse
 from .account_create_response import AccountCreateResponse as AccountCreateResponse
 from .account_delete_response import AccountDeleteResponse as AccountDeleteResponse
 from .account_reauth_response import AccountReauthResponse as AccountReauthResponse
@@ -32,7 +29,6 @@ from .media_download_response import MediaDownloadResponse as MediaDownloadRespo
 from .profile_update_response import ProfileUpdateResponse as ProfileUpdateResponse
 from .tweet_get_quotes_params import TweetGetQuotesParams as TweetGetQuotesParams
 from .tweet_get_thread_params import TweetGetThreadParams as TweetGetThreadParams
-from .tweet_retrieve_response import TweetRetrieveResponse as TweetRetrieveResponse
 from .tweet_get_replies_params import TweetGetRepliesParams as TweetGetRepliesParams
 from .account_retrieve_response import AccountRetrieveResponse as AccountRetrieveResponse
 from .community_create_response import CommunityCreateResponse as CommunityCreateResponse
