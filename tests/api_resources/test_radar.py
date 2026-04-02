@@ -31,7 +31,7 @@ class TestRadar:
             count=0,
             hours=0,
             region="region",
-            source="source",
+            source="github",
         )
         assert_matches_type(RadarRetrieveTrendingTopicsResponse, radar, path=["response"])
 
@@ -77,7 +77,7 @@ class TestAsyncRadar:
             count=0,
             hours=0,
             region="region",
-            source="source",
+            source="github",
         )
         assert_matches_type(RadarRetrieveTrendingTopicsResponse, radar, path=["response"])
 

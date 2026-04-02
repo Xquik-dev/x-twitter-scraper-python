@@ -20,7 +20,6 @@ from .draft_create_params import DraftCreateParams as DraftCreateParams
 from .draft_list_response import DraftListResponse as DraftListResponse
 from .event_list_response import EventListResponse as EventListResponse
 from .style_list_response import StyleListResponse as StyleListResponse
-from .style_update_params import StyleUpdateParams as StyleUpdateParams
 from .trend_list_response import TrendListResponse as TrendListResponse
 from .style_analyze_params import StyleAnalyzeParams as StyleAnalyzeParams
 from .style_compare_params import StyleCompareParams as StyleCompareParams
@@ -32,7 +31,6 @@ from .extraction_run_params import ExtractionRunParams as ExtractionRunParams
 from .monitor_create_params import MonitorCreateParams as MonitorCreateParams
 from .monitor_list_response import MonitorListResponse as MonitorListResponse
 from .monitor_update_params import MonitorUpdateParams as MonitorUpdateParams
-from .style_update_response import StyleUpdateResponse as StyleUpdateResponse
 from .webhook_create_params import WebhookCreateParams as WebhookCreateParams
 from .webhook_list_response import WebhookListResponse as WebhookListResponse
 from .webhook_test_response import WebhookTestResponse as WebhookTestResponse
@@ -50,7 +48,6 @@ from .event_retrieve_response import EventRetrieveResponse as EventRetrieveRespo
 from .extraction_run_response import ExtractionRunResponse as ExtractionRunResponse
 from .monitor_create_response import MonitorCreateResponse as MonitorCreateResponse
 from .monitor_update_response import MonitorUpdateResponse as MonitorUpdateResponse
-from .style_retrieve_response import StyleRetrieveResponse as StyleRetrieveResponse
 from .webhook_create_response import WebhookCreateResponse as WebhookCreateResponse
 from .webhook_update_response import WebhookUpdateResponse as WebhookUpdateResponse
 from .extraction_list_response import ExtractionListResponse as ExtractionListResponse
@@ -78,7 +75,6 @@ from .credit_topup_balance_response import CreditTopupBalanceResponse as CreditT
 from .integration_retrieve_response import IntegrationRetrieveResponse as IntegrationRetrieveResponse
 from .account_update_locale_response import AccountUpdateLocaleResponse as AccountUpdateLocaleResponse
 from .integration_send_test_response import IntegrationSendTestResponse as IntegrationSendTestResponse
-from .style_get_performance_response import StyleGetPerformanceResponse as StyleGetPerformanceResponse
 from .account_set_x_username_response import AccountSetXUsernameResponse as AccountSetXUsernameResponse
 from .extraction_estimate_cost_params import ExtractionEstimateCostParams as ExtractionEstimateCostParams
 from .credit_retrieve_balance_response import CreditRetrieveBalanceResponse as CreditRetrieveBalanceResponse

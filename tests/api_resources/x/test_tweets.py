@@ -11,9 +11,7 @@ from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
     TweetCreateResponse,
-    TweetDeleteResponse,
     TweetSearchResponse,
-    TweetRetrieveResponse,
     TweetGetQuotesResponse,
     TweetGetThreadResponse,
     TweetGetRepliesResponse,
@@ -80,48 +78,6 @@ class TestTweets:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_method_retrieve(self, client: XTwitterScraper) -> None:
-        tweet = client.x.tweets.retrieve(
-            "tweetId",
-        )
-        assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_raw_response_retrieve(self, client: XTwitterScraper) -> None:
-        response = client.x.tweets.with_raw_response.retrieve(
-            "tweetId",
-        )
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        tweet = response.parse()
-        assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_streaming_response_retrieve(self, client: XTwitterScraper) -> None:
-        with client.x.tweets.with_streaming_response.retrieve(
-            "tweetId",
-        ) as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            tweet = response.parse()
-            assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_path_params_retrieve(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
-            client.x.tweets.with_raw_response.retrieve(
-                "",
-            )
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
     def test_method_list(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.list(
             ids="ids",
@@ -153,52 +109,6 @@ class TestTweets:
             assert tweet is None
 
         assert cast(Any, response.is_closed) is True
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_method_delete(self, client: XTwitterScraper) -> None:
-        tweet = client.x.tweets.delete(
-            tweet_id="tweetId",
-            account="account",
-        )
-        assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_raw_response_delete(self, client: XTwitterScraper) -> None:
-        response = client.x.tweets.with_raw_response.delete(
-            tweet_id="tweetId",
-            account="account",
-        )
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        tweet = response.parse()
-        assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_streaming_response_delete(self, client: XTwitterScraper) -> None:
-        with client.x.tweets.with_streaming_response.delete(
-            tweet_id="tweetId",
-            account="account",
-        ) as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            tweet = response.parse()
-            assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_path_params_delete(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
-            client.x.tweets.with_raw_response.delete(
-                tweet_id="",
-                account="account",
-            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -566,48 +476,6 @@ class TestAsyncTweets:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_method_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
-        tweet = await async_client.x.tweets.retrieve(
-            "tweetId",
-        )
-        assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_raw_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
-        response = await async_client.x.tweets.with_raw_response.retrieve(
-            "tweetId",
-        )
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        tweet = await response.parse()
-        assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_streaming_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
-        async with async_client.x.tweets.with_streaming_response.retrieve(
-            "tweetId",
-        ) as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            tweet = await response.parse()
-            assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_path_params_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
-            await async_client.x.tweets.with_raw_response.retrieve(
-                "",
-            )
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.list(
             ids="ids",
@@ -639,52 +507,6 @@ class TestAsyncTweets:
             assert tweet is None
 
         assert cast(Any, response.is_closed) is True
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_method_delete(self, async_client: AsyncXTwitterScraper) -> None:
-        tweet = await async_client.x.tweets.delete(
-            tweet_id="tweetId",
-            account="account",
-        )
-        assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_raw_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
-        response = await async_client.x.tweets.with_raw_response.delete(
-            tweet_id="tweetId",
-            account="account",
-        )
-
-        assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        tweet = await response.parse()
-        assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_streaming_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
-        async with async_client.x.tweets.with_streaming_response.delete(
-            tweet_id="tweetId",
-            account="account",
-        ) as response:
-            assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-
-            tweet = await response.parse()
-            assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
-
-        assert cast(Any, response.is_closed) is True
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_path_params_delete(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
-            await async_client.x.tweets.with_raw_response.delete(
-                tweet_id="",
-                account="account",
-            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
