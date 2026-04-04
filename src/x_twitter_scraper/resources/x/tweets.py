@@ -401,7 +401,7 @@ class TweetsResource(SyncAPIResource):
 
           cursor: Pagination cursor from previous response
 
-          limit: Deprecated — use cursor-based pagination instead
+          limit: Max tweets to return (server paginates internally). Omit for single page (~20).
 
           query_type: Sort order — Latest (chronological) or Top (engagement-ranked)
 
@@ -807,7 +807,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           cursor: Pagination cursor from previous response
 
-          limit: Deprecated — use cursor-based pagination instead
+          limit: Max tweets to return (server paginates internally). Omit for single page (~20).
 
           query_type: Sort order — Latest (chronological) or Top (engagement-ranked)
 

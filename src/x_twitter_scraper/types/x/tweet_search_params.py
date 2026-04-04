@@ -17,7 +17,7 @@ class TweetSearchParams(TypedDict, total=False):
     """Pagination cursor from previous response"""
 
     limit: int
-    """Deprecated — use cursor-based pagination instead"""
+    """Max tweets to return (server paginates internally). Omit for single page (~20)."""
 
     query_type: Annotated[Literal["Latest", "Top"], PropertyInfo(alias="queryType")]
     """Sort order — Latest (chronological) or Top (engagement-ranked)"""
