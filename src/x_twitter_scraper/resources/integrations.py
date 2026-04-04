@@ -158,6 +158,10 @@ class IntegrationsResource(SyncAPIResource):
         Update integration
 
         Args:
+          filters: Event filter rules (JSON)
+
+          message_template: Custom message template (JSON)
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -442,6 +446,10 @@ class AsyncIntegrationsResource(AsyncAPIResource):
         Update integration
 
         Args:
+          filters: Event filter rules (JSON)
+
+          message_template: Custom message template (JSON)
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request

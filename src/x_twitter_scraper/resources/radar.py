@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing_extensions import Literal
+
 import httpx
 
 from ..types import radar_retrieve_trending_topics_params
@@ -50,7 +52,8 @@ class RadarResource(SyncAPIResource):
         count: int | Omit = omit,
         hours: int | Omit = omit,
         region: str | Omit = omit,
-        source: str | Omit = omit,
+        source: Literal["github", "google_trends", "hacker_news", "polymarket", "reddit", "trustmrr", "wikipedia"]
+        | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -132,7 +135,8 @@ class AsyncRadarResource(AsyncAPIResource):
         count: int | Omit = omit,
         hours: int | Omit = omit,
         region: str | Omit = omit,
-        source: str | Omit = omit,
+        source: Literal["github", "google_trends", "hacker_news", "polymarket", "reddit", "trustmrr", "wikipedia"]
+        | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing_extensions import TypedDict
+from typing_extensions import Literal, TypedDict
 
 __all__ = ["RadarRetrieveTrendingTopicsParams"]
 
@@ -20,7 +20,7 @@ class RadarRetrieveTrendingTopicsParams(TypedDict, total=False):
     region: str
     """Region filter (us, global, etc.)"""
 
-    source: str
+    source: Literal["github", "google_trends", "hacker_news", "polymarket", "reddit", "trustmrr", "wikipedia"]
     """Source filter.
 
     One of: github, google_trends, hacker_news, polymarket, reddit, trustmrr,

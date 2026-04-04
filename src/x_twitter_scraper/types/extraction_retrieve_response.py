@@ -13,6 +13,7 @@ class ExtractionRetrieveResponse(BaseModel):
     has_more: bool = FieldInfo(alias="hasMore")
 
     job: Dict[str, object]
+    """Extraction job metadata — shape varies by tool type (JSON)"""
 
     results: List[Dict[str, object]]
 

@@ -2,176 +2,62 @@
 
 from __future__ import annotations
 
-from typing_extensions import Literal
-
 import httpx
 
-from .like import (
-    LikeResource,
-    AsyncLikeResource,
-    LikeResourceWithRawResponse,
-    AsyncLikeResourceWithRawResponse,
-    LikeResourceWithStreamingResponse,
-    AsyncLikeResourceWithStreamingResponse,
+from ..._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
+from ..._utils import path_template, maybe_transform, async_maybe_transform
+from ..._compat import cached_property
+from ...types.x import (
+    user_retrieve_batch_params,
+    user_retrieve_likes_params,
+    user_retrieve_media_params,
+    user_retrieve_search_params,
+    user_retrieve_tweets_params,
+    user_retrieve_mentions_params,
+    user_retrieve_followers_params,
+    user_retrieve_following_params,
+    user_retrieve_followers_you_know_params,
+    user_retrieve_verified_followers_params,
 )
-from .retweet import (
-    RetweetResource,
-    AsyncRetweetResource,
-    RetweetResourceWithRawResponse,
-    AsyncRetweetResourceWithRawResponse,
-    RetweetResourceWithStreamingResponse,
-    AsyncRetweetResourceWithStreamingResponse,
-)
-from ...._types import Body, Omit, Query, Headers, NoneType, NotGiven, SequenceNotStr, omit, not_given
-from ...._utils import path_template, maybe_transform, async_maybe_transform
-from ...._compat import cached_property
-from ....types.x import (
-    tweet_list_params,
-    tweet_create_params,
-    tweet_delete_params,
-    tweet_search_params,
-    tweet_get_quotes_params,
-    tweet_get_thread_params,
-    tweet_get_replies_params,
-    tweet_get_favoriters_params,
-    tweet_get_retweeters_params,
-)
-from ...._resource import SyncAPIResource, AsyncAPIResource
-from ...._response import (
+from ..._resource import SyncAPIResource, AsyncAPIResource
+from ..._response import (
     to_raw_response_wrapper,
     to_streamed_response_wrapper,
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
-from ...._base_client import make_request_options
-from ....types.x.tweet_create_response import TweetCreateResponse
-from ....types.x.tweet_delete_response import TweetDeleteResponse
-from ....types.x.tweet_search_response import TweetSearchResponse
-from ....types.x.tweet_retrieve_response import TweetRetrieveResponse
-from ....types.x.tweet_get_quotes_response import TweetGetQuotesResponse
-from ....types.x.tweet_get_thread_response import TweetGetThreadResponse
-from ....types.x.tweet_get_replies_response import TweetGetRepliesResponse
-from ....types.x.tweet_get_favoriters_response import TweetGetFavoritersResponse
-from ....types.x.tweet_get_retweeters_response import TweetGetRetweetersResponse
+from ..._base_client import make_request_options
+from ...types.x.user_retrieve_likes_response import UserRetrieveLikesResponse
+from ...types.x.user_retrieve_media_response import UserRetrieveMediaResponse
+from ...types.x.user_retrieve_tweets_response import UserRetrieveTweetsResponse
+from ...types.x.user_retrieve_followers_you_know_response import UserRetrieveFollowersYouKnowResponse
 
-__all__ = ["TweetsResource", "AsyncTweetsResource"]
+__all__ = ["UsersResource", "AsyncUsersResource"]
 
 
-class TweetsResource(SyncAPIResource):
-    @cached_property
-    def like(self) -> LikeResource:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return LikeResource(self._client)
+class UsersResource(SyncAPIResource):
+    """X data lookups (subscription required)"""
 
     @cached_property
-    def retweet(self) -> RetweetResource:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return RetweetResource(self._client)
-
-    @cached_property
-    def with_raw_response(self) -> TweetsResourceWithRawResponse:
+    def with_raw_response(self) -> UsersResourceWithRawResponse:
         """
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
-        return TweetsResourceWithRawResponse(self)
+        return UsersResourceWithRawResponse(self)
 
     @cached_property
-    def with_streaming_response(self) -> TweetsResourceWithStreamingResponse:
+    def with_streaming_response(self) -> UsersResourceWithStreamingResponse:
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
         For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
-        return TweetsResourceWithStreamingResponse(self)
+        return UsersResourceWithStreamingResponse(self)
 
-    def create(
-        self,
-        *,
-        account: str,
-        text: str,
-        attachment_url: str | Omit = omit,
-        community_id: str | Omit = omit,
-        is_note_tweet: bool | Omit = omit,
-        media_ids: SequenceNotStr[str] | Omit = omit,
-        reply_to_tweet_id: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetCreateResponse:
-        """
-        Create tweet
-
-        Args:
-          account: X account (@username or account ID)
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return self._post(
-            "/x/tweets",
-            body=maybe_transform(
-                {
-                    "account": account,
-                    "text": text,
-                    "attachment_url": attachment_url,
-                    "community_id": community_id,
-                    "is_note_tweet": is_note_tweet,
-                    "media_ids": media_ids,
-                    "reply_to_tweet_id": reply_to_tweet_id,
-                },
-                tweet_create_params.TweetCreateParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=TweetCreateResponse,
-        )
-
-    def retrieve(
-        self,
-        tweet_id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetRetrieveResponse:
-        """
-        Look up tweet
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
-        return self._get(
-            path_template("/x/tweets/{tweet_id}", tweet_id=tweet_id),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=TweetRetrieveResponse,
-        )
-
-    def list(
+    def retrieve_batch(
         self,
         *,
         ids: str,
@@ -183,10 +69,10 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Get multiple tweets by IDs
+        Get multiple users by IDs
 
         Args:
-          ids: Comma-separated tweet IDs (max 100)
+          ids: Comma-separated user IDs (max 100)
 
           extra_headers: Send extra headers
 
@@ -198,34 +84,37 @@ class TweetsResource(SyncAPIResource):
         """
         extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
-            "/x/tweets",
+            "/x/users/batch",
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"ids": ids}, tweet_list_params.TweetListParams),
+                query=maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
             ),
             cast_to=NoneType,
         )
 
-    def delete(
+    def retrieve_followers(
         self,
-        tweet_id: str,
+        id: str,
         *,
-        account: str,
+        cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetDeleteResponse:
+    ) -> None:
         """
-        Delete tweet
+        Get user followers
 
         Args:
-          account: X account (@username or account ID)
+          cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 200)
 
           extra_headers: Send extra headers
 
@@ -235,18 +124,28 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
-        return self._delete(
-            path_template("/x/tweets/{tweet_id}", tweet_id=tweet_id),
-            body=maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return self._get(
+            path_template("/x/users/{id}/followers", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_followers_params.UserRetrieveFollowersParams,
+                ),
             ),
-            cast_to=TweetDeleteResponse,
+            cast_to=NoneType,
         )
 
-    def get_favoriters(
+    def retrieve_followers_you_know(
         self,
         id: str,
         *,
@@ -257,9 +156,9 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetFavoritersResponse:
+    ) -> UserRetrieveFollowersYouKnowResponse:
         """
-        Get users who liked a tweet
+        Get followers you know for a user
 
         Args:
           cursor: Pagination cursor from previous response
@@ -275,23 +174,154 @@ class TweetsResource(SyncAPIResource):
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._get(
-            path_template("/x/tweets/{id}/favoriters", id=id),
+            path_template("/x/users/{id}/followers-you-know", id=id),
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, tweet_get_favoriters_params.TweetGetFavoritersParams),
+                query=maybe_transform(
+                    {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
+                ),
             ),
-            cast_to=TweetGetFavoritersResponse,
+            cast_to=UserRetrieveFollowersYouKnowResponse,
         )
 
-    def get_quotes(
+    def retrieve_following(
         self,
         id: str,
         *,
         cursor: str | Omit = omit,
-        include_replies: bool | Omit = omit,
+        page_size: int | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> None:
+        """
+        Get users this user follows
+
+        Args:
+          cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 200)
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return self._get(
+            path_template("/x/users/{id}/following", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_following_params.UserRetrieveFollowingParams,
+                ),
+            ),
+            cast_to=NoneType,
+        )
+
+    def retrieve_likes(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveLikesResponse:
+        """
+        Get tweets liked by a user
+
+        Args:
+          cursor: Pagination cursor from previous response
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/users/{id}/likes", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform({"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams),
+            ),
+            cast_to=UserRetrieveLikesResponse,
+        )
+
+    def retrieve_media(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveMediaResponse:
+        """
+        Get media tweets by a user
+
+        Args:
+          cursor: Pagination cursor from previous response
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/users/{id}/media", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform({"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams),
+            ),
+            cast_to=UserRetrieveMediaResponse,
+        )
+
+    def retrieve_mentions(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
         since_time: str | Omit = omit,
         until_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -300,14 +330,12 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetQuotesResponse:
+    ) -> None:
         """
-        Get quote tweets of a tweet
+        Get tweets mentioning a user
 
         Args:
           cursor: Pagination cursor
-
-          include_replies: Include replies (default false)
 
           since_time: Unix timestamp - filter after
 
@@ -323,62 +351,9 @@ class TweetsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
-            path_template("/x/tweets/{id}/quotes", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform(
-                    {
-                        "cursor": cursor,
-                        "include_replies": include_replies,
-                        "since_time": since_time,
-                        "until_time": until_time,
-                    },
-                    tweet_get_quotes_params.TweetGetQuotesParams,
-                ),
-            ),
-            cast_to=TweetGetQuotesResponse,
-        )
-
-    def get_replies(
-        self,
-        id: str,
-        *,
-        cursor: str | Omit = omit,
-        since_time: str | Omit = omit,
-        until_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetRepliesResponse:
-        """
-        Get replies to a tweet
-
-        Args:
-          cursor: Pagination cursor
-
-          since_time: Unix timestamp - filter after
-
-          until_time: Unix timestamp - filter before
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get(
-            path_template("/x/tweets/{id}/replies", id=id),
+            path_template("/x/users/{id}/mentions", id=id),
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -390,123 +365,31 @@ class TweetsResource(SyncAPIResource):
                         "since_time": since_time,
                         "until_time": until_time,
                     },
-                    tweet_get_replies_params.TweetGetRepliesParams,
+                    user_retrieve_mentions_params.UserRetrieveMentionsParams,
                 ),
             ),
-            cast_to=TweetGetRepliesResponse,
+            cast_to=NoneType,
         )
 
-    def get_retweeters(
-        self,
-        id: str,
-        *,
-        cursor: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetRetweetersResponse:
-        """
-        Get users who retweeted a tweet
-
-        Args:
-          cursor: Pagination cursor
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get(
-            path_template("/x/tweets/{id}/retweeters", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, tweet_get_retweeters_params.TweetGetRetweetersParams),
-            ),
-            cast_to=TweetGetRetweetersResponse,
-        )
-
-    def get_thread(
-        self,
-        id: str,
-        *,
-        cursor: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetThreadResponse:
-        """
-        Get thread context for a tweet
-
-        Args:
-          cursor: Pagination cursor
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get(
-            path_template("/x/tweets/{id}/thread", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, tweet_get_thread_params.TweetGetThreadParams),
-            ),
-            cast_to=TweetGetThreadResponse,
-        )
-
-    def search(
+    def retrieve_search(
         self,
         *,
         q: str,
         cursor: str | Omit = omit,
-        limit: int | Omit = omit,
-        query_type: Literal["Latest", "Top"] | Omit = omit,
-        since_time: str | Omit = omit,
-        until_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetSearchResponse:
+    ) -> None:
         """
-        Search tweets
+        Search users by name or username
 
         Args:
-          q: Search query (keywords,
+          q: Search query
 
-          cursor: Pagination cursor from previous response
-
-          limit: Deprecated — use cursor-based pagination instead
-
-          query_type: Sort order — Latest (chronological) or Top (engagement-ranked)
-
-          since_time: ISO 8601 timestamp — only return tweets after this time
-
-          until_time: ISO 8601 timestamp — only return tweets before this time
+          cursor: Pagination cursor
 
           extra_headers: Send extra headers
 
@@ -516,8 +399,9 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
-            "/x/tweets/search",
+            "/x/users/search",
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -527,133 +411,133 @@ class TweetsResource(SyncAPIResource):
                     {
                         "q": q,
                         "cursor": cursor,
-                        "limit": limit,
-                        "query_type": query_type,
-                        "since_time": since_time,
-                        "until_time": until_time,
                     },
-                    tweet_search_params.TweetSearchParams,
+                    user_retrieve_search_params.UserRetrieveSearchParams,
                 ),
             ),
-            cast_to=TweetSearchResponse,
+            cast_to=NoneType,
+        )
+
+    def retrieve_tweets(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        include_parent_tweet: bool | Omit = omit,
+        include_replies: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveTweetsResponse:
+        """
+        Get recent tweets by a user
+
+        Args:
+          cursor: Pagination cursor from previous response
+
+          include_parent_tweet: Include parent tweet for replies
+
+          include_replies: Include reply tweets
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/users/{id}/tweets", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "include_parent_tweet": include_parent_tweet,
+                        "include_replies": include_replies,
+                    },
+                    user_retrieve_tweets_params.UserRetrieveTweetsParams,
+                ),
+            ),
+            cast_to=UserRetrieveTweetsResponse,
+        )
+
+    def retrieve_verified_followers(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> None:
+        """
+        Get verified followers
+
+        Args:
+          cursor: Pagination cursor
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return self._get(
+            path_template("/x/users/{id}/verified-followers", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {"cursor": cursor}, user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams
+                ),
+            ),
+            cast_to=NoneType,
         )
 
 
-class AsyncTweetsResource(AsyncAPIResource):
-    @cached_property
-    def like(self) -> AsyncLikeResource:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return AsyncLikeResource(self._client)
+class AsyncUsersResource(AsyncAPIResource):
+    """X data lookups (subscription required)"""
 
     @cached_property
-    def retweet(self) -> AsyncRetweetResource:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return AsyncRetweetResource(self._client)
-
-    @cached_property
-    def with_raw_response(self) -> AsyncTweetsResourceWithRawResponse:
+    def with_raw_response(self) -> AsyncUsersResourceWithRawResponse:
         """
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
         For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
-        return AsyncTweetsResourceWithRawResponse(self)
+        return AsyncUsersResourceWithRawResponse(self)
 
     @cached_property
-    def with_streaming_response(self) -> AsyncTweetsResourceWithStreamingResponse:
+    def with_streaming_response(self) -> AsyncUsersResourceWithStreamingResponse:
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
         For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
-        return AsyncTweetsResourceWithStreamingResponse(self)
+        return AsyncUsersResourceWithStreamingResponse(self)
 
-    async def create(
-        self,
-        *,
-        account: str,
-        text: str,
-        attachment_url: str | Omit = omit,
-        community_id: str | Omit = omit,
-        is_note_tweet: bool | Omit = omit,
-        media_ids: SequenceNotStr[str] | Omit = omit,
-        reply_to_tweet_id: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetCreateResponse:
-        """
-        Create tweet
-
-        Args:
-          account: X account (@username or account ID)
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return await self._post(
-            "/x/tweets",
-            body=await async_maybe_transform(
-                {
-                    "account": account,
-                    "text": text,
-                    "attachment_url": attachment_url,
-                    "community_id": community_id,
-                    "is_note_tweet": is_note_tweet,
-                    "media_ids": media_ids,
-                    "reply_to_tweet_id": reply_to_tweet_id,
-                },
-                tweet_create_params.TweetCreateParams,
-            ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=TweetCreateResponse,
-        )
-
-    async def retrieve(
-        self,
-        tweet_id: str,
-        *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetRetrieveResponse:
-        """
-        Look up tweet
-
-        Args:
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
-        return await self._get(
-            path_template("/x/tweets/{tweet_id}", tweet_id=tweet_id),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=TweetRetrieveResponse,
-        )
-
-    async def list(
+    async def retrieve_batch(
         self,
         *,
         ids: str,
@@ -665,10 +549,10 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Get multiple tweets by IDs
+        Get multiple users by IDs
 
         Args:
-          ids: Comma-separated tweet IDs (max 100)
+          ids: Comma-separated user IDs (max 100)
 
           extra_headers: Send extra headers
 
@@ -680,34 +564,37 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
-            "/x/tweets",
+            "/x/users/batch",
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=await async_maybe_transform({"ids": ids}, tweet_list_params.TweetListParams),
+                query=await async_maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
             ),
             cast_to=NoneType,
         )
 
-    async def delete(
+    async def retrieve_followers(
         self,
-        tweet_id: str,
+        id: str,
         *,
-        account: str,
+        cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetDeleteResponse:
+    ) -> None:
         """
-        Delete tweet
+        Get user followers
 
         Args:
-          account: X account (@username or account ID)
+          cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 200)
 
           extra_headers: Send extra headers
 
@@ -717,18 +604,28 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
-        return await self._delete(
-            path_template("/x/tweets/{tweet_id}", tweet_id=tweet_id),
-            body=await async_maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return await self._get(
+            path_template("/x/users/{id}/followers", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_followers_params.UserRetrieveFollowersParams,
+                ),
             ),
-            cast_to=TweetDeleteResponse,
+            cast_to=NoneType,
         )
 
-    async def get_favoriters(
+    async def retrieve_followers_you_know(
         self,
         id: str,
         *,
@@ -739,9 +636,9 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetFavoritersResponse:
+    ) -> UserRetrieveFollowersYouKnowResponse:
         """
-        Get users who liked a tweet
+        Get followers you know for a user
 
         Args:
           cursor: Pagination cursor from previous response
@@ -757,25 +654,158 @@ class AsyncTweetsResource(AsyncAPIResource):
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._get(
-            path_template("/x/tweets/{id}/favoriters", id=id),
+            path_template("/x/users/{id}/followers-you-know", id=id),
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, tweet_get_favoriters_params.TweetGetFavoritersParams
+                    {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
                 ),
             ),
-            cast_to=TweetGetFavoritersResponse,
+            cast_to=UserRetrieveFollowersYouKnowResponse,
         )
 
-    async def get_quotes(
+    async def retrieve_following(
         self,
         id: str,
         *,
         cursor: str | Omit = omit,
-        include_replies: bool | Omit = omit,
+        page_size: int | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> None:
+        """
+        Get users this user follows
+
+        Args:
+          cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 200)
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return await self._get(
+            path_template("/x/users/{id}/following", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_following_params.UserRetrieveFollowingParams,
+                ),
+            ),
+            cast_to=NoneType,
+        )
+
+    async def retrieve_likes(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveLikesResponse:
+        """
+        Get tweets liked by a user
+
+        Args:
+          cursor: Pagination cursor from previous response
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/users/{id}/likes", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams
+                ),
+            ),
+            cast_to=UserRetrieveLikesResponse,
+        )
+
+    async def retrieve_media(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveMediaResponse:
+        """
+        Get media tweets by a user
+
+        Args:
+          cursor: Pagination cursor from previous response
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/users/{id}/media", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams
+                ),
+            ),
+            cast_to=UserRetrieveMediaResponse,
+        )
+
+    async def retrieve_mentions(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
         since_time: str | Omit = omit,
         until_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -784,14 +814,12 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetQuotesResponse:
+    ) -> None:
         """
-        Get quote tweets of a tweet
+        Get tweets mentioning a user
 
         Args:
           cursor: Pagination cursor
-
-          include_replies: Include replies (default false)
 
           since_time: Unix timestamp - filter after
 
@@ -807,62 +835,9 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
-            path_template("/x/tweets/{id}/quotes", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {
-                        "cursor": cursor,
-                        "include_replies": include_replies,
-                        "since_time": since_time,
-                        "until_time": until_time,
-                    },
-                    tweet_get_quotes_params.TweetGetQuotesParams,
-                ),
-            ),
-            cast_to=TweetGetQuotesResponse,
-        )
-
-    async def get_replies(
-        self,
-        id: str,
-        *,
-        cursor: str | Omit = omit,
-        since_time: str | Omit = omit,
-        until_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetRepliesResponse:
-        """
-        Get replies to a tweet
-
-        Args:
-          cursor: Pagination cursor
-
-          since_time: Unix timestamp - filter after
-
-          until_time: Unix timestamp - filter before
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._get(
-            path_template("/x/tweets/{id}/replies", id=id),
+            path_template("/x/users/{id}/mentions", id=id),
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -874,125 +849,31 @@ class AsyncTweetsResource(AsyncAPIResource):
                         "since_time": since_time,
                         "until_time": until_time,
                     },
-                    tweet_get_replies_params.TweetGetRepliesParams,
+                    user_retrieve_mentions_params.UserRetrieveMentionsParams,
                 ),
             ),
-            cast_to=TweetGetRepliesResponse,
+            cast_to=NoneType,
         )
 
-    async def get_retweeters(
-        self,
-        id: str,
-        *,
-        cursor: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetRetweetersResponse:
-        """
-        Get users who retweeted a tweet
-
-        Args:
-          cursor: Pagination cursor
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._get(
-            path_template("/x/tweets/{id}/retweeters", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {"cursor": cursor}, tweet_get_retweeters_params.TweetGetRetweetersParams
-                ),
-            ),
-            cast_to=TweetGetRetweetersResponse,
-        )
-
-    async def get_thread(
-        self,
-        id: str,
-        *,
-        cursor: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetGetThreadResponse:
-        """
-        Get thread context for a tweet
-
-        Args:
-          cursor: Pagination cursor
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        if not id:
-            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._get(
-            path_template("/x/tweets/{id}/thread", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform({"cursor": cursor}, tweet_get_thread_params.TweetGetThreadParams),
-            ),
-            cast_to=TweetGetThreadResponse,
-        )
-
-    async def search(
+    async def retrieve_search(
         self,
         *,
         q: str,
         cursor: str | Omit = omit,
-        limit: int | Omit = omit,
-        query_type: Literal["Latest", "Top"] | Omit = omit,
-        since_time: str | Omit = omit,
-        until_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> TweetSearchResponse:
+    ) -> None:
         """
-        Search tweets
+        Search users by name or username
 
         Args:
-          q: Search query (keywords,
+          q: Search query
 
-          cursor: Pagination cursor from previous response
-
-          limit: Deprecated — use cursor-based pagination instead
-
-          query_type: Sort order — Latest (chronological) or Top (engagement-ranked)
-
-          since_time: ISO 8601 timestamp — only return tweets after this time
-
-          until_time: ISO 8601 timestamp — only return tweets before this time
+          cursor: Pagination cursor
 
           extra_headers: Send extra headers
 
@@ -1002,8 +883,9 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
-            "/x/tweets/search",
+            "/x/users/search",
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -1013,197 +895,249 @@ class AsyncTweetsResource(AsyncAPIResource):
                     {
                         "q": q,
                         "cursor": cursor,
-                        "limit": limit,
-                        "query_type": query_type,
-                        "since_time": since_time,
-                        "until_time": until_time,
                     },
-                    tweet_search_params.TweetSearchParams,
+                    user_retrieve_search_params.UserRetrieveSearchParams,
                 ),
             ),
-            cast_to=TweetSearchResponse,
+            cast_to=NoneType,
+        )
+
+    async def retrieve_tweets(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        include_parent_tweet: bool | Omit = omit,
+        include_replies: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveTweetsResponse:
+        """
+        Get recent tweets by a user
+
+        Args:
+          cursor: Pagination cursor from previous response
+
+          include_parent_tweet: Include parent tweet for replies
+
+          include_replies: Include reply tweets
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/users/{id}/tweets", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "include_parent_tweet": include_parent_tweet,
+                        "include_replies": include_replies,
+                    },
+                    user_retrieve_tweets_params.UserRetrieveTweetsParams,
+                ),
+            ),
+            cast_to=UserRetrieveTweetsResponse,
+        )
+
+    async def retrieve_verified_followers(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> None:
+        """
+        Get verified followers
+
+        Args:
+          cursor: Pagination cursor
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return await self._get(
+            path_template("/x/users/{id}/verified-followers", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {"cursor": cursor}, user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams
+                ),
+            ),
+            cast_to=NoneType,
         )
 
 
-class TweetsResourceWithRawResponse:
-    def __init__(self, tweets: TweetsResource) -> None:
-        self._tweets = tweets
+class UsersResourceWithRawResponse:
+    def __init__(self, users: UsersResource) -> None:
+        self._users = users
 
-        self.create = to_raw_response_wrapper(
-            tweets.create,
+        self.retrieve_batch = to_raw_response_wrapper(
+            users.retrieve_batch,
         )
-        self.retrieve = to_raw_response_wrapper(
-            tweets.retrieve,
+        self.retrieve_followers = to_raw_response_wrapper(
+            users.retrieve_followers,
         )
-        self.list = to_raw_response_wrapper(
-            tweets.list,
+        self.retrieve_followers_you_know = to_raw_response_wrapper(
+            users.retrieve_followers_you_know,
         )
-        self.delete = to_raw_response_wrapper(
-            tweets.delete,
+        self.retrieve_following = to_raw_response_wrapper(
+            users.retrieve_following,
         )
-        self.get_favoriters = to_raw_response_wrapper(
-            tweets.get_favoriters,
+        self.retrieve_likes = to_raw_response_wrapper(
+            users.retrieve_likes,
         )
-        self.get_quotes = to_raw_response_wrapper(
-            tweets.get_quotes,
+        self.retrieve_media = to_raw_response_wrapper(
+            users.retrieve_media,
         )
-        self.get_replies = to_raw_response_wrapper(
-            tweets.get_replies,
+        self.retrieve_mentions = to_raw_response_wrapper(
+            users.retrieve_mentions,
         )
-        self.get_retweeters = to_raw_response_wrapper(
-            tweets.get_retweeters,
+        self.retrieve_search = to_raw_response_wrapper(
+            users.retrieve_search,
         )
-        self.get_thread = to_raw_response_wrapper(
-            tweets.get_thread,
+        self.retrieve_tweets = to_raw_response_wrapper(
+            users.retrieve_tweets,
         )
-        self.search = to_raw_response_wrapper(
-            tweets.search,
+        self.retrieve_verified_followers = to_raw_response_wrapper(
+            users.retrieve_verified_followers,
         )
-
-    @cached_property
-    def like(self) -> LikeResourceWithRawResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return LikeResourceWithRawResponse(self._tweets.like)
-
-    @cached_property
-    def retweet(self) -> RetweetResourceWithRawResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return RetweetResourceWithRawResponse(self._tweets.retweet)
 
 
-class AsyncTweetsResourceWithRawResponse:
-    def __init__(self, tweets: AsyncTweetsResource) -> None:
-        self._tweets = tweets
+class AsyncUsersResourceWithRawResponse:
+    def __init__(self, users: AsyncUsersResource) -> None:
+        self._users = users
 
-        self.create = async_to_raw_response_wrapper(
-            tweets.create,
+        self.retrieve_batch = async_to_raw_response_wrapper(
+            users.retrieve_batch,
         )
-        self.retrieve = async_to_raw_response_wrapper(
-            tweets.retrieve,
+        self.retrieve_followers = async_to_raw_response_wrapper(
+            users.retrieve_followers,
         )
-        self.list = async_to_raw_response_wrapper(
-            tweets.list,
+        self.retrieve_followers_you_know = async_to_raw_response_wrapper(
+            users.retrieve_followers_you_know,
         )
-        self.delete = async_to_raw_response_wrapper(
-            tweets.delete,
+        self.retrieve_following = async_to_raw_response_wrapper(
+            users.retrieve_following,
         )
-        self.get_favoriters = async_to_raw_response_wrapper(
-            tweets.get_favoriters,
+        self.retrieve_likes = async_to_raw_response_wrapper(
+            users.retrieve_likes,
         )
-        self.get_quotes = async_to_raw_response_wrapper(
-            tweets.get_quotes,
+        self.retrieve_media = async_to_raw_response_wrapper(
+            users.retrieve_media,
         )
-        self.get_replies = async_to_raw_response_wrapper(
-            tweets.get_replies,
+        self.retrieve_mentions = async_to_raw_response_wrapper(
+            users.retrieve_mentions,
         )
-        self.get_retweeters = async_to_raw_response_wrapper(
-            tweets.get_retweeters,
+        self.retrieve_search = async_to_raw_response_wrapper(
+            users.retrieve_search,
         )
-        self.get_thread = async_to_raw_response_wrapper(
-            tweets.get_thread,
+        self.retrieve_tweets = async_to_raw_response_wrapper(
+            users.retrieve_tweets,
         )
-        self.search = async_to_raw_response_wrapper(
-            tweets.search,
+        self.retrieve_verified_followers = async_to_raw_response_wrapper(
+            users.retrieve_verified_followers,
         )
-
-    @cached_property
-    def like(self) -> AsyncLikeResourceWithRawResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return AsyncLikeResourceWithRawResponse(self._tweets.like)
-
-    @cached_property
-    def retweet(self) -> AsyncRetweetResourceWithRawResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return AsyncRetweetResourceWithRawResponse(self._tweets.retweet)
 
 
-class TweetsResourceWithStreamingResponse:
-    def __init__(self, tweets: TweetsResource) -> None:
-        self._tweets = tweets
+class UsersResourceWithStreamingResponse:
+    def __init__(self, users: UsersResource) -> None:
+        self._users = users
 
-        self.create = to_streamed_response_wrapper(
-            tweets.create,
+        self.retrieve_batch = to_streamed_response_wrapper(
+            users.retrieve_batch,
         )
-        self.retrieve = to_streamed_response_wrapper(
-            tweets.retrieve,
+        self.retrieve_followers = to_streamed_response_wrapper(
+            users.retrieve_followers,
         )
-        self.list = to_streamed_response_wrapper(
-            tweets.list,
+        self.retrieve_followers_you_know = to_streamed_response_wrapper(
+            users.retrieve_followers_you_know,
         )
-        self.delete = to_streamed_response_wrapper(
-            tweets.delete,
+        self.retrieve_following = to_streamed_response_wrapper(
+            users.retrieve_following,
         )
-        self.get_favoriters = to_streamed_response_wrapper(
-            tweets.get_favoriters,
+        self.retrieve_likes = to_streamed_response_wrapper(
+            users.retrieve_likes,
         )
-        self.get_quotes = to_streamed_response_wrapper(
-            tweets.get_quotes,
+        self.retrieve_media = to_streamed_response_wrapper(
+            users.retrieve_media,
         )
-        self.get_replies = to_streamed_response_wrapper(
-            tweets.get_replies,
+        self.retrieve_mentions = to_streamed_response_wrapper(
+            users.retrieve_mentions,
         )
-        self.get_retweeters = to_streamed_response_wrapper(
-            tweets.get_retweeters,
+        self.retrieve_search = to_streamed_response_wrapper(
+            users.retrieve_search,
         )
-        self.get_thread = to_streamed_response_wrapper(
-            tweets.get_thread,
+        self.retrieve_tweets = to_streamed_response_wrapper(
+            users.retrieve_tweets,
         )
-        self.search = to_streamed_response_wrapper(
-            tweets.search,
+        self.retrieve_verified_followers = to_streamed_response_wrapper(
+            users.retrieve_verified_followers,
         )
-
-    @cached_property
-    def like(self) -> LikeResourceWithStreamingResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return LikeResourceWithStreamingResponse(self._tweets.like)
-
-    @cached_property
-    def retweet(self) -> RetweetResourceWithStreamingResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return RetweetResourceWithStreamingResponse(self._tweets.retweet)
 
 
-class AsyncTweetsResourceWithStreamingResponse:
-    def __init__(self, tweets: AsyncTweetsResource) -> None:
-        self._tweets = tweets
+class AsyncUsersResourceWithStreamingResponse:
+    def __init__(self, users: AsyncUsersResource) -> None:
+        self._users = users
 
-        self.create = async_to_streamed_response_wrapper(
-            tweets.create,
+        self.retrieve_batch = async_to_streamed_response_wrapper(
+            users.retrieve_batch,
         )
-        self.retrieve = async_to_streamed_response_wrapper(
-            tweets.retrieve,
+        self.retrieve_followers = async_to_streamed_response_wrapper(
+            users.retrieve_followers,
         )
-        self.list = async_to_streamed_response_wrapper(
-            tweets.list,
+        self.retrieve_followers_you_know = async_to_streamed_response_wrapper(
+            users.retrieve_followers_you_know,
         )
-        self.delete = async_to_streamed_response_wrapper(
-            tweets.delete,
+        self.retrieve_following = async_to_streamed_response_wrapper(
+            users.retrieve_following,
         )
-        self.get_favoriters = async_to_streamed_response_wrapper(
-            tweets.get_favoriters,
+        self.retrieve_likes = async_to_streamed_response_wrapper(
+            users.retrieve_likes,
         )
-        self.get_quotes = async_to_streamed_response_wrapper(
-            tweets.get_quotes,
+        self.retrieve_media = async_to_streamed_response_wrapper(
+            users.retrieve_media,
         )
-        self.get_replies = async_to_streamed_response_wrapper(
-            tweets.get_replies,
+        self.retrieve_mentions = async_to_streamed_response_wrapper(
+            users.retrieve_mentions,
         )
-        self.get_retweeters = async_to_streamed_response_wrapper(
-            tweets.get_retweeters,
+        self.retrieve_search = async_to_streamed_response_wrapper(
+            users.retrieve_search,
         )
-        self.get_thread = async_to_streamed_response_wrapper(
-            tweets.get_thread,
+        self.retrieve_tweets = async_to_streamed_response_wrapper(
+            users.retrieve_tweets,
         )
-        self.search = async_to_streamed_response_wrapper(
-            tweets.search,
+        self.retrieve_verified_followers = async_to_streamed_response_wrapper(
+            users.retrieve_verified_followers,
         )
-
-    @cached_property
-    def like(self) -> AsyncLikeResourceWithStreamingResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return AsyncLikeResourceWithStreamingResponse(self._tweets.like)
-
-    @cached_property
-    def retweet(self) -> AsyncRetweetResourceWithStreamingResponse:
-        """X write actions (tweets, likes, follows, DMs)"""
-        return AsyncRetweetResourceWithStreamingResponse(self._tweets.retweet)

@@ -30,6 +30,22 @@ from .media import (
     MediaResourceWithStreamingResponse,
     AsyncMediaResourceWithStreamingResponse,
 )
+from .users import (
+    UsersResource,
+    AsyncUsersResource,
+    UsersResourceWithRawResponse,
+    AsyncUsersResourceWithRawResponse,
+    UsersResourceWithStreamingResponse,
+    AsyncUsersResourceWithStreamingResponse,
+)
+from .tweets import (
+    TweetsResource,
+    AsyncTweetsResource,
+    TweetsResourceWithRawResponse,
+    AsyncTweetsResourceWithRawResponse,
+    TweetsResourceWithStreamingResponse,
+    AsyncTweetsResourceWithStreamingResponse,
+)
 from ...types import x_get_home_timeline_params, x_get_notifications_params
 from .profile import (
     ProfileResource,
@@ -72,22 +88,6 @@ from ..._response import (
     to_streamed_response_wrapper,
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
-)
-from .users.users import (
-    UsersResource,
-    AsyncUsersResource,
-    UsersResourceWithRawResponse,
-    AsyncUsersResourceWithRawResponse,
-    UsersResourceWithStreamingResponse,
-    AsyncUsersResourceWithStreamingResponse,
-)
-from .tweets.tweets import (
-    TweetsResource,
-    AsyncTweetsResource,
-    TweetsResourceWithRawResponse,
-    AsyncTweetsResourceWithRawResponse,
-    TweetsResourceWithStreamingResponse,
-    AsyncTweetsResourceWithStreamingResponse,
 )
 from ..._base_client import make_request_options
 from .communities.communities import (
