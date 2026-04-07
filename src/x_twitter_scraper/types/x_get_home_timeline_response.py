@@ -30,6 +30,9 @@ class Tweet(BaseModel):
 
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
+    is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
+    """Whether this is a Note Tweet (long-form post, up to 25,000 characters)"""
+
     like_count: Optional[int] = FieldInfo(alias="likeCount", default=None)
 
     quote_count: Optional[int] = FieldInfo(alias="quoteCount", default=None)
