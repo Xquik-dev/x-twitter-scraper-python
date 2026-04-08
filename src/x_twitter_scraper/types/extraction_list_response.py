@@ -12,6 +12,8 @@ __all__ = ["ExtractionListResponse", "Extraction"]
 
 
 class Extraction(BaseModel):
+    """Extraction job tracking status, tool type, and result count."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")
@@ -40,6 +42,7 @@ class Extraction(BaseModel):
         "tweet_search_extractor",
         "verified_follower_explorer",
     ] = FieldInfo(alias="toolType")
+    """Identifier for the extraction tool used to run a job."""
 
     total_results: int = FieldInfo(alias="totalResults")
 

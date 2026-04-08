@@ -11,6 +11,8 @@ __all__ = ["DraftListResponse", "Draft"]
 
 
 class Draft(BaseModel):
+    """Saved tweet draft with optional topic and goal."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")

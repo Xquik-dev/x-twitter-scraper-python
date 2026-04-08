@@ -11,6 +11,8 @@ __all__ = ["StyleListResponse", "Style"]
 
 
 class Style(BaseModel):
+    """Style profile summary with tweet count and ownership flag."""
+
     fetched_at: datetime = FieldInfo(alias="fetchedAt")
 
     is_own_account: bool = FieldInfo(alias="isOwnAccount")

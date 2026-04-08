@@ -11,7 +11,7 @@ __all__ = ["ListRetrieveTweetsParams"]
 
 class ListRetrieveTweetsParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for list tweets"""
 
     include_replies: Annotated[bool, PropertyInfo(alias="includeReplies")]
     """Include replies (default false)"""

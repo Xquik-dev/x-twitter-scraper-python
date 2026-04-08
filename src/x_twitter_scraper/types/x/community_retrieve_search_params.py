@@ -14,7 +14,7 @@ class CommunityRetrieveSearchParams(TypedDict, total=False):
     """Search query"""
 
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for community search"""
 
     query_type: Annotated[str, PropertyInfo(alias="queryType")]
     """Sort order (Latest or Top)"""

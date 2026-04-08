@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import httpx
 
-from ...._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
+from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ...._utils import maybe_transform, async_maybe_transform
 from ...._compat import cached_property
 from ...._resource import SyncAPIResource, AsyncAPIResource
@@ -16,6 +16,7 @@ from ...._response import (
 )
 from ...._base_client import make_request_options
 from ....types.x.communities import tweet_list_params
+from ....types.x.communities.tweet_list_response import TweetListResponse
 
 __all__ = ["TweetsResource", "AsyncTweetsResource"]
 
@@ -54,16 +55,16 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> TweetListResponse:
         """
         Search tweets across all communities
 
         Args:
-          q: Search query
+          q: Search query for cross-community tweets
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for cross-community results
 
-          query_type: Sort order (Latest or Top)
+          query_type: Sort order for cross-community results (Latest or Top)
 
           extra_headers: Send extra headers
 
@@ -73,7 +74,6 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             "/x/communities/tweets",
             options=make_request_options(
@@ -90,7 +90,7 @@ class TweetsResource(SyncAPIResource):
                     tweet_list_params.TweetListParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=TweetListResponse,
         )
 
 
@@ -128,16 +128,16 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> TweetListResponse:
         """
         Search tweets across all communities
 
         Args:
-          q: Search query
+          q: Search query for cross-community tweets
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for cross-community results
 
-          query_type: Sort order (Latest or Top)
+          query_type: Sort order for cross-community results (Latest or Top)
 
           extra_headers: Send extra headers
 
@@ -147,7 +147,6 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             "/x/communities/tweets",
             options=make_request_options(
@@ -164,7 +163,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     tweet_list_params.TweetListParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=TweetListResponse,
         )
 
 

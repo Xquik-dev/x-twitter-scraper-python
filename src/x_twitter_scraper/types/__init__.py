@@ -35,6 +35,7 @@ from .webhook_create_params import WebhookCreateParams as WebhookCreateParams
 from .webhook_list_response import WebhookListResponse as WebhookListResponse
 from .webhook_test_response import WebhookTestResponse as WebhookTestResponse
 from .webhook_update_params import WebhookUpdateParams as WebhookUpdateParams
+from .x_get_trends_response import XGetTrendsResponse as XGetTrendsResponse
 from .draw_retrieve_response import DrawRetrieveResponse as DrawRetrieveResponse
 from .extraction_list_params import ExtractionListParams as ExtractionListParams
 from .style_analyze_response import StyleAnalyzeResponse as StyleAnalyzeResponse

@@ -100,7 +100,13 @@ class EventsResource(SyncAPIResource):
         List events
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          event_type: Filter events by type
+
+          limit: Maximum number of items to return (1-100, default 50)
+
+          monitor_id: Filter events by monitor ID
 
           extra_headers: Send extra headers
 
@@ -208,7 +214,13 @@ class AsyncEventsResource(AsyncAPIResource):
         List events
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          event_type: Filter events by type
+
+          limit: Maximum number of items to return (1-100, default 50)
+
+          monitor_id: Filter events by monitor ID
 
           extra_headers: Send extra headers
 

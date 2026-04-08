@@ -27,8 +27,8 @@ class TestMonitors:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         monitor = client.monitors.create(
-            event_types=["tweet.new"],
-            username="username",
+            event_types=["tweet.new", "follower.gained"],
+            username="elonmusk",
         )
         assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
 
@@ -36,8 +36,8 @@ class TestMonitors:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.monitors.with_raw_response.create(
-            event_types=["tweet.new"],
-            username="username",
+            event_types=["tweet.new", "follower.gained"],
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -49,8 +49,8 @@ class TestMonitors:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.monitors.with_streaming_response.create(
-            event_types=["tweet.new"],
-            username="username",
+            event_types=["tweet.new", "follower.gained"],
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -234,8 +234,8 @@ class TestAsyncMonitors:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         monitor = await async_client.monitors.create(
-            event_types=["tweet.new"],
-            username="username",
+            event_types=["tweet.new", "follower.gained"],
+            username="elonmusk",
         )
         assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
 
@@ -243,8 +243,8 @@ class TestAsyncMonitors:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.monitors.with_raw_response.create(
-            event_types=["tweet.new"],
-            username="username",
+            event_types=["tweet.new", "follower.gained"],
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -256,8 +256,8 @@ class TestAsyncMonitors:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.monitors.with_streaming_response.create(
-            event_types=["tweet.new"],
-            username="username",
+            event_types=["tweet.new", "follower.gained"],
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

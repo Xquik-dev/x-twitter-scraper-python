@@ -14,3 +14,4 @@ class DraftListParams(TypedDict, total=False):
     """Cursor for pagination"""
 
     limit: int
+    """Maximum number of items to return (1-100, default 50)"""

@@ -6,7 +6,7 @@ from typing_extensions import Literal
 
 import httpx
 
-from ..._types import Body, Omit, Query, Headers, NoneType, NotGiven, SequenceNotStr, omit, not_given
+from ..._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import (
@@ -27,6 +27,7 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
+from ...types.x.tweet_list_response import TweetListResponse
 from ...types.x.tweet_create_response import TweetCreateResponse
 from ...types.x.tweet_search_response import TweetSearchResponse
 from ...types.x.tweet_get_quotes_response import TweetGetQuotesResponse
@@ -119,7 +120,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> TweetListResponse:
         """
         Get multiple tweets by IDs
 
@@ -134,7 +135,6 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             "/x/tweets",
             options=make_request_options(
@@ -144,7 +144,7 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"ids": ids}, tweet_list_params.TweetListParams),
             ),
-            cast_to=NoneType,
+            cast_to=TweetListResponse,
         )
 
     def get_favoriters(
@@ -163,7 +163,7 @@ class TweetsResource(SyncAPIResource):
         Get users who liked a tweet
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for favoriters
 
           extra_headers: Send extra headers
 
@@ -206,13 +206,13 @@ class TweetsResource(SyncAPIResource):
         Get quote tweets of a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for quote tweets
 
-          include_replies: Include replies (default false)
+          include_replies: Include reply quotes (default false)
 
-          since_time: Unix timestamp - filter after
+          since_time: Unix timestamp - return quotes posted after this time
 
-          until_time: Unix timestamp - filter before
+          until_time: Unix timestamp - return quotes posted before this time
 
           extra_headers: Send extra headers
 
@@ -262,11 +262,11 @@ class TweetsResource(SyncAPIResource):
         Get replies to a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for tweet replies
 
-          since_time: Unix timestamp - filter after
+          since_time: Unix timestamp - return replies posted after this time
 
-          until_time: Unix timestamp - filter before
+          until_time: Unix timestamp - return replies posted before this time
 
           extra_headers: Send extra headers
 
@@ -313,7 +313,7 @@ class TweetsResource(SyncAPIResource):
         Get users who retweeted a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for retweeters
 
           extra_headers: Send extra headers
 
@@ -353,7 +353,7 @@ class TweetsResource(SyncAPIResource):
         Get thread context for a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for thread tweets
 
           extra_headers: Send extra headers
 
@@ -521,7 +521,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> TweetListResponse:
         """
         Get multiple tweets by IDs
 
@@ -536,7 +536,6 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             "/x/tweets",
             options=make_request_options(
@@ -546,7 +545,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform({"ids": ids}, tweet_list_params.TweetListParams),
             ),
-            cast_to=NoneType,
+            cast_to=TweetListResponse,
         )
 
     async def get_favoriters(
@@ -565,7 +564,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         Get users who liked a tweet
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for favoriters
 
           extra_headers: Send extra headers
 
@@ -610,13 +609,13 @@ class AsyncTweetsResource(AsyncAPIResource):
         Get quote tweets of a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for quote tweets
 
-          include_replies: Include replies (default false)
+          include_replies: Include reply quotes (default false)
 
-          since_time: Unix timestamp - filter after
+          since_time: Unix timestamp - return quotes posted after this time
 
-          until_time: Unix timestamp - filter before
+          until_time: Unix timestamp - return quotes posted before this time
 
           extra_headers: Send extra headers
 
@@ -666,11 +665,11 @@ class AsyncTweetsResource(AsyncAPIResource):
         Get replies to a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for tweet replies
 
-          since_time: Unix timestamp - filter after
+          since_time: Unix timestamp - return replies posted after this time
 
-          until_time: Unix timestamp - filter before
+          until_time: Unix timestamp - return replies posted before this time
 
           extra_headers: Send extra headers
 
@@ -717,7 +716,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         Get users who retweeted a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for retweeters
 
           extra_headers: Send extra headers
 
@@ -759,7 +758,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         Get thread context for a tweet
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for thread tweets
 
           extra_headers: Send extra headers
 

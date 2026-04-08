@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import httpx
 
-from ..._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
+from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import list_retrieve_tweets_params, list_retrieve_members_params, list_retrieve_followers_params
@@ -16,6 +16,9 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
+from ...types.x.list_retrieve_tweets_response import ListRetrieveTweetsResponse
+from ...types.x.list_retrieve_members_response import ListRetrieveMembersResponse
+from ...types.x.list_retrieve_followers_response import ListRetrieveFollowersResponse
 
 __all__ = ["ListsResource", "AsyncListsResource"]
 
@@ -53,12 +56,12 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> ListRetrieveFollowersResponse:
         """
         Get list followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list followers
 
           extra_headers: Send extra headers
 
@@ -70,7 +73,6 @@ class ListsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/lists/{id}/followers", id=id),
             options=make_request_options(
@@ -80,7 +82,7 @@ class ListsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams),
             ),
-            cast_to=NoneType,
+            cast_to=ListRetrieveFollowersResponse,
         )
 
     def retrieve_members(
@@ -94,12 +96,12 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> ListRetrieveMembersResponse:
         """
         Get list members
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list members
 
           extra_headers: Send extra headers
 
@@ -111,7 +113,6 @@ class ListsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/lists/{id}/members", id=id),
             options=make_request_options(
@@ -121,7 +122,7 @@ class ListsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, list_retrieve_members_params.ListRetrieveMembersParams),
             ),
-            cast_to=NoneType,
+            cast_to=ListRetrieveMembersResponse,
         )
 
     def retrieve_tweets(
@@ -138,12 +139,12 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> ListRetrieveTweetsResponse:
         """
         Get list tweets
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list tweets
 
           include_replies: Include replies (default false)
 
@@ -161,7 +162,6 @@ class ListsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/lists/{id}/tweets", id=id),
             options=make_request_options(
@@ -179,7 +179,7 @@ class ListsResource(SyncAPIResource):
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=ListRetrieveTweetsResponse,
         )
 
 
@@ -216,12 +216,12 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> ListRetrieveFollowersResponse:
         """
         Get list followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list followers
 
           extra_headers: Send extra headers
 
@@ -233,7 +233,6 @@ class AsyncListsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/lists/{id}/followers", id=id),
             options=make_request_options(
@@ -245,7 +244,7 @@ class AsyncListsResource(AsyncAPIResource):
                     {"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=ListRetrieveFollowersResponse,
         )
 
     async def retrieve_members(
@@ -259,12 +258,12 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> ListRetrieveMembersResponse:
         """
         Get list members
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list members
 
           extra_headers: Send extra headers
 
@@ -276,7 +275,6 @@ class AsyncListsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/lists/{id}/members", id=id),
             options=make_request_options(
@@ -288,7 +286,7 @@ class AsyncListsResource(AsyncAPIResource):
                     {"cursor": cursor}, list_retrieve_members_params.ListRetrieveMembersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=ListRetrieveMembersResponse,
         )
 
     async def retrieve_tweets(
@@ -305,12 +303,12 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> ListRetrieveTweetsResponse:
         """
         Get list tweets
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list tweets
 
           include_replies: Include replies (default false)
 
@@ -328,7 +326,6 @@ class AsyncListsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/lists/{id}/tweets", id=id),
             options=make_request_options(
@@ -346,7 +343,7 @@ class AsyncListsResource(AsyncAPIResource):
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=ListRetrieveTweetsResponse,
         )
 
 

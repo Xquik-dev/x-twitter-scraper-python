@@ -220,9 +220,9 @@ class AccountsResource(SyncAPIResource):
         Re-authenticate X account
 
         Args:
-          password: Account password
+          password: Updated account password
 
-          totp_secret: TOTP secret for 2FA
+          totp_secret: TOTP secret for 2FA re-authentication
 
           extra_headers: Send extra headers
 
@@ -449,9 +449,9 @@ class AsyncAccountsResource(AsyncAPIResource):
         Re-authenticate X account
 
         Args:
-          password: Account password
+          password: Updated account password
 
-          totp_secret: TOTP secret for 2FA
+          totp_secret: TOTP secret for 2FA re-authentication
 
           extra_headers: Send extra headers
 

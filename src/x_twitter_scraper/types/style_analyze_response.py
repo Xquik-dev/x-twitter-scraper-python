@@ -21,6 +21,8 @@ class Tweet(BaseModel):
 
 
 class StyleAnalyzeResponse(BaseModel):
+    """Full style profile with sampled tweets used for tone analysis."""
+
     fetched_at: datetime = FieldInfo(alias="fetchedAt")
 
     is_own_account: bool = FieldInfo(alias="isOwnAccount")

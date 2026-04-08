@@ -10,6 +10,8 @@ __all__ = ["DrawRunResponse", "Winner"]
 
 
 class Winner(BaseModel):
+    """Giveaway draw winner with position and backup flag."""
+
     author_username: str = FieldInfo(alias="authorUsername")
 
     is_backup: bool = FieldInfo(alias="isBackup")

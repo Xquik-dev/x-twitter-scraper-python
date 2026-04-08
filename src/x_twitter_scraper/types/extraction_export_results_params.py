@@ -9,3 +9,4 @@ __all__ = ["ExtractionExportResultsParams"]
 
 class ExtractionExportResultsParams(TypedDict, total=False):
     format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]
+    """Export file format"""

@@ -31,7 +31,7 @@ class TestAPIKeys:
     @parametrize
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         api_key = client.api_keys.create(
-            name="name",
+            name="My API Key",
         )
         assert_matches_type(APIKeyCreateResponse, api_key, path=["response"])
 
@@ -143,7 +143,7 @@ class TestAsyncAPIKeys:
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         api_key = await async_client.api_keys.create(
-            name="name",
+            name="My API Key",
         )
         assert_matches_type(APIKeyCreateResponse, api_key, path=["response"])
 

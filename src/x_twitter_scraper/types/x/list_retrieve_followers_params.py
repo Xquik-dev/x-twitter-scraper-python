@@ -9,4 +9,4 @@ __all__ = ["ListRetrieveFollowersParams"]
 
 class ListRetrieveFollowersParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for list followers"""

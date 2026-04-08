@@ -9,4 +9,4 @@ __all__ = ["ListRetrieveMembersParams"]
 
 class ListRetrieveMembersParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for list members"""

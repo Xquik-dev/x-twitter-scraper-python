@@ -139,6 +139,8 @@ class DraftsResource(SyncAPIResource):
         Args:
           after_cursor: Cursor for pagination
 
+          limit: Maximum number of items to return (1-100, default 50)
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -313,6 +315,8 @@ class AsyncDraftsResource(AsyncAPIResource):
 
         Args:
           after_cursor: Cursor for pagination
+
+          limit: Maximum number of items to return (1-100, default 50)
 
           extra_headers: Send extra headers
 

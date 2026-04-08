@@ -11,7 +11,7 @@ __all__ = ["ProfileUpdateAvatarParams"]
 
 class ProfileUpdateAvatarParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account (@username or ID) for avatar update"""
 
     file: Required[FileTypes]
     """Avatar image (max 716KB)"""

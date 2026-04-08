@@ -9,6 +9,7 @@ __all__ = ["DrawExportParams"]
 
 class DrawExportParams(TypedDict, total=False):
     format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]
+    """Export output format"""
 
     type: Literal["winners", "entries"]
     """Export winners or all entries"""

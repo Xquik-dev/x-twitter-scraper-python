@@ -60,7 +60,7 @@ class BookmarksResource(SyncAPIResource):
         Get bookmarked tweets
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for bookmarks
 
           folder_id: Optional bookmark folder ID
 
@@ -148,7 +148,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         Get bookmarked tweets
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for bookmarks
 
           folder_id: Optional bookmark folder ID
 

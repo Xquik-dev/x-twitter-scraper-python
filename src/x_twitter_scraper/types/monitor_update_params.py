@@ -15,5 +15,6 @@ class MonitorUpdateParams(TypedDict, total=False):
         List[Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]],
         PropertyInfo(alias="eventTypes"),
     ]
+    """Array of event types to subscribe to."""
 
     is_active: Annotated[bool, PropertyInfo(alias="isActive")]

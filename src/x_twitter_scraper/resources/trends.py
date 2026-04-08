@@ -56,9 +56,11 @@ class TrendsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
         """
-        Get trending topics
+        Get regional trending topics
 
         Args:
+          count: Number of trending topics to return (1-50, default 30)
+
           woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
 
           extra_headers: Send extra headers
@@ -123,9 +125,11 @@ class AsyncTrendsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
         """
-        Get trending topics
+        Get regional trending topics
 
         Args:
+          count: Number of trending topics to return (1-50, default 30)
+
           woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
 
           extra_headers: Send extra headers

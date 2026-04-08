@@ -127,9 +127,9 @@ from x_twitter_scraper import XTwitterScraper
 client = XTwitterScraper()
 
 integration = client.integrations.create(
-    config={"chat_id": "chatId"},
-    event_types=["tweet.new"],
-    name="name",
+    config={"chat_id": "-1001234567890"},
+    event_types=["tweet.new", "follower.gained"],
+    name="My Telegram Bot",
     type="telegram",
 )
 print(integration.config)
@@ -146,7 +146,7 @@ from x_twitter_scraper import XTwitterScraper
 client = XTwitterScraper()
 
 client.x.media.upload(
-    account="account",
+    account="@elonmusk",
     file=Path("/path/to/file"),
 )
 ```

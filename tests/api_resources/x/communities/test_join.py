@@ -25,7 +25,7 @@ class TestJoin:
     def test_method_create(self, client: XTwitterScraper) -> None:
         join = client.x.communities.join.create(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
         assert_matches_type(JoinCreateResponse, join, path=["response"])
 
@@ -34,7 +34,7 @@ class TestJoin:
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.communities.join.with_raw_response.create(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -47,7 +47,7 @@ class TestJoin:
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.communities.join.with_streaming_response.create(
             id="id",
-            account="account",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -63,7 +63,7 @@ class TestJoin:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.communities.join.with_raw_response.create(
                 id="",
-                account="account",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -71,7 +71,7 @@ class TestJoin:
     def test_method_delete_all(self, client: XTwitterScraper) -> None:
         join = client.x.communities.join.delete_all(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
         assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
@@ -80,7 +80,7 @@ class TestJoin:
     def test_raw_response_delete_all(self, client: XTwitterScraper) -> None:
         response = client.x.communities.join.with_raw_response.delete_all(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -93,7 +93,7 @@ class TestJoin:
     def test_streaming_response_delete_all(self, client: XTwitterScraper) -> None:
         with client.x.communities.join.with_streaming_response.delete_all(
             id="id",
-            account="account",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -109,7 +109,7 @@ class TestJoin:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.communities.join.with_raw_response.delete_all(
                 id="",
-                account="account",
+                account="@elonmusk",
             )
 
 
@@ -123,7 +123,7 @@ class TestAsyncJoin:
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         join = await async_client.x.communities.join.create(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
         assert_matches_type(JoinCreateResponse, join, path=["response"])
 
@@ -132,7 +132,7 @@ class TestAsyncJoin:
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.join.with_raw_response.create(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -145,7 +145,7 @@ class TestAsyncJoin:
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.join.with_streaming_response.create(
             id="id",
-            account="account",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -161,7 +161,7 @@ class TestAsyncJoin:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.communities.join.with_raw_response.create(
                 id="",
-                account="account",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -169,7 +169,7 @@ class TestAsyncJoin:
     async def test_method_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         join = await async_client.x.communities.join.delete_all(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
         assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
@@ -178,7 +178,7 @@ class TestAsyncJoin:
     async def test_raw_response_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.join.with_raw_response.delete_all(
             id="id",
-            account="account",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -191,7 +191,7 @@ class TestAsyncJoin:
     async def test_streaming_response_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.join.with_streaming_response.delete_all(
             id="id",
-            account="account",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -207,5 +207,5 @@ class TestAsyncJoin:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.communities.join.with_raw_response.delete_all(
                 id="",
-                account="account",
+                account="@elonmusk",
             )

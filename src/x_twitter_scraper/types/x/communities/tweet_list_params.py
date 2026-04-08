@@ -11,10 +11,10 @@ __all__ = ["TweetListParams"]
 
 class TweetListParams(TypedDict, total=False):
     q: Required[str]
-    """Search query"""
+    """Search query for cross-community tweets"""
 
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for cross-community results"""
 
     query_type: Annotated[str, PropertyInfo(alias="queryType")]
-    """Sort order (Latest or Top)"""
+    """Sort order for cross-community results (Latest or Top)"""

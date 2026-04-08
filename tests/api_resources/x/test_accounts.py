@@ -27,9 +27,9 @@ class TestAccounts:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -37,11 +37,11 @@ class TestAccounts:
     @parametrize
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
-            proxy_country="proxy_country",
-            totp_secret="totp_secret",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
+            proxy_country="US",
+            totp_secret="JBSWY3DPEHPK3PXP",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -49,9 +49,9 @@ class TestAccounts:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.accounts.with_raw_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -63,9 +63,9 @@ class TestAccounts:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.accounts.with_streaming_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -192,7 +192,7 @@ class TestAccounts:
     def test_method_reauth(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -201,8 +201,8 @@ class TestAccounts:
     def test_method_reauth_with_all_params(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.reauth(
             id="id",
-            password="password",
-            totp_secret="totp_secret",
+            password="password_value",
+            totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -211,7 +211,7 @@ class TestAccounts:
     def test_raw_response_reauth(self, client: XTwitterScraper) -> None:
         response = client.x.accounts.with_raw_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
 
         assert response.is_closed is True
@@ -224,7 +224,7 @@ class TestAccounts:
     def test_streaming_response_reauth(self, client: XTwitterScraper) -> None:
         with client.x.accounts.with_streaming_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -240,7 +240,7 @@ class TestAccounts:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.accounts.with_raw_response.reauth(
                 id="",
-                password="password",
+                password="password_value",
             )
 
 
@@ -253,9 +253,9 @@ class TestAsyncAccounts:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -263,11 +263,11 @@ class TestAsyncAccounts:
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
-            proxy_country="proxy_country",
-            totp_secret="totp_secret",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
+            proxy_country="US",
+            totp_secret="JBSWY3DPEHPK3PXP",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -275,9 +275,9 @@ class TestAsyncAccounts:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.accounts.with_raw_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -289,9 +289,9 @@ class TestAsyncAccounts:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.accounts.with_streaming_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -418,7 +418,7 @@ class TestAsyncAccounts:
     async def test_method_reauth(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -427,8 +427,8 @@ class TestAsyncAccounts:
     async def test_method_reauth_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.reauth(
             id="id",
-            password="password",
-            totp_secret="totp_secret",
+            password="password_value",
+            totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -437,7 +437,7 @@ class TestAsyncAccounts:
     async def test_raw_response_reauth(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.accounts.with_raw_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
 
         assert response.is_closed is True
@@ -450,7 +450,7 @@ class TestAsyncAccounts:
     async def test_streaming_response_reauth(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.accounts.with_streaming_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -466,5 +466,5 @@ class TestAsyncAccounts:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.accounts.with_raw_response.reauth(
                 id="",
-                password="password",
+                password="password_value",
             )

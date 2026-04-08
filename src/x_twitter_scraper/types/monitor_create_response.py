@@ -19,6 +19,7 @@ class MonitorCreateResponse(BaseModel):
     event_types: List[
         Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
     ] = FieldInfo(alias="eventTypes")
+    """Array of event types to subscribe to."""
 
     username: str
 

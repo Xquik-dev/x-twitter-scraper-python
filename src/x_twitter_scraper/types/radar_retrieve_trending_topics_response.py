@@ -11,6 +11,8 @@ __all__ = ["RadarRetrieveTrendingTopicsResponse", "Item"]
 
 
 class Item(BaseModel):
+    """Trending topic with score, category, source, and region."""
+
     category: str
 
     published_at: datetime = FieldInfo(alias="publishedAt")

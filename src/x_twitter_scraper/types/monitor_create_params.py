@@ -19,6 +19,7 @@ class MonitorCreateParams(TypedDict, total=False):
             PropertyInfo(alias="eventTypes"),
         ]
     ]
+    """Array of event types to subscribe to."""
 
     username: Required[str]
     """X username (without @)"""

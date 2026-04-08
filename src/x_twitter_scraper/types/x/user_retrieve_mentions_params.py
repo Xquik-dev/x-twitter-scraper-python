@@ -11,10 +11,10 @@ __all__ = ["UserRetrieveMentionsParams"]
 
 class UserRetrieveMentionsParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for mentions"""
 
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
-    """Unix timestamp - filter after"""
+    """Unix timestamp - return mentions after this time"""
 
     until_time: Annotated[str, PropertyInfo(alias="untilTime")]
-    """Unix timestamp - filter before"""
+    """Unix timestamp - return mentions before this time"""

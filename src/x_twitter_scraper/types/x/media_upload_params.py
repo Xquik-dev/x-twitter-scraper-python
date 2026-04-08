@@ -11,7 +11,7 @@ __all__ = ["MediaUploadParams"]
 
 class MediaUploadParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account (@username or ID) uploading media"""
 
     file: Required[FileTypes]
     """Media file to upload"""

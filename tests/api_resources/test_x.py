@@ -10,6 +10,7 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types import (
+    XGetTrendsResponse,
     XGetArticleResponse,
     XGetHomeTimelineResponse,
     XGetNotificationsResponse,
@@ -141,7 +142,7 @@ class TestX:
     @parametrize
     def test_method_get_trends(self, client: XTwitterScraper) -> None:
         x = client.x.get_trends()
-        assert x is None
+        assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -151,7 +152,7 @@ class TestX:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         x = response.parse()
-        assert x is None
+        assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -161,7 +162,7 @@ class TestX:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             x = response.parse()
-            assert x is None
+            assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -291,7 +292,7 @@ class TestAsyncX:
     @parametrize
     async def test_method_get_trends(self, async_client: AsyncXTwitterScraper) -> None:
         x = await async_client.x.get_trends()
-        assert x is None
+        assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -301,7 +302,7 @@ class TestAsyncX:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         x = await response.parse()
-        assert x is None
+        assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -311,6 +312,6 @@ class TestAsyncX:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             x = await response.parse()
-            assert x is None
+            assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
         assert cast(Any, response.is_closed) is True

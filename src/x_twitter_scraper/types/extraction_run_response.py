@@ -36,3 +36,4 @@ class ExtractionRunResponse(BaseModel):
         "tweet_search_extractor",
         "verified_follower_explorer",
     ] = FieldInfo(alias="toolType")
+    """Identifier for the extraction tool used to run a job."""

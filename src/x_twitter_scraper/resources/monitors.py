@@ -68,6 +68,8 @@ class MonitorsResource(SyncAPIResource):
         Create monitor
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           username: X username (without @)
 
           extra_headers: Send extra headers
@@ -146,6 +148,8 @@ class MonitorsResource(SyncAPIResource):
         Update monitor
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -264,6 +268,8 @@ class AsyncMonitorsResource(AsyncAPIResource):
         Create monitor
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           username: X username (without @)
 
           extra_headers: Send extra headers
@@ -342,6 +348,8 @@ class AsyncMonitorsResource(AsyncAPIResource):
         Update monitor
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request

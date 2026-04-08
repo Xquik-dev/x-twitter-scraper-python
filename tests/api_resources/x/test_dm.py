@@ -77,8 +77,8 @@ class TestDm:
     def test_method_send(self, client: XTwitterScraper) -> None:
         dm = client.x.dm.send(
             user_id="userId",
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Example text content",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -87,10 +87,10 @@ class TestDm:
     def test_method_send_with_all_params(self, client: XTwitterScraper) -> None:
         dm = client.x.dm.send(
             user_id="userId",
-            account="account",
-            text="text",
-            media_ids=["string"],
-            reply_to_message_id="reply_to_message_id",
+            account="@elonmusk",
+            text="Example text content",
+            media_ids=["1234567890123456789"],
+            reply_to_message_id="1234567890123456789",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -99,8 +99,8 @@ class TestDm:
     def test_raw_response_send(self, client: XTwitterScraper) -> None:
         response = client.x.dm.with_raw_response.send(
             user_id="userId",
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Example text content",
         )
 
         assert response.is_closed is True
@@ -113,8 +113,8 @@ class TestDm:
     def test_streaming_response_send(self, client: XTwitterScraper) -> None:
         with client.x.dm.with_streaming_response.send(
             user_id="userId",
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Example text content",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -130,8 +130,8 @@ class TestDm:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
             client.x.dm.with_raw_response.send(
                 user_id="",
-                account="account",
-                text="text",
+                account="@elonmusk",
+                text="Example text content",
             )
 
 
@@ -197,8 +197,8 @@ class TestAsyncDm:
     async def test_method_send(self, async_client: AsyncXTwitterScraper) -> None:
         dm = await async_client.x.dm.send(
             user_id="userId",
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Example text content",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -207,10 +207,10 @@ class TestAsyncDm:
     async def test_method_send_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         dm = await async_client.x.dm.send(
             user_id="userId",
-            account="account",
-            text="text",
-            media_ids=["string"],
-            reply_to_message_id="reply_to_message_id",
+            account="@elonmusk",
+            text="Example text content",
+            media_ids=["1234567890123456789"],
+            reply_to_message_id="1234567890123456789",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -219,8 +219,8 @@ class TestAsyncDm:
     async def test_raw_response_send(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.dm.with_raw_response.send(
             user_id="userId",
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Example text content",
         )
 
         assert response.is_closed is True
@@ -233,8 +233,8 @@ class TestAsyncDm:
     async def test_streaming_response_send(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.dm.with_streaming_response.send(
             user_id="userId",
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Example text content",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -250,6 +250,6 @@ class TestAsyncDm:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
             await async_client.x.dm.with_raw_response.send(
                 user_id="",
-                account="account",
-                text="text",
+                account="@elonmusk",
+                text="Example text content",
             )

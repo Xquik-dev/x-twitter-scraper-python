@@ -11,6 +11,8 @@ __all__ = ["AccountRetrieveResponse"]
 
 
 class AccountRetrieveResponse(BaseModel):
+    """Full X account details including proxy, cookies, and update timestamp."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")

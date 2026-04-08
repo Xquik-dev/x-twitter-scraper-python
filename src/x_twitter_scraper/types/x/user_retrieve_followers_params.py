@@ -11,7 +11,7 @@ __all__ = ["UserRetrieveFollowersParams"]
 
 class UserRetrieveFollowersParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for followers list"""
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
     """Items per page (20-200, default 200)"""

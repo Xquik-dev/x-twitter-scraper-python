@@ -9,4 +9,4 @@ __all__ = ["TweetGetRetweetersParams"]
 
 class TweetGetRetweetersParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for retweeters"""

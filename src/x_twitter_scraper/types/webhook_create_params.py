@@ -19,6 +19,7 @@ class WebhookCreateParams(TypedDict, total=False):
             PropertyInfo(alias="eventTypes"),
         ]
     ]
+    """Array of event types to subscribe to."""
 
     url: Required[str]
     """HTTPS URL"""
