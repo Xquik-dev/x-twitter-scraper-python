@@ -69,6 +69,8 @@ class WebhooksResource(SyncAPIResource):
         Create webhook
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           url: HTTPS URL
 
           extra_headers: Send extra headers
@@ -115,6 +117,8 @@ class WebhooksResource(SyncAPIResource):
         Update webhook
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -300,6 +304,8 @@ class AsyncWebhooksResource(AsyncAPIResource):
         Create webhook
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           url: HTTPS URL
 
           extra_headers: Send extra headers
@@ -346,6 +352,8 @@ class AsyncWebhooksResource(AsyncAPIResource):
         Update webhook
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request

@@ -9,4 +9,4 @@ __all__ = ["CommunityRetrieveModeratorsParams"]
 
 class CommunityRetrieveModeratorsParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for community moderators"""

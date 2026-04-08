@@ -11,11 +11,13 @@ __all__ = ["ExtractionListParams"]
 
 class ExtractionListParams(TypedDict, total=False):
     after: str
-    """Cursor for pagination"""
+    """Cursor for keyset pagination"""
 
     limit: int
+    """Maximum number of items to return (1-100, default 50)"""
 
     status: Literal["running", "completed", "failed"]
+    """Filter by job status"""
 
     tool_type: Annotated[
         Literal[
@@ -42,3 +44,4 @@ class ExtractionListParams(TypedDict, total=False):
         ],
         PropertyInfo(alias="toolType"),
     ]
+    """Filter by extraction tool type"""

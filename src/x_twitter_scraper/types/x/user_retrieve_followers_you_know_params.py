@@ -9,4 +9,4 @@ __all__ = ["UserRetrieveFollowersYouKnowParams"]
 
 class UserRetrieveFollowersYouKnowParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor from previous response"""
+    """Pagination cursor for followers-you-know"""

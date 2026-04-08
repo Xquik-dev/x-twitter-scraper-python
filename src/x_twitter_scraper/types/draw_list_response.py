@@ -11,6 +11,8 @@ __all__ = ["DrawListResponse", "Draw"]
 
 
 class Draw(BaseModel):
+    """Giveaway draw summary with entry counts and status."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")

@@ -60,7 +60,7 @@ class JoinResource(SyncAPIResource):
         Join community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -97,7 +97,7 @@ class JoinResource(SyncAPIResource):
         Leave community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -157,7 +157,7 @@ class AsyncJoinResource(AsyncAPIResource):
         Join community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -194,7 +194,7 @@ class AsyncJoinResource(AsyncAPIResource):
         Leave community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 

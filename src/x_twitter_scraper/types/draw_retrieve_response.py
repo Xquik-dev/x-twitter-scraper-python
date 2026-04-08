@@ -11,6 +11,8 @@ __all__ = ["DrawRetrieveResponse", "Draw", "Winner"]
 
 
 class Draw(BaseModel):
+    """Full giveaway draw with tweet metrics, entries, and timing."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")
@@ -41,6 +43,8 @@ class Draw(BaseModel):
 
 
 class Winner(BaseModel):
+    """Giveaway draw winner with position and backup flag."""
+
     author_username: str = FieldInfo(alias="authorUsername")
 
     is_backup: bool = FieldInfo(alias="isBackup")
@@ -52,5 +56,6 @@ class Winner(BaseModel):
 
 class DrawRetrieveResponse(BaseModel):
     draw: Draw
+    """Full giveaway draw with tweet metrics, entries, and timing."""
 
     winners: List[Winner]

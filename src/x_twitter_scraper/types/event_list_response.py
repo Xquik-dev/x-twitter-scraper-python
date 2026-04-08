@@ -12,6 +12,8 @@ __all__ = ["EventListResponse", "Event"]
 
 
 class Event(BaseModel):
+    """Monitor event summary with type, username, and occurrence time."""
+
     id: str
 
     data: Dict[str, object]
@@ -21,6 +23,7 @@ class Event(BaseModel):
     occurred_at: datetime = FieldInfo(alias="occurredAt")
 
     type: Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
+    """Type of monitor event fired when account activity occurs."""
 
     username: str
 

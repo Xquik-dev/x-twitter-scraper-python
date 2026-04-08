@@ -27,7 +27,7 @@ class Community(BaseModel):
     """Community info object"""
 
     id: str
-    """Community ID"""
+    """Unique community identifier"""
 
     banner_url: Optional[str] = None
     """Community banner image URL"""
@@ -36,7 +36,7 @@ class Community(BaseModel):
     """Community creation timestamp"""
 
     description: Optional[str] = None
-    """Community description"""
+    """About text for the community"""
 
     join_policy: Optional[str] = None
     """Join policy (open or restricted)"""
@@ -48,7 +48,7 @@ class Community(BaseModel):
     """Total moderator count"""
 
     name: Optional[str] = None
-    """Community name"""
+    """Display name of the community"""
 
     primary_topic: Optional[CommunityPrimaryTopic] = None
     """Primary topic"""

@@ -53,7 +53,7 @@ class TestAccount:
     @parametrize
     def test_method_set_x_username(self, client: XTwitterScraper) -> None:
         account = client.account.set_x_username(
-            username="username",
+            username="elonmusk",
         )
         assert_matches_type(AccountSetXUsernameResponse, account, path=["response"])
 
@@ -61,7 +61,7 @@ class TestAccount:
     @parametrize
     def test_raw_response_set_x_username(self, client: XTwitterScraper) -> None:
         response = client.account.with_raw_response.set_x_username(
-            username="username",
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -73,7 +73,7 @@ class TestAccount:
     @parametrize
     def test_streaming_response_set_x_username(self, client: XTwitterScraper) -> None:
         with client.account.with_streaming_response.set_x_username(
-            username="username",
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -155,7 +155,7 @@ class TestAsyncAccount:
     @parametrize
     async def test_method_set_x_username(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.account.set_x_username(
-            username="username",
+            username="elonmusk",
         )
         assert_matches_type(AccountSetXUsernameResponse, account, path=["response"])
 
@@ -163,7 +163,7 @@ class TestAsyncAccount:
     @parametrize
     async def test_raw_response_set_x_username(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.account.with_raw_response.set_x_username(
-            username="username",
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -175,7 +175,7 @@ class TestAsyncAccount:
     @parametrize
     async def test_streaming_response_set_x_username(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.account.with_streaming_response.set_x_username(
-            username="username",
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

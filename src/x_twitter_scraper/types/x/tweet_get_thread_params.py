@@ -9,4 +9,4 @@ __all__ = ["TweetGetThreadParams"]
 
 class TweetGetThreadParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for thread tweets"""

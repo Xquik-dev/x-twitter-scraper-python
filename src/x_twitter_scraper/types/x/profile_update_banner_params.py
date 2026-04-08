@@ -11,7 +11,7 @@ __all__ = ["ProfileUpdateBannerParams"]
 
 class ProfileUpdateBannerParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account (@username or ID) for banner update"""
 
     file: Required[FileTypes]
     """Banner image (max 2MB)"""

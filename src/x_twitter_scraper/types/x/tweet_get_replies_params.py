@@ -11,10 +11,10 @@ __all__ = ["TweetGetRepliesParams"]
 
 class TweetGetRepliesParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for tweet replies"""
 
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
-    """Unix timestamp - filter after"""
+    """Unix timestamp - return replies posted after this time"""
 
     until_time: Annotated[str, PropertyInfo(alias="untilTime")]
-    """Unix timestamp - filter before"""
+    """Unix timestamp - return replies posted before this time"""

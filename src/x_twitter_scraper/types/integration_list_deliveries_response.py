@@ -11,6 +11,8 @@ __all__ = ["IntegrationListDeliveriesResponse", "Delivery"]
 
 
 class Delivery(BaseModel):
+    """Integration delivery attempt record with status and retry count."""
+
     id: str
 
     attempts: int

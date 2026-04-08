@@ -11,6 +11,8 @@ __all__ = ["APIKeyListResponse", "Key"]
 
 
 class Key(BaseModel):
+    """API key metadata returned when listing keys."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")

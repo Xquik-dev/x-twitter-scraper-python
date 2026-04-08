@@ -21,6 +21,8 @@ class Style1Tweet(BaseModel):
 
 
 class Style1(BaseModel):
+    """Full style profile with sampled tweets used for tone analysis."""
+
     fetched_at: datetime = FieldInfo(alias="fetchedAt")
 
     is_own_account: bool = FieldInfo(alias="isOwnAccount")
@@ -43,6 +45,8 @@ class Style2Tweet(BaseModel):
 
 
 class Style2(BaseModel):
+    """Full style profile with sampled tweets used for tone analysis."""
+
     fetched_at: datetime = FieldInfo(alias="fetchedAt")
 
     is_own_account: bool = FieldInfo(alias="isOwnAccount")
@@ -56,5 +60,7 @@ class Style2(BaseModel):
 
 class StyleCompareResponse(BaseModel):
     style1: Style1
+    """Full style profile with sampled tweets used for tone analysis."""
 
     style2: Style2
+    """Full style profile with sampled tweets used for tone analysis."""

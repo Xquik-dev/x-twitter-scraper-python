@@ -10,6 +10,8 @@ __all__ = ["TweetGetRetweetersResponse", "User"]
 
 
 class User(BaseModel):
+    """X user profile with bio, follower counts, and verification status."""
+
     id: str
 
     name: str
@@ -34,6 +36,8 @@ class User(BaseModel):
 
 
 class TweetGetRetweetersResponse(BaseModel):
+    """Paginated list of user profiles with cursor-based navigation."""
+
     has_next_page: bool
 
     next_cursor: str

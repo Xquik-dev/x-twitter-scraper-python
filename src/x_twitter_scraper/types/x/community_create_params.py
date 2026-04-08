@@ -9,7 +9,7 @@ __all__ = ["CommunityCreateParams"]
 
 class CommunityCreateParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account (@username or ID) creating the community"""
 
     name: Required[str]
     """Community name"""

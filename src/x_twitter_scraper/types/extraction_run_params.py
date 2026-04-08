@@ -37,6 +37,7 @@ class ExtractionRunParams(TypedDict, total=False):
             PropertyInfo(alias="toolType"),
         ]
     ]
+    """Identifier for the extraction tool used to run a job."""
 
     advanced_query: Annotated[str, PropertyInfo(alias="advancedQuery")]
     """Raw advanced search query appended as-is (tweet_search_extractor)"""

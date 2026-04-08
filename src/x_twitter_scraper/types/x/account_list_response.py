@@ -11,6 +11,8 @@ __all__ = ["AccountListResponse", "Account"]
 
 
 class Account(BaseModel):
+    """Linked X account summary with username and connection status."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")

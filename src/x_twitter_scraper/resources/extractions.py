@@ -79,7 +79,9 @@ class ExtractionsResource(SyncAPIResource):
         Get extraction results
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          limit: Maximum number of results to return (1-1000, default 100)
 
           extra_headers: Send extra headers
 
@@ -149,7 +151,13 @@ class ExtractionsResource(SyncAPIResource):
         List extraction jobs
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          limit: Maximum number of items to return (1-100, default 50)
+
+          status: Filter by job status
+
+          tool_type: Filter by extraction tool type
 
           extra_headers: Send extra headers
 
@@ -224,11 +232,13 @@ class ExtractionsResource(SyncAPIResource):
         Estimate extraction cost
 
         Args:
-          advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
+          tool_type: Identifier for the extraction tool used to run a job.
 
-          exact_phrase: Exact phrase to match (tweet_search_extractor)
+          advanced_query: Raw advanced query string appended to the estimate (tweet_search_extractor)
 
-          exclude_words: Words to exclude from results (tweet_search_extractor)
+          exact_phrase: Exact phrase filter for search estimation
+
+          exclude_words: Words excluded from estimated search results
 
           extra_headers: Send extra headers
 
@@ -277,6 +287,8 @@ class ExtractionsResource(SyncAPIResource):
         Export extraction results
 
         Args:
+          format: Export file format
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -347,6 +359,8 @@ class ExtractionsResource(SyncAPIResource):
         Run extraction
 
         Args:
+          tool_type: Identifier for the extraction tool used to run a job.
+
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
           exact_phrase: Exact phrase to match (tweet_search_extractor)
@@ -424,7 +438,9 @@ class AsyncExtractionsResource(AsyncAPIResource):
         Get extraction results
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          limit: Maximum number of results to return (1-1000, default 100)
 
           extra_headers: Send extra headers
 
@@ -494,7 +510,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
         List extraction jobs
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          limit: Maximum number of items to return (1-100, default 50)
+
+          status: Filter by job status
+
+          tool_type: Filter by extraction tool type
 
           extra_headers: Send extra headers
 
@@ -569,11 +591,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
         Estimate extraction cost
 
         Args:
-          advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
+          tool_type: Identifier for the extraction tool used to run a job.
 
-          exact_phrase: Exact phrase to match (tweet_search_extractor)
+          advanced_query: Raw advanced query string appended to the estimate (tweet_search_extractor)
 
-          exclude_words: Words to exclude from results (tweet_search_extractor)
+          exact_phrase: Exact phrase filter for search estimation
+
+          exclude_words: Words excluded from estimated search results
 
           extra_headers: Send extra headers
 
@@ -622,6 +646,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
         Export extraction results
 
         Args:
+          format: Export file format
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -692,6 +718,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
         Run extraction
 
         Args:
+          tool_type: Identifier for the extraction tool used to run a job.
+
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
           exact_phrase: Exact phrase to match (tweet_search_extractor)

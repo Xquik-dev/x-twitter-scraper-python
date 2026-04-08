@@ -75,6 +75,8 @@ class IntegrationsResource(SyncAPIResource):
 
         Telegram chatId)
 
+          event_types: Array of event types to subscribe to.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -158,6 +160,8 @@ class IntegrationsResource(SyncAPIResource):
         Update integration
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           filters: Event filter rules (JSON)
 
           message_template: Custom message template (JSON)
@@ -260,6 +264,8 @@ class IntegrationsResource(SyncAPIResource):
         List integration delivery history
 
         Args:
+          limit: Maximum number of items to return (1-100, default 50)
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -363,6 +369,8 @@ class AsyncIntegrationsResource(AsyncAPIResource):
 
         Telegram chatId)
 
+          event_types: Array of event types to subscribe to.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -446,6 +454,8 @@ class AsyncIntegrationsResource(AsyncAPIResource):
         Update integration
 
         Args:
+          event_types: Array of event types to subscribe to.
+
           filters: Event filter rules (JSON)
 
           message_template: Custom message template (JSON)
@@ -548,6 +558,8 @@ class AsyncIntegrationsResource(AsyncAPIResource):
         List integration delivery history
 
         Args:
+          limit: Maximum number of items to return (1-100, default 50)
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request

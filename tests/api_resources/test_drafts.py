@@ -25,7 +25,7 @@ class TestDrafts:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         draft = client.drafts.create(
-            text="text",
+            text="AI is the future of productivity",
         )
         assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
@@ -33,9 +33,9 @@ class TestDrafts:
     @parametrize
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         draft = client.drafts.create(
-            text="text",
+            text="AI is the future of productivity",
             goal="engagement",
-            topic="topic",
+            topic="AI trends",
         )
         assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
@@ -43,7 +43,7 @@ class TestDrafts:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.drafts.with_raw_response.create(
-            text="text",
+            text="AI is the future of productivity",
         )
 
         assert response.is_closed is True
@@ -55,7 +55,7 @@ class TestDrafts:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.drafts.with_streaming_response.create(
-            text="text",
+            text="AI is the future of productivity",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -196,7 +196,7 @@ class TestAsyncDrafts:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         draft = await async_client.drafts.create(
-            text="text",
+            text="AI is the future of productivity",
         )
         assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
@@ -204,9 +204,9 @@ class TestAsyncDrafts:
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         draft = await async_client.drafts.create(
-            text="text",
+            text="AI is the future of productivity",
             goal="engagement",
-            topic="topic",
+            topic="AI trends",
         )
         assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
@@ -214,7 +214,7 @@ class TestAsyncDrafts:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.drafts.with_raw_response.create(
-            text="text",
+            text="AI is the future of productivity",
         )
 
         assert response.is_closed is True
@@ -226,7 +226,7 @@ class TestAsyncDrafts:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.drafts.with_streaming_response.create(
-            text="text",
+            text="AI is the future of productivity",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

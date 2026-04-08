@@ -8,6 +8,8 @@ __all__ = ["Error"]
 
 
 class Error(BaseModel):
+    """Error response containing a machine-readable error code."""
+
     error: Literal[
         "internal_error",
         "invalid_format",

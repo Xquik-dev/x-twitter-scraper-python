@@ -47,6 +47,8 @@ class Article(BaseModel):
 
 
 class Author(BaseModel):
+    """Author of a tweet with follower count and verification status."""
+
     id: str
 
     followers: int
@@ -62,3 +64,4 @@ class XGetArticleResponse(BaseModel):
     article: Article
 
     author: Optional[Author] = None
+    """Author of a tweet with follower count and verification status."""

@@ -12,6 +12,8 @@ __all__ = ["EventRetrieveResponse"]
 
 
 class EventRetrieveResponse(BaseModel):
+    """Full monitor event including payload data and optional X event ID."""
+
     id: str
 
     data: Dict[str, object]
@@ -22,6 +24,7 @@ class EventRetrieveResponse(BaseModel):
     occurred_at: datetime = FieldInfo(alias="occurredAt")
 
     type: Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
+    """Type of monitor event fired when account activity occurs."""
 
     username: str
 

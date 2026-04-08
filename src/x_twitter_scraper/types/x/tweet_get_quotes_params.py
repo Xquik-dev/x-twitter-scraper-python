@@ -11,13 +11,13 @@ __all__ = ["TweetGetQuotesParams"]
 
 class TweetGetQuotesParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for quote tweets"""
 
     include_replies: Annotated[bool, PropertyInfo(alias="includeReplies")]
-    """Include replies (default false)"""
+    """Include reply quotes (default false)"""
 
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
-    """Unix timestamp - filter after"""
+    """Unix timestamp - return quotes posted after this time"""
 
     until_time: Annotated[str, PropertyInfo(alias="untilTime")]
-    """Unix timestamp - filter before"""
+    """Unix timestamp - return quotes posted before this time"""

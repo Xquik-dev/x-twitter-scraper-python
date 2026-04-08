@@ -11,7 +11,7 @@ __all__ = ["XGetHomeTimelineParams"]
 
 class XGetHomeTimelineParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor from previous response"""
+    """Pagination cursor for timeline"""
 
     seen_tweet_ids: Annotated[str, PropertyInfo(alias="seenTweetIds")]
     """Comma-separated tweet IDs to exclude from results"""

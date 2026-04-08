@@ -13,6 +13,9 @@ from x_twitter_scraper.types.x import (
     CommunityCreateResponse,
     CommunityDeleteResponse,
     CommunityRetrieveInfoResponse,
+    CommunityRetrieveSearchResponse,
+    CommunityRetrieveMembersResponse,
+    CommunityRetrieveModeratorsResponse,
 )
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
@@ -25,8 +28,8 @@ class TestCommunities:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         community = client.x.communities.create(
-            account="account",
-            name="name",
+            account="@elonmusk",
+            name="Example Name",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -34,9 +37,9 @@ class TestCommunities:
     @parametrize
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         community = client.x.communities.create(
-            account="account",
-            name="name",
-            description="description",
+            account="@elonmusk",
+            name="Example Name",
+            description="A community for Tesla enthusiasts",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -44,8 +47,8 @@ class TestCommunities:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.communities.with_raw_response.create(
-            account="account",
-            name="name",
+            account="@elonmusk",
+            name="Example Name",
         )
 
         assert response.is_closed is True
@@ -57,8 +60,8 @@ class TestCommunities:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.communities.with_streaming_response.create(
-            account="account",
-            name="name",
+            account="@elonmusk",
+            name="Example Name",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -73,8 +76,8 @@ class TestCommunities:
     def test_method_delete(self, client: XTwitterScraper) -> None:
         community = client.x.communities.delete(
             id="id",
-            account="account",
-            community_name="community_name",
+            account="@elonmusk",
+            community_name="Tesla Fans",
         )
         assert_matches_type(CommunityDeleteResponse, community, path=["response"])
 
@@ -83,8 +86,8 @@ class TestCommunities:
     def test_raw_response_delete(self, client: XTwitterScraper) -> None:
         response = client.x.communities.with_raw_response.delete(
             id="id",
-            account="account",
-            community_name="community_name",
+            account="@elonmusk",
+            community_name="Tesla Fans",
         )
 
         assert response.is_closed is True
@@ -97,8 +100,8 @@ class TestCommunities:
     def test_streaming_response_delete(self, client: XTwitterScraper) -> None:
         with client.x.communities.with_streaming_response.delete(
             id="id",
-            account="account",
-            community_name="community_name",
+            account="@elonmusk",
+            community_name="Tesla Fans",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -114,8 +117,8 @@ class TestCommunities:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.communities.with_raw_response.delete(
                 id="",
-                account="account",
-                community_name="community_name",
+                account="@elonmusk",
+                community_name="Tesla Fans",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -166,7 +169,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_members(
             id="id",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -175,7 +178,7 @@ class TestCommunities:
             id="id",
             cursor="cursor",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -187,7 +190,7 @@ class TestCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = response.parse()
-        assert community is None
+        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -199,7 +202,7 @@ class TestCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = response.parse()
-            assert community is None
+            assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -217,7 +220,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_moderators(
             id="id",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -226,7 +229,7 @@ class TestCommunities:
             id="id",
             cursor="cursor",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -238,7 +241,7 @@ class TestCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = response.parse()
-        assert community is None
+        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -250,7 +253,7 @@ class TestCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = response.parse()
-            assert community is None
+            assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -268,7 +271,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_search(
             q="q",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -278,7 +281,7 @@ class TestCommunities:
             cursor="cursor",
             query_type="queryType",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -290,7 +293,7 @@ class TestCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = response.parse()
-        assert community is None
+        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -302,7 +305,7 @@ class TestCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = response.parse()
-            assert community is None
+            assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -316,8 +319,8 @@ class TestAsyncCommunities:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         community = await async_client.x.communities.create(
-            account="account",
-            name="name",
+            account="@elonmusk",
+            name="Example Name",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -325,9 +328,9 @@ class TestAsyncCommunities:
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         community = await async_client.x.communities.create(
-            account="account",
-            name="name",
-            description="description",
+            account="@elonmusk",
+            name="Example Name",
+            description="A community for Tesla enthusiasts",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -335,8 +338,8 @@ class TestAsyncCommunities:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.with_raw_response.create(
-            account="account",
-            name="name",
+            account="@elonmusk",
+            name="Example Name",
         )
 
         assert response.is_closed is True
@@ -348,8 +351,8 @@ class TestAsyncCommunities:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.with_streaming_response.create(
-            account="account",
-            name="name",
+            account="@elonmusk",
+            name="Example Name",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -364,8 +367,8 @@ class TestAsyncCommunities:
     async def test_method_delete(self, async_client: AsyncXTwitterScraper) -> None:
         community = await async_client.x.communities.delete(
             id="id",
-            account="account",
-            community_name="community_name",
+            account="@elonmusk",
+            community_name="Tesla Fans",
         )
         assert_matches_type(CommunityDeleteResponse, community, path=["response"])
 
@@ -374,8 +377,8 @@ class TestAsyncCommunities:
     async def test_raw_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.with_raw_response.delete(
             id="id",
-            account="account",
-            community_name="community_name",
+            account="@elonmusk",
+            community_name="Tesla Fans",
         )
 
         assert response.is_closed is True
@@ -388,8 +391,8 @@ class TestAsyncCommunities:
     async def test_streaming_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.with_streaming_response.delete(
             id="id",
-            account="account",
-            community_name="community_name",
+            account="@elonmusk",
+            community_name="Tesla Fans",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -405,8 +408,8 @@ class TestAsyncCommunities:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.communities.with_raw_response.delete(
                 id="",
-                account="account",
-                community_name="community_name",
+                account="@elonmusk",
+                community_name="Tesla Fans",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -457,7 +460,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_members(
             id="id",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -466,7 +469,7 @@ class TestAsyncCommunities:
             id="id",
             cursor="cursor",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -478,7 +481,7 @@ class TestAsyncCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = await response.parse()
-        assert community is None
+        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -490,7 +493,7 @@ class TestAsyncCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = await response.parse()
-            assert community is None
+            assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -508,7 +511,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_moderators(
             id="id",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -517,7 +520,7 @@ class TestAsyncCommunities:
             id="id",
             cursor="cursor",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -529,7 +532,7 @@ class TestAsyncCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = await response.parse()
-        assert community is None
+        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -541,7 +544,7 @@ class TestAsyncCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = await response.parse()
-            assert community is None
+            assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -559,7 +562,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_search(
             q="q",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -569,7 +572,7 @@ class TestAsyncCommunities:
             cursor="cursor",
             query_type="queryType",
         )
-        assert community is None
+        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -581,7 +584,7 @@ class TestAsyncCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = await response.parse()
-        assert community is None
+        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -593,6 +596,6 @@ class TestAsyncCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = await response.parse()
-            assert community is None
+            assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True

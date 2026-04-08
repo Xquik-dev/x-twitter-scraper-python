@@ -27,7 +27,7 @@ class TestBookmarks:
     @parametrize
     def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
         bookmark = client.x.bookmarks.list(
-            cursor="cursor",
+            cursor="folders_value",
             folder_id="folderId",
         )
         assert_matches_type(BookmarkListResponse, bookmark, path=["response"])
@@ -98,7 +98,7 @@ class TestAsyncBookmarks:
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         bookmark = await async_client.x.bookmarks.list(
-            cursor="cursor",
+            cursor="folders_value",
             folder_id="folderId",
         )
         assert_matches_type(BookmarkListResponse, bookmark, path=["response"])

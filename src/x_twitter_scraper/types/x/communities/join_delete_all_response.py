@@ -10,6 +10,8 @@ __all__ = ["JoinDeleteAllResponse"]
 
 
 class JoinDeleteAllResponse(BaseModel):
+    """Result of a community join or leave action."""
+
     community_id: str = FieldInfo(alias="communityId")
 
     community_name: str = FieldInfo(alias="communityName")

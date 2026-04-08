@@ -11,7 +11,7 @@ __all__ = ["UserRetrieveFollowingParams"]
 
 class UserRetrieveFollowingParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for following list"""
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Items per page (20-200, default 200)"""
+    """Results per page (20-200, default 200)"""

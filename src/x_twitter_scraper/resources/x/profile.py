@@ -66,7 +66,7 @@ class ProfileResource(SyncAPIResource):
         Update X profile
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) to update profile
 
           description: Bio description
 
@@ -116,7 +116,7 @@ class ProfileResource(SyncAPIResource):
         Update profile avatar
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) for avatar update
 
           file: Avatar image (max 716KB)
 
@@ -165,7 +165,7 @@ class ProfileResource(SyncAPIResource):
         Update profile banner
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) for banner update
 
           file: Banner image (max 2MB)
 
@@ -240,7 +240,7 @@ class AsyncProfileResource(AsyncAPIResource):
         Update X profile
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) to update profile
 
           description: Bio description
 
@@ -290,7 +290,7 @@ class AsyncProfileResource(AsyncAPIResource):
         Update profile avatar
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) for avatar update
 
           file: Avatar image (max 716KB)
 
@@ -339,7 +339,7 @@ class AsyncProfileResource(AsyncAPIResource):
         Update profile banner
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) for banner update
 
           file: Banner image (max 2MB)
 

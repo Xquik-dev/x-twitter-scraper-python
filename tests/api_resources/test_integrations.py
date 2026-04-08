@@ -29,9 +29,9 @@ class TestIntegrations:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         integration = client.integrations.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
         assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
@@ -40,9 +40,9 @@ class TestIntegrations:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.integrations.with_raw_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
 
@@ -55,9 +55,9 @@ class TestIntegrations:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.integrations.with_streaming_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         ) as response:
             assert not response.is_closed
@@ -123,13 +123,13 @@ class TestIntegrations:
     def test_method_update_with_all_params(self, client: XTwitterScraper) -> None:
         integration = client.integrations.update(
             id="id",
-            event_types=["tweet.new"],
-            filters={"foo": "bar"},
+            event_types=["tweet.new", "follower.gained"],
+            filters={},
             is_active=True,
-            message_template={"foo": "bar"},
-            name="name",
+            message_template={},
+            name="My Telegram Bot",
             scope_all_monitors=True,
-            silent_push=True,
+            silent_push=False,
         )
         assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 
@@ -340,9 +340,9 @@ class TestAsyncIntegrations:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         integration = await async_client.integrations.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
         assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
@@ -351,9 +351,9 @@ class TestAsyncIntegrations:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.integrations.with_raw_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
 
@@ -366,9 +366,9 @@ class TestAsyncIntegrations:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.integrations.with_streaming_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         ) as response:
             assert not response.is_closed
@@ -434,13 +434,13 @@ class TestAsyncIntegrations:
     async def test_method_update_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         integration = await async_client.integrations.update(
             id="id",
-            event_types=["tweet.new"],
-            filters={"foo": "bar"},
+            event_types=["tweet.new", "follower.gained"],
+            filters={},
             is_active=True,
-            message_template={"foo": "bar"},
-            name="name",
+            message_template={},
+            name="My Telegram Bot",
             scope_all_monitors=True,
-            silent_push=True,
+            silent_push=False,
         )
         assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
 

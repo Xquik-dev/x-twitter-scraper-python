@@ -11,6 +11,8 @@ __all__ = ["WebhookListDeliveriesResponse", "Delivery"]
 
 
 class Delivery(BaseModel):
+    """Webhook delivery attempt record with status and retry count."""
+
     id: str
 
     attempts: int

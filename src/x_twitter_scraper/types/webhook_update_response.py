@@ -12,6 +12,8 @@ __all__ = ["WebhookUpdateResponse"]
 
 
 class WebhookUpdateResponse(BaseModel):
+    """Webhook endpoint registered to receive event deliveries."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")
@@ -19,6 +21,7 @@ class WebhookUpdateResponse(BaseModel):
     event_types: List[
         Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
     ] = FieldInfo(alias="eventTypes")
+    """Array of event types to subscribe to."""
 
     is_active: bool = FieldInfo(alias="isActive")
 
