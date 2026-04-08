@@ -4,12 +4,14 @@ from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
-from ...._models import BaseModel
+from ..._models import BaseModel
 
-__all__ = ["JoinCreateResponse"]
+__all__ = ["CommunityActionResult"]
 
 
-class JoinCreateResponse(BaseModel):
+class CommunityActionResult(BaseModel):
+    """Result of a community join or leave action."""
+
     community_id: str = FieldInfo(alias="communityId")
 
     community_name: str = FieldInfo(alias="communityName")

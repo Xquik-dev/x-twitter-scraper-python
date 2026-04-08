@@ -176,7 +176,7 @@ class TestDraws:
     @parametrize
     def test_method_run(self, client: XTwitterScraper) -> None:
         draw = client.draws.run(
-            tweet_url="https://example.com",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         )
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 
@@ -184,18 +184,18 @@ class TestDraws:
     @parametrize
     def test_method_run_with_all_params(self, client: XTwitterScraper) -> None:
         draw = client.draws.run(
-            tweet_url="https://example.com",
-            backup_count=0,
-            filter_account_age_days=0,
-            filter_language="filterLanguage",
-            filter_min_followers=0,
-            must_follow_username="mustFollowUsername",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
+            backup_count=2,
+            filter_account_age_days=30,
+            filter_language="en",
+            filter_min_followers=50,
+            must_follow_username="elonmusk",
             must_retweet=True,
-            required_hashtags=["string"],
-            required_keywords=["string"],
-            required_mentions=["string"],
+            required_hashtags=["#giveaway"],
+            required_keywords=["entered"],
+            required_mentions=["@elonmusk"],
             unique_authors_only=True,
-            winner_count=0,
+            winner_count=3,
         )
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 
@@ -203,7 +203,7 @@ class TestDraws:
     @parametrize
     def test_raw_response_run(self, client: XTwitterScraper) -> None:
         response = client.draws.with_raw_response.run(
-            tweet_url="https://example.com",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         )
 
         assert response.is_closed is True
@@ -215,7 +215,7 @@ class TestDraws:
     @parametrize
     def test_streaming_response_run(self, client: XTwitterScraper) -> None:
         with client.draws.with_streaming_response.run(
-            tweet_url="https://example.com",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -380,7 +380,7 @@ class TestAsyncDraws:
     @parametrize
     async def test_method_run(self, async_client: AsyncXTwitterScraper) -> None:
         draw = await async_client.draws.run(
-            tweet_url="https://example.com",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         )
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 
@@ -388,18 +388,18 @@ class TestAsyncDraws:
     @parametrize
     async def test_method_run_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         draw = await async_client.draws.run(
-            tweet_url="https://example.com",
-            backup_count=0,
-            filter_account_age_days=0,
-            filter_language="filterLanguage",
-            filter_min_followers=0,
-            must_follow_username="mustFollowUsername",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
+            backup_count=2,
+            filter_account_age_days=30,
+            filter_language="en",
+            filter_min_followers=50,
+            must_follow_username="elonmusk",
             must_retweet=True,
-            required_hashtags=["string"],
-            required_keywords=["string"],
-            required_mentions=["string"],
+            required_hashtags=["#giveaway"],
+            required_keywords=["entered"],
+            required_mentions=["@elonmusk"],
             unique_authors_only=True,
-            winner_count=0,
+            winner_count=3,
         )
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 
@@ -407,7 +407,7 @@ class TestAsyncDraws:
     @parametrize
     async def test_raw_response_run(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.draws.with_raw_response.run(
-            tweet_url="https://example.com",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         )
 
         assert response.is_closed is True
@@ -419,7 +419,7 @@ class TestAsyncDraws:
     @parametrize
     async def test_streaming_response_run(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.draws.with_streaming_response.run(
-            tweet_url="https://example.com",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

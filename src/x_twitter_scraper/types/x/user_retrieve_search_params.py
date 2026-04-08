@@ -9,7 +9,7 @@ __all__ = ["UserRetrieveSearchParams"]
 
 class UserRetrieveSearchParams(TypedDict, total=False):
     q: Required[str]
-    """Search query"""
+    """User search query"""
 
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for user search"""

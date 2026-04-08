@@ -9,3 +9,4 @@ __all__ = ["IntegrationListDeliveriesParams"]
 
 class IntegrationListDeliveriesParams(TypedDict, total=False):
     limit: int
+    """Maximum number of items to return (1-100, default 50)"""

@@ -59,7 +59,7 @@ class DmResource(SyncAPIResource):
         Get DM conversation history
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for DM history
 
           max_id: Legacy pagination cursor (backward compat)
 
@@ -110,7 +110,7 @@ class DmResource(SyncAPIResource):
         Send direct message
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) sending the DM
 
           extra_headers: Send extra headers
 
@@ -177,7 +177,7 @@ class AsyncDmResource(AsyncAPIResource):
         Get DM conversation history
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for DM history
 
           max_id: Legacy pagination cursor (backward compat)
 
@@ -228,7 +228,7 @@ class AsyncDmResource(AsyncAPIResource):
         Send direct message
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) sending the DM
 
           extra_headers: Send extra headers
 

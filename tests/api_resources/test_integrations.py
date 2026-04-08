@@ -10,11 +10,9 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types import (
+    Integration,
     IntegrationListResponse,
-    IntegrationCreateResponse,
     IntegrationDeleteResponse,
-    IntegrationUpdateResponse,
-    IntegrationRetrieveResponse,
     IntegrationSendTestResponse,
     IntegrationListDeliveriesResponse,
 )
@@ -29,42 +27,42 @@ class TestIntegrations:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         integration = client.integrations.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
-        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.integrations.with_raw_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = response.parse()
-        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.integrations.with_streaming_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = response.parse()
-            assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
+            assert_matches_type(Integration, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -74,7 +72,7 @@ class TestIntegrations:
         integration = client.integrations.retrieve(
             "id",
         )
-        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -86,7 +84,7 @@ class TestIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = response.parse()
-        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -98,7 +96,7 @@ class TestIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = response.parse()
-            assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
+            assert_matches_type(Integration, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -116,7 +114,7 @@ class TestIntegrations:
         integration = client.integrations.update(
             id="id",
         )
-        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -124,14 +122,14 @@ class TestIntegrations:
         integration = client.integrations.update(
             id="id",
             event_types=["tweet.new"],
-            filters={"foo": "bar"},
+            filters={},
             is_active=True,
-            message_template={"foo": "bar"},
-            name="name",
+            message_template={},
+            name="My Telegram Bot",
             scope_all_monitors=True,
-            silent_push=True,
+            silent_push=False,
         )
-        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -143,7 +141,7 @@ class TestIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = response.parse()
-        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -155,7 +153,7 @@ class TestIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = response.parse()
-            assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+            assert_matches_type(Integration, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -340,42 +338,42 @@ class TestAsyncIntegrations:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         integration = await async_client.integrations.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
-        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.integrations.with_raw_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = await response.parse()
-        assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.integrations.with_streaming_response.create(
-            config={"chat_id": "chatId"},
-            event_types=["tweet.new"],
-            name="name",
+            config={"chat_id": "-1001234567890"},
+            event_types=["tweet.new", "follower.gained"],
+            name="My Telegram Bot",
             type="telegram",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = await response.parse()
-            assert_matches_type(IntegrationCreateResponse, integration, path=["response"])
+            assert_matches_type(Integration, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -385,7 +383,7 @@ class TestAsyncIntegrations:
         integration = await async_client.integrations.retrieve(
             "id",
         )
-        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -397,7 +395,7 @@ class TestAsyncIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = await response.parse()
-        assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -409,7 +407,7 @@ class TestAsyncIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = await response.parse()
-            assert_matches_type(IntegrationRetrieveResponse, integration, path=["response"])
+            assert_matches_type(Integration, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -427,7 +425,7 @@ class TestAsyncIntegrations:
         integration = await async_client.integrations.update(
             id="id",
         )
-        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -435,14 +433,14 @@ class TestAsyncIntegrations:
         integration = await async_client.integrations.update(
             id="id",
             event_types=["tweet.new"],
-            filters={"foo": "bar"},
+            filters={},
             is_active=True,
-            message_template={"foo": "bar"},
-            name="name",
+            message_template={},
+            name="My Telegram Bot",
             scope_all_monitors=True,
-            silent_push=True,
+            silent_push=False,
         )
-        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -454,7 +452,7 @@ class TestAsyncIntegrations:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         integration = await response.parse()
-        assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+        assert_matches_type(Integration, integration, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -466,7 +464,7 @@ class TestAsyncIntegrations:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             integration = await response.parse()
-            assert_matches_type(IntegrationUpdateResponse, integration, path=["response"])
+            assert_matches_type(Integration, integration, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

@@ -37,15 +37,16 @@ class ExtractionEstimateCostParams(TypedDict, total=False):
             PropertyInfo(alias="toolType"),
         ]
     ]
+    """Identifier for the extraction tool used to run a job."""
 
     advanced_query: Annotated[str, PropertyInfo(alias="advancedQuery")]
-    """Raw advanced search query appended as-is (tweet_search_extractor)"""
+    """Raw advanced query string appended to the estimate (tweet_search_extractor)"""
 
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
-    """Exact phrase to match (tweet_search_extractor)"""
+    """Exact phrase filter for search estimation"""
 
     exclude_words: Annotated[str, PropertyInfo(alias="excludeWords")]
-    """Words to exclude from results (tweet_search_extractor)"""
+    """Words excluded from estimated search results"""
 
     search_query: Annotated[str, PropertyInfo(alias="searchQuery")]
 

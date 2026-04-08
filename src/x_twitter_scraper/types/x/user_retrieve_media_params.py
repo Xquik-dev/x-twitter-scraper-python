@@ -9,4 +9,4 @@ __all__ = ["UserRetrieveMediaParams"]
 
 class UserRetrieveMediaParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor from previous response"""
+    """Pagination cursor for media tweets"""

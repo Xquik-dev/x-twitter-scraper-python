@@ -32,11 +32,11 @@ client = XTwitterScraper(
     api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # This is the default and can be omitted
 )
 
-response = client.x.tweets.search(
+paginated_tweets = client.x.tweets.search(
     q="from:elonmusk",
     limit=10,
 )
-print(response.has_next_page)
+print(paginated_tweets.has_next_page)
 ```
 
 While you can provide an `api_key` keyword argument,
@@ -59,11 +59,11 @@ client = AsyncXTwitterScraper(
 
 
 async def main() -> None:
-    response = await client.x.tweets.search(
+    paginated_tweets = await client.x.tweets.search(
         q="from:elonmusk",
         limit=10,
     )
-    print(response.has_next_page)
+    print(paginated_tweets.has_next_page)
 
 
 asyncio.run(main())
@@ -98,11 +98,11 @@ async def main() -> None:
         ),  # This is the default and can be omitted
         http_client=DefaultAioHttpClient(),
     ) as client:
-        response = await client.x.tweets.search(
+        paginated_tweets = await client.x.tweets.search(
             q="from:elonmusk",
             limit=10,
         )
-        print(response.has_next_page)
+        print(paginated_tweets.has_next_page)
 
 
 asyncio.run(main())
@@ -127,9 +127,9 @@ from x_twitter_scraper import XTwitterScraper
 client = XTwitterScraper()
 
 integration = client.integrations.create(
-    config={"chat_id": "chatId"},
-    event_types=["tweet.new"],
-    name="name",
+    config={"chat_id": "-1001234567890"},
+    event_types=["tweet.new", "follower.gained"],
+    name="My Telegram Bot",
     type="telegram",
 )
 print(integration.config)
@@ -146,7 +146,7 @@ from x_twitter_scraper import XTwitterScraper
 client = XTwitterScraper()
 
 client.x.media.upload(
-    account="account",
+    account="@elonmusk",
     file=Path("/path/to/file"),
 )
 ```

@@ -24,8 +24,8 @@ class TestFollow:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         follow = client.x.users.follow.create(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(FollowCreateResponse, follow, path=["response"])
 
@@ -33,8 +33,8 @@ class TestFollow:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.users.follow.with_raw_response.create(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -46,8 +46,8 @@ class TestFollow:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.users.follow.with_streaming_response.create(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -60,18 +60,18 @@ class TestFollow:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_path_params_create(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.users.follow.with_raw_response.create(
-                user_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_method_delete_all(self, client: XTwitterScraper) -> None:
         follow = client.x.users.follow.delete_all(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(FollowDeleteAllResponse, follow, path=["response"])
 
@@ -79,8 +79,8 @@ class TestFollow:
     @parametrize
     def test_raw_response_delete_all(self, client: XTwitterScraper) -> None:
         response = client.x.users.follow.with_raw_response.delete_all(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -92,8 +92,8 @@ class TestFollow:
     @parametrize
     def test_streaming_response_delete_all(self, client: XTwitterScraper) -> None:
         with client.x.users.follow.with_streaming_response.delete_all(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -106,10 +106,10 @@ class TestFollow:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_path_params_delete_all(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.users.follow.with_raw_response.delete_all(
-                user_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
 
@@ -122,8 +122,8 @@ class TestAsyncFollow:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         follow = await async_client.x.users.follow.create(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(FollowCreateResponse, follow, path=["response"])
 
@@ -131,8 +131,8 @@ class TestAsyncFollow:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.users.follow.with_raw_response.create(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -144,8 +144,8 @@ class TestAsyncFollow:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.users.follow.with_streaming_response.create(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -158,18 +158,18 @@ class TestAsyncFollow:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_path_params_create(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.users.follow.with_raw_response.create(
-                user_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_method_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         follow = await async_client.x.users.follow.delete_all(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(FollowDeleteAllResponse, follow, path=["response"])
 
@@ -177,8 +177,8 @@ class TestAsyncFollow:
     @parametrize
     async def test_raw_response_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.users.follow.with_raw_response.delete_all(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -190,8 +190,8 @@ class TestAsyncFollow:
     @parametrize
     async def test_streaming_response_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.users.follow.with_streaming_response.delete_all(
-            user_id="userId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -204,8 +204,8 @@ class TestAsyncFollow:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_path_params_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.users.follow.with_raw_response.delete_all(
-                user_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )

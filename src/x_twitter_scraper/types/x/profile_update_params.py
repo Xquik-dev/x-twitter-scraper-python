@@ -9,7 +9,7 @@ __all__ = ["ProfileUpdateParams"]
 
 class ProfileUpdateParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account (@username or ID) to update profile"""
 
     description: str
     """Bio description"""

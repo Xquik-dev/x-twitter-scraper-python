@@ -9,4 +9,4 @@ __all__ = ["LikeDeleteParams"]
 
 class LikeDeleteParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account identifier (@username or account ID)"""

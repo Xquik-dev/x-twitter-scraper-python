@@ -11,7 +11,7 @@ __all__ = ["DmRetrieveHistoryParams"]
 
 class DmRetrieveHistoryParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor from previous response"""
+    """Pagination cursor for DM history"""
 
     max_id: Annotated[str, PropertyInfo(alias="maxId")]
     """Legacy pagination cursor (backward compat)"""

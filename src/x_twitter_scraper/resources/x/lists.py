@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import httpx
 
-from ..._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
+from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import list_retrieve_tweets_params, list_retrieve_members_params, list_retrieve_followers_params
@@ -16,6 +16,8 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
+from ...types.shared.paginated_users import PaginatedUsers
+from ...types.shared.paginated_tweets import PaginatedTweets
 
 __all__ = ["ListsResource", "AsyncListsResource"]
 
@@ -53,12 +55,12 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get list followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list followers
 
           extra_headers: Send extra headers
 
@@ -70,7 +72,6 @@ class ListsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/lists/{id}/followers", id=id),
             options=make_request_options(
@@ -80,7 +81,7 @@ class ListsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_members(
@@ -94,12 +95,12 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get list members
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list members
 
           extra_headers: Send extra headers
 
@@ -111,7 +112,6 @@ class ListsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/lists/{id}/members", id=id),
             options=make_request_options(
@@ -121,7 +121,7 @@ class ListsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, list_retrieve_members_params.ListRetrieveMembersParams),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_tweets(
@@ -138,12 +138,12 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Get list tweets
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list tweets
 
           include_replies: Include replies (default false)
 
@@ -161,7 +161,6 @@ class ListsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/lists/{id}/tweets", id=id),
             options=make_request_options(
@@ -179,7 +178,7 @@ class ListsResource(SyncAPIResource):
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
         )
 
 
@@ -216,12 +215,12 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get list followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list followers
 
           extra_headers: Send extra headers
 
@@ -233,7 +232,6 @@ class AsyncListsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/lists/{id}/followers", id=id),
             options=make_request_options(
@@ -245,7 +243,7 @@ class AsyncListsResource(AsyncAPIResource):
                     {"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_members(
@@ -259,12 +257,12 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get list members
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list members
 
           extra_headers: Send extra headers
 
@@ -276,7 +274,6 @@ class AsyncListsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/lists/{id}/members", id=id),
             options=make_request_options(
@@ -288,7 +285,7 @@ class AsyncListsResource(AsyncAPIResource):
                     {"cursor": cursor}, list_retrieve_members_params.ListRetrieveMembersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_tweets(
@@ -305,12 +302,12 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Get list tweets
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for list tweets
 
           include_replies: Include replies (default false)
 
@@ -328,7 +325,6 @@ class AsyncListsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/lists/{id}/tweets", id=id),
             options=make_request_options(
@@ -346,7 +342,7 @@ class AsyncListsResource(AsyncAPIResource):
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
         )
 
 

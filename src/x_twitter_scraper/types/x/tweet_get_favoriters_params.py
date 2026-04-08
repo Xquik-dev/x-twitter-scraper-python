@@ -9,4 +9,4 @@ __all__ = ["TweetGetFavoritersParams"]
 
 class TweetGetFavoritersParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor from previous response"""
+    """Pagination cursor for favoriters"""

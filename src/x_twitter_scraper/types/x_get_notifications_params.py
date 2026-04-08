@@ -9,7 +9,7 @@ __all__ = ["XGetNotificationsParams"]
 
 class XGetNotificationsParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor from previous response"""
+    """Pagination cursor for notifications"""
 
     type: Literal["All", "Verified", "Mentions"]
     """Notification type filter"""

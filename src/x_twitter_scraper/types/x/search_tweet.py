@@ -1,15 +1,15 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List, Optional
+from typing import Optional
 
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
-__all__ = ["UserRetrieveLikesResponse", "Tweet", "TweetAuthor"]
+__all__ = ["SearchTweet", "Author"]
 
 
-class TweetAuthor(BaseModel):
+class Author(BaseModel):
     id: str
 
     name: str
@@ -19,16 +19,21 @@ class TweetAuthor(BaseModel):
     verified: Optional[bool] = None
 
 
-class Tweet(BaseModel):
+class SearchTweet(BaseModel):
+    """Tweet returned from search results with inline author info."""
+
     id: str
 
     text: str
 
-    author: Optional[TweetAuthor] = None
+    author: Optional[Author] = None
 
     bookmark_count: Optional[int] = FieldInfo(alias="bookmarkCount", default=None)
 
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
+
+    is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
+    """True for Note Tweets (long-form content, up to 25,000 characters)"""
 
     like_count: Optional[int] = FieldInfo(alias="likeCount", default=None)
 
@@ -39,11 +44,3 @@ class Tweet(BaseModel):
     retweet_count: Optional[int] = FieldInfo(alias="retweetCount", default=None)
 
     view_count: Optional[int] = FieldInfo(alias="viewCount", default=None)
-
-
-class UserRetrieveLikesResponse(BaseModel):
-    has_next_page: bool
-
-    next_cursor: str
-
-    tweets: List[Tweet]

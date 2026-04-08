@@ -46,7 +46,7 @@ class FollowResource(SyncAPIResource):
 
     def create(
         self,
-        user_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -60,7 +60,7 @@ class FollowResource(SyncAPIResource):
         Follow user
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -70,10 +70,10 @@ class FollowResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not user_id:
-            raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._post(
-            path_template("/x/users/{user_id}/follow", user_id=user_id),
+            path_template("/x/users/{id}/follow", id=id),
             body=maybe_transform({"account": account}, follow_create_params.FollowCreateParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -83,7 +83,7 @@ class FollowResource(SyncAPIResource):
 
     def delete_all(
         self,
-        user_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -97,7 +97,7 @@ class FollowResource(SyncAPIResource):
         Unfollow user
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -107,10 +107,10 @@ class FollowResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not user_id:
-            raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._delete(
-            path_template("/x/users/{user_id}/follow", user_id=user_id),
+            path_template("/x/users/{id}/follow", id=id),
             body=maybe_transform({"account": account}, follow_delete_all_params.FollowDeleteAllParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -143,7 +143,7 @@ class AsyncFollowResource(AsyncAPIResource):
 
     async def create(
         self,
-        user_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -157,7 +157,7 @@ class AsyncFollowResource(AsyncAPIResource):
         Follow user
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -167,10 +167,10 @@ class AsyncFollowResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not user_id:
-            raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._post(
-            path_template("/x/users/{user_id}/follow", user_id=user_id),
+            path_template("/x/users/{id}/follow", id=id),
             body=await async_maybe_transform({"account": account}, follow_create_params.FollowCreateParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -180,7 +180,7 @@ class AsyncFollowResource(AsyncAPIResource):
 
     async def delete_all(
         self,
-        user_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -194,7 +194,7 @@ class AsyncFollowResource(AsyncAPIResource):
         Unfollow user
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -204,10 +204,10 @@ class AsyncFollowResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not user_id:
-            raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._delete(
-            path_template("/x/users/{user_id}/follow", user_id=user_id),
+            path_template("/x/users/{id}/follow", id=id),
             body=await async_maybe_transform({"account": account}, follow_delete_all_params.FollowDeleteAllParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout

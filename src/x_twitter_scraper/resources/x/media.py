@@ -116,7 +116,7 @@ class MediaResource(SyncAPIResource):
         Upload media
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) uploading media
 
           file: Media file to upload
 
@@ -233,7 +233,7 @@ class AsyncMediaResource(AsyncAPIResource):
         Upload media
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) uploading media
 
           file: Media file to upload
 

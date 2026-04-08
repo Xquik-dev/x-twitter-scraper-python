@@ -12,7 +12,7 @@ from .follow import (
     FollowResourceWithStreamingResponse,
     AsyncFollowResourceWithStreamingResponse,
 )
-from ...._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
+from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ...._utils import path_template, maybe_transform, async_maybe_transform
 from ...._compat import cached_property
 from ....types.x import (
@@ -35,11 +35,9 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
-from ....types.x.user_retrieve_response import UserRetrieveResponse
-from ....types.x.user_retrieve_likes_response import UserRetrieveLikesResponse
-from ....types.x.user_retrieve_media_response import UserRetrieveMediaResponse
-from ....types.x.user_retrieve_tweets_response import UserRetrieveTweetsResponse
-from ....types.x.user_retrieve_followers_you_know_response import UserRetrieveFollowersYouKnowResponse
+from ....types.x.user_profile import UserProfile
+from ....types.shared.paginated_users import PaginatedUsers
+from ....types.shared.paginated_tweets import PaginatedTweets
 
 __all__ = ["UsersResource", "AsyncUsersResource"]
 
@@ -73,7 +71,7 @@ class UsersResource(SyncAPIResource):
 
     def retrieve(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -81,7 +79,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveResponse:
+    ) -> UserProfile:
         """
         Look up X user
 
@@ -94,14 +92,14 @@ class UsersResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._get(
-            path_template("/x/users/{username}", username=username),
+            path_template("/x/users/{id}", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=UserRetrieveResponse,
+            cast_to=UserProfile,
         )
 
     def retrieve_batch(
@@ -114,7 +112,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get multiple users by IDs
 
@@ -129,7 +127,6 @@ class UsersResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             "/x/users/batch",
             options=make_request_options(
@@ -139,7 +136,7 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_followers(
@@ -154,12 +151,12 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get user followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for followers list
 
           page_size: Items per page (20-200, default 200)
 
@@ -173,7 +170,6 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/users/{id}/followers", id=id),
             options=make_request_options(
@@ -189,7 +185,7 @@ class UsersResource(SyncAPIResource):
                     user_retrieve_followers_params.UserRetrieveFollowersParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_followers_you_know(
@@ -203,12 +199,12 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveFollowersYouKnowResponse:
+    ) -> PaginatedUsers:
         """
         Get followers you know for a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for followers-you-know
 
           extra_headers: Send extra headers
 
@@ -231,7 +227,7 @@ class UsersResource(SyncAPIResource):
                     {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
                 ),
             ),
-            cast_to=UserRetrieveFollowersYouKnowResponse,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_following(
@@ -246,14 +242,14 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get users this user follows
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for following list
 
-          page_size: Items per page (20-200, default 200)
+          page_size: Results per page (20-200, default 200)
 
           extra_headers: Send extra headers
 
@@ -265,7 +261,6 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/users/{id}/following", id=id),
             options=make_request_options(
@@ -281,7 +276,7 @@ class UsersResource(SyncAPIResource):
                     user_retrieve_following_params.UserRetrieveFollowingParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_likes(
@@ -295,12 +290,12 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveLikesResponse:
+    ) -> PaginatedTweets:
         """
         Get tweets liked by a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for liked tweets
 
           extra_headers: Send extra headers
 
@@ -321,7 +316,7 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams),
             ),
-            cast_to=UserRetrieveLikesResponse,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_media(
@@ -335,12 +330,12 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveMediaResponse:
+    ) -> PaginatedTweets:
         """
         Get media tweets by a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for media tweets
 
           extra_headers: Send extra headers
 
@@ -361,7 +356,7 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams),
             ),
-            cast_to=UserRetrieveMediaResponse,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_mentions(
@@ -377,16 +372,16 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Get tweets mentioning a user
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for mentions
 
-          since_time: Unix timestamp - filter after
+          since_time: Unix timestamp - return mentions after this time
 
-          until_time: Unix timestamp - filter before
+          until_time: Unix timestamp - return mentions before this time
 
           extra_headers: Send extra headers
 
@@ -398,7 +393,6 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/users/{id}/mentions", id=id),
             options=make_request_options(
@@ -415,7 +409,7 @@ class UsersResource(SyncAPIResource):
                     user_retrieve_mentions_params.UserRetrieveMentionsParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_search(
@@ -429,14 +423,14 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Search users by name or username
 
         Args:
-          q: Search query
+          q: User search query
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for user search
 
           extra_headers: Send extra headers
 
@@ -446,7 +440,6 @@ class UsersResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             "/x/users/search",
             options=make_request_options(
@@ -462,7 +455,7 @@ class UsersResource(SyncAPIResource):
                     user_retrieve_search_params.UserRetrieveSearchParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_tweets(
@@ -478,12 +471,12 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveTweetsResponse:
+    ) -> PaginatedTweets:
         """
         Get recent tweets by a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for user tweets
 
           include_parent_tweet: Include parent tweet for replies
 
@@ -515,7 +508,7 @@ class UsersResource(SyncAPIResource):
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
             ),
-            cast_to=UserRetrieveTweetsResponse,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_verified_followers(
@@ -529,12 +522,12 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get verified followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for verified followers
 
           extra_headers: Send extra headers
 
@@ -546,7 +539,6 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/users/{id}/verified-followers", id=id),
             options=make_request_options(
@@ -558,7 +550,7 @@ class UsersResource(SyncAPIResource):
                     {"cursor": cursor}, user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
 
@@ -591,7 +583,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
     async def retrieve(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -599,7 +591,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveResponse:
+    ) -> UserProfile:
         """
         Look up X user
 
@@ -612,14 +604,14 @@ class AsyncUsersResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._get(
-            path_template("/x/users/{username}", username=username),
+            path_template("/x/users/{id}", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=UserRetrieveResponse,
+            cast_to=UserProfile,
         )
 
     async def retrieve_batch(
@@ -632,7 +624,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get multiple users by IDs
 
@@ -647,7 +639,6 @@ class AsyncUsersResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             "/x/users/batch",
             options=make_request_options(
@@ -657,7 +648,7 @@ class AsyncUsersResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_followers(
@@ -672,12 +663,12 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get user followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for followers list
 
           page_size: Items per page (20-200, default 200)
 
@@ -691,7 +682,6 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/users/{id}/followers", id=id),
             options=make_request_options(
@@ -707,7 +697,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     user_retrieve_followers_params.UserRetrieveFollowersParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_followers_you_know(
@@ -721,12 +711,12 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveFollowersYouKnowResponse:
+    ) -> PaginatedUsers:
         """
         Get followers you know for a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for followers-you-know
 
           extra_headers: Send extra headers
 
@@ -749,7 +739,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
                 ),
             ),
-            cast_to=UserRetrieveFollowersYouKnowResponse,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_following(
@@ -764,14 +754,14 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get users this user follows
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for following list
 
-          page_size: Items per page (20-200, default 200)
+          page_size: Results per page (20-200, default 200)
 
           extra_headers: Send extra headers
 
@@ -783,7 +773,6 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/users/{id}/following", id=id),
             options=make_request_options(
@@ -799,7 +788,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     user_retrieve_following_params.UserRetrieveFollowingParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_likes(
@@ -813,12 +802,12 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveLikesResponse:
+    ) -> PaginatedTweets:
         """
         Get tweets liked by a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for liked tweets
 
           extra_headers: Send extra headers
 
@@ -841,7 +830,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     {"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams
                 ),
             ),
-            cast_to=UserRetrieveLikesResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_media(
@@ -855,12 +844,12 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveMediaResponse:
+    ) -> PaginatedTweets:
         """
         Get media tweets by a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for media tweets
 
           extra_headers: Send extra headers
 
@@ -883,7 +872,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     {"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams
                 ),
             ),
-            cast_to=UserRetrieveMediaResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_mentions(
@@ -899,16 +888,16 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Get tweets mentioning a user
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for mentions
 
-          since_time: Unix timestamp - filter after
+          since_time: Unix timestamp - return mentions after this time
 
-          until_time: Unix timestamp - filter before
+          until_time: Unix timestamp - return mentions before this time
 
           extra_headers: Send extra headers
 
@@ -920,7 +909,6 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/users/{id}/mentions", id=id),
             options=make_request_options(
@@ -937,7 +925,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     user_retrieve_mentions_params.UserRetrieveMentionsParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_search(
@@ -951,14 +939,14 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Search users by name or username
 
         Args:
-          q: Search query
+          q: User search query
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for user search
 
           extra_headers: Send extra headers
 
@@ -968,7 +956,6 @@ class AsyncUsersResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             "/x/users/search",
             options=make_request_options(
@@ -984,7 +971,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     user_retrieve_search_params.UserRetrieveSearchParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_tweets(
@@ -1000,12 +987,12 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> UserRetrieveTweetsResponse:
+    ) -> PaginatedTweets:
         """
         Get recent tweets by a user
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for user tweets
 
           include_parent_tweet: Include parent tweet for replies
 
@@ -1037,7 +1024,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
             ),
-            cast_to=UserRetrieveTweetsResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_verified_followers(
@@ -1051,12 +1038,12 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get verified followers
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for verified followers
 
           extra_headers: Send extra headers
 
@@ -1068,7 +1055,6 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/users/{id}/verified-followers", id=id),
             options=make_request_options(
@@ -1080,7 +1066,7 @@ class AsyncUsersResource(AsyncAPIResource):
                     {"cursor": cursor}, user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
 

@@ -2,23 +2,24 @@
 
 from typing import List
 from datetime import datetime
-from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
+from .shared.event_type import EventType
 
-__all__ = ["MonitorUpdateResponse"]
+__all__ = ["Monitor"]
 
 
-class MonitorUpdateResponse(BaseModel):
+class Monitor(BaseModel):
+    """Account monitor that tracks activity for a given X user."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")
 
-    event_types: List[
-        Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-    ] = FieldInfo(alias="eventTypes")
+    event_types: List[EventType] = FieldInfo(alias="eventTypes")
+    """Array of event types to subscribe to."""
 
     is_active: bool = FieldInfo(alias="isActive")
 

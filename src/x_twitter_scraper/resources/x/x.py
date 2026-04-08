@@ -39,7 +39,7 @@ from .profile import (
     ProfileResourceWithStreamingResponse,
     AsyncProfileResourceWithStreamingResponse,
 )
-from ..._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
+from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from .accounts import (
     AccountsResource,
@@ -98,8 +98,9 @@ from .communities.communities import (
     CommunitiesResourceWithStreamingResponse,
     AsyncCommunitiesResourceWithStreamingResponse,
 )
+from ...types.x_get_trends_response import XGetTrendsResponse
 from ...types.x_get_article_response import XGetArticleResponse
-from ...types.x_get_home_timeline_response import XGetHomeTimelineResponse
+from ...types.shared.paginated_tweets import PaginatedTweets
 from ...types.x_get_notifications_response import XGetNotificationsResponse
 
 __all__ = ["XResource", "AsyncXResource"]
@@ -218,12 +219,12 @@ class XResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> XGetHomeTimelineResponse:
+    ) -> PaginatedTweets:
         """
         Get home timeline
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for timeline
 
           seen_tweet_ids: Comma-separated tweet IDs to exclude from results
 
@@ -250,7 +251,7 @@ class XResource(SyncAPIResource):
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
             ),
-            cast_to=XGetHomeTimelineResponse,
+            cast_to=PaginatedTweets,
         )
 
     def get_notifications(
@@ -269,7 +270,7 @@ class XResource(SyncAPIResource):
         Get notifications
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for notifications
 
           type: Notification type filter
 
@@ -308,15 +309,14 @@ class XResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> XGetTrendsResponse:
         """Get trending topics"""
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             "/x/trends",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=NoneType,
+            cast_to=XGetTrendsResponse,
         )
 
 
@@ -433,12 +433,12 @@ class AsyncXResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> XGetHomeTimelineResponse:
+    ) -> PaginatedTweets:
         """
         Get home timeline
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for timeline
 
           seen_tweet_ids: Comma-separated tweet IDs to exclude from results
 
@@ -465,7 +465,7 @@ class AsyncXResource(AsyncAPIResource):
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
             ),
-            cast_to=XGetHomeTimelineResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def get_notifications(
@@ -484,7 +484,7 @@ class AsyncXResource(AsyncAPIResource):
         Get notifications
 
         Args:
-          cursor: Pagination cursor from previous response
+          cursor: Pagination cursor for notifications
 
           type: Notification type filter
 
@@ -523,15 +523,14 @@ class AsyncXResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> XGetTrendsResponse:
         """Get trending topics"""
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             "/x/trends",
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=NoneType,
+            cast_to=XGetTrendsResponse,
         )
 
 

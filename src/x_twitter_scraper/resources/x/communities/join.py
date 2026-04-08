@@ -16,8 +16,7 @@ from ...._response import (
 )
 from ...._base_client import make_request_options
 from ....types.x.communities import join_create_params, join_delete_all_params
-from ....types.x.communities.join_create_response import JoinCreateResponse
-from ....types.x.communities.join_delete_all_response import JoinDeleteAllResponse
+from ....types.x.community_action_result import CommunityActionResult
 
 __all__ = ["JoinResource", "AsyncJoinResource"]
 
@@ -55,12 +54,12 @@ class JoinResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> JoinCreateResponse:
+    ) -> CommunityActionResult:
         """
         Join community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -78,7 +77,7 @@ class JoinResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=JoinCreateResponse,
+            cast_to=CommunityActionResult,
         )
 
     def delete_all(
@@ -92,12 +91,12 @@ class JoinResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> JoinDeleteAllResponse:
+    ) -> CommunityActionResult:
         """
         Leave community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -115,7 +114,7 @@ class JoinResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=JoinDeleteAllResponse,
+            cast_to=CommunityActionResult,
         )
 
 
@@ -152,12 +151,12 @@ class AsyncJoinResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> JoinCreateResponse:
+    ) -> CommunityActionResult:
         """
         Join community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -175,7 +174,7 @@ class AsyncJoinResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=JoinCreateResponse,
+            cast_to=CommunityActionResult,
         )
 
     async def delete_all(
@@ -189,12 +188,12 @@ class AsyncJoinResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> JoinDeleteAllResponse:
+    ) -> CommunityActionResult:
         """
         Leave community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -212,7 +211,7 @@ class AsyncJoinResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=JoinDeleteAllResponse,
+            cast_to=CommunityActionResult,
         )
 
 

@@ -135,7 +135,7 @@ class AccountResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountUpdateLocaleResponse,
         )
@@ -255,7 +255,7 @@ class AsyncAccountResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountUpdateLocaleResponse,
         )

@@ -11,7 +11,7 @@ __all__ = ["UserRetrieveTweetsParams"]
 
 class UserRetrieveTweetsParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor from previous response"""
+    """Pagination cursor for user tweets"""
 
     include_parent_tweet: Annotated[bool, PropertyInfo(alias="includeParentTweet")]
     """Include parent tweet for replies"""

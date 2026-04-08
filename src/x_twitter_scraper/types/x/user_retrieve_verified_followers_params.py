@@ -9,4 +9,4 @@ __all__ = ["UserRetrieveVerifiedFollowersParams"]
 
 class UserRetrieveVerifiedFollowersParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for verified followers"""

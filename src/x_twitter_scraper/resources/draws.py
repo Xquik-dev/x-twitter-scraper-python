@@ -104,7 +104,9 @@ class DrawsResource(SyncAPIResource):
         List draws
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          limit: Maximum number of items to return (1-100, default 50)
 
           extra_headers: Send extra headers
 
@@ -149,6 +151,8 @@ class DrawsResource(SyncAPIResource):
         Export draw data
 
         Args:
+          format: Export output format
+
           type: Export winners or all entries
 
           extra_headers: Send extra headers
@@ -311,7 +315,9 @@ class AsyncDrawsResource(AsyncAPIResource):
         List draws
 
         Args:
-          after: Cursor for pagination
+          after: Cursor for keyset pagination
+
+          limit: Maximum number of items to return (1-100, default 50)
 
           extra_headers: Send extra headers
 
@@ -356,6 +362,8 @@ class AsyncDrawsResource(AsyncAPIResource):
         Export draw data
 
         Args:
+          format: Export output format
+
           type: Export winners or all entries
 
           extra_headers: Send extra headers

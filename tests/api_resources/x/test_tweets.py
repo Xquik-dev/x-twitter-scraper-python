@@ -12,14 +12,9 @@ from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
     TweetCreateResponse,
     TweetDeleteResponse,
-    TweetSearchResponse,
     TweetRetrieveResponse,
-    TweetGetQuotesResponse,
-    TweetGetThreadResponse,
-    TweetGetRepliesResponse,
-    TweetGetFavoritersResponse,
-    TweetGetRetweetersResponse,
 )
+from x_twitter_scraper.types.shared import PaginatedUsers, PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -31,8 +26,8 @@ class TestTweets:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Just launched our new feature!",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -40,13 +35,13 @@ class TestTweets:
     @parametrize
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
-            account="account",
-            text="text",
-            attachment_url="attachment_url",
-            community_id="community_id",
-            is_note_tweet=True,
-            media_ids=["string"],
-            reply_to_tweet_id="reply_to_tweet_id",
+            account="@elonmusk",
+            text="Just launched our new feature!",
+            attachment_url="https://x.com/elonmusk/status/1234567890",
+            community_id="1500000000000000000",
+            is_note_tweet=False,
+            media_ids=["1234567890123456789"],
+            reply_to_tweet_id="1234567890",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -54,8 +49,8 @@ class TestTweets:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.with_raw_response.create(
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Just launched our new feature!",
         )
 
         assert response.is_closed is True
@@ -67,8 +62,8 @@ class TestTweets:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.tweets.with_streaming_response.create(
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Just launched our new feature!",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -82,7 +77,7 @@ class TestTweets:
     @parametrize
     def test_method_retrieve(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.retrieve(
-            "tweetId",
+            "id",
         )
         assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
 
@@ -90,7 +85,7 @@ class TestTweets:
     @parametrize
     def test_raw_response_retrieve(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.with_raw_response.retrieve(
-            "tweetId",
+            "id",
         )
 
         assert response.is_closed is True
@@ -102,7 +97,7 @@ class TestTweets:
     @parametrize
     def test_streaming_response_retrieve(self, client: XTwitterScraper) -> None:
         with client.x.tweets.with_streaming_response.retrieve(
-            "tweetId",
+            "id",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -115,7 +110,7 @@ class TestTweets:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_path_params_retrieve(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.tweets.with_raw_response.retrieve(
                 "",
             )
@@ -126,7 +121,7 @@ class TestTweets:
         tweet = client.x.tweets.list(
             ids="ids",
         )
-        assert tweet is None
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -138,7 +133,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert tweet is None
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -150,7 +145,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert tweet is None
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -158,8 +153,8 @@ class TestTweets:
     @parametrize
     def test_method_delete(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
 
@@ -167,8 +162,8 @@ class TestTweets:
     @parametrize
     def test_raw_response_delete(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.with_raw_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -180,8 +175,8 @@ class TestTweets:
     @parametrize
     def test_streaming_response_delete(self, client: XTwitterScraper) -> None:
         with client.x.tweets.with_streaming_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -194,10 +189,10 @@ class TestTweets:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_path_params_delete(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.tweets.with_raw_response.delete(
-                tweet_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -206,7 +201,7 @@ class TestTweets:
         tweet = client.x.tweets.get_favoriters(
             id="id",
         )
-        assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -215,7 +210,7 @@ class TestTweets:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -227,7 +222,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -239,7 +234,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -257,7 +252,7 @@ class TestTweets:
         tweet = client.x.tweets.get_quotes(
             id="id",
         )
-        assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -269,7 +264,7 @@ class TestTweets:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -281,7 +276,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -293,7 +288,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -311,7 +306,7 @@ class TestTweets:
         tweet = client.x.tweets.get_replies(
             id="id",
         )
-        assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -322,7 +317,7 @@ class TestTweets:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -334,7 +329,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -346,7 +341,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -364,7 +359,7 @@ class TestTweets:
         tweet = client.x.tweets.get_retweeters(
             id="id",
         )
-        assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -373,7 +368,7 @@ class TestTweets:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -385,7 +380,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -397,7 +392,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -415,7 +410,7 @@ class TestTweets:
         tweet = client.x.tweets.get_thread(
             id="id",
         )
-        assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -424,7 +419,7 @@ class TestTweets:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -436,7 +431,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -448,7 +443,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -466,7 +461,7 @@ class TestTweets:
         tweet = client.x.tweets.search(
             q="q",
         )
-        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -479,7 +474,7 @@ class TestTweets:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -491,7 +486,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -503,7 +498,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -517,8 +512,8 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Just launched our new feature!",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -526,13 +521,13 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
-            account="account",
-            text="text",
-            attachment_url="attachment_url",
-            community_id="community_id",
-            is_note_tweet=True,
-            media_ids=["string"],
-            reply_to_tweet_id="reply_to_tweet_id",
+            account="@elonmusk",
+            text="Just launched our new feature!",
+            attachment_url="https://x.com/elonmusk/status/1234567890",
+            community_id="1500000000000000000",
+            is_note_tweet=False,
+            media_ids=["1234567890123456789"],
+            reply_to_tweet_id="1234567890",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -540,8 +535,8 @@ class TestAsyncTweets:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.with_raw_response.create(
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Just launched our new feature!",
         )
 
         assert response.is_closed is True
@@ -553,8 +548,8 @@ class TestAsyncTweets:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.with_streaming_response.create(
-            account="account",
-            text="text",
+            account="@elonmusk",
+            text="Just launched our new feature!",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -568,7 +563,7 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.retrieve(
-            "tweetId",
+            "id",
         )
         assert_matches_type(TweetRetrieveResponse, tweet, path=["response"])
 
@@ -576,7 +571,7 @@ class TestAsyncTweets:
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.with_raw_response.retrieve(
-            "tweetId",
+            "id",
         )
 
         assert response.is_closed is True
@@ -588,7 +583,7 @@ class TestAsyncTweets:
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.with_streaming_response.retrieve(
-            "tweetId",
+            "id",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -601,7 +596,7 @@ class TestAsyncTweets:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_path_params_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.tweets.with_raw_response.retrieve(
                 "",
             )
@@ -612,7 +607,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.list(
             ids="ids",
         )
-        assert tweet is None
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -624,7 +619,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert tweet is None
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -636,7 +631,7 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert tweet is None
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -644,8 +639,8 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_delete(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
 
@@ -653,8 +648,8 @@ class TestAsyncTweets:
     @parametrize
     async def test_raw_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.with_raw_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -666,8 +661,8 @@ class TestAsyncTweets:
     @parametrize
     async def test_streaming_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.with_streaming_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -680,10 +675,10 @@ class TestAsyncTweets:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_path_params_delete(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.tweets.with_raw_response.delete(
-                tweet_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -692,7 +687,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_favoriters(
             id="id",
         )
-        assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -701,7 +696,7 @@ class TestAsyncTweets:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -713,7 +708,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -725,7 +720,7 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert_matches_type(TweetGetFavoritersResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -743,7 +738,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_quotes(
             id="id",
         )
-        assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -755,7 +750,7 @@ class TestAsyncTweets:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -767,7 +762,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -779,7 +774,7 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert_matches_type(TweetGetQuotesResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -797,7 +792,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_replies(
             id="id",
         )
-        assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -808,7 +803,7 @@ class TestAsyncTweets:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -820,7 +815,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -832,7 +827,7 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -850,7 +845,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_retweeters(
             id="id",
         )
-        assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -859,7 +854,7 @@ class TestAsyncTweets:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -871,7 +866,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -883,7 +878,7 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert_matches_type(TweetGetRetweetersResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -901,7 +896,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_thread(
             id="id",
         )
-        assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -910,7 +905,7 @@ class TestAsyncTweets:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -922,7 +917,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -934,7 +929,7 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert_matches_type(TweetGetThreadResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -952,7 +947,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.search(
             q="q",
         )
-        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -965,7 +960,7 @@ class TestAsyncTweets:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -977,7 +972,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+        assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -989,6 +984,6 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert_matches_type(TweetSearchResponse, tweet, path=["response"])
+            assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True

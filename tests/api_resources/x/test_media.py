@@ -30,8 +30,8 @@ class TestMedia:
     @parametrize
     def test_method_download_with_all_params(self, client: XTwitterScraper) -> None:
         media = client.x.media.download(
-            tweet_ids=["string"],
-            tweet_input="tweetInput",
+            tweet_ids=["1234567890", "1234567891"],
+            tweet_input="https://x.com/elonmusk/status/1234567890",
         )
         assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
@@ -61,7 +61,7 @@ class TestMedia:
     @parametrize
     def test_method_upload(self, client: XTwitterScraper) -> None:
         media = client.x.media.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
         )
         assert_matches_type(MediaUploadResponse, media, path=["response"])
@@ -70,7 +70,7 @@ class TestMedia:
     @parametrize
     def test_method_upload_with_all_params(self, client: XTwitterScraper) -> None:
         media = client.x.media.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
             is_long_video=True,
         )
@@ -80,7 +80,7 @@ class TestMedia:
     @parametrize
     def test_raw_response_upload(self, client: XTwitterScraper) -> None:
         response = client.x.media.with_raw_response.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
         )
 
@@ -93,7 +93,7 @@ class TestMedia:
     @parametrize
     def test_streaming_response_upload(self, client: XTwitterScraper) -> None:
         with client.x.media.with_streaming_response.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
         ) as response:
             assert not response.is_closed
@@ -120,8 +120,8 @@ class TestAsyncMedia:
     @parametrize
     async def test_method_download_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         media = await async_client.x.media.download(
-            tweet_ids=["string"],
-            tweet_input="tweetInput",
+            tweet_ids=["1234567890", "1234567891"],
+            tweet_input="https://x.com/elonmusk/status/1234567890",
         )
         assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
@@ -151,7 +151,7 @@ class TestAsyncMedia:
     @parametrize
     async def test_method_upload(self, async_client: AsyncXTwitterScraper) -> None:
         media = await async_client.x.media.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
         )
         assert_matches_type(MediaUploadResponse, media, path=["response"])
@@ -160,7 +160,7 @@ class TestAsyncMedia:
     @parametrize
     async def test_method_upload_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         media = await async_client.x.media.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
             is_long_video=True,
         )
@@ -170,7 +170,7 @@ class TestAsyncMedia:
     @parametrize
     async def test_raw_response_upload(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.media.with_raw_response.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
         )
 
@@ -183,7 +183,7 @@ class TestAsyncMedia:
     @parametrize
     async def test_streaming_response_upload(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.media.with_streaming_response.upload(
-            account="account",
+            account="@elonmusk",
             file=b"Example data",
         ) as response:
             assert not response.is_closed

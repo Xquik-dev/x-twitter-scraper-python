@@ -9,7 +9,7 @@ __all__ = ["CommunityDeleteParams"]
 
 class CommunityDeleteParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account (@username or ID) deleting the community"""
 
     community_name: Required[str]
     """Community name for confirmation"""

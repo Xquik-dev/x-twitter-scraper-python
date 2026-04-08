@@ -4,8 +4,8 @@ from __future__ import annotations
 
 import httpx
 
-from ...._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
-from ...._utils import maybe_transform, async_maybe_transform
+from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
+from ...._utils import path_template, maybe_transform, async_maybe_transform
 from ...._compat import cached_property
 from ...._resource import SyncAPIResource, AsyncAPIResource
 from ...._response import (
@@ -15,7 +15,8 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
-from ....types.x.communities import tweet_list_params
+from ....types.x.communities import tweet_list_params, tweet_list_by_community_params
+from ....types.shared.paginated_tweets import PaginatedTweets
 
 __all__ = ["TweetsResource", "AsyncTweetsResource"]
 
@@ -54,16 +55,16 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Search tweets across all communities
 
         Args:
-          q: Search query
+          q: Search query for cross-community tweets
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for cross-community results
 
-          query_type: Sort order (Latest or Top)
+          query_type: Sort order for cross-community results (Latest or Top)
 
           extra_headers: Send extra headers
 
@@ -73,7 +74,6 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             "/x/communities/tweets",
             options=make_request_options(
@@ -90,7 +90,47 @@ class TweetsResource(SyncAPIResource):
                     tweet_list_params.TweetListParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
+        )
+
+    def list_by_community(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> PaginatedTweets:
+        """
+        Get community tweets
+
+        Args:
+          cursor: Pagination cursor for community tweets
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/communities/{id}/tweets", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform({"cursor": cursor}, tweet_list_by_community_params.TweetListByCommunityParams),
+            ),
+            cast_to=PaginatedTweets,
         )
 
 
@@ -128,16 +168,16 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Search tweets across all communities
 
         Args:
-          q: Search query
+          q: Search query for cross-community tweets
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for cross-community results
 
-          query_type: Sort order (Latest or Top)
+          query_type: Sort order for cross-community results (Latest or Top)
 
           extra_headers: Send extra headers
 
@@ -147,7 +187,6 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             "/x/communities/tweets",
             options=make_request_options(
@@ -164,7 +203,49 @@ class AsyncTweetsResource(AsyncAPIResource):
                     tweet_list_params.TweetListParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
+        )
+
+    async def list_by_community(
+        self,
+        id: str,
+        *,
+        cursor: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> PaginatedTweets:
+        """
+        Get community tweets
+
+        Args:
+          cursor: Pagination cursor for community tweets
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/communities/{id}/tweets", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {"cursor": cursor}, tweet_list_by_community_params.TweetListByCommunityParams
+                ),
+            ),
+            cast_to=PaginatedTweets,
         )
 
 
@@ -175,6 +256,9 @@ class TweetsResourceWithRawResponse:
         self.list = to_raw_response_wrapper(
             tweets.list,
         )
+        self.list_by_community = to_raw_response_wrapper(
+            tweets.list_by_community,
+        )
 
 
 class AsyncTweetsResourceWithRawResponse:
@@ -183,6 +267,9 @@ class AsyncTweetsResourceWithRawResponse:
 
         self.list = async_to_raw_response_wrapper(
             tweets.list,
+        )
+        self.list_by_community = async_to_raw_response_wrapper(
+            tweets.list_by_community,
         )
 
 
@@ -193,6 +280,9 @@ class TweetsResourceWithStreamingResponse:
         self.list = to_streamed_response_wrapper(
             tweets.list,
         )
+        self.list_by_community = to_streamed_response_wrapper(
+            tweets.list_by_community,
+        )
 
 
 class AsyncTweetsResourceWithStreamingResponse:
@@ -201,4 +291,7 @@ class AsyncTweetsResourceWithStreamingResponse:
 
         self.list = async_to_streamed_response_wrapper(
             tweets.list,
+        )
+        self.list_by_community = async_to_streamed_response_wrapper(
+            tweets.list_by_community,
         )

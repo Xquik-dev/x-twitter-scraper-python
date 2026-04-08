@@ -52,7 +52,7 @@ class TestCredits:
     @parametrize
     def test_method_topup_balance(self, client: XTwitterScraper) -> None:
         credit = client.credits.topup_balance(
-            amount=0,
+            amount=10000,
         )
         assert_matches_type(CreditTopupBalanceResponse, credit, path=["response"])
 
@@ -60,7 +60,7 @@ class TestCredits:
     @parametrize
     def test_raw_response_topup_balance(self, client: XTwitterScraper) -> None:
         response = client.credits.with_raw_response.topup_balance(
-            amount=0,
+            amount=10000,
         )
 
         assert response.is_closed is True
@@ -72,7 +72,7 @@ class TestCredits:
     @parametrize
     def test_streaming_response_topup_balance(self, client: XTwitterScraper) -> None:
         with client.credits.with_streaming_response.topup_balance(
-            amount=0,
+            amount=10000,
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -120,7 +120,7 @@ class TestAsyncCredits:
     @parametrize
     async def test_method_topup_balance(self, async_client: AsyncXTwitterScraper) -> None:
         credit = await async_client.credits.topup_balance(
-            amount=0,
+            amount=10000,
         )
         assert_matches_type(CreditTopupBalanceResponse, credit, path=["response"])
 
@@ -128,7 +128,7 @@ class TestAsyncCredits:
     @parametrize
     async def test_raw_response_topup_balance(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.credits.with_raw_response.topup_balance(
-            amount=0,
+            amount=10000,
         )
 
         assert response.is_closed is True
@@ -140,7 +140,7 @@ class TestAsyncCredits:
     @parametrize
     async def test_streaming_response_topup_balance(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.credits.with_streaming_response.topup_balance(
-            amount=0,
+            amount=10000,
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

@@ -7,17 +7,17 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["DraftCreateResponse"]
+__all__ = ["Draft"]
 
 
-class DraftCreateResponse(BaseModel):
+class Draft(BaseModel):
+    """Saved tweet draft with optional topic and goal."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")
 
     text: str
-
-    updated_at: datetime = FieldInfo(alias="updatedAt")
 
     goal: Optional[str] = None
 

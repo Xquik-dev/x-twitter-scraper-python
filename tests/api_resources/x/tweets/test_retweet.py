@@ -24,8 +24,8 @@ class TestRetweet:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         retweet = client.x.tweets.retweet.create(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
@@ -33,8 +33,8 @@ class TestRetweet:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.retweet.with_raw_response.create(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -46,8 +46,8 @@ class TestRetweet:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.tweets.retweet.with_streaming_response.create(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -60,18 +60,18 @@ class TestRetweet:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_path_params_create(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.tweets.retweet.with_raw_response.create(
-                tweet_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_method_delete(self, client: XTwitterScraper) -> None:
         retweet = client.x.tweets.retweet.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
@@ -79,8 +79,8 @@ class TestRetweet:
     @parametrize
     def test_raw_response_delete(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.retweet.with_raw_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -92,8 +92,8 @@ class TestRetweet:
     @parametrize
     def test_streaming_response_delete(self, client: XTwitterScraper) -> None:
         with client.x.tweets.retweet.with_streaming_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -106,10 +106,10 @@ class TestRetweet:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_path_params_delete(self, client: XTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.tweets.retweet.with_raw_response.delete(
-                tweet_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
 
@@ -122,8 +122,8 @@ class TestAsyncRetweet:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         retweet = await async_client.x.tweets.retweet.create(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
@@ -131,8 +131,8 @@ class TestAsyncRetweet:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.retweet.with_raw_response.create(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -144,8 +144,8 @@ class TestAsyncRetweet:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.retweet.with_streaming_response.create(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -158,18 +158,18 @@ class TestAsyncRetweet:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_path_params_create(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.tweets.retweet.with_raw_response.create(
-                tweet_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_method_delete(self, async_client: AsyncXTwitterScraper) -> None:
         retweet = await async_client.x.tweets.retweet.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
         assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
@@ -177,8 +177,8 @@ class TestAsyncRetweet:
     @parametrize
     async def test_raw_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.retweet.with_raw_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         )
 
         assert response.is_closed is True
@@ -190,8 +190,8 @@ class TestAsyncRetweet:
     @parametrize
     async def test_streaming_response_delete(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.retweet.with_streaming_response.delete(
-            tweet_id="tweetId",
-            account="account",
+            id="id",
+            account="@elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -204,8 +204,8 @@ class TestAsyncRetweet:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_path_params_delete(self, async_client: AsyncXTwitterScraper) -> None:
-        with pytest.raises(ValueError, match=r"Expected a non-empty value for `tweet_id` but received ''"):
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.tweets.retweet.with_raw_response.delete(
-                tweet_id="",
-                account="account",
+                id="",
+                account="@elonmusk",
             )

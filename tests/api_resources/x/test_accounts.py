@@ -10,11 +10,12 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
+    XAccountDetail,
     AccountListResponse,
     AccountCreateResponse,
     AccountDeleteResponse,
     AccountReauthResponse,
-    AccountRetrieveResponse,
+    AccountBulkRetryResponse,
 )
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
@@ -27,9 +28,9 @@ class TestAccounts:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -37,11 +38,11 @@ class TestAccounts:
     @parametrize
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
-            proxy_country="proxy_country",
-            totp_secret="totp_secret",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
+            proxy_country="US",
+            totp_secret="JBSWY3DPEHPK3PXP",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -49,9 +50,9 @@ class TestAccounts:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.accounts.with_raw_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -63,9 +64,9 @@ class TestAccounts:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.accounts.with_streaming_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -81,7 +82,7 @@ class TestAccounts:
         account = client.x.accounts.retrieve(
             "id",
         )
-        assert_matches_type(AccountRetrieveResponse, account, path=["response"])
+        assert_matches_type(XAccountDetail, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -93,7 +94,7 @@ class TestAccounts:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         account = response.parse()
-        assert_matches_type(AccountRetrieveResponse, account, path=["response"])
+        assert_matches_type(XAccountDetail, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -105,7 +106,7 @@ class TestAccounts:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             account = response.parse()
-            assert_matches_type(AccountRetrieveResponse, account, path=["response"])
+            assert_matches_type(XAccountDetail, account, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -189,10 +190,38 @@ class TestAccounts:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_bulk_retry(self, client: XTwitterScraper) -> None:
+        account = client.x.accounts.bulk_retry()
+        assert_matches_type(AccountBulkRetryResponse, account, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_bulk_retry(self, client: XTwitterScraper) -> None:
+        response = client.x.accounts.with_raw_response.bulk_retry()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        account = response.parse()
+        assert_matches_type(AccountBulkRetryResponse, account, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_bulk_retry(self, client: XTwitterScraper) -> None:
+        with client.x.accounts.with_streaming_response.bulk_retry() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            account = response.parse()
+            assert_matches_type(AccountBulkRetryResponse, account, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_method_reauth(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -201,8 +230,8 @@ class TestAccounts:
     def test_method_reauth_with_all_params(self, client: XTwitterScraper) -> None:
         account = client.x.accounts.reauth(
             id="id",
-            password="password",
-            totp_secret="totp_secret",
+            password="password_value",
+            totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -211,7 +240,7 @@ class TestAccounts:
     def test_raw_response_reauth(self, client: XTwitterScraper) -> None:
         response = client.x.accounts.with_raw_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
 
         assert response.is_closed is True
@@ -224,7 +253,7 @@ class TestAccounts:
     def test_streaming_response_reauth(self, client: XTwitterScraper) -> None:
         with client.x.accounts.with_streaming_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -240,7 +269,7 @@ class TestAccounts:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.accounts.with_raw_response.reauth(
                 id="",
-                password="password",
+                password="password_value",
             )
 
 
@@ -253,9 +282,9 @@ class TestAsyncAccounts:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -263,11 +292,11 @@ class TestAsyncAccounts:
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.create(
-            email="email",
-            password="password",
-            username="username",
-            proxy_country="proxy_country",
-            totp_secret="totp_secret",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
+            proxy_country="US",
+            totp_secret="JBSWY3DPEHPK3PXP",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
 
@@ -275,9 +304,9 @@ class TestAsyncAccounts:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.accounts.with_raw_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         )
 
         assert response.is_closed is True
@@ -289,9 +318,9 @@ class TestAsyncAccounts:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.accounts.with_streaming_response.create(
-            email="email",
-            password="password",
-            username="username",
+            email="user@example.com",
+            password="s3cur3Pa$$w0rd",
+            username="elonmusk",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -307,7 +336,7 @@ class TestAsyncAccounts:
         account = await async_client.x.accounts.retrieve(
             "id",
         )
-        assert_matches_type(AccountRetrieveResponse, account, path=["response"])
+        assert_matches_type(XAccountDetail, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -319,7 +348,7 @@ class TestAsyncAccounts:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         account = await response.parse()
-        assert_matches_type(AccountRetrieveResponse, account, path=["response"])
+        assert_matches_type(XAccountDetail, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -331,7 +360,7 @@ class TestAsyncAccounts:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             account = await response.parse()
-            assert_matches_type(AccountRetrieveResponse, account, path=["response"])
+            assert_matches_type(XAccountDetail, account, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -415,10 +444,38 @@ class TestAsyncAccounts:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    async def test_method_bulk_retry(self, async_client: AsyncXTwitterScraper) -> None:
+        account = await async_client.x.accounts.bulk_retry()
+        assert_matches_type(AccountBulkRetryResponse, account, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_bulk_retry(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.accounts.with_raw_response.bulk_retry()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        account = await response.parse()
+        assert_matches_type(AccountBulkRetryResponse, account, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_bulk_retry(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.accounts.with_streaming_response.bulk_retry() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            account = await response.parse()
+            assert_matches_type(AccountBulkRetryResponse, account, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     async def test_method_reauth(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -427,8 +484,8 @@ class TestAsyncAccounts:
     async def test_method_reauth_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         account = await async_client.x.accounts.reauth(
             id="id",
-            password="password",
-            totp_secret="totp_secret",
+            password="password_value",
+            totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
 
@@ -437,7 +494,7 @@ class TestAsyncAccounts:
     async def test_raw_response_reauth(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.accounts.with_raw_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         )
 
         assert response.is_closed is True
@@ -450,7 +507,7 @@ class TestAsyncAccounts:
     async def test_streaming_response_reauth(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.accounts.with_streaming_response.reauth(
             id="id",
-            password="password",
+            password="password_value",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -466,5 +523,5 @@ class TestAsyncAccounts:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.accounts.with_raw_response.reauth(
                 id="",
-                password="password",
+                password="password_value",
             )

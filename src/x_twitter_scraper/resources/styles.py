@@ -18,11 +18,9 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.style_profile import StyleProfile
 from ..types.style_list_response import StyleListResponse
-from ..types.style_update_response import StyleUpdateResponse
-from ..types.style_analyze_response import StyleAnalyzeResponse
 from ..types.style_compare_response import StyleCompareResponse
-from ..types.style_retrieve_response import StyleRetrieveResponse
 from ..types.style_get_performance_response import StyleGetPerformanceResponse
 
 __all__ = ["StylesResource", "AsyncStylesResource"]
@@ -52,7 +50,7 @@ class StylesResource(SyncAPIResource):
 
     def retrieve(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -60,7 +58,7 @@ class StylesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleRetrieveResponse:
+    ) -> StyleProfile:
         """
         Get cached style profile
 
@@ -73,19 +71,19 @@ class StylesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._get(
-            path_template("/styles/{username}", username=username),
+            path_template("/styles/{id}", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleRetrieveResponse,
+            cast_to=StyleProfile,
         )
 
     def update(
         self,
-        username: str,
+        id: str,
         *,
         label: str,
         tweets: Iterable[style_update_params.Tweet],
@@ -95,7 +93,7 @@ class StylesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleUpdateResponse:
+    ) -> StyleProfile:
         """
         Save style profile with custom tweets
 
@@ -112,10 +110,10 @@ class StylesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._put(
-            path_template("/styles/{username}", username=username),
+            path_template("/styles/{id}", id=id),
             body=maybe_transform(
                 {
                     "label": label,
@@ -126,7 +124,7 @@ class StylesResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleUpdateResponse,
+            cast_to=StyleProfile,
         )
 
     def list(
@@ -150,7 +148,7 @@ class StylesResource(SyncAPIResource):
 
     def delete(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -171,11 +169,11 @@ class StylesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._delete(
-            path_template("/styles/{username}", username=username),
+            path_template("/styles/{id}", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -192,7 +190,7 @@ class StylesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleAnalyzeResponse:
+    ) -> StyleProfile:
         """
         Analyze writing style from recent tweets
 
@@ -213,7 +211,7 @@ class StylesResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleAnalyzeResponse,
+            cast_to=StyleProfile,
         )
 
     def compare(
@@ -264,7 +262,7 @@ class StylesResource(SyncAPIResource):
 
     def get_performance(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -285,10 +283,10 @@ class StylesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._get(
-            path_template("/styles/{username}/performance", username=username),
+            path_template("/styles/{id}/performance", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -320,7 +318,7 @@ class AsyncStylesResource(AsyncAPIResource):
 
     async def retrieve(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -328,7 +326,7 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleRetrieveResponse:
+    ) -> StyleProfile:
         """
         Get cached style profile
 
@@ -341,19 +339,19 @@ class AsyncStylesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._get(
-            path_template("/styles/{username}", username=username),
+            path_template("/styles/{id}", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleRetrieveResponse,
+            cast_to=StyleProfile,
         )
 
     async def update(
         self,
-        username: str,
+        id: str,
         *,
         label: str,
         tweets: Iterable[style_update_params.Tweet],
@@ -363,7 +361,7 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleUpdateResponse:
+    ) -> StyleProfile:
         """
         Save style profile with custom tweets
 
@@ -380,10 +378,10 @@ class AsyncStylesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._put(
-            path_template("/styles/{username}", username=username),
+            path_template("/styles/{id}", id=id),
             body=await async_maybe_transform(
                 {
                     "label": label,
@@ -394,7 +392,7 @@ class AsyncStylesResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleUpdateResponse,
+            cast_to=StyleProfile,
         )
 
     async def list(
@@ -418,7 +416,7 @@ class AsyncStylesResource(AsyncAPIResource):
 
     async def delete(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -439,11 +437,11 @@ class AsyncStylesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._delete(
-            path_template("/styles/{username}", username=username),
+            path_template("/styles/{id}", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -460,7 +458,7 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> StyleAnalyzeResponse:
+    ) -> StyleProfile:
         """
         Analyze writing style from recent tweets
 
@@ -481,7 +479,7 @@ class AsyncStylesResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=StyleAnalyzeResponse,
+            cast_to=StyleProfile,
         )
 
     async def compare(
@@ -532,7 +530,7 @@ class AsyncStylesResource(AsyncAPIResource):
 
     async def get_performance(
         self,
-        username: str,
+        id: str,
         *,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -553,10 +551,10 @@ class AsyncStylesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not username:
-            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._get(
-            path_template("/styles/{username}/performance", username=username),
+            path_template("/styles/{id}/performance", id=id),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),

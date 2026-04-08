@@ -1,5 +1,29 @@
 # Changelog
 
+## 0.3.0 (2026-04-08)
+
+Full Changelog: [v0.2.0...v0.3.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.2.0...v0.3.0)
+
+### Features
+
+* **api:** api update ([95f41f1](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/95f41f169819933331d1f5099dd49bec9f54c153))
+* **api:** api update ([1099626](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/10996263a67c92aed9a32c6b08d665a314481efd))
+* **api:** api update ([4da9b26](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/4da9b26da35aaf2d98decc7589df0a441decc54e))
+* **api:** api update ([a4aab27](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/a4aab2774ebcd526a8d8e1bb141f245fa39a44da))
+* **api:** api update ([6595833](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/65958335df38ea35208109db2248093a51f6563b))
+* **api:** api update ([9059aff](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9059aff529800e915fda0f8c3f1c0e19234f3057))
+* **api:** api update ([e52e7fb](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/e52e7fba2cb13cdc2dd75fcfe4d281e7e28d445c))
+
+
+### Bug Fixes
+
+* **client:** preserve hardcoded query params when merging with user params ([6ce9027](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/6ce902711cfc8cfac19f9adbddcc37762d0a6517))
+
+
+### Chores
+
+* update SDK settings ([60a1489](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/60a1489a526d1b98b2a11e39b835bd7ce552feb1))
+
 ## 0.2.0 (2026-04-01)
 
 Full Changelog: [v0.1.3...v0.2.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.1.3...v0.2.0)

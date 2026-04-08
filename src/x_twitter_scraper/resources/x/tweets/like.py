@@ -46,7 +46,7 @@ class LikeResource(SyncAPIResource):
 
     def create(
         self,
-        tweet_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -60,7 +60,7 @@ class LikeResource(SyncAPIResource):
         Like tweet
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -70,10 +70,10 @@ class LikeResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._post(
-            path_template("/x/tweets/{tweet_id}/like", tweet_id=tweet_id),
+            path_template("/x/tweets/{id}/like", id=id),
             body=maybe_transform({"account": account}, like_create_params.LikeCreateParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -83,7 +83,7 @@ class LikeResource(SyncAPIResource):
 
     def delete(
         self,
-        tweet_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -97,7 +97,7 @@ class LikeResource(SyncAPIResource):
         Unlike tweet
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -107,10 +107,10 @@ class LikeResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return self._delete(
-            path_template("/x/tweets/{tweet_id}/like", tweet_id=tweet_id),
+            path_template("/x/tweets/{id}/like", id=id),
             body=maybe_transform({"account": account}, like_delete_params.LikeDeleteParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -143,7 +143,7 @@ class AsyncLikeResource(AsyncAPIResource):
 
     async def create(
         self,
-        tweet_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -157,7 +157,7 @@ class AsyncLikeResource(AsyncAPIResource):
         Like tweet
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -167,10 +167,10 @@ class AsyncLikeResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._post(
-            path_template("/x/tweets/{tweet_id}/like", tweet_id=tweet_id),
+            path_template("/x/tweets/{id}/like", id=id),
             body=await async_maybe_transform({"account": account}, like_create_params.LikeCreateParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -180,7 +180,7 @@ class AsyncLikeResource(AsyncAPIResource):
 
     async def delete(
         self,
-        tweet_id: str,
+        id: str,
         *,
         account: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -194,7 +194,7 @@ class AsyncLikeResource(AsyncAPIResource):
         Unlike tweet
 
         Args:
-          account: X account (@username or account ID)
+          account: X account identifier (@username or account ID)
 
           extra_headers: Send extra headers
 
@@ -204,10 +204,10 @@ class AsyncLikeResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        if not tweet_id:
-            raise ValueError(f"Expected a non-empty value for `tweet_id` but received {tweet_id!r}")
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         return await self._delete(
-            path_template("/x/tweets/{tweet_id}/like", tweet_id=tweet_id),
+            path_template("/x/tweets/{id}/like", id=id),
             body=await async_maybe_transform({"account": account}, like_delete_params.LikeDeleteParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout

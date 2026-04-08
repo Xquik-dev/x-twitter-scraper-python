@@ -7,7 +7,7 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["StyleRetrieveResponse", "Tweet"]
+__all__ = ["StyleProfile", "Tweet"]
 
 
 class Tweet(BaseModel):
@@ -20,7 +20,9 @@ class Tweet(BaseModel):
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
 
-class StyleRetrieveResponse(BaseModel):
+class StyleProfile(BaseModel):
+    """Full style profile with sampled tweets used for tone analysis."""
+
     fetched_at: datetime = FieldInfo(alias="fetchedAt")
 
     is_own_account: bool = FieldInfo(alias="isOwnAccount")

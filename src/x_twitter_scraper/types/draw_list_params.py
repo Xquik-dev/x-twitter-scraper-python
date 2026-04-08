@@ -9,6 +9,7 @@ __all__ = ["DrawListParams"]
 
 class DrawListParams(TypedDict, total=False):
     after: str
-    """Cursor for pagination"""
+    """Cursor for keyset pagination"""
 
     limit: int
+    """Maximum number of items to return (1-100, default 50)"""

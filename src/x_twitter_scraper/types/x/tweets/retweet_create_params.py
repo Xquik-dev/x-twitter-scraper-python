@@ -9,4 +9,4 @@ __all__ = ["RetweetCreateParams"]
 
 class RetweetCreateParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or account ID)"""
+    """X account identifier (@username or account ID)"""

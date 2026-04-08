@@ -9,7 +9,7 @@ __all__ = ["AccountReauthParams"]
 
 class AccountReauthParams(TypedDict, total=False):
     password: Required[str]
-    """Account password"""
+    """Updated account password"""
 
     totp_secret: str
-    """TOTP secret for 2FA"""
+    """TOTP secret for 2FA re-authentication"""

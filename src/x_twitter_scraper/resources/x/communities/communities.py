@@ -20,7 +20,7 @@ from .tweets import (
     TweetsResourceWithStreamingResponse,
     AsyncTweetsResourceWithStreamingResponse,
 )
-from ...._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
+from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ...._utils import path_template, maybe_transform, async_maybe_transform
 from ...._compat import cached_property
 from ....types.x import (
@@ -38,6 +38,8 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
+from ....types.shared.paginated_users import PaginatedUsers
+from ....types.shared.paginated_tweets import PaginatedTweets
 from ....types.x.community_create_response import CommunityCreateResponse
 from ....types.x.community_delete_response import CommunityDeleteResponse
 from ....types.x.community_retrieve_info_response import CommunityRetrieveInfoResponse
@@ -92,7 +94,7 @@ class CommunitiesResource(SyncAPIResource):
         Create community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) creating the community
 
           name: Community name
 
@@ -139,7 +141,7 @@ class CommunitiesResource(SyncAPIResource):
         Delete community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) deleting the community
 
           community_name: Community name for confirmation
 
@@ -212,7 +214,7 @@ class CommunitiesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get community members
 
@@ -229,7 +231,6 @@ class CommunitiesResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/communities/{id}/members", id=id),
             options=make_request_options(
@@ -241,7 +242,7 @@ class CommunitiesResource(SyncAPIResource):
                     {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_moderators(
@@ -255,12 +256,12 @@ class CommunitiesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get community moderators
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for community moderators
 
           extra_headers: Send extra headers
 
@@ -272,7 +273,6 @@ class CommunitiesResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             path_template("/x/communities/{id}/moderators", id=id),
             options=make_request_options(
@@ -284,7 +284,7 @@ class CommunitiesResource(SyncAPIResource):
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_search(
@@ -299,14 +299,14 @@ class CommunitiesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Search tweets across communities
 
         Args:
           q: Search query
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for community search
 
           query_type: Sort order (Latest or Top)
 
@@ -318,7 +318,6 @@ class CommunitiesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return self._get(
             "/x/communities/search",
             options=make_request_options(
@@ -335,7 +334,7 @@ class CommunitiesResource(SyncAPIResource):
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
         )
 
 
@@ -386,7 +385,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         Create community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) creating the community
 
           name: Community name
 
@@ -433,7 +432,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         Delete community
 
         Args:
-          account: X account (@username or account ID)
+          account: X account (@username or ID) deleting the community
 
           community_name: Community name for confirmation
 
@@ -506,7 +505,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get community members
 
@@ -523,7 +522,6 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/communities/{id}/members", id=id),
             options=make_request_options(
@@ -535,7 +533,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_moderators(
@@ -549,12 +547,12 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedUsers:
         """
         Get community moderators
 
         Args:
-          cursor: Pagination cursor
+          cursor: Pagination cursor for community moderators
 
           extra_headers: Send extra headers
 
@@ -566,7 +564,6 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             path_template("/x/communities/{id}/moderators", id=id),
             options=make_request_options(
@@ -578,7 +575,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_search(
@@ -593,14 +590,14 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> None:
+    ) -> PaginatedTweets:
         """
         Search tweets across communities
 
         Args:
           q: Search query
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for community search
 
           query_type: Sort order (Latest or Top)
 
@@ -612,7 +609,6 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
         return await self._get(
             "/x/communities/search",
             options=make_request_options(
@@ -629,7 +625,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
             ),
-            cast_to=NoneType,
+            cast_to=PaginatedTweets,
         )
 
 

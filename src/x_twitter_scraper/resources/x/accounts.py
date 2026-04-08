@@ -16,11 +16,12 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
+from ...types.x.x_account_detail import XAccountDetail
 from ...types.x.account_list_response import AccountListResponse
 from ...types.x.account_create_response import AccountCreateResponse
 from ...types.x.account_delete_response import AccountDeleteResponse
 from ...types.x.account_reauth_response import AccountReauthResponse
-from ...types.x.account_retrieve_response import AccountRetrieveResponse
+from ...types.x.account_bulk_retry_response import AccountBulkRetryResponse
 
 __all__ = ["AccountsResource", "AsyncAccountsResource"]
 
@@ -101,7 +102,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountCreateResponse,
         )
@@ -116,7 +117,7 @@ class AccountsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AccountRetrieveResponse:
+    ) -> XAccountDetail:
         """
         Get X account details
 
@@ -138,9 +139,9 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
-            cast_to=AccountRetrieveResponse,
+            cast_to=XAccountDetail,
         )
 
     def list(
@@ -161,7 +162,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountListResponse,
         )
@@ -198,9 +199,35 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountDeleteResponse,
+        )
+
+    def bulk_retry(
+        self,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> AccountBulkRetryResponse:
+        """
+        Clears loginFailedAt and loginFailureReason for all accounts with transient or
+        automated failure reasons, making them eligible for retry on next use.
+        """
+        return self._post(
+            "/x/accounts/bulk-retry",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={"api_key": True},
+            ),
+            cast_to=AccountBulkRetryResponse,
         )
 
     def reauth(
@@ -220,9 +247,9 @@ class AccountsResource(SyncAPIResource):
         Re-authenticate X account
 
         Args:
-          password: Account password
+          password: Updated account password
 
-          totp_secret: TOTP secret for 2FA
+          totp_secret: TOTP secret for 2FA re-authentication
 
           extra_headers: Send extra headers
 
@@ -248,7 +275,7 @@ class AccountsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountReauthResponse,
         )
@@ -330,7 +357,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountCreateResponse,
         )
@@ -345,7 +372,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AccountRetrieveResponse:
+    ) -> XAccountDetail:
         """
         Get X account details
 
@@ -367,9 +394,9 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
-            cast_to=AccountRetrieveResponse,
+            cast_to=XAccountDetail,
         )
 
     async def list(
@@ -390,7 +417,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountListResponse,
         )
@@ -427,9 +454,35 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountDeleteResponse,
+        )
+
+    async def bulk_retry(
+        self,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> AccountBulkRetryResponse:
+        """
+        Clears loginFailedAt and loginFailureReason for all accounts with transient or
+        automated failure reasons, making them eligible for retry on next use.
+        """
+        return await self._post(
+            "/x/accounts/bulk-retry",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={"api_key": True},
+            ),
+            cast_to=AccountBulkRetryResponse,
         )
 
     async def reauth(
@@ -449,9 +502,9 @@ class AsyncAccountsResource(AsyncAPIResource):
         Re-authenticate X account
 
         Args:
-          password: Account password
+          password: Updated account password
 
-          totp_secret: TOTP secret for 2FA
+          totp_secret: TOTP secret for 2FA re-authentication
 
           extra_headers: Send extra headers
 
@@ -477,7 +530,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                security={},
+                security={"api_key": True},
             ),
             cast_to=AccountReauthResponse,
         )
@@ -498,6 +551,9 @@ class AccountsResourceWithRawResponse:
         )
         self.delete = to_raw_response_wrapper(
             accounts.delete,
+        )
+        self.bulk_retry = to_raw_response_wrapper(
+            accounts.bulk_retry,
         )
         self.reauth = to_raw_response_wrapper(
             accounts.reauth,
@@ -520,6 +576,9 @@ class AsyncAccountsResourceWithRawResponse:
         self.delete = async_to_raw_response_wrapper(
             accounts.delete,
         )
+        self.bulk_retry = async_to_raw_response_wrapper(
+            accounts.bulk_retry,
+        )
         self.reauth = async_to_raw_response_wrapper(
             accounts.reauth,
         )
@@ -541,6 +600,9 @@ class AccountsResourceWithStreamingResponse:
         self.delete = to_streamed_response_wrapper(
             accounts.delete,
         )
+        self.bulk_retry = to_streamed_response_wrapper(
+            accounts.bulk_retry,
+        )
         self.reauth = to_streamed_response_wrapper(
             accounts.reauth,
         )
@@ -561,6 +623,9 @@ class AsyncAccountsResourceWithStreamingResponse:
         )
         self.delete = async_to_streamed_response_wrapper(
             accounts.delete,
+        )
+        self.bulk_retry = async_to_streamed_response_wrapper(
+            accounts.bulk_retry,
         )
         self.reauth = async_to_streamed_response_wrapper(
             accounts.reauth,

@@ -7,10 +7,12 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["DraftRetrieveResponse"]
+__all__ = ["DraftDetail"]
 
 
-class DraftRetrieveResponse(BaseModel):
+class DraftDetail(BaseModel):
+    """Full tweet draft including update timestamp."""
+
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")

@@ -30,16 +30,16 @@ class TestCompose:
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         compose = client.compose.create(
             step="compose",
-            additional_context="additionalContext",
-            call_to_action="callToAction",
-            draft="draft",
+            additional_context="https://x.com/elonmusk/status/1234567890",
+            call_to_action="Follow for more",
+            draft="AI is changing everything. Here's why.",
             goal="engagement",
-            has_link=True,
-            has_media=True,
-            media_type="photo",
-            style_username="styleUsername",
-            tone="tone",
-            topic="topic",
+            has_link=False,
+            has_media=False,
+            media_type="none",
+            style_username="elonmusk",
+            tone="professional",
+            topic="AI trends in 2025",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -88,16 +88,16 @@ class TestAsyncCompose:
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         compose = await async_client.compose.create(
             step="compose",
-            additional_context="additionalContext",
-            call_to_action="callToAction",
-            draft="draft",
+            additional_context="https://x.com/elonmusk/status/1234567890",
+            call_to_action="Follow for more",
+            draft="AI is changing everything. Here's why.",
             goal="engagement",
-            has_link=True,
-            has_media=True,
-            media_type="photo",
-            style_username="styleUsername",
-            tone="tone",
-            topic="topic",
+            has_link=False,
+            has_media=False,
+            media_type="none",
+            style_username="elonmusk",
+            tone="professional",
+            topic="AI trends in 2025",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 

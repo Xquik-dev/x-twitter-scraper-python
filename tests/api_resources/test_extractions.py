@@ -95,7 +95,7 @@ class TestExtractions:
             after="after",
             limit=1,
             status="running",
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
         assert_matches_type(ExtractionListResponse, extraction, path=["response"])
 
@@ -125,7 +125,7 @@ class TestExtractions:
     @parametrize
     def test_method_estimate_cost(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.estimate_cost(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -133,16 +133,16 @@ class TestExtractions:
     @parametrize
     def test_method_estimate_cost_with_all_params(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.estimate_cost(
-            tool_type="article_extractor",
-            advanced_query="advancedQuery",
-            exact_phrase="exactPhrase",
-            exclude_words="excludeWords",
-            search_query="searchQuery",
-            target_community_id="targetCommunityId",
-            target_list_id="targetListId",
-            target_space_id="targetSpaceId",
-            target_tweet_id="targetTweetId",
-            target_username="targetUsername",
+            tool_type="follower_explorer",
+            advanced_query="min_faves:100",
+            exact_phrase="artificial intelligence",
+            exclude_words="spam",
+            search_query="AI trends 2025",
+            target_community_id="1500000000000000000",
+            target_list_id="1234567890",
+            target_space_id="1vOGwMdBqpwGB",
+            target_tweet_id="1234567890",
+            target_username="elonmusk",
         )
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -150,7 +150,7 @@ class TestExtractions:
     @parametrize
     def test_raw_response_estimate_cost(self, client: XTwitterScraper) -> None:
         response = client.extractions.with_raw_response.estimate_cost(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
 
         assert response.is_closed is True
@@ -162,7 +162,7 @@ class TestExtractions:
     @parametrize
     def test_streaming_response_estimate_cost(self, client: XTwitterScraper) -> None:
         with client.extractions.with_streaming_response.estimate_cost(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -239,7 +239,7 @@ class TestExtractions:
     @parametrize
     def test_method_run(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.run(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
@@ -247,16 +247,16 @@ class TestExtractions:
     @parametrize
     def test_method_run_with_all_params(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.run(
-            tool_type="article_extractor",
-            advanced_query="advancedQuery",
-            exact_phrase="exactPhrase",
-            exclude_words="excludeWords",
-            search_query="searchQuery",
-            target_community_id="targetCommunityId",
-            target_list_id="targetListId",
-            target_space_id="targetSpaceId",
-            target_tweet_id="targetTweetId",
-            target_username="targetUsername",
+            tool_type="follower_explorer",
+            advanced_query="min_faves:100",
+            exact_phrase="artificial intelligence",
+            exclude_words="spam",
+            search_query="AI trends 2025",
+            target_community_id="1500000000000000000",
+            target_list_id="1234567890",
+            target_space_id="1vOGwMdBqpwGB",
+            target_tweet_id="1234567890",
+            target_username="elonmusk",
         )
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
@@ -264,7 +264,7 @@ class TestExtractions:
     @parametrize
     def test_raw_response_run(self, client: XTwitterScraper) -> None:
         response = client.extractions.with_raw_response.run(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
 
         assert response.is_closed is True
@@ -276,7 +276,7 @@ class TestExtractions:
     @parametrize
     def test_streaming_response_run(self, client: XTwitterScraper) -> None:
         with client.extractions.with_streaming_response.run(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -357,7 +357,7 @@ class TestAsyncExtractions:
             after="after",
             limit=1,
             status="running",
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
         assert_matches_type(ExtractionListResponse, extraction, path=["response"])
 
@@ -387,7 +387,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_estimate_cost(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.estimate_cost(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -395,16 +395,16 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_estimate_cost_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.estimate_cost(
-            tool_type="article_extractor",
-            advanced_query="advancedQuery",
-            exact_phrase="exactPhrase",
-            exclude_words="excludeWords",
-            search_query="searchQuery",
-            target_community_id="targetCommunityId",
-            target_list_id="targetListId",
-            target_space_id="targetSpaceId",
-            target_tweet_id="targetTweetId",
-            target_username="targetUsername",
+            tool_type="follower_explorer",
+            advanced_query="min_faves:100",
+            exact_phrase="artificial intelligence",
+            exclude_words="spam",
+            search_query="AI trends 2025",
+            target_community_id="1500000000000000000",
+            target_list_id="1234567890",
+            target_space_id="1vOGwMdBqpwGB",
+            target_tweet_id="1234567890",
+            target_username="elonmusk",
         )
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -412,7 +412,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_raw_response_estimate_cost(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.extractions.with_raw_response.estimate_cost(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
 
         assert response.is_closed is True
@@ -424,7 +424,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_streaming_response_estimate_cost(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.extractions.with_streaming_response.estimate_cost(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -507,7 +507,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_run(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.run(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
@@ -515,16 +515,16 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_run_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.run(
-            tool_type="article_extractor",
-            advanced_query="advancedQuery",
-            exact_phrase="exactPhrase",
-            exclude_words="excludeWords",
-            search_query="searchQuery",
-            target_community_id="targetCommunityId",
-            target_list_id="targetListId",
-            target_space_id="targetSpaceId",
-            target_tweet_id="targetTweetId",
-            target_username="targetUsername",
+            tool_type="follower_explorer",
+            advanced_query="min_faves:100",
+            exact_phrase="artificial intelligence",
+            exclude_words="spam",
+            search_query="AI trends 2025",
+            target_community_id="1500000000000000000",
+            target_list_id="1234567890",
+            target_space_id="1vOGwMdBqpwGB",
+            target_tweet_id="1234567890",
+            target_username="elonmusk",
         )
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
@@ -532,7 +532,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_raw_response_run(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.extractions.with_raw_response.run(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         )
 
         assert response.is_closed is True
@@ -544,7 +544,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_streaming_response_run(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.extractions.with_streaming_response.run(
-            tool_type="article_extractor",
+            tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
