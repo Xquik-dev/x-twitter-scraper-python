@@ -441,8 +441,8 @@ Methods:
 
 Methods:
 
-- <code title="get /x/communities/tweets">client.x.communities.tweets.<a href="./src/x_twitter_scraper/resources/x/communities/tweets.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/x/communities/tweet_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">SyncCursorPage[PaginatedTweets]</a></code>
-- <code title="get /x/communities/{id}/tweets">client.x.communities.tweets.<a href="./src/x_twitter_scraper/resources/x/communities/tweets.py">list_by_community</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/communities/tweet_list_by_community_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">SyncCursorPage[PaginatedTweets]</a></code>
+- <code title="get /x/communities/tweets">client.x.communities.tweets.<a href="./src/x_twitter_scraper/resources/x/communities/tweets.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/x/communities/tweet_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/communities/{id}/tweets">client.x.communities.tweets.<a href="./src/x_twitter_scraper/resources/x/communities/tweets.py">list_by_community</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/communities/tweet_list_by_community_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 
 ## Accounts
 
@@ -479,7 +479,7 @@ from x_twitter_scraper.types.x import BookmarkRetrieveFoldersResponse
 
 Methods:
 
-- <code title="get /x/bookmarks">client.x.bookmarks.<a href="./src/x_twitter_scraper/resources/x/bookmarks.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/x/bookmark_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">SyncCursorPage[PaginatedTweets]</a></code>
+- <code title="get /x/bookmarks">client.x.bookmarks.<a href="./src/x_twitter_scraper/resources/x/bookmarks.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/x/bookmark_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/bookmarks/folders">client.x.bookmarks.<a href="./src/x_twitter_scraper/resources/x/bookmarks.py">retrieve_folders</a>() -> <a href="./src/x_twitter_scraper/types/x/bookmark_retrieve_folders_response.py">BookmarkRetrieveFoldersResponse</a></code>
 
 ## Lists

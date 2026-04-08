@@ -5,7 +5,7 @@ from __future__ import annotations
 import httpx
 
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from ..._utils import maybe_transform
+from ..._utils import maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import bookmark_list_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -15,8 +15,7 @@ from ..._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
-from ...pagination import SyncCursorPage, AsyncCursorPage
-from ..._base_client import AsyncPaginator, make_request_options
+from ..._base_client import make_request_options
 from ...types.shared.paginated_tweets import PaginatedTweets
 from ...types.x.bookmark_retrieve_folders_response import BookmarkRetrieveFoldersResponse
 
@@ -56,7 +55,7 @@ class BookmarksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> SyncCursorPage[PaginatedTweets]:
+    ) -> PaginatedTweets:
         """
         Get bookmarked tweets
 
@@ -73,9 +72,8 @@ class BookmarksResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._get_api_list(
+        return self._get(
             "/x/bookmarks",
-            page=SyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -89,7 +87,7 @@ class BookmarksResource(SyncAPIResource):
                     bookmark_list_params.BookmarkListParams,
                 ),
             ),
-            model=PaginatedTweets,
+            cast_to=PaginatedTweets,
         )
 
     def retrieve_folders(
@@ -134,7 +132,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         """
         return AsyncBookmarksResourceWithStreamingResponse(self)
 
-    def list(
+    async def list(
         self,
         *,
         cursor: str | Omit = omit,
@@ -145,7 +143,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AsyncPaginator[PaginatedTweets, AsyncCursorPage[PaginatedTweets]]:
+    ) -> PaginatedTweets:
         """
         Get bookmarked tweets
 
@@ -162,15 +160,14 @@ class AsyncBookmarksResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._get_api_list(
+        return await self._get(
             "/x/bookmarks",
-            page=AsyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform(
+                query=await async_maybe_transform(
                     {
                         "cursor": cursor,
                         "folder_id": folder_id,
@@ -178,7 +175,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
                     bookmark_list_params.BookmarkListParams,
                 ),
             ),
-            model=PaginatedTweets,
+            cast_to=PaginatedTweets,
         )
 
     async def retrieve_folders(

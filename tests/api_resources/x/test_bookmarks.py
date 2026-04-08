@@ -10,7 +10,6 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import BookmarkRetrieveFoldersResponse
-from x_twitter_scraper.pagination import SyncCursorPage, AsyncCursorPage
 from x_twitter_scraper.types.shared import PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
@@ -23,7 +22,7 @@ class TestBookmarks:
     @parametrize
     def test_method_list(self, client: XTwitterScraper) -> None:
         bookmark = client.x.bookmarks.list()
-        assert_matches_type(SyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+        assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -32,7 +31,7 @@ class TestBookmarks:
             cursor="folders_value",
             folder_id="folderId",
         )
-        assert_matches_type(SyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+        assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -42,7 +41,7 @@ class TestBookmarks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         bookmark = response.parse()
-        assert_matches_type(SyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+        assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -52,7 +51,7 @@ class TestBookmarks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             bookmark = response.parse()
-            assert_matches_type(SyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+            assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -94,7 +93,7 @@ class TestAsyncBookmarks:
     @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         bookmark = await async_client.x.bookmarks.list()
-        assert_matches_type(AsyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+        assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -103,7 +102,7 @@ class TestAsyncBookmarks:
             cursor="folders_value",
             folder_id="folderId",
         )
-        assert_matches_type(AsyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+        assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -113,7 +112,7 @@ class TestAsyncBookmarks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         bookmark = await response.parse()
-        assert_matches_type(AsyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+        assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -123,7 +122,7 @@ class TestAsyncBookmarks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             bookmark = await response.parse()
-            assert_matches_type(AsyncCursorPage[PaginatedTweets], bookmark, path=["response"])
+            assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
