@@ -5,7 +5,7 @@ from __future__ import annotations
 import httpx
 
 from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from ...._utils import path_template, maybe_transform
+from ...._utils import path_template, maybe_transform, async_maybe_transform
 from ...._compat import cached_property
 from ...._resource import SyncAPIResource, AsyncAPIResource
 from ...._response import (
@@ -14,8 +14,7 @@ from ...._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
-from ....pagination import SyncCursorPage, AsyncCursorPage
-from ...._base_client import AsyncPaginator, make_request_options
+from ...._base_client import make_request_options
 from ....types.x.communities import tweet_list_params, tweet_list_by_community_params
 from ....types.shared.paginated_tweets import PaginatedTweets
 
@@ -56,7 +55,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> SyncCursorPage[PaginatedTweets]:
+    ) -> PaginatedTweets:
         """
         Search tweets across all communities
 
@@ -75,9 +74,8 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._get_api_list(
+        return self._get(
             "/x/communities/tweets",
-            page=SyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -92,7 +90,7 @@ class TweetsResource(SyncAPIResource):
                     tweet_list_params.TweetListParams,
                 ),
             ),
-            model=PaginatedTweets,
+            cast_to=PaginatedTweets,
         )
 
     def list_by_community(
@@ -106,7 +104,7 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> SyncCursorPage[PaginatedTweets]:
+    ) -> PaginatedTweets:
         """
         Get community tweets
 
@@ -123,9 +121,8 @@ class TweetsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get_api_list(
+        return self._get(
             path_template("/x/communities/{id}/tweets", id=id),
-            page=SyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -133,7 +130,7 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, tweet_list_by_community_params.TweetListByCommunityParams),
             ),
-            model=PaginatedTweets,
+            cast_to=PaginatedTweets,
         )
 
 
@@ -159,7 +156,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         return AsyncTweetsResourceWithStreamingResponse(self)
 
-    def list(
+    async def list(
         self,
         *,
         q: str,
@@ -171,7 +168,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AsyncPaginator[PaginatedTweets, AsyncCursorPage[PaginatedTweets]]:
+    ) -> PaginatedTweets:
         """
         Search tweets across all communities
 
@@ -190,15 +187,14 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._get_api_list(
+        return await self._get(
             "/x/communities/tweets",
-            page=AsyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform(
+                query=await async_maybe_transform(
                     {
                         "q": q,
                         "cursor": cursor,
@@ -207,10 +203,10 @@ class AsyncTweetsResource(AsyncAPIResource):
                     tweet_list_params.TweetListParams,
                 ),
             ),
-            model=PaginatedTweets,
+            cast_to=PaginatedTweets,
         )
 
-    def list_by_community(
+    async def list_by_community(
         self,
         id: str,
         *,
@@ -221,7 +217,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AsyncPaginator[PaginatedTweets, AsyncCursorPage[PaginatedTweets]]:
+    ) -> PaginatedTweets:
         """
         Get community tweets
 
@@ -238,17 +234,18 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get_api_list(
+        return await self._get(
             path_template("/x/communities/{id}/tweets", id=id),
-            page=AsyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, tweet_list_by_community_params.TweetListByCommunityParams),
+                query=await async_maybe_transform(
+                    {"cursor": cursor}, tweet_list_by_community_params.TweetListByCommunityParams
+                ),
             ),
-            model=PaginatedTweets,
+            cast_to=PaginatedTweets,
         )
 
 
