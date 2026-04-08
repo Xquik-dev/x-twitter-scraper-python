@@ -38,12 +38,11 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
+from ....types.shared.paginated_users import PaginatedUsers
+from ....types.shared.paginated_tweets import PaginatedTweets
 from ....types.x.community_create_response import CommunityCreateResponse
 from ....types.x.community_delete_response import CommunityDeleteResponse
 from ....types.x.community_retrieve_info_response import CommunityRetrieveInfoResponse
-from ....types.x.community_retrieve_search_response import CommunityRetrieveSearchResponse
-from ....types.x.community_retrieve_members_response import CommunityRetrieveMembersResponse
-from ....types.x.community_retrieve_moderators_response import CommunityRetrieveModeratorsResponse
 
 __all__ = ["CommunitiesResource", "AsyncCommunitiesResource"]
 
@@ -65,7 +64,7 @@ class CommunitiesResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return CommunitiesResourceWithRawResponse(self)
 
@@ -74,7 +73,7 @@ class CommunitiesResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return CommunitiesResourceWithStreamingResponse(self)
 
@@ -215,7 +214,7 @@ class CommunitiesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityRetrieveMembersResponse:
+    ) -> PaginatedUsers:
         """
         Get community members
 
@@ -243,7 +242,7 @@ class CommunitiesResource(SyncAPIResource):
                     {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
                 ),
             ),
-            cast_to=CommunityRetrieveMembersResponse,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_moderators(
@@ -257,7 +256,7 @@ class CommunitiesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityRetrieveModeratorsResponse:
+    ) -> PaginatedUsers:
         """
         Get community moderators
 
@@ -285,7 +284,7 @@ class CommunitiesResource(SyncAPIResource):
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
             ),
-            cast_to=CommunityRetrieveModeratorsResponse,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_search(
@@ -300,7 +299,7 @@ class CommunitiesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityRetrieveSearchResponse:
+    ) -> PaginatedTweets:
         """
         Search tweets across communities
 
@@ -335,7 +334,7 @@ class CommunitiesResource(SyncAPIResource):
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
             ),
-            cast_to=CommunityRetrieveSearchResponse,
+            cast_to=PaginatedTweets,
         )
 
 
@@ -356,7 +355,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncCommunitiesResourceWithRawResponse(self)
 
@@ -365,7 +364,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncCommunitiesResourceWithStreamingResponse(self)
 
@@ -506,7 +505,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityRetrieveMembersResponse:
+    ) -> PaginatedUsers:
         """
         Get community members
 
@@ -534,7 +533,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
                 ),
             ),
-            cast_to=CommunityRetrieveMembersResponse,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_moderators(
@@ -548,7 +547,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityRetrieveModeratorsResponse:
+    ) -> PaginatedUsers:
         """
         Get community moderators
 
@@ -576,7 +575,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
             ),
-            cast_to=CommunityRetrieveModeratorsResponse,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_search(
@@ -591,7 +590,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityRetrieveSearchResponse:
+    ) -> PaginatedTweets:
         """
         Search tweets across communities
 
@@ -626,7 +625,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
             ),
-            cast_to=CommunityRetrieveSearchResponse,
+            cast_to=PaginatedTweets,
         )
 
 

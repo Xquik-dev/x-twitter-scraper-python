@@ -6,6 +6,7 @@ from typing import List
 from typing_extensions import Literal, Required, Annotated, TypedDict
 
 from .._utils import PropertyInfo
+from .shared.event_type import EventType
 
 __all__ = ["IntegrationCreateParams", "Config"]
 
@@ -14,14 +15,7 @@ class IntegrationCreateParams(TypedDict, total=False):
     config: Required[Config]
     """Integration config (e.g. Telegram chatId)"""
 
-    event_types: Required[
-        Annotated[
-            List[
-                Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-            ],
-            PropertyInfo(alias="eventTypes"),
-        ]
-    ]
+    event_types: Required[Annotated[List[EventType], PropertyInfo(alias="eventTypes")]]
     """Array of event types to subscribe to."""
 
     name: Required[str]

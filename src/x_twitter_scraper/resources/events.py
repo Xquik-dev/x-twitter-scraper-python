@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing_extensions import Literal
-
 import httpx
 
 from ..types import event_list_params
@@ -18,8 +16,9 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.event_detail import EventDetail
+from ..types.shared.event_type import EventType
 from ..types.event_list_response import EventListResponse
-from ..types.event_retrieve_response import EventRetrieveResponse
 
 __all__ = ["EventsResource", "AsyncEventsResource"]
 
@@ -33,7 +32,7 @@ class EventsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return EventsResourceWithRawResponse(self)
 
@@ -42,7 +41,7 @@ class EventsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return EventsResourceWithStreamingResponse(self)
 
@@ -56,7 +55,7 @@ class EventsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> EventRetrieveResponse:
+    ) -> EventDetail:
         """
         Get event
 
@@ -76,17 +75,14 @@ class EventsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=EventRetrieveResponse,
+            cast_to=EventDetail,
         )
 
     def list(
         self,
         *,
         after: str | Omit = omit,
-        event_type: Literal[
-            "tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"
-        ]
-        | Omit = omit,
+        event_type: EventType | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -147,7 +143,7 @@ class AsyncEventsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncEventsResourceWithRawResponse(self)
 
@@ -156,7 +152,7 @@ class AsyncEventsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncEventsResourceWithStreamingResponse(self)
 
@@ -170,7 +166,7 @@ class AsyncEventsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> EventRetrieveResponse:
+    ) -> EventDetail:
         """
         Get event
 
@@ -190,17 +186,14 @@ class AsyncEventsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=EventRetrieveResponse,
+            cast_to=EventDetail,
         )
 
     async def list(
         self,
         *,
         after: str | Omit = omit,
-        event_type: Literal[
-            "tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"
-        ]
-        | Omit = omit,
+        event_type: EventType | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.

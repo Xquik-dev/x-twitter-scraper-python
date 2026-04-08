@@ -1,38 +1,12 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List, Optional
-from datetime import datetime
-
-from pydantic import Field as FieldInfo
+from typing import List
 
 from .._models import BaseModel
+from .integration_delivery import IntegrationDelivery
 
-__all__ = ["IntegrationListDeliveriesResponse", "Delivery"]
-
-
-class Delivery(BaseModel):
-    """Integration delivery attempt record with status and retry count."""
-
-    id: str
-
-    attempts: int
-
-    created_at: datetime = FieldInfo(alias="createdAt")
-
-    event_type: str = FieldInfo(alias="eventType")
-
-    status: str
-
-    delivered_at: Optional[datetime] = FieldInfo(alias="deliveredAt", default=None)
-
-    last_error: Optional[str] = FieldInfo(alias="lastError", default=None)
-
-    last_status_code: Optional[int] = FieldInfo(alias="lastStatusCode", default=None)
-
-    source_id: Optional[str] = FieldInfo(alias="sourceId", default=None)
-
-    source_type: Optional[str] = FieldInfo(alias="sourceType", default=None)
+__all__ = ["IntegrationListDeliveriesResponse"]
 
 
 class IntegrationListDeliveriesResponse(BaseModel):
-    deliveries: List[Delivery]
+    deliveries: List[IntegrationDelivery]

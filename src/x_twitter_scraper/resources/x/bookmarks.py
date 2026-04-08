@@ -5,7 +5,7 @@ from __future__ import annotations
 import httpx
 
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from ..._utils import maybe_transform, async_maybe_transform
+from ..._utils import maybe_transform
 from ..._compat import cached_property
 from ...types.x import bookmark_list_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -15,8 +15,9 @@ from ..._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
-from ..._base_client import make_request_options
-from ...types.x.bookmark_list_response import BookmarkListResponse
+from ...pagination import SyncCursorPage, AsyncCursorPage
+from ..._base_client import AsyncPaginator, make_request_options
+from ...types.shared.paginated_tweets import PaginatedTweets
 from ...types.x.bookmark_retrieve_folders_response import BookmarkRetrieveFoldersResponse
 
 __all__ = ["BookmarksResource", "AsyncBookmarksResource"]
@@ -31,7 +32,7 @@ class BookmarksResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return BookmarksResourceWithRawResponse(self)
 
@@ -40,7 +41,7 @@ class BookmarksResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return BookmarksResourceWithStreamingResponse(self)
 
@@ -55,7 +56,7 @@ class BookmarksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> BookmarkListResponse:
+    ) -> SyncCursorPage[PaginatedTweets]:
         """
         Get bookmarked tweets
 
@@ -72,8 +73,9 @@ class BookmarksResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._get(
+        return self._get_api_list(
             "/x/bookmarks",
+            page=SyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
@@ -87,7 +89,7 @@ class BookmarksResource(SyncAPIResource):
                     bookmark_list_params.BookmarkListParams,
                 ),
             ),
-            cast_to=BookmarkListResponse,
+            model=PaginatedTweets,
         )
 
     def retrieve_folders(
@@ -119,7 +121,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncBookmarksResourceWithRawResponse(self)
 
@@ -128,11 +130,11 @@ class AsyncBookmarksResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncBookmarksResourceWithStreamingResponse(self)
 
-    async def list(
+    def list(
         self,
         *,
         cursor: str | Omit = omit,
@@ -143,7 +145,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> BookmarkListResponse:
+    ) -> AsyncPaginator[PaginatedTweets, AsyncCursorPage[PaginatedTweets]]:
         """
         Get bookmarked tweets
 
@@ -160,14 +162,15 @@ class AsyncBookmarksResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return await self._get(
+        return self._get_api_list(
             "/x/bookmarks",
+            page=AsyncCursorPage[PaginatedTweets],
             options=make_request_options(
                 extra_headers=extra_headers,
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=await async_maybe_transform(
+                query=maybe_transform(
                     {
                         "cursor": cursor,
                         "folder_id": folder_id,
@@ -175,7 +178,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
                     bookmark_list_params.BookmarkListParams,
                 ),
             ),
-            cast_to=BookmarkListResponse,
+            model=PaginatedTweets,
         )
 
     async def retrieve_folders(

@@ -12,9 +12,9 @@ from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types import (
     XGetTrendsResponse,
     XGetArticleResponse,
-    XGetHomeTimelineResponse,
     XGetNotificationsResponse,
 )
+from x_twitter_scraper.types.shared import PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -68,7 +68,7 @@ class TestX:
     @parametrize
     def test_method_get_home_timeline(self, client: XTwitterScraper) -> None:
         x = client.x.get_home_timeline()
-        assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+        assert_matches_type(PaginatedTweets, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -77,7 +77,7 @@ class TestX:
             cursor="cursor",
             seen_tweet_ids="seenTweetIds",
         )
-        assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+        assert_matches_type(PaginatedTweets, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -87,7 +87,7 @@ class TestX:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         x = response.parse()
-        assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+        assert_matches_type(PaginatedTweets, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -97,7 +97,7 @@ class TestX:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             x = response.parse()
-            assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+            assert_matches_type(PaginatedTweets, x, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -218,7 +218,7 @@ class TestAsyncX:
     @parametrize
     async def test_method_get_home_timeline(self, async_client: AsyncXTwitterScraper) -> None:
         x = await async_client.x.get_home_timeline()
-        assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+        assert_matches_type(PaginatedTweets, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -227,7 +227,7 @@ class TestAsyncX:
             cursor="cursor",
             seen_tweet_ids="seenTweetIds",
         )
-        assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+        assert_matches_type(PaginatedTweets, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -237,7 +237,7 @@ class TestAsyncX:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         x = await response.parse()
-        assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+        assert_matches_type(PaginatedTweets, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -247,7 +247,7 @@ class TestAsyncX:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             x = await response.parse()
-            assert_matches_type(XGetHomeTimelineResponse, x, path=["response"])
+            assert_matches_type(PaginatedTweets, x, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

@@ -30,22 +30,6 @@ from .media import (
     MediaResourceWithStreamingResponse,
     AsyncMediaResourceWithStreamingResponse,
 )
-from .users import (
-    UsersResource,
-    AsyncUsersResource,
-    UsersResourceWithRawResponse,
-    AsyncUsersResourceWithRawResponse,
-    UsersResourceWithStreamingResponse,
-    AsyncUsersResourceWithStreamingResponse,
-)
-from .tweets import (
-    TweetsResource,
-    AsyncTweetsResource,
-    TweetsResourceWithRawResponse,
-    AsyncTweetsResourceWithRawResponse,
-    TweetsResourceWithStreamingResponse,
-    AsyncTweetsResourceWithStreamingResponse,
-)
 from ...types import x_get_home_timeline_params, x_get_notifications_params
 from .profile import (
     ProfileResource,
@@ -89,6 +73,22 @@ from ..._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
+from .users.users import (
+    UsersResource,
+    AsyncUsersResource,
+    UsersResourceWithRawResponse,
+    AsyncUsersResourceWithRawResponse,
+    UsersResourceWithStreamingResponse,
+    AsyncUsersResourceWithStreamingResponse,
+)
+from .tweets.tweets import (
+    TweetsResource,
+    AsyncTweetsResource,
+    TweetsResourceWithRawResponse,
+    AsyncTweetsResourceWithRawResponse,
+    TweetsResourceWithStreamingResponse,
+    AsyncTweetsResourceWithStreamingResponse,
+)
 from ..._base_client import make_request_options
 from .communities.communities import (
     CommunitiesResource,
@@ -100,7 +100,7 @@ from .communities.communities import (
 )
 from ...types.x_get_trends_response import XGetTrendsResponse
 from ...types.x_get_article_response import XGetArticleResponse
-from ...types.x_get_home_timeline_response import XGetHomeTimelineResponse
+from ...types.shared.paginated_tweets import PaginatedTweets
 from ...types.x_get_notifications_response import XGetNotificationsResponse
 
 __all__ = ["XResource", "AsyncXResource"]
@@ -162,7 +162,7 @@ class XResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return XResourceWithRawResponse(self)
 
@@ -171,7 +171,7 @@ class XResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return XResourceWithStreamingResponse(self)
 
@@ -219,7 +219,7 @@ class XResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> XGetHomeTimelineResponse:
+    ) -> PaginatedTweets:
         """
         Get home timeline
 
@@ -251,7 +251,7 @@ class XResource(SyncAPIResource):
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
             ),
-            cast_to=XGetHomeTimelineResponse,
+            cast_to=PaginatedTweets,
         )
 
     def get_notifications(
@@ -376,7 +376,7 @@ class AsyncXResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncXResourceWithRawResponse(self)
 
@@ -385,7 +385,7 @@ class AsyncXResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncXResourceWithStreamingResponse(self)
 
@@ -433,7 +433,7 @@ class AsyncXResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> XGetHomeTimelineResponse:
+    ) -> PaginatedTweets:
         """
         Get home timeline
 
@@ -465,7 +465,7 @@ class AsyncXResource(AsyncAPIResource):
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
             ),
-            cast_to=XGetHomeTimelineResponse,
+            cast_to=PaginatedTweets,
         )
 
     async def get_notifications(

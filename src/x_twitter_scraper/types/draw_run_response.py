@@ -4,21 +4,10 @@ from typing import List
 
 from pydantic import Field as FieldInfo
 
+from .winner import Winner
 from .._models import BaseModel
 
-__all__ = ["DrawRunResponse", "Winner"]
-
-
-class Winner(BaseModel):
-    """Giveaway draw winner with position and backup flag."""
-
-    author_username: str = FieldInfo(alias="authorUsername")
-
-    is_backup: bool = FieldInfo(alias="isBackup")
-
-    position: int
-
-    tweet_id: str = FieldInfo(alias="tweetId")
+__all__ = ["DrawRunResponse"]
 
 
 class DrawRunResponse(BaseModel):

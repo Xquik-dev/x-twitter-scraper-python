@@ -16,9 +16,8 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.x.list_retrieve_tweets_response import ListRetrieveTweetsResponse
-from ...types.x.list_retrieve_members_response import ListRetrieveMembersResponse
-from ...types.x.list_retrieve_followers_response import ListRetrieveFollowersResponse
+from ...types.shared.paginated_users import PaginatedUsers
+from ...types.shared.paginated_tweets import PaginatedTweets
 
 __all__ = ["ListsResource", "AsyncListsResource"]
 
@@ -32,7 +31,7 @@ class ListsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return ListsResourceWithRawResponse(self)
 
@@ -41,7 +40,7 @@ class ListsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return ListsResourceWithStreamingResponse(self)
 
@@ -56,7 +55,7 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ListRetrieveFollowersResponse:
+    ) -> PaginatedUsers:
         """
         Get list followers
 
@@ -82,7 +81,7 @@ class ListsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams),
             ),
-            cast_to=ListRetrieveFollowersResponse,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_members(
@@ -96,7 +95,7 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ListRetrieveMembersResponse:
+    ) -> PaginatedUsers:
         """
         Get list members
 
@@ -122,7 +121,7 @@ class ListsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"cursor": cursor}, list_retrieve_members_params.ListRetrieveMembersParams),
             ),
-            cast_to=ListRetrieveMembersResponse,
+            cast_to=PaginatedUsers,
         )
 
     def retrieve_tweets(
@@ -139,7 +138,7 @@ class ListsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ListRetrieveTweetsResponse:
+    ) -> PaginatedTweets:
         """
         Get list tweets
 
@@ -179,7 +178,7 @@ class ListsResource(SyncAPIResource):
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
             ),
-            cast_to=ListRetrieveTweetsResponse,
+            cast_to=PaginatedTweets,
         )
 
 
@@ -192,7 +191,7 @@ class AsyncListsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncListsResourceWithRawResponse(self)
 
@@ -201,7 +200,7 @@ class AsyncListsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncListsResourceWithStreamingResponse(self)
 
@@ -216,7 +215,7 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ListRetrieveFollowersResponse:
+    ) -> PaginatedUsers:
         """
         Get list followers
 
@@ -244,7 +243,7 @@ class AsyncListsResource(AsyncAPIResource):
                     {"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams
                 ),
             ),
-            cast_to=ListRetrieveFollowersResponse,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_members(
@@ -258,7 +257,7 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ListRetrieveMembersResponse:
+    ) -> PaginatedUsers:
         """
         Get list members
 
@@ -286,7 +285,7 @@ class AsyncListsResource(AsyncAPIResource):
                     {"cursor": cursor}, list_retrieve_members_params.ListRetrieveMembersParams
                 ),
             ),
-            cast_to=ListRetrieveMembersResponse,
+            cast_to=PaginatedUsers,
         )
 
     async def retrieve_tweets(
@@ -303,7 +302,7 @@ class AsyncListsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> ListRetrieveTweetsResponse:
+    ) -> PaginatedTweets:
         """
         Get list tweets
 
@@ -343,7 +342,7 @@ class AsyncListsResource(AsyncAPIResource):
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
             ),
-            cast_to=ListRetrieveTweetsResponse,
+            cast_to=PaginatedTweets,
         )
 
 

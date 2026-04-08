@@ -3,18 +3,16 @@
 from __future__ import annotations
 
 from typing import List
-from typing_extensions import Literal, Annotated, TypedDict
+from typing_extensions import Annotated, TypedDict
 
 from .._utils import PropertyInfo
+from .shared.event_type import EventType
 
 __all__ = ["MonitorUpdateParams"]
 
 
 class MonitorUpdateParams(TypedDict, total=False):
-    event_types: Annotated[
-        List[Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]],
-        PropertyInfo(alias="eventTypes"),
-    ]
+    event_types: Annotated[List[EventType], PropertyInfo(alias="eventTypes")]
     """Array of event types to subscribe to."""
 
     is_active: Annotated[bool, PropertyInfo(alias="isActive")]
