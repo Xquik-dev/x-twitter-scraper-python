@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.1 (2026-04-08)
+
+Full Changelog: [v0.3.0...v0.3.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.3.0...v0.3.1)
+
+### Chores
+
+* update SDK settings ([e2ff786](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/e2ff78681cdf29128336f66240aa1ca30ec605d3))
+
 ## 0.3.0 (2026-04-08)
 
 Full Changelog: [v0.2.0...v0.3.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.2.0...v0.3.0)
