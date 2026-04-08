@@ -9,11 +9,7 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper.types.x import (
-    ListRetrieveTweetsResponse,
-    ListRetrieveMembersResponse,
-    ListRetrieveFollowersResponse,
-)
+from x_twitter_scraper.types.shared import PaginatedUsers, PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -27,7 +23,7 @@ class TestLists:
         list_ = client.x.lists.retrieve_followers(
             id="id",
         )
-        assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -36,7 +32,7 @@ class TestLists:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -48,7 +44,7 @@ class TestLists:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         list_ = response.parse()
-        assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -60,7 +56,7 @@ class TestLists:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             list_ = response.parse()
-            assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+            assert_matches_type(PaginatedUsers, list_, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -78,7 +74,7 @@ class TestLists:
         list_ = client.x.lists.retrieve_members(
             id="id",
         )
-        assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -87,7 +83,7 @@ class TestLists:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -99,7 +95,7 @@ class TestLists:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         list_ = response.parse()
-        assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -111,7 +107,7 @@ class TestLists:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             list_ = response.parse()
-            assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+            assert_matches_type(PaginatedUsers, list_, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -129,7 +125,7 @@ class TestLists:
         list_ = client.x.lists.retrieve_tweets(
             id="id",
         )
-        assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+        assert_matches_type(PaginatedTweets, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -141,7 +137,7 @@ class TestLists:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+        assert_matches_type(PaginatedTweets, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -153,7 +149,7 @@ class TestLists:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         list_ = response.parse()
-        assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+        assert_matches_type(PaginatedTweets, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -165,7 +161,7 @@ class TestLists:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             list_ = response.parse()
-            assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+            assert_matches_type(PaginatedTweets, list_, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -189,7 +185,7 @@ class TestAsyncLists:
         list_ = await async_client.x.lists.retrieve_followers(
             id="id",
         )
-        assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -198,7 +194,7 @@ class TestAsyncLists:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -210,7 +206,7 @@ class TestAsyncLists:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         list_ = await response.parse()
-        assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -222,7 +218,7 @@ class TestAsyncLists:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             list_ = await response.parse()
-            assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
+            assert_matches_type(PaginatedUsers, list_, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -240,7 +236,7 @@ class TestAsyncLists:
         list_ = await async_client.x.lists.retrieve_members(
             id="id",
         )
-        assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -249,7 +245,7 @@ class TestAsyncLists:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -261,7 +257,7 @@ class TestAsyncLists:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         list_ = await response.parse()
-        assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+        assert_matches_type(PaginatedUsers, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -273,7 +269,7 @@ class TestAsyncLists:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             list_ = await response.parse()
-            assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
+            assert_matches_type(PaginatedUsers, list_, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -291,7 +287,7 @@ class TestAsyncLists:
         list_ = await async_client.x.lists.retrieve_tweets(
             id="id",
         )
-        assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+        assert_matches_type(PaginatedTweets, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -303,7 +299,7 @@ class TestAsyncLists:
             since_time="sinceTime",
             until_time="untilTime",
         )
-        assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+        assert_matches_type(PaginatedTweets, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -315,7 +311,7 @@ class TestAsyncLists:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         list_ = await response.parse()
-        assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+        assert_matches_type(PaginatedTweets, list_, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -327,7 +323,7 @@ class TestAsyncLists:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             list_ = await response.parse()
-            assert_matches_type(ListRetrieveTweetsResponse, list_, path=["response"])
+            assert_matches_type(PaginatedTweets, list_, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

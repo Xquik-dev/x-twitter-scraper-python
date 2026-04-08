@@ -18,9 +18,8 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.draft_detail import DraftDetail
 from ..types.draft_list_response import DraftListResponse
-from ..types.draft_create_response import DraftCreateResponse
-from ..types.draft_retrieve_response import DraftRetrieveResponse
 
 __all__ = ["DraftsResource", "AsyncDraftsResource"]
 
@@ -34,7 +33,7 @@ class DraftsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return DraftsResourceWithRawResponse(self)
 
@@ -43,7 +42,7 @@ class DraftsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return DraftsResourceWithStreamingResponse(self)
 
@@ -59,7 +58,7 @@ class DraftsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> DraftCreateResponse:
+    ) -> DraftDetail:
         """
         Save a tweet draft
 
@@ -85,7 +84,7 @@ class DraftsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=DraftCreateResponse,
+            cast_to=DraftDetail,
         )
 
     def retrieve(
@@ -98,7 +97,7 @@ class DraftsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> DraftRetrieveResponse:
+    ) -> DraftDetail:
         """
         Get draft by ID
 
@@ -118,7 +117,7 @@ class DraftsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=DraftRetrieveResponse,
+            cast_to=DraftDetail,
         )
 
     def list(
@@ -211,7 +210,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncDraftsResourceWithRawResponse(self)
 
@@ -220,7 +219,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncDraftsResourceWithStreamingResponse(self)
 
@@ -236,7 +235,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> DraftCreateResponse:
+    ) -> DraftDetail:
         """
         Save a tweet draft
 
@@ -262,7 +261,7 @@ class AsyncDraftsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=DraftCreateResponse,
+            cast_to=DraftDetail,
         )
 
     async def retrieve(
@@ -275,7 +274,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> DraftRetrieveResponse:
+    ) -> DraftDetail:
         """
         Get draft by ID
 
@@ -295,7 +294,7 @@ class AsyncDraftsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=DraftRetrieveResponse,
+            cast_to=DraftDetail,
         )
 
     async def list(

@@ -10,10 +10,10 @@ import pytest
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types import (
+    Webhook,
     WebhookListResponse,
     WebhookTestResponse,
     WebhookCreateResponse,
-    WebhookUpdateResponse,
     WebhookDeactivateResponse,
     WebhookListDeliveriesResponse,
 )
@@ -67,18 +67,18 @@ class TestWebhooks:
         webhook = client.webhooks.update(
             id="id",
         )
-        assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+        assert_matches_type(Webhook, webhook, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_method_update_with_all_params(self, client: XTwitterScraper) -> None:
         webhook = client.webhooks.update(
             id="id",
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new"],
             is_active=True,
             url="https://example.com/webhook",
         )
-        assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+        assert_matches_type(Webhook, webhook, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -90,7 +90,7 @@ class TestWebhooks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         webhook = response.parse()
-        assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+        assert_matches_type(Webhook, webhook, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -102,7 +102,7 @@ class TestWebhooks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             webhook = response.parse()
-            assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+            assert_matches_type(Webhook, webhook, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -317,18 +317,18 @@ class TestAsyncWebhooks:
         webhook = await async_client.webhooks.update(
             id="id",
         )
-        assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+        assert_matches_type(Webhook, webhook, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_method_update_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         webhook = await async_client.webhooks.update(
             id="id",
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new"],
             is_active=True,
             url="https://example.com/webhook",
         )
-        assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+        assert_matches_type(Webhook, webhook, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -340,7 +340,7 @@ class TestAsyncWebhooks:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         webhook = await response.parse()
-        assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+        assert_matches_type(Webhook, webhook, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -352,7 +352,7 @@ class TestAsyncWebhooks:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             webhook = await response.parse()
-            assert_matches_type(WebhookUpdateResponse, webhook, path=["response"])
+            assert_matches_type(Webhook, webhook, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

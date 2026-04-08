@@ -16,11 +16,12 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
+from ...types.x.x_account_detail import XAccountDetail
 from ...types.x.account_list_response import AccountListResponse
 from ...types.x.account_create_response import AccountCreateResponse
 from ...types.x.account_delete_response import AccountDeleteResponse
 from ...types.x.account_reauth_response import AccountReauthResponse
-from ...types.x.account_retrieve_response import AccountRetrieveResponse
+from ...types.x.account_bulk_retry_response import AccountBulkRetryResponse
 
 __all__ = ["AccountsResource", "AsyncAccountsResource"]
 
@@ -34,7 +35,7 @@ class AccountsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AccountsResourceWithRawResponse(self)
 
@@ -43,7 +44,7 @@ class AccountsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AccountsResourceWithStreamingResponse(self)
 
@@ -116,7 +117,7 @@ class AccountsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AccountRetrieveResponse:
+    ) -> XAccountDetail:
         """
         Get X account details
 
@@ -140,7 +141,7 @@ class AccountsResource(SyncAPIResource):
                 timeout=timeout,
                 security={"api_key": True},
             ),
-            cast_to=AccountRetrieveResponse,
+            cast_to=XAccountDetail,
         )
 
     def list(
@@ -203,6 +204,32 @@ class AccountsResource(SyncAPIResource):
             cast_to=AccountDeleteResponse,
         )
 
+    def bulk_retry(
+        self,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> AccountBulkRetryResponse:
+        """
+        Clears loginFailedAt and loginFailureReason for all accounts with transient or
+        automated failure reasons, making them eligible for retry on next use.
+        """
+        return self._post(
+            "/x/accounts/bulk-retry",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={"api_key": True},
+            ),
+            cast_to=AccountBulkRetryResponse,
+        )
+
     def reauth(
         self,
         id: str,
@@ -263,7 +290,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncAccountsResourceWithRawResponse(self)
 
@@ -272,7 +299,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncAccountsResourceWithStreamingResponse(self)
 
@@ -345,7 +372,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AccountRetrieveResponse:
+    ) -> XAccountDetail:
         """
         Get X account details
 
@@ -369,7 +396,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 timeout=timeout,
                 security={"api_key": True},
             ),
-            cast_to=AccountRetrieveResponse,
+            cast_to=XAccountDetail,
         )
 
     async def list(
@@ -430,6 +457,32 @@ class AsyncAccountsResource(AsyncAPIResource):
                 security={"api_key": True},
             ),
             cast_to=AccountDeleteResponse,
+        )
+
+    async def bulk_retry(
+        self,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> AccountBulkRetryResponse:
+        """
+        Clears loginFailedAt and loginFailureReason for all accounts with transient or
+        automated failure reasons, making them eligible for retry on next use.
+        """
+        return await self._post(
+            "/x/accounts/bulk-retry",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={"api_key": True},
+            ),
+            cast_to=AccountBulkRetryResponse,
         )
 
     async def reauth(
@@ -499,6 +552,9 @@ class AccountsResourceWithRawResponse:
         self.delete = to_raw_response_wrapper(
             accounts.delete,
         )
+        self.bulk_retry = to_raw_response_wrapper(
+            accounts.bulk_retry,
+        )
         self.reauth = to_raw_response_wrapper(
             accounts.reauth,
         )
@@ -519,6 +575,9 @@ class AsyncAccountsResourceWithRawResponse:
         )
         self.delete = async_to_raw_response_wrapper(
             accounts.delete,
+        )
+        self.bulk_retry = async_to_raw_response_wrapper(
+            accounts.bulk_retry,
         )
         self.reauth = async_to_raw_response_wrapper(
             accounts.reauth,
@@ -541,6 +600,9 @@ class AccountsResourceWithStreamingResponse:
         self.delete = to_streamed_response_wrapper(
             accounts.delete,
         )
+        self.bulk_retry = to_streamed_response_wrapper(
+            accounts.bulk_retry,
+        )
         self.reauth = to_streamed_response_wrapper(
             accounts.reauth,
         )
@@ -561,6 +623,9 @@ class AsyncAccountsResourceWithStreamingResponse:
         )
         self.delete = async_to_streamed_response_wrapper(
             accounts.delete,
+        )
+        self.bulk_retry = async_to_streamed_response_wrapper(
+            accounts.bulk_retry,
         )
         self.reauth = async_to_streamed_response_wrapper(
             accounts.reauth,

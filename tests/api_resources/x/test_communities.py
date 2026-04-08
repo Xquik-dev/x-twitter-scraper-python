@@ -13,10 +13,8 @@ from x_twitter_scraper.types.x import (
     CommunityCreateResponse,
     CommunityDeleteResponse,
     CommunityRetrieveInfoResponse,
-    CommunityRetrieveSearchResponse,
-    CommunityRetrieveMembersResponse,
-    CommunityRetrieveModeratorsResponse,
 )
+from x_twitter_scraper.types.shared import PaginatedUsers, PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -169,7 +167,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_members(
             id="id",
         )
-        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -178,7 +176,7 @@ class TestCommunities:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -190,7 +188,7 @@ class TestCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = response.parse()
-        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -202,7 +200,7 @@ class TestCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = response.parse()
-            assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+            assert_matches_type(PaginatedUsers, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -220,7 +218,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_moderators(
             id="id",
         )
-        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -229,7 +227,7 @@ class TestCommunities:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -241,7 +239,7 @@ class TestCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = response.parse()
-        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -253,7 +251,7 @@ class TestCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = response.parse()
-            assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+            assert_matches_type(PaginatedUsers, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -271,7 +269,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_search(
             q="q",
         )
-        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+        assert_matches_type(PaginatedTweets, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -281,7 +279,7 @@ class TestCommunities:
             cursor="cursor",
             query_type="queryType",
         )
-        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+        assert_matches_type(PaginatedTweets, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -293,7 +291,7 @@ class TestCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = response.parse()
-        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+        assert_matches_type(PaginatedTweets, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -305,7 +303,7 @@ class TestCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = response.parse()
-            assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+            assert_matches_type(PaginatedTweets, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -460,7 +458,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_members(
             id="id",
         )
-        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -469,7 +467,7 @@ class TestAsyncCommunities:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -481,7 +479,7 @@ class TestAsyncCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = await response.parse()
-        assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -493,7 +491,7 @@ class TestAsyncCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = await response.parse()
-            assert_matches_type(CommunityRetrieveMembersResponse, community, path=["response"])
+            assert_matches_type(PaginatedUsers, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -511,7 +509,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_moderators(
             id="id",
         )
-        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -520,7 +518,7 @@ class TestAsyncCommunities:
             id="id",
             cursor="cursor",
         )
-        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -532,7 +530,7 @@ class TestAsyncCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = await response.parse()
-        assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+        assert_matches_type(PaginatedUsers, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -544,7 +542,7 @@ class TestAsyncCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = await response.parse()
-            assert_matches_type(CommunityRetrieveModeratorsResponse, community, path=["response"])
+            assert_matches_type(PaginatedUsers, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -562,7 +560,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_search(
             q="q",
         )
-        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+        assert_matches_type(PaginatedTweets, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -572,7 +570,7 @@ class TestAsyncCommunities:
             cursor="cursor",
             query_type="queryType",
         )
-        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+        assert_matches_type(PaginatedTweets, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -584,7 +582,7 @@ class TestAsyncCommunities:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         community = await response.parse()
-        assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+        assert_matches_type(PaginatedTweets, community, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -596,6 +594,6 @@ class TestAsyncCommunities:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             community = await response.parse()
-            assert_matches_type(CommunityRetrieveSearchResponse, community, path=["response"])
+            assert_matches_type(PaginatedTweets, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True

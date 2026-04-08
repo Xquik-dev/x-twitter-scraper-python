@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from typing import List
-from typing_extensions import Literal
 
 import httpx
 
@@ -19,10 +18,11 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.webhook import Webhook
+from ..types.shared.event_type import EventType
 from ..types.webhook_list_response import WebhookListResponse
 from ..types.webhook_test_response import WebhookTestResponse
 from ..types.webhook_create_response import WebhookCreateResponse
-from ..types.webhook_update_response import WebhookUpdateResponse
 from ..types.webhook_deactivate_response import WebhookDeactivateResponse
 from ..types.webhook_list_deliveries_response import WebhookListDeliveriesResponse
 
@@ -38,7 +38,7 @@ class WebhooksResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return WebhooksResourceWithRawResponse(self)
 
@@ -47,16 +47,14 @@ class WebhooksResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return WebhooksResourceWithStreamingResponse(self)
 
     def create(
         self,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ],
+        event_types: List[EventType],
         url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -100,10 +98,7 @@ class WebhooksResource(SyncAPIResource):
         self,
         id: str,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ]
-        | Omit = omit,
+        event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
         url: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -112,7 +107,7 @@ class WebhooksResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> WebhookUpdateResponse:
+    ) -> Webhook:
         """
         Update webhook
 
@@ -142,7 +137,7 @@ class WebhooksResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=WebhookUpdateResponse,
+            cast_to=Webhook,
         )
 
     def list(
@@ -273,7 +268,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncWebhooksResourceWithRawResponse(self)
 
@@ -282,16 +277,14 @@ class AsyncWebhooksResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncWebhooksResourceWithStreamingResponse(self)
 
     async def create(
         self,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ],
+        event_types: List[EventType],
         url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -335,10 +328,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        event_types: List[
-            Literal["tweet.new", "tweet.reply", "tweet.retweet", "tweet.quote", "follower.gained", "follower.lost"]
-        ]
-        | Omit = omit,
+        event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
         url: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -347,7 +337,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> WebhookUpdateResponse:
+    ) -> Webhook:
         """
         Update webhook
 
@@ -377,7 +367,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=WebhookUpdateResponse,
+            cast_to=Webhook,
         )
 
     async def list(
