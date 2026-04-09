@@ -39,6 +39,7 @@ from .event_list_response import EventListResponse as EventListResponse
 from .style_list_response import StyleListResponse as StyleListResponse
 from .style_update_params import StyleUpdateParams as StyleUpdateParams
 from .trend_list_response import TrendListResponse as TrendListResponse
+from .x_get_trends_params import XGetTrendsParams as XGetTrendsParams
 from .integration_delivery import IntegrationDelivery as IntegrationDelivery
 from .style_analyze_params import StyleAnalyzeParams as StyleAnalyzeParams
 from .style_compare_params import StyleCompareParams as StyleCompareParams

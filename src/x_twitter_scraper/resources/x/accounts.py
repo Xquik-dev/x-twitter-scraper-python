@@ -98,11 +98,7 @@ class AccountsResource(SyncAPIResource):
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountCreateResponse,
         )
@@ -135,11 +131,7 @@ class AccountsResource(SyncAPIResource):
         return self._get(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=XAccountDetail,
         )
@@ -158,11 +150,7 @@ class AccountsResource(SyncAPIResource):
         return self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountListResponse,
         )
@@ -195,11 +183,7 @@ class AccountsResource(SyncAPIResource):
         return self._delete(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -221,11 +205,7 @@ class AccountsResource(SyncAPIResource):
         return self._post(
             "/x/accounts/bulk-retry",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountBulkRetryResponse,
         )
@@ -271,11 +251,7 @@ class AccountsResource(SyncAPIResource):
                 account_reauth_params.AccountReauthParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountReauthResponse,
         )
@@ -353,11 +329,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountCreateResponse,
         )
@@ -390,11 +362,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=XAccountDetail,
         )
@@ -413,11 +381,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountListResponse,
         )
@@ -450,11 +414,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._delete(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -476,11 +436,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._post(
             "/x/accounts/bulk-retry",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountBulkRetryResponse,
         )
@@ -526,11 +482,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 account_reauth_params.AccountReauthParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountReauthResponse,
         )

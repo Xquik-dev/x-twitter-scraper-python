@@ -30,7 +30,7 @@ from .media import (
     MediaResourceWithStreamingResponse,
     AsyncMediaResourceWithStreamingResponse,
 )
-from ...types import x_get_home_timeline_params, x_get_notifications_params
+from ...types import x_get_trends_params, x_get_home_timeline_params, x_get_notifications_params
 from .profile import (
     ProfileResource,
     AsyncProfileResource,
@@ -303,6 +303,8 @@ class XResource(SyncAPIResource):
     def get_trends(
         self,
         *,
+        count: int | Omit = omit,
+        woeid: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -310,11 +312,36 @@ class XResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
-        """Get trending topics"""
+        """
+        Get trending topics
+
+        Args:
+          count: Number of trending topics to return (1-50, default 30)
+
+          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/x/trends",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "count": count,
+                        "woeid": woeid,
+                    },
+                    x_get_trends_params.XGetTrendsParams,
+                ),
             ),
             cast_to=XGetTrendsResponse,
         )
@@ -517,6 +544,8 @@ class AsyncXResource(AsyncAPIResource):
     async def get_trends(
         self,
         *,
+        count: int | Omit = omit,
+        woeid: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -524,11 +553,36 @@ class AsyncXResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
-        """Get trending topics"""
+        """
+        Get trending topics
+
+        Args:
+          count: Number of trending topics to return (1-50, default 30)
+
+          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/x/trends",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "count": count,
+                        "woeid": woeid,
+                    },
+                    x_get_trends_params.XGetTrendsParams,
+                ),
             ),
             cast_to=XGetTrendsResponse,
         )
