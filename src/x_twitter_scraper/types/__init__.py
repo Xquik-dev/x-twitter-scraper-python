@@ -7,6 +7,8 @@ from .event import Event as Event
 from .shared import (
     Error as Error,
     EventType as EventType,
+    SearchTweet as SearchTweet,
+    UserProfile as UserProfile,
     PaginatedUsers as PaginatedUsers,
     PaginatedTweets as PaginatedTweets,
 )

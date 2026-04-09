@@ -35,7 +35,7 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
-from ....types.x.user_profile import UserProfile
+from ....types.shared.user_profile import UserProfile
 from ....types.shared.paginated_users import PaginatedUsers
 from ....types.shared.paginated_tweets import PaginatedTweets
 

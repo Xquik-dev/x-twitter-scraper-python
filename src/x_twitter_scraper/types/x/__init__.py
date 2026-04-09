@@ -3,10 +3,8 @@
 from __future__ import annotations
 
 from .x_account import XAccount as XAccount
-from .search_tweet import SearchTweet as SearchTweet
 from .tweet_author import TweetAuthor as TweetAuthor
 from .tweet_detail import TweetDetail as TweetDetail
-from .user_profile import UserProfile as UserProfile
 from .dm_send_params import DmSendParams as DmSendParams
 from .dm_send_response import DmSendResponse as DmSendResponse
 from .x_account_detail import XAccountDetail as XAccountDetail
