@@ -1,7 +1,14 @@
 # Shared Types
 
 ```python
-from x_twitter_scraper.types import Error, EventType, PaginatedTweets, PaginatedUsers
+from x_twitter_scraper.types import (
+    Error,
+    EventType,
+    PaginatedTweets,
+    PaginatedUsers,
+    SearchTweet,
+    UserProfile,
+)
 ```
 
 # Account
@@ -269,7 +276,6 @@ Types:
 
 ```python
 from x_twitter_scraper.types.x import (
-    SearchTweet,
     TweetAuthor,
     TweetDetail,
     TweetCreateResponse,
@@ -319,15 +325,9 @@ Methods:
 
 ## Users
 
-Types:
-
-```python
-from x_twitter_scraper.types.x import UserProfile
-```
-
 Methods:
 
-- <code title="get /x/users/{id}">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/user_profile.py">UserProfile</a></code>
+- <code title="get /x/users/{id}">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/shared/user_profile.py">UserProfile</a></code>
 - <code title="get /x/users/batch">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_batch</a>(\*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_batch_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/followers">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_followers</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_followers_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/followers-you-know">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_followers_you_know</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_followers_you_know_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
