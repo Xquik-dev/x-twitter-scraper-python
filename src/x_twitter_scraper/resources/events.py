@@ -128,7 +128,6 @@ class EventsResource(SyncAPIResource):
                     },
                     event_list_params.EventListParams,
                 ),
-                security={"api_key": True},
             ),
             cast_to=EventListResponse,
         )
@@ -239,7 +238,6 @@ class AsyncEventsResource(AsyncAPIResource):
                     },
                     event_list_params.EventListParams,
                 ),
-                security={"api_key": True},
             ),
             cast_to=EventListResponse,
         )

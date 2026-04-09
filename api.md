@@ -268,7 +268,7 @@ Methods:
 - <code title="get /x/articles/{tweetId}">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_article</a>(tweet_id) -> <a href="./src/x_twitter_scraper/types/x_get_article_response.py">XGetArticleResponse</a></code>
 - <code title="get /x/timeline">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_home_timeline</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_home_timeline_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/notifications">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_notifications</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_notifications_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_notifications_response.py">XGetNotificationsResponse</a></code>
-- <code title="get /x/trends">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_trends</a>() -> <a href="./src/x_twitter_scraper/types/x_get_trends_response.py">XGetTrendsResponse</a></code>
+- <code title="get /x/trends">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_trends</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_trends_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_trends_response.py">XGetTrendsResponse</a></code>
 
 ## Tweets
 

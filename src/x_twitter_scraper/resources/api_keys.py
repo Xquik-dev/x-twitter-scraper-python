@@ -72,11 +72,7 @@ class APIKeysResource(SyncAPIResource):
             "/api-keys",
             body=maybe_transform({"name": name}, api_key_create_params.APIKeyCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=APIKeyCreateResponse,
         )
@@ -95,11 +91,7 @@ class APIKeysResource(SyncAPIResource):
         return self._get(
             "/api-keys",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=APIKeyListResponse,
         )
@@ -132,11 +124,7 @@ class APIKeysResource(SyncAPIResource):
         return self._delete(
             path_template("/api-keys/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=APIKeyRevokeResponse,
         )
@@ -191,11 +179,7 @@ class AsyncAPIKeysResource(AsyncAPIResource):
             "/api-keys",
             body=await async_maybe_transform({"name": name}, api_key_create_params.APIKeyCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=APIKeyCreateResponse,
         )
@@ -214,11 +198,7 @@ class AsyncAPIKeysResource(AsyncAPIResource):
         return await self._get(
             "/api-keys",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=APIKeyListResponse,
         )
@@ -251,11 +231,7 @@ class AsyncAPIKeysResource(AsyncAPIResource):
         return await self._delete(
             path_template("/api-keys/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=APIKeyRevokeResponse,
         )

@@ -146,6 +146,15 @@ class TestX:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_get_trends_with_all_params(self, client: XTwitterScraper) -> None:
+        x = client.x.get_trends(
+            count=1,
+            woeid=0,
+        )
+        assert_matches_type(XGetTrendsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_get_trends(self, client: XTwitterScraper) -> None:
         response = client.x.with_raw_response.get_trends()
 
@@ -292,6 +301,15 @@ class TestAsyncX:
     @parametrize
     async def test_method_get_trends(self, async_client: AsyncXTwitterScraper) -> None:
         x = await async_client.x.get_trends()
+        assert_matches_type(XGetTrendsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_get_trends_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        x = await async_client.x.get_trends(
+            count=1,
+            woeid=0,
+        )
         assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
