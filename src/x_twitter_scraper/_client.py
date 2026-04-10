@@ -143,7 +143,7 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def account(self) -> AccountResource:
-        """Account info & settings"""
+        """Account info and settings"""
         from .resources.account import AccountResource
 
         return AccountResource(self)
@@ -157,35 +157,35 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def subscribe(self) -> SubscribeResource:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResource
 
         return SubscribeResource(self)
 
     @cached_property
     def compose(self) -> ComposeResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import ComposeResource
 
         return ComposeResource(self)
 
     @cached_property
     def drafts(self) -> DraftsResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import DraftsResource
 
         return DraftsResource(self)
 
     @cached_property
     def styles(self) -> StylesResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import StylesResource
 
         return StylesResource(self)
 
     @cached_property
     def radar(self) -> RadarResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import RadarResource
 
         return RadarResource(self)
@@ -220,7 +220,7 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def webhooks(self) -> WebhooksResource:
-        """Webhook endpoint management & delivery"""
+        """Webhook endpoint management and delivery"""
         from .resources.webhooks import WebhooksResource
 
         return WebhooksResource(self)
@@ -234,14 +234,13 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def x(self) -> XResource:
-        """X data lookups (subscription required)"""
         from .resources.x import XResource
 
         return XResource(self)
 
     @cached_property
     def trends(self) -> TrendsResource:
-        """Trending topics by region"""
+        """Trending topics and hashtags by region"""
         from .resources.trends import TrendsResource
 
         return TrendsResource(self)
@@ -254,7 +253,7 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def credits(self) -> CreditsResource:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.credits import CreditsResource
 
         return CreditsResource(self)
@@ -462,7 +461,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def account(self) -> AsyncAccountResource:
-        """Account info & settings"""
+        """Account info and settings"""
         from .resources.account import AsyncAccountResource
 
         return AsyncAccountResource(self)
@@ -476,35 +475,35 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def subscribe(self) -> AsyncSubscribeResource:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.subscribe import AsyncSubscribeResource
 
         return AsyncSubscribeResource(self)
 
     @cached_property
     def compose(self) -> AsyncComposeResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import AsyncComposeResource
 
         return AsyncComposeResource(self)
 
     @cached_property
     def drafts(self) -> AsyncDraftsResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import AsyncDraftsResource
 
         return AsyncDraftsResource(self)
 
     @cached_property
     def styles(self) -> AsyncStylesResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import AsyncStylesResource
 
         return AsyncStylesResource(self)
 
     @cached_property
     def radar(self) -> AsyncRadarResource:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import AsyncRadarResource
 
         return AsyncRadarResource(self)
@@ -539,7 +538,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def webhooks(self) -> AsyncWebhooksResource:
-        """Webhook endpoint management & delivery"""
+        """Webhook endpoint management and delivery"""
         from .resources.webhooks import AsyncWebhooksResource
 
         return AsyncWebhooksResource(self)
@@ -553,14 +552,13 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def x(self) -> AsyncXResource:
-        """X data lookups (subscription required)"""
         from .resources.x import AsyncXResource
 
         return AsyncXResource(self)
 
     @cached_property
     def trends(self) -> AsyncTrendsResource:
-        """Trending topics by region"""
+        """Trending topics and hashtags by region"""
         from .resources.trends import AsyncTrendsResource
 
         return AsyncTrendsResource(self)
@@ -573,7 +571,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def credits(self) -> AsyncCreditsResource:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.credits import AsyncCreditsResource
 
         return AsyncCreditsResource(self)
@@ -728,7 +726,7 @@ class XTwitterScraperWithRawResponse:
 
     @cached_property
     def account(self) -> account.AccountResourceWithRawResponse:
-        """Account info & settings"""
+        """Account info and settings"""
         from .resources.account import AccountResourceWithRawResponse
 
         return AccountResourceWithRawResponse(self._client.account)
@@ -742,35 +740,35 @@ class XTwitterScraperWithRawResponse:
 
     @cached_property
     def subscribe(self) -> subscribe.SubscribeResourceWithRawResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithRawResponse
 
         return SubscribeResourceWithRawResponse(self._client.subscribe)
 
     @cached_property
     def compose(self) -> compose.ComposeResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import ComposeResourceWithRawResponse
 
         return ComposeResourceWithRawResponse(self._client.compose)
 
     @cached_property
     def drafts(self) -> drafts.DraftsResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import DraftsResourceWithRawResponse
 
         return DraftsResourceWithRawResponse(self._client.drafts)
 
     @cached_property
     def styles(self) -> styles.StylesResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import StylesResourceWithRawResponse
 
         return StylesResourceWithRawResponse(self._client.styles)
 
     @cached_property
     def radar(self) -> radar.RadarResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import RadarResourceWithRawResponse
 
         return RadarResourceWithRawResponse(self._client.radar)
@@ -805,7 +803,7 @@ class XTwitterScraperWithRawResponse:
 
     @cached_property
     def webhooks(self) -> webhooks.WebhooksResourceWithRawResponse:
-        """Webhook endpoint management & delivery"""
+        """Webhook endpoint management and delivery"""
         from .resources.webhooks import WebhooksResourceWithRawResponse
 
         return WebhooksResourceWithRawResponse(self._client.webhooks)
@@ -819,14 +817,13 @@ class XTwitterScraperWithRawResponse:
 
     @cached_property
     def x(self) -> x.XResourceWithRawResponse:
-        """X data lookups (subscription required)"""
         from .resources.x import XResourceWithRawResponse
 
         return XResourceWithRawResponse(self._client.x)
 
     @cached_property
     def trends(self) -> trends.TrendsResourceWithRawResponse:
-        """Trending topics by region"""
+        """Trending topics and hashtags by region"""
         from .resources.trends import TrendsResourceWithRawResponse
 
         return TrendsResourceWithRawResponse(self._client.trends)
@@ -839,7 +836,7 @@ class XTwitterScraperWithRawResponse:
 
     @cached_property
     def credits(self) -> credits.CreditsResourceWithRawResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.credits import CreditsResourceWithRawResponse
 
         return CreditsResourceWithRawResponse(self._client.credits)
@@ -853,7 +850,7 @@ class AsyncXTwitterScraperWithRawResponse:
 
     @cached_property
     def account(self) -> account.AsyncAccountResourceWithRawResponse:
-        """Account info & settings"""
+        """Account info and settings"""
         from .resources.account import AsyncAccountResourceWithRawResponse
 
         return AsyncAccountResourceWithRawResponse(self._client.account)
@@ -867,35 +864,35 @@ class AsyncXTwitterScraperWithRawResponse:
 
     @cached_property
     def subscribe(self) -> subscribe.AsyncSubscribeResourceWithRawResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.subscribe import AsyncSubscribeResourceWithRawResponse
 
         return AsyncSubscribeResourceWithRawResponse(self._client.subscribe)
 
     @cached_property
     def compose(self) -> compose.AsyncComposeResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import AsyncComposeResourceWithRawResponse
 
         return AsyncComposeResourceWithRawResponse(self._client.compose)
 
     @cached_property
     def drafts(self) -> drafts.AsyncDraftsResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import AsyncDraftsResourceWithRawResponse
 
         return AsyncDraftsResourceWithRawResponse(self._client.drafts)
 
     @cached_property
     def styles(self) -> styles.AsyncStylesResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import AsyncStylesResourceWithRawResponse
 
         return AsyncStylesResourceWithRawResponse(self._client.styles)
 
     @cached_property
     def radar(self) -> radar.AsyncRadarResourceWithRawResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import AsyncRadarResourceWithRawResponse
 
         return AsyncRadarResourceWithRawResponse(self._client.radar)
@@ -930,7 +927,7 @@ class AsyncXTwitterScraperWithRawResponse:
 
     @cached_property
     def webhooks(self) -> webhooks.AsyncWebhooksResourceWithRawResponse:
-        """Webhook endpoint management & delivery"""
+        """Webhook endpoint management and delivery"""
         from .resources.webhooks import AsyncWebhooksResourceWithRawResponse
 
         return AsyncWebhooksResourceWithRawResponse(self._client.webhooks)
@@ -944,14 +941,13 @@ class AsyncXTwitterScraperWithRawResponse:
 
     @cached_property
     def x(self) -> x.AsyncXResourceWithRawResponse:
-        """X data lookups (subscription required)"""
         from .resources.x import AsyncXResourceWithRawResponse
 
         return AsyncXResourceWithRawResponse(self._client.x)
 
     @cached_property
     def trends(self) -> trends.AsyncTrendsResourceWithRawResponse:
-        """Trending topics by region"""
+        """Trending topics and hashtags by region"""
         from .resources.trends import AsyncTrendsResourceWithRawResponse
 
         return AsyncTrendsResourceWithRawResponse(self._client.trends)
@@ -964,7 +960,7 @@ class AsyncXTwitterScraperWithRawResponse:
 
     @cached_property
     def credits(self) -> credits.AsyncCreditsResourceWithRawResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.credits import AsyncCreditsResourceWithRawResponse
 
         return AsyncCreditsResourceWithRawResponse(self._client.credits)
@@ -978,7 +974,7 @@ class XTwitterScraperWithStreamedResponse:
 
     @cached_property
     def account(self) -> account.AccountResourceWithStreamingResponse:
-        """Account info & settings"""
+        """Account info and settings"""
         from .resources.account import AccountResourceWithStreamingResponse
 
         return AccountResourceWithStreamingResponse(self._client.account)
@@ -992,35 +988,35 @@ class XTwitterScraperWithStreamedResponse:
 
     @cached_property
     def subscribe(self) -> subscribe.SubscribeResourceWithStreamingResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithStreamingResponse
 
         return SubscribeResourceWithStreamingResponse(self._client.subscribe)
 
     @cached_property
     def compose(self) -> compose.ComposeResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import ComposeResourceWithStreamingResponse
 
         return ComposeResourceWithStreamingResponse(self._client.compose)
 
     @cached_property
     def drafts(self) -> drafts.DraftsResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import DraftsResourceWithStreamingResponse
 
         return DraftsResourceWithStreamingResponse(self._client.drafts)
 
     @cached_property
     def styles(self) -> styles.StylesResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import StylesResourceWithStreamingResponse
 
         return StylesResourceWithStreamingResponse(self._client.styles)
 
     @cached_property
     def radar(self) -> radar.RadarResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import RadarResourceWithStreamingResponse
 
         return RadarResourceWithStreamingResponse(self._client.radar)
@@ -1055,7 +1051,7 @@ class XTwitterScraperWithStreamedResponse:
 
     @cached_property
     def webhooks(self) -> webhooks.WebhooksResourceWithStreamingResponse:
-        """Webhook endpoint management & delivery"""
+        """Webhook endpoint management and delivery"""
         from .resources.webhooks import WebhooksResourceWithStreamingResponse
 
         return WebhooksResourceWithStreamingResponse(self._client.webhooks)
@@ -1069,14 +1065,13 @@ class XTwitterScraperWithStreamedResponse:
 
     @cached_property
     def x(self) -> x.XResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
         from .resources.x import XResourceWithStreamingResponse
 
         return XResourceWithStreamingResponse(self._client.x)
 
     @cached_property
     def trends(self) -> trends.TrendsResourceWithStreamingResponse:
-        """Trending topics by region"""
+        """Trending topics and hashtags by region"""
         from .resources.trends import TrendsResourceWithStreamingResponse
 
         return TrendsResourceWithStreamingResponse(self._client.trends)
@@ -1089,7 +1084,7 @@ class XTwitterScraperWithStreamedResponse:
 
     @cached_property
     def credits(self) -> credits.CreditsResourceWithStreamingResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.credits import CreditsResourceWithStreamingResponse
 
         return CreditsResourceWithStreamingResponse(self._client.credits)
@@ -1103,7 +1098,7 @@ class AsyncXTwitterScraperWithStreamedResponse:
 
     @cached_property
     def account(self) -> account.AsyncAccountResourceWithStreamingResponse:
-        """Account info & settings"""
+        """Account info and settings"""
         from .resources.account import AsyncAccountResourceWithStreamingResponse
 
         return AsyncAccountResourceWithStreamingResponse(self._client.account)
@@ -1117,35 +1112,35 @@ class AsyncXTwitterScraperWithStreamedResponse:
 
     @cached_property
     def subscribe(self) -> subscribe.AsyncSubscribeResourceWithStreamingResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.subscribe import AsyncSubscribeResourceWithStreamingResponse
 
         return AsyncSubscribeResourceWithStreamingResponse(self._client.subscribe)
 
     @cached_property
     def compose(self) -> compose.AsyncComposeResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import AsyncComposeResourceWithStreamingResponse
 
         return AsyncComposeResourceWithStreamingResponse(self._client.compose)
 
     @cached_property
     def drafts(self) -> drafts.AsyncDraftsResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import AsyncDraftsResourceWithStreamingResponse
 
         return AsyncDraftsResourceWithStreamingResponse(self._client.drafts)
 
     @cached_property
     def styles(self) -> styles.AsyncStylesResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import AsyncStylesResourceWithStreamingResponse
 
         return AsyncStylesResourceWithStreamingResponse(self._client.styles)
 
     @cached_property
     def radar(self) -> radar.AsyncRadarResourceWithStreamingResponse:
-        """Tweet composition, drafts, writing styles & radar"""
+        """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import AsyncRadarResourceWithStreamingResponse
 
         return AsyncRadarResourceWithStreamingResponse(self._client.radar)
@@ -1180,7 +1175,7 @@ class AsyncXTwitterScraperWithStreamedResponse:
 
     @cached_property
     def webhooks(self) -> webhooks.AsyncWebhooksResourceWithStreamingResponse:
-        """Webhook endpoint management & delivery"""
+        """Webhook endpoint management and delivery"""
         from .resources.webhooks import AsyncWebhooksResourceWithStreamingResponse
 
         return AsyncWebhooksResourceWithStreamingResponse(self._client.webhooks)
@@ -1194,14 +1189,13 @@ class AsyncXTwitterScraperWithStreamedResponse:
 
     @cached_property
     def x(self) -> x.AsyncXResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
         from .resources.x import AsyncXResourceWithStreamingResponse
 
         return AsyncXResourceWithStreamingResponse(self._client.x)
 
     @cached_property
     def trends(self) -> trends.AsyncTrendsResourceWithStreamingResponse:
-        """Trending topics by region"""
+        """Trending topics and hashtags by region"""
         from .resources.trends import AsyncTrendsResourceWithStreamingResponse
 
         return AsyncTrendsResourceWithStreamingResponse(self._client.trends)
@@ -1214,7 +1208,7 @@ class AsyncXTwitterScraperWithStreamedResponse:
 
     @cached_property
     def credits(self) -> credits.AsyncCreditsResourceWithStreamingResponse:
-        """Subscription & billing"""
+        """Subscription, billing, and credits"""
         from .resources.credits import AsyncCreditsResourceWithStreamingResponse
 
         return AsyncCreditsResourceWithStreamingResponse(self._client.credits)

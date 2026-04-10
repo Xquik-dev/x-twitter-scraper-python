@@ -23,7 +23,7 @@ __all__ = ["ListsResource", "AsyncListsResource"]
 
 
 class ListsResource(SyncAPIResource):
-    """X data lookups (subscription required)"""
+    """X List followers, members, and tweets"""
 
     @cached_property
     def with_raw_response(self) -> ListsResourceWithRawResponse:
@@ -57,7 +57,7 @@ class ListsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get list followers
+        List followers of an X List
 
         Args:
           cursor: Pagination cursor for list followers
@@ -97,7 +97,7 @@ class ListsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get list members
+        List members of an X List
 
         Args:
           cursor: Pagination cursor for list members
@@ -140,7 +140,7 @@ class ListsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get list tweets
+        List tweets from an X List
 
         Args:
           cursor: Pagination cursor for list tweets
@@ -183,7 +183,7 @@ class ListsResource(SyncAPIResource):
 
 
 class AsyncListsResource(AsyncAPIResource):
-    """X data lookups (subscription required)"""
+    """X List followers, members, and tweets"""
 
     @cached_property
     def with_raw_response(self) -> AsyncListsResourceWithRawResponse:
@@ -217,7 +217,7 @@ class AsyncListsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get list followers
+        List followers of an X List
 
         Args:
           cursor: Pagination cursor for list followers
@@ -259,7 +259,7 @@ class AsyncListsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get list members
+        List members of an X List
 
         Args:
           cursor: Pagination cursor for list members
@@ -304,7 +304,7 @@ class AsyncListsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get list tweets
+        List tweets from an X List
 
         Args:
           cursor: Pagination cursor for list tweets

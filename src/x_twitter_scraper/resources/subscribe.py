@@ -20,7 +20,7 @@ __all__ = ["SubscribeResource", "AsyncSubscribeResource"]
 
 
 class SubscribeResource(SyncAPIResource):
-    """Subscription & billing"""
+    """Subscription, billing, and credits"""
 
     @cached_property
     def with_raw_response(self) -> SubscribeResourceWithRawResponse:
@@ -62,7 +62,7 @@ class SubscribeResource(SyncAPIResource):
 
 
 class AsyncSubscribeResource(AsyncAPIResource):
-    """Subscription & billing"""
+    """Subscription, billing, and credits"""
 
     @cached_property
     def with_raw_response(self) -> AsyncSubscribeResourceWithRawResponse:

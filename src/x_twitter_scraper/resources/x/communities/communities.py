@@ -55,7 +55,7 @@ class CommunitiesResource(SyncAPIResource):
 
     @cached_property
     def tweets(self) -> TweetsResource:
-        """X data lookups (subscription required)"""
+        """X Community info, members, and tweets"""
         return TweetsResource(self._client)
 
     @cached_property
@@ -182,7 +182,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community details
+        Get community name, description & member count
 
         Args:
           extra_headers: Send extra headers
@@ -216,7 +216,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get community members
+        List members of a community
 
         Args:
           cursor: Pagination cursor
@@ -258,7 +258,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get community moderators
+        List moderators of a community
 
         Args:
           cursor: Pagination cursor for community moderators
@@ -301,7 +301,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets across communities
+        Search for communities by keyword
 
         Args:
           q: Search query
@@ -346,7 +346,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
     @cached_property
     def tweets(self) -> AsyncTweetsResource:
-        """X data lookups (subscription required)"""
+        """X Community info, members, and tweets"""
         return AsyncTweetsResource(self._client)
 
     @cached_property
@@ -473,7 +473,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community details
+        Get community name, description & member count
 
         Args:
           extra_headers: Send extra headers
@@ -507,7 +507,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get community members
+        List members of a community
 
         Args:
           cursor: Pagination cursor
@@ -549,7 +549,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get community moderators
+        List moderators of a community
 
         Args:
           cursor: Pagination cursor for community moderators
@@ -592,7 +592,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets across communities
+        Search for communities by keyword
 
         Args:
           q: Search query
@@ -659,7 +659,7 @@ class CommunitiesResourceWithRawResponse:
 
     @cached_property
     def tweets(self) -> TweetsResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """X Community info, members, and tweets"""
         return TweetsResourceWithRawResponse(self._communities.tweets)
 
 
@@ -693,7 +693,7 @@ class AsyncCommunitiesResourceWithRawResponse:
 
     @cached_property
     def tweets(self) -> AsyncTweetsResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """X Community info, members, and tweets"""
         return AsyncTweetsResourceWithRawResponse(self._communities.tweets)
 
 
@@ -727,7 +727,7 @@ class CommunitiesResourceWithStreamingResponse:
 
     @cached_property
     def tweets(self) -> TweetsResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """X Community info, members, and tweets"""
         return TweetsResourceWithStreamingResponse(self._communities.tweets)
 
 
@@ -761,5 +761,5 @@ class AsyncCommunitiesResourceWithStreamingResponse:
 
     @cached_property
     def tweets(self) -> AsyncTweetsResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """X Community info, members, and tweets"""
         return AsyncTweetsResourceWithStreamingResponse(self._communities.tweets)
