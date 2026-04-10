@@ -35,7 +35,7 @@ __all__ = ["MediaResource", "AsyncMediaResource"]
 
 
 class MediaResource(SyncAPIResource):
-    """Media upload & download"""
+    """Media upload and download"""
 
     @cached_property
     def with_raw_response(self) -> MediaResourceWithRawResponse:
@@ -69,7 +69,7 @@ class MediaResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download tweet media
+        Download images & videos from tweets
 
         Args:
           tweet_ids: Array of tweet URLs or IDs (bulk, max 50)
@@ -152,7 +152,7 @@ class MediaResource(SyncAPIResource):
 
 
 class AsyncMediaResource(AsyncAPIResource):
-    """Media upload & download"""
+    """Media upload and download"""
 
     @cached_property
     def with_raw_response(self) -> AsyncMediaResourceWithRawResponse:
@@ -186,7 +186,7 @@ class AsyncMediaResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download tweet media
+        Download images & videos from tweets
 
         Args:
           tweet_ids: Array of tweet URLs or IDs (bulk, max 50)

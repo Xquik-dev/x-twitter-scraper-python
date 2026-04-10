@@ -22,7 +22,7 @@ __all__ = ["TweetsResource", "AsyncTweetsResource"]
 
 
 class TweetsResource(SyncAPIResource):
-    """X data lookups (subscription required)"""
+    """X Community info, members, and tweets"""
 
     @cached_property
     def with_raw_response(self) -> TweetsResourceWithRawResponse:
@@ -57,7 +57,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets across all communities
+        List tweets across all communities
 
         Args:
           q: Search query for cross-community tweets
@@ -106,7 +106,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get community tweets
+        List tweets posted in a community
 
         Args:
           cursor: Pagination cursor for community tweets
@@ -135,7 +135,7 @@ class TweetsResource(SyncAPIResource):
 
 
 class AsyncTweetsResource(AsyncAPIResource):
-    """X data lookups (subscription required)"""
+    """X Community info, members, and tweets"""
 
     @cached_property
     def with_raw_response(self) -> AsyncTweetsResourceWithRawResponse:
@@ -170,7 +170,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets across all communities
+        List tweets across all communities
 
         Args:
           q: Search query for cross-community tweets
@@ -219,7 +219,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get community tweets
+        List tweets posted in a community
 
         Args:
           cursor: Pagination cursor for community tweets

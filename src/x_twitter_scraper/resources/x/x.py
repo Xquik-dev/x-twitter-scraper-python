@@ -107,20 +107,18 @@ __all__ = ["XResource", "AsyncXResource"]
 
 
 class XResource(SyncAPIResource):
-    """X data lookups (subscription required)"""
-
     @cached_property
     def tweets(self) -> TweetsResource:
         return TweetsResource(self._client)
 
     @cached_property
     def users(self) -> UsersResource:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return UsersResource(self._client)
 
     @cached_property
     def followers(self) -> FollowersResource:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return FollowersResource(self._client)
 
     @cached_property
@@ -129,7 +127,7 @@ class XResource(SyncAPIResource):
 
     @cached_property
     def media(self) -> MediaResource:
-        """Media upload & download"""
+        """Media upload and download"""
         return MediaResource(self._client)
 
     @cached_property
@@ -148,12 +146,12 @@ class XResource(SyncAPIResource):
 
     @cached_property
     def bookmarks(self) -> BookmarksResource:
-        """X data lookups (subscription required)"""
+        """Look up, search, and analyze individual tweets"""
         return BookmarksResource(self._client)
 
     @cached_property
     def lists(self) -> ListsResource:
-        """X data lookups (subscription required)"""
+        """X List followers, members, and tweets"""
         return ListsResource(self._client)
 
     @cached_property
@@ -313,7 +311,7 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending topics
+        Get trending hashtags & topics from X by region
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
@@ -348,20 +346,18 @@ class XResource(SyncAPIResource):
 
 
 class AsyncXResource(AsyncAPIResource):
-    """X data lookups (subscription required)"""
-
     @cached_property
     def tweets(self) -> AsyncTweetsResource:
         return AsyncTweetsResource(self._client)
 
     @cached_property
     def users(self) -> AsyncUsersResource:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return AsyncUsersResource(self._client)
 
     @cached_property
     def followers(self) -> AsyncFollowersResource:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return AsyncFollowersResource(self._client)
 
     @cached_property
@@ -370,7 +366,7 @@ class AsyncXResource(AsyncAPIResource):
 
     @cached_property
     def media(self) -> AsyncMediaResource:
-        """Media upload & download"""
+        """Media upload and download"""
         return AsyncMediaResource(self._client)
 
     @cached_property
@@ -389,12 +385,12 @@ class AsyncXResource(AsyncAPIResource):
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResource:
-        """X data lookups (subscription required)"""
+        """Look up, search, and analyze individual tweets"""
         return AsyncBookmarksResource(self._client)
 
     @cached_property
     def lists(self) -> AsyncListsResource:
-        """X data lookups (subscription required)"""
+        """X List followers, members, and tweets"""
         return AsyncListsResource(self._client)
 
     @cached_property
@@ -554,7 +550,7 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending topics
+        Get trending hashtags & topics from X by region
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
@@ -611,12 +607,12 @@ class XResourceWithRawResponse:
 
     @cached_property
     def users(self) -> UsersResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return UsersResourceWithRawResponse(self._x.users)
 
     @cached_property
     def followers(self) -> FollowersResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return FollowersResourceWithRawResponse(self._x.followers)
 
     @cached_property
@@ -625,7 +621,7 @@ class XResourceWithRawResponse:
 
     @cached_property
     def media(self) -> MediaResourceWithRawResponse:
-        """Media upload & download"""
+        """Media upload and download"""
         return MediaResourceWithRawResponse(self._x.media)
 
     @cached_property
@@ -644,12 +640,12 @@ class XResourceWithRawResponse:
 
     @cached_property
     def bookmarks(self) -> BookmarksResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and analyze individual tweets"""
         return BookmarksResourceWithRawResponse(self._x.bookmarks)
 
     @cached_property
     def lists(self) -> ListsResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """X List followers, members, and tweets"""
         return ListsResourceWithRawResponse(self._x.lists)
 
 
@@ -676,12 +672,12 @@ class AsyncXResourceWithRawResponse:
 
     @cached_property
     def users(self) -> AsyncUsersResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return AsyncUsersResourceWithRawResponse(self._x.users)
 
     @cached_property
     def followers(self) -> AsyncFollowersResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return AsyncFollowersResourceWithRawResponse(self._x.followers)
 
     @cached_property
@@ -690,7 +686,7 @@ class AsyncXResourceWithRawResponse:
 
     @cached_property
     def media(self) -> AsyncMediaResourceWithRawResponse:
-        """Media upload & download"""
+        """Media upload and download"""
         return AsyncMediaResourceWithRawResponse(self._x.media)
 
     @cached_property
@@ -709,12 +705,12 @@ class AsyncXResourceWithRawResponse:
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and analyze individual tweets"""
         return AsyncBookmarksResourceWithRawResponse(self._x.bookmarks)
 
     @cached_property
     def lists(self) -> AsyncListsResourceWithRawResponse:
-        """X data lookups (subscription required)"""
+        """X List followers, members, and tweets"""
         return AsyncListsResourceWithRawResponse(self._x.lists)
 
 
@@ -741,12 +737,12 @@ class XResourceWithStreamingResponse:
 
     @cached_property
     def users(self) -> UsersResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return UsersResourceWithStreamingResponse(self._x.users)
 
     @cached_property
     def followers(self) -> FollowersResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return FollowersResourceWithStreamingResponse(self._x.followers)
 
     @cached_property
@@ -755,7 +751,7 @@ class XResourceWithStreamingResponse:
 
     @cached_property
     def media(self) -> MediaResourceWithStreamingResponse:
-        """Media upload & download"""
+        """Media upload and download"""
         return MediaResourceWithStreamingResponse(self._x.media)
 
     @cached_property
@@ -774,12 +770,12 @@ class XResourceWithStreamingResponse:
 
     @cached_property
     def bookmarks(self) -> BookmarksResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and analyze individual tweets"""
         return BookmarksResourceWithStreamingResponse(self._x.bookmarks)
 
     @cached_property
     def lists(self) -> ListsResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """X List followers, members, and tweets"""
         return ListsResourceWithStreamingResponse(self._x.lists)
 
 
@@ -806,12 +802,12 @@ class AsyncXResourceWithStreamingResponse:
 
     @cached_property
     def users(self) -> AsyncUsersResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return AsyncUsersResourceWithStreamingResponse(self._x.users)
 
     @cached_property
     def followers(self) -> AsyncFollowersResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and explore user profiles and relationships"""
         return AsyncFollowersResourceWithStreamingResponse(self._x.followers)
 
     @cached_property
@@ -820,7 +816,7 @@ class AsyncXResourceWithStreamingResponse:
 
     @cached_property
     def media(self) -> AsyncMediaResourceWithStreamingResponse:
-        """Media upload & download"""
+        """Media upload and download"""
         return AsyncMediaResourceWithStreamingResponse(self._x.media)
 
     @cached_property
@@ -839,10 +835,10 @@ class AsyncXResourceWithStreamingResponse:
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """Look up, search, and analyze individual tweets"""
         return AsyncBookmarksResourceWithStreamingResponse(self._x.bookmarks)
 
     @cached_property
     def lists(self) -> AsyncListsResourceWithStreamingResponse:
-        """X data lookups (subscription required)"""
+        """X List followers, members, and tweets"""
         return AsyncListsResourceWithStreamingResponse(self._x.lists)

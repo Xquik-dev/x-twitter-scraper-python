@@ -146,7 +146,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Look up tweet
+        Get tweet with full text, author, metrics & media
 
         Args:
           extra_headers: Send extra headers
@@ -254,7 +254,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who liked a tweet
+        List users who liked a tweet
 
         Args:
           cursor: Pagination cursor for favoriters
@@ -297,7 +297,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get quote tweets of a tweet
+        List quote tweets of a tweet
 
         Args:
           cursor: Pagination cursor for quote tweets
@@ -353,7 +353,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get replies to a tweet
+        List replies to a tweet
 
         Args:
           cursor: Pagination cursor for tweet replies
@@ -404,7 +404,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who retweeted a tweet
+        List users who retweeted a tweet
 
         Args:
           cursor: Pagination cursor for retweeters
@@ -444,7 +444,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get thread context for a tweet
+        Get full conversation thread for a tweet
 
         Args:
           cursor: Pagination cursor for thread tweets
@@ -488,7 +488,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets
+        Search tweets with X query operators & pagination
 
         Args:
           q: Search query (keywords,
@@ -627,7 +627,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Look up tweet
+        Get tweet with full text, author, metrics & media
 
         Args:
           extra_headers: Send extra headers
@@ -735,7 +735,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who liked a tweet
+        List users who liked a tweet
 
         Args:
           cursor: Pagination cursor for favoriters
@@ -780,7 +780,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get quote tweets of a tweet
+        List quote tweets of a tweet
 
         Args:
           cursor: Pagination cursor for quote tweets
@@ -836,7 +836,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get replies to a tweet
+        List replies to a tweet
 
         Args:
           cursor: Pagination cursor for tweet replies
@@ -887,7 +887,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who retweeted a tweet
+        List users who retweeted a tweet
 
         Args:
           cursor: Pagination cursor for retweeters
@@ -929,7 +929,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get thread context for a tweet
+        Get full conversation thread for a tweet
 
         Args:
           cursor: Pagination cursor for thread tweets
@@ -973,7 +973,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets
+        Search tweets with X query operators & pagination
 
         Args:
           q: Search query (keywords,
