@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.4.0 (2026-04-22)
+
+Full Changelog: [v0.3.1...v0.4.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.3.1...v0.4.0)
+
+### Features
+
+* **api:** api update ([ea97c97](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/ea97c97b83f9388dfe339655bd7e1e2f39bf8537))
+* **api:** api update ([9ab5907](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9ab59079a7538deaedc38cb221ba6421ff4dd39a))
+* **api:** api update ([e6edd37](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/e6edd371ab5a80748ae26a0173206e89634c5da5))
+* **api:** api update ([8e576ed](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/8e576ed647806a054a3f6b7f3be7dbcaffb36aef))
+
+
+### Bug Fixes
+
+* ensure file data are only sent as 1 parameter ([c86dcf1](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/c86dcf186aed37ef154028b708bc9cdf3a56bf39))
+* escape ampersand in OpenAPI summaries for C# XML docs ([d2d9141](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/d2d9141e286e7f032f9aec934e93f33414c7221e))
+
+
+### Performance Improvements
+
+* **client:** optimize file structure copying in multipart requests ([eb0688d](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/eb0688d0ae9da72c17a1b3550e0221d2f81a9ef4))
+
+
+### Chores
+
+* sync OpenAPI spec ([e7bfdb7](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/e7bfdb76972a4d2c6b5ddb5f0f1f815579fd175d))
+* wire production_repo for all targets ([18d4cc3](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/18d4cc3d3c5796aaa637f3841224dfaa9e076a5b))
+
 ## 0.3.1 (2026-04-08)
 
 Full Changelog: [v0.3.0...v0.3.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.3.0...v0.3.1)
