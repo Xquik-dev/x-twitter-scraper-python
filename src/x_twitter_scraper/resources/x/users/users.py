@@ -81,7 +81,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserProfile:
         """
-        Get user profile with follower counts & verification
+        Get user profile with follower counts and verification
 
         Args:
           extra_headers: Send extra headers
@@ -593,7 +593,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserProfile:
         """
-        Get user profile with follower counts & verification
+        Get user profile with follower counts and verification
 
         Args:
           extra_headers: Send extra headers

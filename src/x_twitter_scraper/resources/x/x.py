@@ -311,7 +311,7 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending hashtags & topics from X by region
+        Get trending hashtags and topics from X by region
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
@@ -550,7 +550,7 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending hashtags & topics from X by region
+        Get trending hashtags and topics from X by region
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
