@@ -226,31 +226,6 @@ Methods:
 - <code title="get /webhooks/{id}/deliveries">client.webhooks.<a href="./src/x_twitter_scraper/resources/webhooks.py">list_deliveries</a>(id) -> <a href="./src/x_twitter_scraper/types/webhook_list_deliveries_response.py">WebhookListDeliveriesResponse</a></code>
 - <code title="post /webhooks/{id}/test">client.webhooks.<a href="./src/x_twitter_scraper/resources/webhooks.py">test</a>(id) -> <a href="./src/x_twitter_scraper/types/webhook_test_response.py">WebhookTestResponse</a></code>
 
-# Integrations
-
-Types:
-
-```python
-from x_twitter_scraper.types import (
-    Integration,
-    IntegrationDelivery,
-    IntegrationListResponse,
-    IntegrationDeleteResponse,
-    IntegrationListDeliveriesResponse,
-    IntegrationSendTestResponse,
-)
-```
-
-Methods:
-
-- <code title="post /integrations">client.integrations.<a href="./src/x_twitter_scraper/resources/integrations.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/integration_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/integration.py">Integration</a></code>
-- <code title="get /integrations/{id}">client.integrations.<a href="./src/x_twitter_scraper/resources/integrations.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/integration.py">Integration</a></code>
-- <code title="patch /integrations/{id}">client.integrations.<a href="./src/x_twitter_scraper/resources/integrations.py">update</a>(id, \*\*<a href="src/x_twitter_scraper/types/integration_update_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/integration.py">Integration</a></code>
-- <code title="get /integrations">client.integrations.<a href="./src/x_twitter_scraper/resources/integrations.py">list</a>() -> <a href="./src/x_twitter_scraper/types/integration_list_response.py">IntegrationListResponse</a></code>
-- <code title="delete /integrations/{id}">client.integrations.<a href="./src/x_twitter_scraper/resources/integrations.py">delete</a>(id) -> <a href="./src/x_twitter_scraper/types/integration_delete_response.py">IntegrationDeleteResponse</a></code>
-- <code title="get /integrations/{id}/deliveries">client.integrations.<a href="./src/x_twitter_scraper/resources/integrations.py">list_deliveries</a>(id, \*\*<a href="src/x_twitter_scraper/types/integration_list_deliveries_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/integration_list_deliveries_response.py">IntegrationListDeliveriesResponse</a></code>
-- <code title="post /integrations/{id}/test">client.integrations.<a href="./src/x_twitter_scraper/resources/integrations.py">send_test</a>(id) -> <a href="./src/x_twitter_scraper/types/integration_send_test_response.py">IntegrationSendTestResponse</a></code>
-
 # X
 
 Types:

@@ -8,14 +8,17 @@ __all__ = ["RadarRetrieveTrendingTopicsParams"]
 
 
 class RadarRetrieveTrendingTopicsParams(TypedDict, total=False):
-    category: str
-    """Filter by category (general, tech, dev, etc.)"""
+    after: str
+    """Cursor for pagination (from prior response nextCursor)."""
 
-    count: int
-    """Number of items to return"""
+    category: Literal["general", "tech", "dev", "science", "culture", "politics", "business", "entertainment"]
+    """Filter by category."""
 
     hours: int
-    """Lookback window in hours"""
+    """Lookback window in hours (1-168, default 24)."""
+
+    limit: int
+    """Number of items to return (1-100, default 50)."""
 
     region: str
     """Region filter (us, global, etc.)"""

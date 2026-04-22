@@ -27,9 +27,10 @@ class TestRadar:
     @parametrize
     def test_method_retrieve_trending_topics_with_all_params(self, client: XTwitterScraper) -> None:
         radar = client.radar.retrieve_trending_topics(
-            category="category",
-            count=0,
-            hours=0,
+            after="after",
+            category="general",
+            hours=1,
+            limit=1,
             region="region",
             source="github",
         )
@@ -73,9 +74,10 @@ class TestAsyncRadar:
     @parametrize
     async def test_method_retrieve_trending_topics_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         radar = await async_client.radar.retrieve_trending_topics(
-            category="category",
-            count=0,
-            hours=0,
+            after="after",
+            category="general",
+            hours=1,
+            limit=1,
             region="region",
             source="github",
         )

@@ -50,7 +50,6 @@ if TYPE_CHECKING:
         webhooks,
         subscribe,
         extractions,
-        integrations,
     )
     from .resources.x.x import XResource, AsyncXResource
     from .resources.draws import DrawsResource, AsyncDrawsResource
@@ -67,7 +66,6 @@ if TYPE_CHECKING:
     from .resources.webhooks import WebhooksResource, AsyncWebhooksResource
     from .resources.subscribe import SubscribeResource, AsyncSubscribeResource
     from .resources.extractions import ExtractionsResource, AsyncExtractionsResource
-    from .resources.integrations import IntegrationsResource, AsyncIntegrationsResource
     from .resources.support.support import SupportResource, AsyncSupportResource
 
 __all__ = [
@@ -224,13 +222,6 @@ class XTwitterScraper(SyncAPIClient):
         from .resources.webhooks import WebhooksResource
 
         return WebhooksResource(self)
-
-    @cached_property
-    def integrations(self) -> IntegrationsResource:
-        """Push notification integrations (Telegram)"""
-        from .resources.integrations import IntegrationsResource
-
-        return IntegrationsResource(self)
 
     @cached_property
     def x(self) -> XResource:
@@ -544,13 +535,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         return AsyncWebhooksResource(self)
 
     @cached_property
-    def integrations(self) -> AsyncIntegrationsResource:
-        """Push notification integrations (Telegram)"""
-        from .resources.integrations import AsyncIntegrationsResource
-
-        return AsyncIntegrationsResource(self)
-
-    @cached_property
     def x(self) -> AsyncXResource:
         from .resources.x import AsyncXResource
 
@@ -809,13 +793,6 @@ class XTwitterScraperWithRawResponse:
         return WebhooksResourceWithRawResponse(self._client.webhooks)
 
     @cached_property
-    def integrations(self) -> integrations.IntegrationsResourceWithRawResponse:
-        """Push notification integrations (Telegram)"""
-        from .resources.integrations import IntegrationsResourceWithRawResponse
-
-        return IntegrationsResourceWithRawResponse(self._client.integrations)
-
-    @cached_property
     def x(self) -> x.XResourceWithRawResponse:
         from .resources.x import XResourceWithRawResponse
 
@@ -931,13 +908,6 @@ class AsyncXTwitterScraperWithRawResponse:
         from .resources.webhooks import AsyncWebhooksResourceWithRawResponse
 
         return AsyncWebhooksResourceWithRawResponse(self._client.webhooks)
-
-    @cached_property
-    def integrations(self) -> integrations.AsyncIntegrationsResourceWithRawResponse:
-        """Push notification integrations (Telegram)"""
-        from .resources.integrations import AsyncIntegrationsResourceWithRawResponse
-
-        return AsyncIntegrationsResourceWithRawResponse(self._client.integrations)
 
     @cached_property
     def x(self) -> x.AsyncXResourceWithRawResponse:
@@ -1057,13 +1027,6 @@ class XTwitterScraperWithStreamedResponse:
         return WebhooksResourceWithStreamingResponse(self._client.webhooks)
 
     @cached_property
-    def integrations(self) -> integrations.IntegrationsResourceWithStreamingResponse:
-        """Push notification integrations (Telegram)"""
-        from .resources.integrations import IntegrationsResourceWithStreamingResponse
-
-        return IntegrationsResourceWithStreamingResponse(self._client.integrations)
-
-    @cached_property
     def x(self) -> x.XResourceWithStreamingResponse:
         from .resources.x import XResourceWithStreamingResponse
 
@@ -1179,13 +1142,6 @@ class AsyncXTwitterScraperWithStreamedResponse:
         from .resources.webhooks import AsyncWebhooksResourceWithStreamingResponse
 
         return AsyncWebhooksResourceWithStreamingResponse(self._client.webhooks)
-
-    @cached_property
-    def integrations(self) -> integrations.AsyncIntegrationsResourceWithStreamingResponse:
-        """Push notification integrations (Telegram)"""
-        from .resources.integrations import AsyncIntegrationsResourceWithStreamingResponse
-
-        return AsyncIntegrationsResourceWithStreamingResponse(self._client.integrations)
 
     @cached_property
     def x(self) -> x.AsyncXResourceWithStreamingResponse:
