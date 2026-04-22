@@ -87,12 +87,13 @@ class TweetsResource(SyncAPIResource):
         self,
         *,
         account: str,
-        text: str,
         attachment_url: str | Omit = omit,
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
+        media: SequenceNotStr[str] | Omit = omit,
         media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
+        text: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -105,6 +106,12 @@ class TweetsResource(SyncAPIResource):
 
         Args:
           account: X account (@username or account ID)
+
+          media: Array of media URLs to attach (mutually exclusive with media_ids)
+
+          media_ids: Array of media IDs to attach (mutually exclusive with media)
+
+          text: Tweet text (optional when media is provided)
 
           extra_headers: Send extra headers
 
@@ -119,12 +126,13 @@ class TweetsResource(SyncAPIResource):
             body=maybe_transform(
                 {
                     "account": account,
-                    "text": text,
                     "attachment_url": attachment_url,
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
+                    "media": media,
                     "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
+                    "text": text,
                 },
                 tweet_create_params.TweetCreateParams,
             ),
@@ -568,12 +576,13 @@ class AsyncTweetsResource(AsyncAPIResource):
         self,
         *,
         account: str,
-        text: str,
         attachment_url: str | Omit = omit,
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
+        media: SequenceNotStr[str] | Omit = omit,
         media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
+        text: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -586,6 +595,12 @@ class AsyncTweetsResource(AsyncAPIResource):
 
         Args:
           account: X account (@username or account ID)
+
+          media: Array of media URLs to attach (mutually exclusive with media_ids)
+
+          media_ids: Array of media IDs to attach (mutually exclusive with media)
+
+          text: Tweet text (optional when media is provided)
 
           extra_headers: Send extra headers
 
@@ -600,12 +615,13 @@ class AsyncTweetsResource(AsyncAPIResource):
             body=await async_maybe_transform(
                 {
                     "account": account,
-                    "text": text,
                     "attachment_url": attachment_url,
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
+                    "media": media,
                     "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
+                    "text": text,
                 },
                 tweet_create_params.TweetCreateParams,
             ),

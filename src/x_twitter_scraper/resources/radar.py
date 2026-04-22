@@ -48,9 +48,11 @@ class RadarResource(SyncAPIResource):
     def retrieve_trending_topics(
         self,
         *,
-        category: str | Omit = omit,
-        count: int | Omit = omit,
+        after: str | Omit = omit,
+        category: Literal["general", "tech", "dev", "science", "culture", "politics", "business", "entertainment"]
+        | Omit = omit,
         hours: int | Omit = omit,
+        limit: int | Omit = omit,
         region: str | Omit = omit,
         source: Literal["github", "google_trends", "hacker_news", "polymarket", "reddit", "trustmrr", "wikipedia"]
         | Omit = omit,
@@ -65,11 +67,13 @@ class RadarResource(SyncAPIResource):
         Get trending topics from curated sources
 
         Args:
-          category: Filter by category (general, tech, dev, etc.)
+          after: Cursor for pagination (from prior response nextCursor).
 
-          count: Number of items to return
+          category: Filter by category.
 
-          hours: Lookback window in hours
+          hours: Lookback window in hours (1-168, default 24).
+
+          limit: Number of items to return (1-100, default 50).
 
           region: Region filter (us, global, etc.)
 
@@ -93,9 +97,10 @@ class RadarResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "after": after,
                         "category": category,
-                        "count": count,
                         "hours": hours,
+                        "limit": limit,
                         "region": region,
                         "source": source,
                     },
@@ -131,9 +136,11 @@ class AsyncRadarResource(AsyncAPIResource):
     async def retrieve_trending_topics(
         self,
         *,
-        category: str | Omit = omit,
-        count: int | Omit = omit,
+        after: str | Omit = omit,
+        category: Literal["general", "tech", "dev", "science", "culture", "politics", "business", "entertainment"]
+        | Omit = omit,
         hours: int | Omit = omit,
+        limit: int | Omit = omit,
         region: str | Omit = omit,
         source: Literal["github", "google_trends", "hacker_news", "polymarket", "reddit", "trustmrr", "wikipedia"]
         | Omit = omit,
@@ -148,11 +155,13 @@ class AsyncRadarResource(AsyncAPIResource):
         Get trending topics from curated sources
 
         Args:
-          category: Filter by category (general, tech, dev, etc.)
+          after: Cursor for pagination (from prior response nextCursor).
 
-          count: Number of items to return
+          category: Filter by category.
 
-          hours: Lookback window in hours
+          hours: Lookback window in hours (1-168, default 24).
+
+          limit: Number of items to return (1-100, default 50).
 
           region: Region filter (us, global, etc.)
 
@@ -176,9 +185,10 @@ class AsyncRadarResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "after": after,
                         "category": category,
-                        "count": count,
                         "hours": hours,
+                        "limit": limit,
                         "region": region,
                         "source": source,
                     },

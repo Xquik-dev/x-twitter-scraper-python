@@ -128,14 +128,6 @@ from .extractions import (
     ExtractionsResourceWithStreamingResponse,
     AsyncExtractionsResourceWithStreamingResponse,
 )
-from .integrations import (
-    IntegrationsResource,
-    AsyncIntegrationsResource,
-    IntegrationsResourceWithRawResponse,
-    AsyncIntegrationsResourceWithRawResponse,
-    IntegrationsResourceWithStreamingResponse,
-    AsyncIntegrationsResourceWithStreamingResponse,
-)
 
 __all__ = [
     "AccountResource",
@@ -210,12 +202,6 @@ __all__ = [
     "AsyncWebhooksResourceWithRawResponse",
     "WebhooksResourceWithStreamingResponse",
     "AsyncWebhooksResourceWithStreamingResponse",
-    "IntegrationsResource",
-    "AsyncIntegrationsResource",
-    "IntegrationsResourceWithRawResponse",
-    "AsyncIntegrationsResourceWithRawResponse",
-    "IntegrationsResourceWithStreamingResponse",
-    "AsyncIntegrationsResourceWithStreamingResponse",
     "XResource",
     "AsyncXResource",
     "XResourceWithRawResponse",

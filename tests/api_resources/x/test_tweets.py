@@ -27,7 +27,6 @@ class TestTweets:
     def test_method_create(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -36,12 +35,13 @@ class TestTweets:
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
             attachment_url="https://x.com/elonmusk/status/1234567890",
             community_id="1500000000000000000",
             is_note_tweet=False,
+            media=["https://example.com/image.jpg"],
             media_ids=["1234567890123456789"],
             reply_to_tweet_id="1234567890",
+            text="Just launched our new feature!",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -50,7 +50,6 @@ class TestTweets:
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.with_raw_response.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
         )
 
         assert response.is_closed is True
@@ -63,7 +62,6 @@ class TestTweets:
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.tweets.with_streaming_response.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -513,7 +511,6 @@ class TestAsyncTweets:
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -522,12 +519,13 @@ class TestAsyncTweets:
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
             attachment_url="https://x.com/elonmusk/status/1234567890",
             community_id="1500000000000000000",
             is_note_tweet=False,
+            media=["https://example.com/image.jpg"],
             media_ids=["1234567890123456789"],
             reply_to_tweet_id="1234567890",
+            text="Just launched our new feature!",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -536,7 +534,6 @@ class TestAsyncTweets:
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.with_raw_response.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
         )
 
         assert response.is_closed is True
@@ -549,7 +546,6 @@ class TestAsyncTweets:
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.with_streaming_response.create(
             account="@elonmusk",
-            text="Just launched our new feature!",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

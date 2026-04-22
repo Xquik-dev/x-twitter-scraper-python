@@ -1,7 +1,8 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import Optional
+from typing import Dict, Optional
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -11,9 +12,32 @@ __all__ = ["RadarItem"]
 
 
 class RadarItem(BaseModel):
-    """Trending topic with score, category, source, and region."""
+    """
+    Trending topic with score, category, source, region, language, and source-specific metadata.
+    """
 
-    category: str
+    id: str
+    """Internal numeric identifier (stringified bigint)."""
+
+    category: Literal["general", "tech", "dev", "science", "culture", "politics", "business", "entertainment"]
+
+    created_at: datetime = FieldInfo(alias="createdAt")
+
+    language: str
+
+    metadata: Dict[str, object]
+    """Source-specific fields. Shape varies per source:
+
+    - reddit: { subreddit: string, author: string }
+    - github: { starsToday: number }
+    - hacker_news: { points: number, numberComments: number }
+    - google_trends: { approxTraffic: number }
+    - polymarket: { volume24hr: number }
+    - wikipedia: { views: number }
+    - trustmrr: { mrr, growthPercent, last30Days, total, customers,
+      activeSubscriptions, onSale, xHandle?, category?, askingPrice?, country?,
+      growthMrrPercent?, multiple?, paymentProvider?, rank? }
+    """
 
     published_at: datetime = FieldInfo(alias="publishedAt")
 
@@ -21,7 +45,10 @@ class RadarItem(BaseModel):
 
     score: float
 
-    source: str
+    source: Literal["github", "google_trends", "hacker_news", "polymarket", "reddit", "trustmrr", "wikipedia"]
+
+    source_id: str = FieldInfo(alias="sourceId")
+    """Source-specific identifier used for deduplication."""
 
     title: str
 

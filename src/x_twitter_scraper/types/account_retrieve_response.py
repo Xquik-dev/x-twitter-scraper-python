@@ -1,22 +1,23 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from typing import Optional
-from datetime import datetime
 from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["AccountRetrieveResponse", "CurrentPeriod"]
+__all__ = ["AccountRetrieveResponse", "CreditInfo"]
 
 
-class CurrentPeriod(BaseModel):
-    end: datetime
+class CreditInfo(BaseModel):
+    auto_topup_enabled: bool = FieldInfo(alias="autoTopupEnabled")
 
-    start: datetime
+    balance: int
 
-    usage_percent: float = FieldInfo(alias="usagePercent")
+    lifetime_purchased: int = FieldInfo(alias="lifetimePurchased")
+
+    lifetime_used: int = FieldInfo(alias="lifetimeUsed")
 
 
 class AccountRetrieveResponse(BaseModel):
@@ -26,4 +27,4 @@ class AccountRetrieveResponse(BaseModel):
 
     plan: Literal["active", "inactive"]
 
-    current_period: Optional[CurrentPeriod] = FieldInfo(alias="currentPeriod", default=None)
+    credit_info: Optional[CreditInfo] = FieldInfo(alias="creditInfo", default=None)

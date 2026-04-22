@@ -26,7 +26,7 @@ class TestMonitors:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         monitor = client.monitors.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             username="elonmusk",
         )
         assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
@@ -35,7 +35,7 @@ class TestMonitors:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.monitors.with_raw_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             username="elonmusk",
         )
 
@@ -48,7 +48,7 @@ class TestMonitors:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.monitors.with_streaming_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             username="elonmusk",
         ) as response:
             assert not response.is_closed
@@ -233,7 +233,7 @@ class TestAsyncMonitors:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         monitor = await async_client.monitors.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             username="elonmusk",
         )
         assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
@@ -242,7 +242,7 @@ class TestAsyncMonitors:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.monitors.with_raw_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             username="elonmusk",
         )
 
@@ -255,7 +255,7 @@ class TestAsyncMonitors:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.monitors.with_streaming_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             username="elonmusk",
         ) as response:
             assert not response.is_closed
