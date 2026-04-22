@@ -27,7 +27,7 @@ __all__ = ["StylesResource", "AsyncStylesResource"]
 
 
 class StylesResource(SyncAPIResource):
-    """Tweet composition, drafts, writing styles & radar"""
+    """AI tweet composition, drafts, writing styles, and radar"""
 
     @cached_property
     def with_raw_response(self) -> StylesResourceWithRawResponse:
@@ -295,7 +295,7 @@ class StylesResource(SyncAPIResource):
 
 
 class AsyncStylesResource(AsyncAPIResource):
-    """Tweet composition, drafts, writing styles & radar"""
+    """AI tweet composition, drafts, writing styles, and radar"""
 
     @cached_property
     def with_raw_response(self) -> AsyncStylesResourceWithRawResponse:

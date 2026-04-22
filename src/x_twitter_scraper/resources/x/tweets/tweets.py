@@ -87,12 +87,13 @@ class TweetsResource(SyncAPIResource):
         self,
         *,
         account: str,
-        text: str,
         attachment_url: str | Omit = omit,
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
+        media: SequenceNotStr[str] | Omit = omit,
         media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
+        text: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -105,6 +106,12 @@ class TweetsResource(SyncAPIResource):
 
         Args:
           account: X account (@username or account ID)
+
+          media: Array of media URLs to attach (mutually exclusive with media_ids)
+
+          media_ids: Array of media IDs to attach (mutually exclusive with media)
+
+          text: Tweet text (optional when media is provided)
 
           extra_headers: Send extra headers
 
@@ -119,12 +126,13 @@ class TweetsResource(SyncAPIResource):
             body=maybe_transform(
                 {
                     "account": account,
-                    "text": text,
                     "attachment_url": attachment_url,
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
+                    "media": media,
                     "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
+                    "text": text,
                 },
                 tweet_create_params.TweetCreateParams,
             ),
@@ -146,7 +154,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Look up tweet
+        Get tweet with full text, author, metrics and media
 
         Args:
           extra_headers: Send extra headers
@@ -254,7 +262,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who liked a tweet
+        List users who liked a tweet
 
         Args:
           cursor: Pagination cursor for favoriters
@@ -297,7 +305,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get quote tweets of a tweet
+        List quote tweets of a tweet
 
         Args:
           cursor: Pagination cursor for quote tweets
@@ -353,7 +361,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get replies to a tweet
+        List replies to a tweet
 
         Args:
           cursor: Pagination cursor for tweet replies
@@ -404,7 +412,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who retweeted a tweet
+        List users who retweeted a tweet
 
         Args:
           cursor: Pagination cursor for retweeters
@@ -444,7 +452,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get thread context for a tweet
+        Get full conversation thread for a tweet
 
         Args:
           cursor: Pagination cursor for thread tweets
@@ -488,7 +496,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets
+        Search tweets with X query operators and pagination
 
         Args:
           q: Search query (keywords,
@@ -568,12 +576,13 @@ class AsyncTweetsResource(AsyncAPIResource):
         self,
         *,
         account: str,
-        text: str,
         attachment_url: str | Omit = omit,
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
+        media: SequenceNotStr[str] | Omit = omit,
         media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
+        text: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -586,6 +595,12 @@ class AsyncTweetsResource(AsyncAPIResource):
 
         Args:
           account: X account (@username or account ID)
+
+          media: Array of media URLs to attach (mutually exclusive with media_ids)
+
+          media_ids: Array of media IDs to attach (mutually exclusive with media)
+
+          text: Tweet text (optional when media is provided)
 
           extra_headers: Send extra headers
 
@@ -600,12 +615,13 @@ class AsyncTweetsResource(AsyncAPIResource):
             body=await async_maybe_transform(
                 {
                     "account": account,
-                    "text": text,
                     "attachment_url": attachment_url,
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
+                    "media": media,
                     "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
+                    "text": text,
                 },
                 tweet_create_params.TweetCreateParams,
             ),
@@ -627,7 +643,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Look up tweet
+        Get tweet with full text, author, metrics and media
 
         Args:
           extra_headers: Send extra headers
@@ -735,7 +751,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who liked a tweet
+        List users who liked a tweet
 
         Args:
           cursor: Pagination cursor for favoriters
@@ -780,7 +796,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get quote tweets of a tweet
+        List quote tweets of a tweet
 
         Args:
           cursor: Pagination cursor for quote tweets
@@ -836,7 +852,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get replies to a tweet
+        List replies to a tweet
 
         Args:
           cursor: Pagination cursor for tweet replies
@@ -887,7 +903,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users who retweeted a tweet
+        List users who retweeted a tweet
 
         Args:
           cursor: Pagination cursor for retweeters
@@ -929,7 +945,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get thread context for a tweet
+        Get full conversation thread for a tweet
 
         Args:
           cursor: Pagination cursor for thread tweets
@@ -973,7 +989,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets
+        Search tweets with X query operators and pagination
 
         Args:
           q: Search query (keywords,

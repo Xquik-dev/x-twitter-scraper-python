@@ -22,7 +22,7 @@ __all__ = ["FollowersResource", "AsyncFollowersResource"]
 
 
 class FollowersResource(SyncAPIResource):
-    """X data lookups (subscription required)"""
+    """Look up, search, and explore user profiles and relationships"""
 
     @cached_property
     def with_raw_response(self) -> FollowersResourceWithRawResponse:
@@ -56,7 +56,7 @@ class FollowersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> FollowerCheckResponse:
         """
-        Check follow relationship
+        Check if one user follows another
 
         Args:
           source: Username to check (without @)
@@ -91,7 +91,7 @@ class FollowersResource(SyncAPIResource):
 
 
 class AsyncFollowersResource(AsyncAPIResource):
-    """X data lookups (subscription required)"""
+    """Look up, search, and explore user profiles and relationships"""
 
     @cached_property
     def with_raw_response(self) -> AsyncFollowersResourceWithRawResponse:
@@ -125,7 +125,7 @@ class AsyncFollowersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> FollowerCheckResponse:
         """
-        Check follow relationship
+        Check if one user follows another
 
         Args:
           source: Username to check (without @)

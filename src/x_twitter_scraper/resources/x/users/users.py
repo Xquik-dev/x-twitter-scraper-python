@@ -35,7 +35,7 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
-from ....types.x.user_profile import UserProfile
+from ....types.shared.user_profile import UserProfile
 from ....types.shared.paginated_users import PaginatedUsers
 from ....types.shared.paginated_tweets import PaginatedTweets
 
@@ -43,7 +43,7 @@ __all__ = ["UsersResource", "AsyncUsersResource"]
 
 
 class UsersResource(SyncAPIResource):
-    """X data lookups (subscription required)"""
+    """Look up, search, and explore user profiles and relationships"""
 
     @cached_property
     def follow(self) -> FollowResource:
@@ -81,7 +81,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserProfile:
         """
-        Look up X user
+        Get user profile with follower counts and verification
 
         Args:
           extra_headers: Send extra headers
@@ -114,7 +114,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get multiple users by IDs
+        Look up multiple users by IDs in one call
 
         Args:
           ids: Comma-separated user IDs (max 100)
@@ -153,7 +153,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get user followers
+        List followers of a user
 
         Args:
           cursor: Pagination cursor for followers list
@@ -201,7 +201,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get followers you know for a user
+        List mutual followers between you and a user
 
         Args:
           cursor: Pagination cursor for followers-you-know
@@ -244,7 +244,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users this user follows
+        List accounts a user follows
 
         Args:
           cursor: Pagination cursor for following list
@@ -292,7 +292,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get tweets liked by a user
+        List tweets liked by a user
 
         Args:
           cursor: Pagination cursor for liked tweets
@@ -332,7 +332,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get media tweets by a user
+        List media tweets posted by a user
 
         Args:
           cursor: Pagination cursor for media tweets
@@ -374,7 +374,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get tweets mentioning a user
+        List tweets mentioning a user
 
         Args:
           cursor: Pagination cursor for mentions
@@ -473,7 +473,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get recent tweets by a user
+        List recent tweets posted by a user
 
         Args:
           cursor: Pagination cursor for user tweets
@@ -524,7 +524,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get verified followers
+        List verified followers of a user
 
         Args:
           cursor: Pagination cursor for verified followers
@@ -555,7 +555,7 @@ class UsersResource(SyncAPIResource):
 
 
 class AsyncUsersResource(AsyncAPIResource):
-    """X data lookups (subscription required)"""
+    """Look up, search, and explore user profiles and relationships"""
 
     @cached_property
     def follow(self) -> AsyncFollowResource:
@@ -593,7 +593,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserProfile:
         """
-        Look up X user
+        Get user profile with follower counts and verification
 
         Args:
           extra_headers: Send extra headers
@@ -626,7 +626,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get multiple users by IDs
+        Look up multiple users by IDs in one call
 
         Args:
           ids: Comma-separated user IDs (max 100)
@@ -665,7 +665,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get user followers
+        List followers of a user
 
         Args:
           cursor: Pagination cursor for followers list
@@ -713,7 +713,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get followers you know for a user
+        List mutual followers between you and a user
 
         Args:
           cursor: Pagination cursor for followers-you-know
@@ -756,7 +756,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get users this user follows
+        List accounts a user follows
 
         Args:
           cursor: Pagination cursor for following list
@@ -804,7 +804,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get tweets liked by a user
+        List tweets liked by a user
 
         Args:
           cursor: Pagination cursor for liked tweets
@@ -846,7 +846,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get media tweets by a user
+        List media tweets posted by a user
 
         Args:
           cursor: Pagination cursor for media tweets
@@ -890,7 +890,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get tweets mentioning a user
+        List tweets mentioning a user
 
         Args:
           cursor: Pagination cursor for mentions
@@ -989,7 +989,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get recent tweets by a user
+        List recent tweets posted by a user
 
         Args:
           cursor: Pagination cursor for user tweets
@@ -1040,7 +1040,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Get verified followers
+        List verified followers of a user
 
         Args:
           cursor: Pagination cursor for verified followers

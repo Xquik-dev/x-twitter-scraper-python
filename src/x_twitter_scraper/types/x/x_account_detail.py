@@ -2,6 +2,7 @@
 
 from typing import Optional
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -16,6 +17,8 @@ class XAccountDetail(BaseModel):
     id: str
 
     created_at: datetime = FieldInfo(alias="createdAt")
+
+    health: Literal["healthy", "locked", "needsReauth", "recovering", "suspended", "temporaryIssue"]
 
     status: str
 

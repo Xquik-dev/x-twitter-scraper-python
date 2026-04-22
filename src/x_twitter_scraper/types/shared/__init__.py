@@ -2,5 +2,7 @@
 
 from .error import Error as Error
 from .event_type import EventType as EventType
+from .search_tweet import SearchTweet as SearchTweet
+from .user_profile import UserProfile as UserProfile
 from .paginated_users import PaginatedUsers as PaginatedUsers
 from .paginated_tweets import PaginatedTweets as PaginatedTweets

@@ -23,7 +23,7 @@ __all__ = ["BookmarksResource", "AsyncBookmarksResource"]
 
 
 class BookmarksResource(SyncAPIResource):
-    """X data lookups (subscription required)"""
+    """Look up, search, and analyze individual tweets"""
 
     @cached_property
     def with_raw_response(self) -> BookmarksResourceWithRawResponse:
@@ -111,7 +111,7 @@ class BookmarksResource(SyncAPIResource):
 
 
 class AsyncBookmarksResource(AsyncAPIResource):
-    """X data lookups (subscription required)"""
+    """Look up, search, and analyze individual tweets"""
 
     @cached_property
     def with_raw_response(self) -> AsyncBookmarksResourceWithRawResponse:

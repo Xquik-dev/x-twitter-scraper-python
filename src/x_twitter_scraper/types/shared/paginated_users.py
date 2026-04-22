@@ -3,7 +3,7 @@
 from typing import List
 
 from ..._models import BaseModel
-from ..x.user_profile import UserProfile
+from .user_profile import UserProfile
 
 __all__ = ["PaginatedUsers"]
 

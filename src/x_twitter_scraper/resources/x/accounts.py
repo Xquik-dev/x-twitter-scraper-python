@@ -98,11 +98,7 @@ class AccountsResource(SyncAPIResource):
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountCreateResponse,
         )
@@ -135,11 +131,7 @@ class AccountsResource(SyncAPIResource):
         return self._get(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=XAccountDetail,
         )
@@ -158,11 +150,7 @@ class AccountsResource(SyncAPIResource):
         return self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountListResponse,
         )
@@ -195,11 +183,7 @@ class AccountsResource(SyncAPIResource):
         return self._delete(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -221,11 +205,7 @@ class AccountsResource(SyncAPIResource):
         return self._post(
             "/x/accounts/bulk-retry",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountBulkRetryResponse,
         )
@@ -235,6 +215,8 @@ class AccountsResource(SyncAPIResource):
         id: str,
         *,
         password: str,
+        email: str | Omit = omit,
+        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -248,6 +230,10 @@ class AccountsResource(SyncAPIResource):
 
         Args:
           password: Updated account password
+
+          email: Email for the X account (updates stored email)
+
+          proxy_country: Two-letter country code for login proxy region
 
           totp_secret: TOTP secret for 2FA re-authentication
 
@@ -266,16 +252,14 @@ class AccountsResource(SyncAPIResource):
             body=maybe_transform(
                 {
                     "password": password,
+                    "email": email,
+                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_reauth_params.AccountReauthParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountReauthResponse,
         )
@@ -353,11 +337,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountCreateResponse,
         )
@@ -390,11 +370,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=XAccountDetail,
         )
@@ -413,11 +389,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountListResponse,
         )
@@ -450,11 +422,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._delete(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -476,11 +444,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._post(
             "/x/accounts/bulk-retry",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountBulkRetryResponse,
         )
@@ -490,6 +454,8 @@ class AsyncAccountsResource(AsyncAPIResource):
         id: str,
         *,
         password: str,
+        email: str | Omit = omit,
+        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -503,6 +469,10 @@ class AsyncAccountsResource(AsyncAPIResource):
 
         Args:
           password: Updated account password
+
+          email: Email for the X account (updates stored email)
+
+          proxy_country: Two-letter country code for login proxy region
 
           totp_secret: TOTP secret for 2FA re-authentication
 
@@ -521,16 +491,14 @@ class AsyncAccountsResource(AsyncAPIResource):
             body=await async_maybe_transform(
                 {
                     "password": password,
+                    "email": email,
+                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_reauth_params.AccountReauthParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountReauthResponse,
         )

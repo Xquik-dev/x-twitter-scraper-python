@@ -9,10 +9,7 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper.types.x import (
-    UserProfile,
-)
-from x_twitter_scraper.types.shared import PaginatedUsers, PaginatedTweets
+from x_twitter_scraper.types.shared import UserProfile, PaginatedUsers, PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 

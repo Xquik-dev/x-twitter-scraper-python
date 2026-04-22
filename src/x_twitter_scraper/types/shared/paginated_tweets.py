@@ -3,7 +3,7 @@
 from typing import List
 
 from ..._models import BaseModel
-from ..x.search_tweet import SearchTweet
+from .search_tweet import SearchTweet
 
 __all__ = ["PaginatedTweets"]
 

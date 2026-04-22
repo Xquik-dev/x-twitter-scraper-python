@@ -13,14 +13,19 @@ class TweetCreateParams(TypedDict, total=False):
     account: Required[str]
     """X account (@username or account ID)"""
 
-    text: Required[str]
-
     attachment_url: str
 
     community_id: str
 
     is_note_tweet: bool
 
+    media: SequenceNotStr[str]
+    """Array of media URLs to attach (mutually exclusive with media_ids)"""
+
     media_ids: SequenceNotStr[str]
+    """Array of media IDs to attach (mutually exclusive with media)"""
 
     reply_to_tweet_id: str
+
+    text: str
+    """Tweet text (optional when media is provided)"""

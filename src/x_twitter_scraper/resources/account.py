@@ -26,7 +26,7 @@ __all__ = ["AccountResource", "AsyncAccountResource"]
 
 
 class AccountResource(SyncAPIResource):
-    """Account info & settings"""
+    """Account info and settings"""
 
     @cached_property
     def with_raw_response(self) -> AccountResourceWithRawResponse:
@@ -61,11 +61,7 @@ class AccountResource(SyncAPIResource):
         return self._get(
             "/account",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountRetrieveResponse,
         )
@@ -131,18 +127,14 @@ class AccountResource(SyncAPIResource):
             "/account",
             body=maybe_transform({"locale": locale}, account_update_locale_params.AccountUpdateLocaleParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountUpdateLocaleResponse,
         )
 
 
 class AsyncAccountResource(AsyncAPIResource):
-    """Account info & settings"""
+    """Account info and settings"""
 
     @cached_property
     def with_raw_response(self) -> AsyncAccountResourceWithRawResponse:
@@ -177,11 +169,7 @@ class AsyncAccountResource(AsyncAPIResource):
         return await self._get(
             "/account",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountRetrieveResponse,
         )
@@ -251,11 +239,7 @@ class AsyncAccountResource(AsyncAPIResource):
                 {"locale": locale}, account_update_locale_params.AccountUpdateLocaleParams
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={"api_key": True},
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountUpdateLocaleResponse,
         )

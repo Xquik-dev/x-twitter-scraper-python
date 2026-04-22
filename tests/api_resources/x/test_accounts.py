@@ -231,6 +231,8 @@ class TestAccounts:
         account = client.x.accounts.reauth(
             id="id",
             password="password_value",
+            email="user@example.com",
+            proxy_country="US",
             totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
@@ -485,6 +487,8 @@ class TestAsyncAccounts:
         account = await async_client.x.accounts.reauth(
             id="id",
             password="password_value",
+            email="user@example.com",
+            proxy_country="US",
             totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])

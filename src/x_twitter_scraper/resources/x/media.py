@@ -6,6 +6,7 @@ from typing import Mapping, cast
 
 import httpx
 
+from ..._files import deepcopy_with_paths
 from ..._types import (
     Body,
     Omit,
@@ -17,7 +18,7 @@ from ..._types import (
     omit,
     not_given,
 )
-from ..._utils import extract_files, maybe_transform, deepcopy_minimal, async_maybe_transform
+from ..._utils import extract_files, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import media_upload_params, media_download_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -35,7 +36,7 @@ __all__ = ["MediaResource", "AsyncMediaResource"]
 
 
 class MediaResource(SyncAPIResource):
-    """Media upload & download"""
+    """Media upload and download"""
 
     @cached_property
     def with_raw_response(self) -> MediaResourceWithRawResponse:
@@ -69,7 +70,7 @@ class MediaResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download tweet media
+        Download images and videos from tweets
 
         Args:
           tweet_ids: Array of tweet URLs or IDs (bulk, max 50)
@@ -128,12 +129,13 @@ class MediaResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        body = deepcopy_minimal(
+        body = deepcopy_with_paths(
             {
                 "account": account,
                 "file": file,
                 "is_long_video": is_long_video,
-            }
+            },
+            [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
         # It should be noted that the actual Content-Type header that will be
@@ -152,7 +154,7 @@ class MediaResource(SyncAPIResource):
 
 
 class AsyncMediaResource(AsyncAPIResource):
-    """Media upload & download"""
+    """Media upload and download"""
 
     @cached_property
     def with_raw_response(self) -> AsyncMediaResourceWithRawResponse:
@@ -186,7 +188,7 @@ class AsyncMediaResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download tweet media
+        Download images and videos from tweets
 
         Args:
           tweet_ids: Array of tweet URLs or IDs (bulk, max 50)
@@ -245,12 +247,13 @@ class AsyncMediaResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        body = deepcopy_minimal(
+        body = deepcopy_with_paths(
             {
                 "account": account,
                 "file": file,
                 "is_long_video": is_long_video,
-            }
+            },
+            [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
         # It should be noted that the actual Content-Type header that will be

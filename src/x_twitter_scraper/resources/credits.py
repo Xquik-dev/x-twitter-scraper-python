@@ -23,7 +23,7 @@ __all__ = ["CreditsResource", "AsyncCreditsResource"]
 
 
 class CreditsResource(SyncAPIResource):
-    """Subscription & billing"""
+    """Subscription, billing, and credits"""
 
     @cached_property
     def with_raw_response(self) -> CreditsResourceWithRawResponse:
@@ -99,7 +99,7 @@ class CreditsResource(SyncAPIResource):
 
 
 class AsyncCreditsResource(AsyncAPIResource):
-    """Subscription & billing"""
+    """Subscription, billing, and credits"""
 
     @cached_property
     def with_raw_response(self) -> AsyncCreditsResourceWithRawResponse:

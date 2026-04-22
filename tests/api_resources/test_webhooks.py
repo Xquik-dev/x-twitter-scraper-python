@@ -28,7 +28,7 @@ class TestWebhooks:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         webhook = client.webhooks.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             url="https://example.com/webhook",
         )
         assert_matches_type(WebhookCreateResponse, webhook, path=["response"])
@@ -37,7 +37,7 @@ class TestWebhooks:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.webhooks.with_raw_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             url="https://example.com/webhook",
         )
 
@@ -50,7 +50,7 @@ class TestWebhooks:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.webhooks.with_streaming_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             url="https://example.com/webhook",
         ) as response:
             assert not response.is_closed
@@ -278,7 +278,7 @@ class TestAsyncWebhooks:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         webhook = await async_client.webhooks.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             url="https://example.com/webhook",
         )
         assert_matches_type(WebhookCreateResponse, webhook, path=["response"])
@@ -287,7 +287,7 @@ class TestAsyncWebhooks:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.webhooks.with_raw_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             url="https://example.com/webhook",
         )
 
@@ -300,7 +300,7 @@ class TestAsyncWebhooks:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.webhooks.with_streaming_response.create(
-            event_types=["tweet.new", "follower.gained"],
+            event_types=["tweet.new", "tweet.reply"],
             url="https://example.com/webhook",
         ) as response:
             assert not response.is_closed
