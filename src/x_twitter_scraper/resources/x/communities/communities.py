@@ -182,7 +182,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community name, description & member count
+        Get community name, description and member count
 
         Args:
           extra_headers: Send extra headers
@@ -473,7 +473,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community name, description & member count
+        Get community name, description and member count
 
         Args:
           extra_headers: Send extra headers

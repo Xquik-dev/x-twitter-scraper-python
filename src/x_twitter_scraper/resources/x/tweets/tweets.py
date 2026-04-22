@@ -154,7 +154,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Get tweet with full text, author, metrics & media
+        Get tweet with full text, author, metrics and media
 
         Args:
           extra_headers: Send extra headers
@@ -496,7 +496,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets with X query operators & pagination
+        Search tweets with X query operators and pagination
 
         Args:
           q: Search query (keywords,
@@ -643,7 +643,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Get tweet with full text, author, metrics & media
+        Get tweet with full text, author, metrics and media
 
         Args:
           extra_headers: Send extra headers
@@ -989,7 +989,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Search tweets with X query operators & pagination
+        Search tweets with X query operators and pagination
 
         Args:
           q: Search query (keywords,

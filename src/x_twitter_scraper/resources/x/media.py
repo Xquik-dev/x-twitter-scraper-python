@@ -70,7 +70,7 @@ class MediaResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download images & videos from tweets
+        Download images and videos from tweets
 
         Args:
           tweet_ids: Array of tweet URLs or IDs (bulk, max 50)
@@ -188,7 +188,7 @@ class AsyncMediaResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download images & videos from tweets
+        Download images and videos from tweets
 
         Args:
           tweet_ids: Array of tweet URLs or IDs (bulk, max 50)
