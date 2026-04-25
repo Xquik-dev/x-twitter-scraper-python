@@ -154,10 +154,7 @@ from x_twitter_scraper import XTwitterScraper
 client = XTwitterScraper()
 
 try:
-    client.x.tweets.search(
-        q="from:elonmusk",
-        limit=10,
-    )
+    client.account.retrieve()
 except x_twitter_scraper.APIConnectionError as e:
     print("The server could not be reached")
     print(e.__cause__)  # an underlying Exception, likely raised within httpx.
@@ -200,10 +197,7 @@ client = XTwitterScraper(
 )
 
 # Or, configure per-request:
-client.with_options(max_retries=5).x.tweets.search(
-    q="from:elonmusk",
-    limit=10,
-)
+client.with_options(max_retries=5).account.retrieve()
 ```
 
 ### Timeouts
@@ -226,10 +220,7 @@ client = XTwitterScraper(
 )
 
 # Override per-request:
-client.with_options(timeout=5.0).x.tweets.search(
-    q="from:elonmusk",
-    limit=10,
-)
+client.with_options(timeout=5.0).account.retrieve()
 ```
 
 On timeout, an `APITimeoutError` is thrown.
@@ -270,14 +261,11 @@ The "raw" Response object can be accessed by prefixing `.with_raw_response.` to 
 from x_twitter_scraper import XTwitterScraper
 
 client = XTwitterScraper()
-response = client.x.tweets.with_raw_response.search(
-    q="from:elonmusk",
-    limit=10,
-)
+response = client.account.with_raw_response.retrieve()
 print(response.headers.get('X-My-Header'))
 
-tweet = response.parse()  # get the object that `x.tweets.search()` would have returned
-print(tweet.has_next_page)
+account = response.parse()  # get the object that `account.retrieve()` would have returned
+print(account.monitors_allowed)
 ```
 
 These methods return an [`APIResponse`](https://github.com/stainless-sdks/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) object.
@@ -291,10 +279,7 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with client.x.tweets.with_streaming_response.search(
-    q="from:elonmusk",
-    limit=10,
-) as response:
+with client.account.with_streaming_response.retrieve() as response:
     print(response.headers.get("X-My-Header"))
 
     for line in response.iter_lines():
