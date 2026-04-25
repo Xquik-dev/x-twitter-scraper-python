@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.1 (2026-04-25)
+
+Full Changelog: [v0.4.0...v0.4.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.4.0...v0.4.1)
+
+### Chores
+
+* **internal:** more robust bootstrap script ([69aa90c](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/69aa90c4cb22f105848e073fc4130e5c79db12aa))
+
+
+### Documentation
+
+* add Contributor Covenant 2.1 Code of Conduct ([#2192](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/2192)) ([06635a2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/06635a2a9951934ecca52515211dbcec2714e46f))
+
 ## 0.4.0 (2026-04-22)
 
 Full Changelog: [v0.3.1...v0.4.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.3.1...v0.4.0)
