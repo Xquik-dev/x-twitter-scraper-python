@@ -64,7 +64,7 @@ class CommunitiesResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return CommunitiesResourceWithRawResponse(self)
 
@@ -73,7 +73,7 @@ class CommunitiesResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return CommunitiesResourceWithStreamingResponse(self)
 
@@ -182,7 +182,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community name, description and member count
+        Get community name, description & member count
 
         Args:
           extra_headers: Send extra headers
@@ -208,6 +208,7 @@ class CommunitiesResource(SyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -220,6 +221,8 @@ class CommunitiesResource(SyncAPIResource):
 
         Args:
           cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 20)
 
           extra_headers: Send extra headers
 
@@ -239,7 +242,11 @@ class CommunitiesResource(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform(
-                    {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -355,7 +362,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncCommunitiesResourceWithRawResponse(self)
 
@@ -364,7 +371,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncCommunitiesResourceWithStreamingResponse(self)
 
@@ -473,7 +480,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community name, description and member count
+        Get community name, description & member count
 
         Args:
           extra_headers: Send extra headers
@@ -499,6 +506,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -511,6 +519,8 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
         Args:
           cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 20)
 
           extra_headers: Send extra headers
 
@@ -530,7 +540,11 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
             ),
             cast_to=PaginatedUsers,

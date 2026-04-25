@@ -20,10 +20,11 @@ class TweetCreateParams(TypedDict, total=False):
     is_note_tweet: bool
 
     media: SequenceNotStr[str]
-    """Array of media URLs to attach (mutually exclusive with media_ids)"""
+    """Array of public image URLs to attach (max 4).
 
-    media_ids: SequenceNotStr[str]
-    """Array of media IDs to attach (mutually exclusive with media)"""
+    Each URL must be publicly reachable - the browser composer fetches them
+    directly.
+    """
 
     reply_to_tweet_id: str
 

@@ -30,7 +30,7 @@ class TrendsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return TrendsResourceWithRawResponse(self)
 
@@ -39,7 +39,7 @@ class TrendsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return TrendsResourceWithStreamingResponse(self)
 
@@ -56,12 +56,12 @@ class TrendsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
         """
-        Get trending hashtags and topics by region (alias)
+        Get trending hashtags & topics by region (alias)
 
         Args:
-          count: Number of trending topics to return (1-50, default 30)
+          count: Number of trending topics returned (1-50, default 30)
 
-          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          woeid: Region Yahoo WOEID code (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
 
           extra_headers: Send extra headers
 
@@ -99,7 +99,7 @@ class AsyncTrendsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncTrendsResourceWithRawResponse(self)
 
@@ -108,7 +108,7 @@ class AsyncTrendsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncTrendsResourceWithStreamingResponse(self)
 
@@ -125,12 +125,12 @@ class AsyncTrendsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
         """
-        Get trending hashtags and topics by region (alias)
+        Get trending hashtags & topics by region (alias)
 
         Args:
-          count: Number of trending topics to return (1-50, default 30)
+          count: Number of trending topics returned (1-50, default 30)
 
-          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          woeid: Region Yahoo WOEID code (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
 
           extra_headers: Send extra headers
 

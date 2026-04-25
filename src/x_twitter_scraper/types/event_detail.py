@@ -17,7 +17,7 @@ class EventDetail(BaseModel):
     id: str
 
     data: Dict[str, object]
-    """Event payload — shape varies by event type (JSON)"""
+    """Event payload - shape varies by event type (JSON)"""
 
     monitor_id: str = FieldInfo(alias="monitorId")
 

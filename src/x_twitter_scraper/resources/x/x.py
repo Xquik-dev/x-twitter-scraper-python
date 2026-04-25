@@ -160,7 +160,7 @@ class XResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return XResourceWithRawResponse(self)
 
@@ -169,7 +169,7 @@ class XResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return XResourceWithStreamingResponse(self)
 
@@ -311,7 +311,7 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending hashtags and topics from X by region
+        Get trending hashtags & topics from X by region
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
@@ -399,7 +399,7 @@ class AsyncXResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncXResourceWithRawResponse(self)
 
@@ -408,7 +408,7 @@ class AsyncXResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncXResourceWithStreamingResponse(self)
 
@@ -550,7 +550,7 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending hashtags and topics from X by region
+        Get trending hashtags & topics from X by region
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
