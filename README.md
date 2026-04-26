@@ -1,9 +1,9 @@
-# X Twitter Scraper Python API library
+# Xquik API library
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
-The X Twitter Scraper Python library provides convenient access to the X Twitter Scraper REST API from any Python 3.9+
+The Xquik library provides convenient access to the X Twitter Scraper REST API from any Python 3.9+
 application. The library includes type definitions for all request params and response fields,
 and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
 
