@@ -1,0 +1,20 @@
+cff-version: 1.2.0
+message: If you use this SDK, cite it using this metadata.
+title: Xquik Python SDK for the X (Twitter) Scraper API
+type: software
+authors:
+  - name: Xquik
+version: 0.4.0
+date-released: 2026-04-22
+url: https://github.com/Xquik-dev/x-twitter-scraper-python
+repository-code: https://github.com/Xquik-dev/x-twitter-scraper-python
+license: Apache-2.0
+keywords:
+  - Xquik
+  - Python
+  - SDK
+  - REST API
+  - webhooks
+  - MCP
+  - X
+  - Twitter scraper
