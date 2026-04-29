@@ -1,17 +1,65 @@
-# X Twitter Scraper Python API library
+# Xquik Python SDK for X (Twitter) Scraper API
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
-The X Twitter Scraper Python library provides convenient access to the X Twitter Scraper REST API from any Python 3.9+
-application. The library includes type definitions for all request params and response fields,
-and offers both synchronous and asynchronous clients powered by [httpx](https://github.com/encode/httpx).
+Xquik Python SDK for the X (Twitter) Scraper API: typed REST, HMAC webhooks, MCP, and docs at https://docs.xquik.com/api-reference/overview.
+
+Use it to search tweets, look up users, monitor accounts, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
+
+[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Server](https://xquik.com/mcp) | [TypeScript SDK](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
 
 It is generated with [Stainless](https://www.stainless.com/).
 
+## Tweet Search & User Lookup
+
+Build Python services that search tweets, fetch user profiles, check follower relationships, download media, and inspect timeline data through one typed REST client.
+
+## Real-Time Monitoring & Webhooks
+
+Create monitors for X accounts, receive HMAC-signed webhook events, and query event history from the same SDK surface.
+
+## AI Agent Workflows With MCP
+
+Connect agent systems to Xquik through the MCP server while keeping custom product code on the typed REST SDK.
+
+## Giveaway Draws & Extractions
+
+Run giveaway draws, export winners, and launch extraction jobs for replies, reposts, quotes, followers, lists, communities, threads, articles, and tweet search.
+
+## Xquik SDK vs Building From Scratch
+
+| Need | Xquik Python SDK | Building From Scratch |
+| --- | --- | --- |
+| Typed REST calls | Pydantic models and typed request params | Hand-maintained schemas |
+| Sync and async apps | Synchronous and asynchronous clients | Separate clients and retries |
+| Real-time events | Monitors plus HMAC webhooks | Separate queue and signing work |
+| AI agent access | REST SDK plus MCP server | Custom bridge layer |
+
+## Package & Registry Trust
+
+- Package: [PyPI `x_twitter_scraper`](https://pypi.org/project/x_twitter_scraper/)
+- Source: [Xquik-dev/x-twitter-scraper-python](https://github.com/Xquik-dev/x-twitter-scraper-python)
+- License: Apache-2.0
+- Citation metadata: [CITATION.cff](CITATION.cff)
+
+## FAQ
+
+### Does this SDK support async Python?
+
+Yes. Import `AsyncXTwitterScraper` and await the same API methods.
+
+### Where are the REST endpoints documented?
+
+Start with the [REST API overview](https://docs.xquik.com/api-reference/overview), then use [api.md](api.md) for generated method names.
+
+### Can this work with AI agents?
+
+Yes. Use the SDK in your app code and the [MCP server](https://xquik.com/mcp) for MCP-compatible agent clients.
+
 ## Documentation
 
-The REST API documentation can be found on [xquik.com](https://xquik.com). The full API of this library can be found in [api.md](api.md).
+The REST API documentation can be found on [docs.xquik.com](https://docs.xquik.com/api-reference/overview). The full API of this library can be found in [api.md](api.md).
 
 ## Installation
 
