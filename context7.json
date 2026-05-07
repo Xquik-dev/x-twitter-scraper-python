@@ -1,4 +1,16 @@
 {
+  "$schema": "https://context7.com/schema/context7.json",
+  "projectTitle": "Xquik Python SDK",
+  "description": "Official Python SDK for Xquik's X/Twitter API: typed sync and async clients for tweet search, user lookup, webhooks, MCP, monitors, and extractions.",
+  "branch": "main",
+  "rules": [
+    "Use README.md first for install, API key setup, sync and async client examples, webhooks, MCP, and common workflows.",
+    "Use api.md for the generated resource map, method names, request parameters, response types, and endpoint coverage.",
+    "Use pyproject.toml and the PyPI package x_twitter_scraper for package metadata and supported Python versions.",
+    "Prefer X_TWITTER_SCRAPER_API_KEY environment configuration; never put API keys in source files or examples.",
+    "For Python code, show XTwitterScraper for sync usage and AsyncXTwitterScraper for async usage.",
+    "Keep generated Stainless conventions intact and align feature claims with the Xquik OpenAPI/docs surface."
+  ],
   "url": "https://context7.com/xquik-dev/x-twitter-scraper-python",
   "public_key": "pk_oCPeRRqZFJsY4cCUSotDD"
 }
