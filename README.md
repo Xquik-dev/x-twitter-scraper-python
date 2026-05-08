@@ -1,4 +1,4 @@
-# Xquik Python SDK for X (Twitter) Scraper API
+# X (Twitter) Scraper Python SDK: Tweet Search, Profile Tweets, Followers & Posting
 
 [![Ask DeepWiki](https://deepwiki.com/badge.svg?url=https%3A%2F%2Fgithub.com%2FXquik-dev%2Fx-twitter-scraper-python)](https://deepwiki.com/Xquik-dev/x-twitter-scraper-python)
 <a href="https://nothumansearch.ai/site/xquik.com" target="_blank" rel="noopener"><img src="https://nothumansearch.ai/badge/xquik.com.svg" alt="NHS Agentic Readiness Score" height="28"></a>
@@ -6,17 +6,17 @@
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
-Xquik Python SDK for the X (Twitter) Scraper API: typed REST, HMAC webhooks, MCP, and docs at https://docs.xquik.com/api-reference/overview.
+Xquik Python SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, MCP, and posting automation.
 
-Use it to search tweets, look up users, monitor accounts, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
+Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
 
 [SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Server](https://xquik.com/mcp) | [TypeScript SDK](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
 
 It is generated with [Stainless](https://www.stainless.com/).
 
-## Tweet Search & User Lookup
+## Tweet Search, Profile Tweets & User Lookup
 
-Build Python services that search tweets, fetch user profiles, check follower relationships, download media, and inspect timeline data through one typed REST client.
+Build Python services that search tweets, get tweets from profiles, fetch user profiles, check follower relationships, export followers, download media, and inspect timeline data through one typed REST client.
 
 ## Real-Time Monitoring & Webhooks
 
