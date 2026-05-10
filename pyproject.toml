@@ -37,8 +37,11 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/Xquik-dev/x-twitter-scraper-python"
+Homepage = "https://docs.xquik.com/sdks/python"
+Documentation = "https://docs.xquik.com/sdks/python"
 Repository = "https://github.com/Xquik-dev/x-twitter-scraper-python"
+Issues = "https://github.com/Xquik-dev/x-twitter-scraper-python/issues"
+Changelog = "https://github.com/Xquik-dev/x-twitter-scraper-python/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
 aiohttp = ["aiohttp", "httpx_aiohttp>=0.1.9"]
