@@ -3,13 +3,40 @@
   "projectTitle": "Xquik Python SDK",
   "description": "Official Python SDK for Xquik's X/Twitter API: typed sync and async clients for tweet search, user lookup, webhooks, MCP, monitors, and extractions.",
   "branch": "main",
+  "excludeFolders": [
+    ".devcontainer",
+    ".github",
+    ".vscode",
+    "bin",
+    "scripts",
+    "tests"
+  ],
+  "excludeFiles": [
+    ".python-version",
+    ".release-please-manifest.json",
+    ".stats.yml",
+    "Brewfile",
+    "CHANGELOG.md",
+    "CITATION.cff",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "LICENSE",
+    "SECURITY.md",
+    "release-please-config.json",
+    "requirements-dev.lock",
+    "uv.lock"
+  ],
   "rules": [
-    "Use README.md first for install, API key setup, sync and async client examples, webhooks, MCP, and common workflows.",
+    "Install from PyPI package x_twitter_scraper, then import x_twitter_scraper.",
+    "Authenticate with XTwitterScraper api_key or the X_TWITTER_SCRAPER_API_KEY environment variable.",
+    "Use README.md first for install, authentication, first request, retries, raw responses, uploads, pagination, webhooks, MCP, and common workflows.",
     "Use api.md for the generated resource map, method names, request parameters, response types, and endpoint coverage.",
-    "Use pyproject.toml and the PyPI package x_twitter_scraper for package metadata and supported Python versions.",
-    "Prefer X_TWITTER_SCRAPER_API_KEY environment configuration; never put API keys in source files or examples.",
+    "Use pyproject.toml for package name, license, project URLs, Python version, dependency metadata, and package file includes.",
+    "Use src/x_twitter_scraper/resources and src/x_twitter_scraper/types for generated Python method names and typed request parameters.",
+    "Use src/x_twitter_scraper/resources/x/tweets/tweets.py for tweet search, posting, replies, retweets, likes, and tweet retrieval workflows.",
+    "Use src/x_twitter_scraper/resources/x/media.py, src/x_twitter_scraper/resources/monitors.py, src/x_twitter_scraper/resources/webhooks.py, and src/x_twitter_scraper/resources/extractions.py for media, monitoring, webhook, and bulk extraction workflows.",
     "For Python code, show XTwitterScraper for sync usage and AsyncXTwitterScraper for async usage.",
-    "Keep generated Stainless conventions intact and align feature claims with the Xquik OpenAPI/docs surface."
+    "Never expose API keys, bearer tokens, webhook signing values, user credentials, or local runtime secrets in examples, logs, or commits."
   ],
   "url": "https://context7.com/xquik-dev/x-twitter-scraper-python",
   "public_key": "pk_oCPeRRqZFJsY4cCUSotDD"
