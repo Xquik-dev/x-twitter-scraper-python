@@ -64,7 +64,7 @@ class TestTickets:
     @parametrize
     def test_method_retrieve(self, client: XTwitterScraper) -> None:
         ticket = client.support.tickets.retrieve(
-            "messages_value",
+            "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         )
         assert_matches_type(TicketRetrieveResponse, ticket, path=["response"])
 
@@ -72,7 +72,7 @@ class TestTickets:
     @parametrize
     def test_raw_response_retrieve(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.retrieve(
-            "messages_value",
+            "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         )
 
         assert response.is_closed is True
@@ -84,7 +84,7 @@ class TestTickets:
     @parametrize
     def test_streaming_response_retrieve(self, client: XTwitterScraper) -> None:
         with client.support.tickets.with_streaming_response.retrieve(
-            "messages_value",
+            "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -106,7 +106,7 @@ class TestTickets:
     @parametrize
     def test_method_update(self, client: XTwitterScraper) -> None:
         ticket = client.support.tickets.update(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             status="resolved",
         )
         assert_matches_type(TicketUpdateResponse, ticket, path=["response"])
@@ -115,7 +115,7 @@ class TestTickets:
     @parametrize
     def test_raw_response_update(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.update(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             status="resolved",
         )
 
@@ -128,7 +128,7 @@ class TestTickets:
     @parametrize
     def test_streaming_response_update(self, client: XTwitterScraper) -> None:
         with client.support.tickets.with_streaming_response.update(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             status="resolved",
         ) as response:
             assert not response.is_closed
@@ -180,7 +180,7 @@ class TestTickets:
     @parametrize
     def test_method_reply(self, client: XTwitterScraper) -> None:
         ticket = client.support.tickets.reply(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             body="Thank you for the update.",
         )
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
@@ -189,7 +189,7 @@ class TestTickets:
     @parametrize
     def test_raw_response_reply(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.reply(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             body="Thank you for the update.",
         )
 
@@ -202,7 +202,7 @@ class TestTickets:
     @parametrize
     def test_streaming_response_reply(self, client: XTwitterScraper) -> None:
         with client.support.tickets.with_streaming_response.reply(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             body="Thank you for the update.",
         ) as response:
             assert not response.is_closed
@@ -269,7 +269,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.retrieve(
-            "messages_value",
+            "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         )
         assert_matches_type(TicketRetrieveResponse, ticket, path=["response"])
 
@@ -277,7 +277,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.support.tickets.with_raw_response.retrieve(
-            "messages_value",
+            "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         )
 
         assert response.is_closed is True
@@ -289,7 +289,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.support.tickets.with_streaming_response.retrieve(
-            "messages_value",
+            "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -311,7 +311,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_method_update(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.update(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             status="resolved",
         )
         assert_matches_type(TicketUpdateResponse, ticket, path=["response"])
@@ -320,7 +320,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_raw_response_update(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.support.tickets.with_raw_response.update(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             status="resolved",
         )
 
@@ -333,7 +333,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_streaming_response_update(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.support.tickets.with_streaming_response.update(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             status="resolved",
         ) as response:
             assert not response.is_closed
@@ -385,7 +385,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_method_reply(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.reply(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             body="Thank you for the update.",
         )
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
@@ -394,7 +394,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_raw_response_reply(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.support.tickets.with_raw_response.reply(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             body="Thank you for the update.",
         )
 
@@ -407,7 +407,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_streaming_response_reply(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.support.tickets.with_streaming_response.reply(
-            id="id",
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             body="Thank you for the update.",
         ) as response:
             assert not response.is_closed

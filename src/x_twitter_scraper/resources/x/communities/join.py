@@ -16,7 +16,8 @@ from ...._response import (
 )
 from ...._base_client import make_request_options
 from ....types.x.communities import join_create_params, join_delete_all_params
-from ....types.x.community_action_result import CommunityActionResult
+from ....types.x.communities.join_create_response import JoinCreateResponse
+from ....types.x.communities.join_delete_all_response import JoinDeleteAllResponse
 
 __all__ = ["JoinResource", "AsyncJoinResource"]
 
@@ -30,7 +31,7 @@ class JoinResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return JoinResourceWithRawResponse(self)
 
@@ -39,7 +40,7 @@ class JoinResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return JoinResourceWithStreamingResponse(self)
 
@@ -54,7 +55,7 @@ class JoinResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinCreateResponse:
         """
         Join community
 
@@ -75,9 +76,16 @@ class JoinResource(SyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_create_params.JoinCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinCreateResponse,
         )
 
     def delete_all(
@@ -91,7 +99,7 @@ class JoinResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinDeleteAllResponse:
         """
         Leave community
 
@@ -112,9 +120,16 @@ class JoinResource(SyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinDeleteAllResponse,
         )
 
 
@@ -127,7 +142,7 @@ class AsyncJoinResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncJoinResourceWithRawResponse(self)
 
@@ -136,7 +151,7 @@ class AsyncJoinResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncJoinResourceWithStreamingResponse(self)
 
@@ -151,7 +166,7 @@ class AsyncJoinResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinCreateResponse:
         """
         Join community
 
@@ -172,9 +187,16 @@ class AsyncJoinResource(AsyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_create_params.JoinCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinCreateResponse,
         )
 
     async def delete_all(
@@ -188,7 +210,7 @@ class AsyncJoinResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinDeleteAllResponse:
         """
         Leave community
 
@@ -209,9 +231,16 @@ class AsyncJoinResource(AsyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinDeleteAllResponse,
         )
 
 

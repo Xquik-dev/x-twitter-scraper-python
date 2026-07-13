@@ -30,7 +30,7 @@ class TrendsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return TrendsResourceWithRawResponse(self)
 
@@ -39,7 +39,7 @@ class TrendsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return TrendsResourceWithStreamingResponse(self)
 
@@ -85,6 +85,10 @@ class TrendsResource(SyncAPIResource):
                     },
                     trend_list_params.TrendListParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=TrendListResponse,
         )
@@ -99,7 +103,7 @@ class AsyncTrendsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncTrendsResourceWithRawResponse(self)
 
@@ -108,7 +112,7 @@ class AsyncTrendsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncTrendsResourceWithStreamingResponse(self)
 
@@ -154,6 +158,10 @@ class AsyncTrendsResource(AsyncAPIResource):
                     },
                     trend_list_params.TrendListParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=TrendListResponse,
         )

@@ -7,17 +7,7 @@ from typing import Mapping, cast
 import httpx
 
 from ..._files import deepcopy_with_paths
-from ..._types import (
-    Body,
-    Omit,
-    Query,
-    Headers,
-    NotGiven,
-    FileTypes,
-    SequenceNotStr,
-    omit,
-    not_given,
-)
+from ..._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
 from ..._utils import extract_files, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import media_upload_params, media_download_params
@@ -44,7 +34,7 @@ class MediaResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return MediaResourceWithRawResponse(self)
 
@@ -53,15 +43,17 @@ class MediaResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return MediaResourceWithStreamingResponse(self)
 
     def download(
         self,
         *,
+        tweet_id: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
+        tweet_url: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -73,9 +65,13 @@ class MediaResource(SyncAPIResource):
         Download images and videos from tweets
 
         Args:
-          tweet_ids: Array of tweet URLs or IDs (bulk, max 50)
+          tweet_id: Numeric tweet ID alias for tweetInput
+
+          tweet_ids: Array of tweet URLs or IDs (bulk, max 50 string items)
 
           tweet_input: Tweet URL or ID (single tweet)
+
+          tweet_url: Tweet URL alias for tweetInput
 
           extra_headers: Send extra headers
 
@@ -89,13 +85,22 @@ class MediaResource(SyncAPIResource):
             "/x/media/download",
             body=maybe_transform(
                 {
+                    "tweet_id": tweet_id,
                     "tweet_ids": tweet_ids,
                     "tweet_input": tweet_input,
+                    "tweet_url": tweet_url,
                 },
                 media_download_params.MediaDownloadParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=MediaDownloadResponse,
         )
@@ -104,8 +109,7 @@ class MediaResource(SyncAPIResource):
         self,
         *,
         account: str,
-        file: FileTypes,
-        is_long_video: bool | Omit = omit,
+        url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -117,9 +121,9 @@ class MediaResource(SyncAPIResource):
         Upload media
 
         Args:
-          account: X account (@username or ID) uploading media
+          account: X account (@username or ID) uploading media from URL
 
-          file: Media file to upload
+          url: HTTPS URL to download and upload as media
 
           extra_headers: Send extra headers
 
@@ -132,22 +136,29 @@ class MediaResource(SyncAPIResource):
         body = deepcopy_with_paths(
             {
                 "account": account,
-                "file": file,
-                "is_long_video": is_long_video,
+                "url": url,
             },
             [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return self._post(
             "/x/media",
             body=maybe_transform(body, media_upload_params.MediaUploadParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=MediaUploadResponse,
         )
@@ -162,7 +173,7 @@ class AsyncMediaResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncMediaResourceWithRawResponse(self)
 
@@ -171,15 +182,17 @@ class AsyncMediaResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncMediaResourceWithStreamingResponse(self)
 
     async def download(
         self,
         *,
+        tweet_id: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
+        tweet_url: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -191,9 +204,13 @@ class AsyncMediaResource(AsyncAPIResource):
         Download images and videos from tweets
 
         Args:
-          tweet_ids: Array of tweet URLs or IDs (bulk, max 50)
+          tweet_id: Numeric tweet ID alias for tweetInput
+
+          tweet_ids: Array of tweet URLs or IDs (bulk, max 50 string items)
 
           tweet_input: Tweet URL or ID (single tweet)
+
+          tweet_url: Tweet URL alias for tweetInput
 
           extra_headers: Send extra headers
 
@@ -207,13 +224,22 @@ class AsyncMediaResource(AsyncAPIResource):
             "/x/media/download",
             body=await async_maybe_transform(
                 {
+                    "tweet_id": tweet_id,
                     "tweet_ids": tweet_ids,
                     "tweet_input": tweet_input,
+                    "tweet_url": tweet_url,
                 },
                 media_download_params.MediaDownloadParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=MediaDownloadResponse,
         )
@@ -222,8 +248,7 @@ class AsyncMediaResource(AsyncAPIResource):
         self,
         *,
         account: str,
-        file: FileTypes,
-        is_long_video: bool | Omit = omit,
+        url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -235,9 +260,9 @@ class AsyncMediaResource(AsyncAPIResource):
         Upload media
 
         Args:
-          account: X account (@username or ID) uploading media
+          account: X account (@username or ID) uploading media from URL
 
-          file: Media file to upload
+          url: HTTPS URL to download and upload as media
 
           extra_headers: Send extra headers
 
@@ -250,22 +275,29 @@ class AsyncMediaResource(AsyncAPIResource):
         body = deepcopy_with_paths(
             {
                 "account": account,
-                "file": file,
-                "is_long_video": is_long_video,
+                "url": url,
             },
             [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return await self._post(
             "/x/media",
             body=await async_maybe_transform(body, media_upload_params.MediaUploadParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=MediaUploadResponse,
         )

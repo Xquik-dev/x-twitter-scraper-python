@@ -8,8 +8,8 @@ __all__ = ["ExtractionRetrieveParams"]
 
 
 class ExtractionRetrieveParams(TypedDict, total=False):
-    after: str
-    """Cursor for keyset pagination"""
+    cursor: str
+    """Cursor for keyset pagination from prior response next_cursor"""
 
     limit: int
     """Maximum number of results to return (1-1000, default 100)"""

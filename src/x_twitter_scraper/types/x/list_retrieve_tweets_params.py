@@ -16,6 +16,15 @@ class ListRetrieveTweetsParams(TypedDict, total=False):
     include_replies: Annotated[bool, PropertyInfo(alias="includeReplies")]
     """Include replies (default false)"""
 
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Maximum items requested from this page (1-100, default 20).
+
+    The response can contain fewer items because the source returned fewer, filters
+    removed items, or remaining credits cover fewer results. Keep requesting
+    next_cursor while has_next_page is true, even when a page is empty. The
+    deprecated limit and count aliases remain accepted.
+    """
+
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
     """Unix timestamp - filter after"""
 

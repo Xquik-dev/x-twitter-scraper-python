@@ -30,8 +30,10 @@ class TestMedia:
     @parametrize
     def test_method_download_with_all_params(self, client: XTwitterScraper) -> None:
         media = client.x.media.download(
+            tweet_id="1234567890",
             tweet_ids=["1234567890", "1234567891"],
             tweet_input="https://x.com/elonmusk/status/1234567890",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         )
         assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
@@ -62,17 +64,7 @@ class TestMedia:
     def test_method_upload(self, client: XTwitterScraper) -> None:
         media = client.x.media.upload(
             account="@elonmusk",
-            file=b"Example data",
-        )
-        assert_matches_type(MediaUploadResponse, media, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    def test_method_upload_with_all_params(self, client: XTwitterScraper) -> None:
-        media = client.x.media.upload(
-            account="@elonmusk",
-            file=b"Example data",
-            is_long_video=True,
+            url="https://example.com/image.png",
         )
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -81,7 +73,7 @@ class TestMedia:
     def test_raw_response_upload(self, client: XTwitterScraper) -> None:
         response = client.x.media.with_raw_response.upload(
             account="@elonmusk",
-            file=b"Example data",
+            url="https://example.com/image.png",
         )
 
         assert response.is_closed is True
@@ -94,7 +86,7 @@ class TestMedia:
     def test_streaming_response_upload(self, client: XTwitterScraper) -> None:
         with client.x.media.with_streaming_response.upload(
             account="@elonmusk",
-            file=b"Example data",
+            url="https://example.com/image.png",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -120,8 +112,10 @@ class TestAsyncMedia:
     @parametrize
     async def test_method_download_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         media = await async_client.x.media.download(
+            tweet_id="1234567890",
             tweet_ids=["1234567890", "1234567891"],
             tweet_input="https://x.com/elonmusk/status/1234567890",
+            tweet_url="https://x.com/elonmusk/status/1234567890",
         )
         assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
@@ -152,17 +146,7 @@ class TestAsyncMedia:
     async def test_method_upload(self, async_client: AsyncXTwitterScraper) -> None:
         media = await async_client.x.media.upload(
             account="@elonmusk",
-            file=b"Example data",
-        )
-        assert_matches_type(MediaUploadResponse, media, path=["response"])
-
-    @pytest.mark.skip(reason="Mock server tests are disabled")
-    @parametrize
-    async def test_method_upload_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
-        media = await async_client.x.media.upload(
-            account="@elonmusk",
-            file=b"Example data",
-            is_long_video=True,
+            url="https://example.com/image.png",
         )
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -171,7 +155,7 @@ class TestAsyncMedia:
     async def test_raw_response_upload(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.media.with_raw_response.upload(
             account="@elonmusk",
-            file=b"Example data",
+            url="https://example.com/image.png",
         )
 
         assert response.is_closed is True
@@ -184,7 +168,7 @@ class TestAsyncMedia:
     async def test_streaming_response_upload(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.media.with_streaming_response.upload(
             account="@elonmusk",
-            file=b"Example data",
+            url="https://example.com/image.png",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

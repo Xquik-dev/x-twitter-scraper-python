@@ -7,7 +7,7 @@ from typing import Mapping, cast
 import httpx
 
 from ..._files import deepcopy_with_paths
-from ..._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
+from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import extract_files, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import profile_update_params, profile_update_avatar_params, profile_update_banner_params
@@ -35,7 +35,7 @@ class ProfileResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return ProfileResourceWithRawResponse(self)
 
@@ -44,7 +44,7 @@ class ProfileResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return ProfileResourceWithStreamingResponse(self)
 
@@ -96,7 +96,14 @@ class ProfileResource(SyncAPIResource):
                 profile_update_params.ProfileUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=ProfileUpdateResponse,
         )
@@ -105,7 +112,7 @@ class ProfileResource(SyncAPIResource):
         self,
         *,
         account: str,
-        file: FileTypes,
+        url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -117,9 +124,9 @@ class ProfileResource(SyncAPIResource):
         Update profile avatar
 
         Args:
-          account: X account (@username or ID) for avatar update
+          account: X account (@username or ID) receiving avatar from URL
 
-          file: Avatar image (max 716KB)
+          url: HTTPS URL to the avatar image to download
 
           extra_headers: Send extra headers
 
@@ -132,21 +139,29 @@ class ProfileResource(SyncAPIResource):
         body = deepcopy_with_paths(
             {
                 "account": account,
-                "file": file,
+                "url": url,
             },
             [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return self._patch(
             "/x/profile/avatar",
             body=maybe_transform(body, profile_update_avatar_params.ProfileUpdateAvatarParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=ProfileUpdateAvatarResponse,
         )
@@ -155,7 +170,7 @@ class ProfileResource(SyncAPIResource):
         self,
         *,
         account: str,
-        file: FileTypes,
+        url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -167,9 +182,9 @@ class ProfileResource(SyncAPIResource):
         Update profile banner
 
         Args:
-          account: X account (@username or ID) for banner update
+          account: X account (@username or ID) receiving banner from URL
 
-          file: Banner image (max 2MB)
+          url: HTTPS URL to the banner image to download
 
           extra_headers: Send extra headers
 
@@ -182,21 +197,29 @@ class ProfileResource(SyncAPIResource):
         body = deepcopy_with_paths(
             {
                 "account": account,
-                "file": file,
+                "url": url,
             },
             [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return self._patch(
             "/x/profile/banner",
             body=maybe_transform(body, profile_update_banner_params.ProfileUpdateBannerParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=ProfileUpdateBannerResponse,
         )
@@ -211,7 +234,7 @@ class AsyncProfileResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncProfileResourceWithRawResponse(self)
 
@@ -220,7 +243,7 @@ class AsyncProfileResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncProfileResourceWithStreamingResponse(self)
 
@@ -272,7 +295,14 @@ class AsyncProfileResource(AsyncAPIResource):
                 profile_update_params.ProfileUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=ProfileUpdateResponse,
         )
@@ -281,7 +311,7 @@ class AsyncProfileResource(AsyncAPIResource):
         self,
         *,
         account: str,
-        file: FileTypes,
+        url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -293,9 +323,9 @@ class AsyncProfileResource(AsyncAPIResource):
         Update profile avatar
 
         Args:
-          account: X account (@username or ID) for avatar update
+          account: X account (@username or ID) receiving avatar from URL
 
-          file: Avatar image (max 716KB)
+          url: HTTPS URL to the avatar image to download
 
           extra_headers: Send extra headers
 
@@ -308,21 +338,29 @@ class AsyncProfileResource(AsyncAPIResource):
         body = deepcopy_with_paths(
             {
                 "account": account,
-                "file": file,
+                "url": url,
             },
             [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return await self._patch(
             "/x/profile/avatar",
             body=await async_maybe_transform(body, profile_update_avatar_params.ProfileUpdateAvatarParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=ProfileUpdateAvatarResponse,
         )
@@ -331,7 +369,7 @@ class AsyncProfileResource(AsyncAPIResource):
         self,
         *,
         account: str,
-        file: FileTypes,
+        url: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -343,9 +381,9 @@ class AsyncProfileResource(AsyncAPIResource):
         Update profile banner
 
         Args:
-          account: X account (@username or ID) for banner update
+          account: X account (@username or ID) receiving banner from URL
 
-          file: Banner image (max 2MB)
+          url: HTTPS URL to the banner image to download
 
           extra_headers: Send extra headers
 
@@ -358,21 +396,29 @@ class AsyncProfileResource(AsyncAPIResource):
         body = deepcopy_with_paths(
             {
                 "account": account,
-                "file": file,
+                "url": url,
             },
             [["file"]],
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
-        # It should be noted that the actual Content-Type header that will be
-        # sent to the server will contain a `boundary` parameter, e.g.
-        # multipart/form-data; boundary=---abc--
-        extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return await self._patch(
             "/x/profile/banner",
             body=await async_maybe_transform(body, profile_update_banner_params.ProfileUpdateBannerParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=ProfileUpdateBannerResponse,
         )

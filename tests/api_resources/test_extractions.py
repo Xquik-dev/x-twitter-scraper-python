@@ -17,6 +17,7 @@ from x_twitter_scraper.types import (
     ExtractionRetrieveResponse,
     ExtractionEstimateCostResponse,
 )
+from x_twitter_scraper._utils import parse_date
 from x_twitter_scraper._response import (
     BinaryAPIResponse,
     AsyncBinaryAPIResponse,
@@ -43,7 +44,7 @@ class TestExtractions:
     def test_method_retrieve_with_all_params(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.retrieve(
             id="id",
-            after="after",
+            cursor="cursor",
             limit=1,
         )
         assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
@@ -92,7 +93,7 @@ class TestExtractions:
     @parametrize
     def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.list(
-            after="after",
+            cursor="cursor",
             limit=1,
             status="running",
             tool_type="follower_explorer",
@@ -135,14 +136,43 @@ class TestExtractions:
         extraction = client.extractions.estimate_cost(
             tool_type="follower_explorer",
             advanced_query="min_faves:100",
+            any_words="ChatGPT AI model",
+            bounding_box="-74.1 40.6 -73.9 40.8",
+            cashtags="$TSLA $NVDA",
+            conversation_id="1234567890",
             exact_phrase="artificial intelligence",
             exclude_words="spam",
+            from_user="nasa",
+            hashtags="#AI startups",
+            in_reply_to_tweet_id="1234567890",
+            language="en",
+            list_id="1234567890",
+            media_type="images",
+            mentioning="example_user",
+            min_faves=10,
+            min_quotes=2,
+            min_replies=3,
+            min_retweets=5,
+            place="96683cc9126741d1",
+            place_country="US",
+            point_radius="-73.99 40.73 25mi",
+            quotes="include",
+            quotes_of_tweet_id="1234567890",
+            replies="include",
+            results_limit=1000,
+            retweets="exclude",
+            retweets_of_tweet_id="1234567890",
             search_query="AI trends 2025",
+            since_date=parse_date("2025-01-01"),
             target_community_id="1500000000000000000",
             target_list_id="1234567890",
             target_space_id="1vOGwMdBqpwGB",
             target_tweet_id="1234567890",
             target_username="elonmusk",
+            to_user="openai",
+            until_date=parse_date("2025-12-31"),
+            url="example.com",
+            verified_only=False,
         )
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -178,18 +208,6 @@ class TestExtractions:
         respx_mock.get("/extractions/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         extraction = client.extractions.export_results(
             id="id",
-        )
-        assert extraction.is_closed
-        assert extraction.json() == {"foo": "bar"}
-        assert cast(Any, extraction.is_closed) is True
-        assert isinstance(extraction, BinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    def test_method_export_results_with_all_params(self, client: XTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/extractions/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        extraction = client.extractions.export_results(
-            id="id",
             format="csv",
         )
         assert extraction.is_closed
@@ -204,6 +222,7 @@ class TestExtractions:
 
         extraction = client.extractions.with_raw_response.export_results(
             id="id",
+            format="csv",
         )
 
         assert extraction.is_closed is True
@@ -217,6 +236,7 @@ class TestExtractions:
         respx_mock.get("/extractions/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         with client.extractions.with_streaming_response.export_results(
             id="id",
+            format="csv",
         ) as extraction:
             assert not extraction.is_closed
             assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -233,6 +253,7 @@ class TestExtractions:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.extractions.with_raw_response.export_results(
                 id="",
+                format="csv",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -249,14 +270,43 @@ class TestExtractions:
         extraction = client.extractions.run(
             tool_type="follower_explorer",
             advanced_query="min_faves:100",
+            any_words="ChatGPT AI model",
+            bounding_box="-74.1 40.6 -73.9 40.8",
+            cashtags="$TSLA $NVDA",
+            conversation_id="1234567890",
             exact_phrase="artificial intelligence",
             exclude_words="spam",
+            from_user="nasa",
+            hashtags="#AI startups",
+            in_reply_to_tweet_id="1234567890",
+            language="en",
+            list_id="1234567890",
+            media_type="images",
+            mentioning="example_user",
+            min_faves=10,
+            min_quotes=2,
+            min_replies=3,
+            min_retweets=5,
+            place="96683cc9126741d1",
+            place_country="US",
+            point_radius="-73.99 40.73 25mi",
+            quotes="include",
+            quotes_of_tweet_id="1234567890",
+            replies="include",
+            results_limit=1000,
+            retweets="exclude",
+            retweets_of_tweet_id="1234567890",
             search_query="AI trends 2025",
+            since_date=parse_date("2025-01-01"),
             target_community_id="1500000000000000000",
             target_list_id="1234567890",
             target_space_id="1vOGwMdBqpwGB",
             target_tweet_id="1234567890",
             target_username="elonmusk",
+            to_user="openai",
+            until_date=parse_date("2025-12-31"),
+            url="example.com",
+            verified_only=False,
         )
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
@@ -305,7 +355,7 @@ class TestAsyncExtractions:
     async def test_method_retrieve_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.retrieve(
             id="id",
-            after="after",
+            cursor="cursor",
             limit=1,
         )
         assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
@@ -354,7 +404,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.list(
-            after="after",
+            cursor="cursor",
             limit=1,
             status="running",
             tool_type="follower_explorer",
@@ -397,14 +447,43 @@ class TestAsyncExtractions:
         extraction = await async_client.extractions.estimate_cost(
             tool_type="follower_explorer",
             advanced_query="min_faves:100",
+            any_words="ChatGPT AI model",
+            bounding_box="-74.1 40.6 -73.9 40.8",
+            cashtags="$TSLA $NVDA",
+            conversation_id="1234567890",
             exact_phrase="artificial intelligence",
             exclude_words="spam",
+            from_user="nasa",
+            hashtags="#AI startups",
+            in_reply_to_tweet_id="1234567890",
+            language="en",
+            list_id="1234567890",
+            media_type="images",
+            mentioning="example_user",
+            min_faves=10,
+            min_quotes=2,
+            min_replies=3,
+            min_retweets=5,
+            place="96683cc9126741d1",
+            place_country="US",
+            point_radius="-73.99 40.73 25mi",
+            quotes="include",
+            quotes_of_tweet_id="1234567890",
+            replies="include",
+            results_limit=1000,
+            retweets="exclude",
+            retweets_of_tweet_id="1234567890",
             search_query="AI trends 2025",
+            since_date=parse_date("2025-01-01"),
             target_community_id="1500000000000000000",
             target_list_id="1234567890",
             target_space_id="1vOGwMdBqpwGB",
             target_tweet_id="1234567890",
             target_username="elonmusk",
+            to_user="openai",
+            until_date=parse_date("2025-12-31"),
+            url="example.com",
+            verified_only=False,
         )
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -440,20 +519,6 @@ class TestAsyncExtractions:
         respx_mock.get("/extractions/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         extraction = await async_client.extractions.export_results(
             id="id",
-        )
-        assert extraction.is_closed
-        assert await extraction.json() == {"foo": "bar"}
-        assert cast(Any, extraction.is_closed) is True
-        assert isinstance(extraction, AsyncBinaryAPIResponse)
-
-    @parametrize
-    @pytest.mark.respx(base_url=base_url)
-    async def test_method_export_results_with_all_params(
-        self, async_client: AsyncXTwitterScraper, respx_mock: MockRouter
-    ) -> None:
-        respx_mock.get("/extractions/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
-        extraction = await async_client.extractions.export_results(
-            id="id",
             format="csv",
         )
         assert extraction.is_closed
@@ -470,6 +535,7 @@ class TestAsyncExtractions:
 
         extraction = await async_client.extractions.with_raw_response.export_results(
             id="id",
+            format="csv",
         )
 
         assert extraction.is_closed is True
@@ -485,6 +551,7 @@ class TestAsyncExtractions:
         respx_mock.get("/extractions/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
         async with async_client.extractions.with_streaming_response.export_results(
             id="id",
+            format="csv",
         ) as extraction:
             assert not extraction.is_closed
             assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -501,6 +568,7 @@ class TestAsyncExtractions:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.extractions.with_raw_response.export_results(
                 id="",
+                format="csv",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -517,14 +585,43 @@ class TestAsyncExtractions:
         extraction = await async_client.extractions.run(
             tool_type="follower_explorer",
             advanced_query="min_faves:100",
+            any_words="ChatGPT AI model",
+            bounding_box="-74.1 40.6 -73.9 40.8",
+            cashtags="$TSLA $NVDA",
+            conversation_id="1234567890",
             exact_phrase="artificial intelligence",
             exclude_words="spam",
+            from_user="nasa",
+            hashtags="#AI startups",
+            in_reply_to_tweet_id="1234567890",
+            language="en",
+            list_id="1234567890",
+            media_type="images",
+            mentioning="example_user",
+            min_faves=10,
+            min_quotes=2,
+            min_replies=3,
+            min_retweets=5,
+            place="96683cc9126741d1",
+            place_country="US",
+            point_radius="-73.99 40.73 25mi",
+            quotes="include",
+            quotes_of_tweet_id="1234567890",
+            replies="include",
+            results_limit=1000,
+            retweets="exclude",
+            retweets_of_tweet_id="1234567890",
             search_query="AI trends 2025",
+            since_date=parse_date("2025-01-01"),
             target_community_id="1500000000000000000",
             target_list_id="1234567890",
             target_space_id="1vOGwMdBqpwGB",
             target_tweet_id="1234567890",
             target_username="elonmusk",
+            to_user="openai",
+            until_date=parse_date("2025-12-31"),
+            url="example.com",
+            verified_only=False,
         )
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 

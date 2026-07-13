@@ -17,7 +17,7 @@ class RadarItem(BaseModel):
     """
 
     id: str
-    """Internal numeric identifier (stringified bigint)."""
+    """Radar item identifier."""
 
     category: Literal["general", "tech", "dev", "science", "culture", "politics", "business", "entertainment"]
 

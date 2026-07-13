@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing_extensions import Literal
+
 import httpx
 
 from .join import (
@@ -64,7 +66,7 @@ class CommunitiesResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return CommunitiesResourceWithRawResponse(self)
 
@@ -73,7 +75,7 @@ class CommunitiesResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return CommunitiesResourceWithStreamingResponse(self)
 
@@ -119,7 +121,14 @@ class CommunitiesResource(SyncAPIResource):
                 community_create_params.CommunityCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=CommunityCreateResponse,
         )
@@ -165,7 +174,14 @@ class CommunitiesResource(SyncAPIResource):
                 community_delete_params.CommunityDeleteParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=CommunityDeleteResponse,
         )
@@ -198,7 +214,14 @@ class CommunitiesResource(SyncAPIResource):
         return self._get(
             path_template("/x/communities/{id}/info", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=CommunityRetrieveInfoResponse,
         )
@@ -222,7 +245,9 @@ class CommunitiesResource(SyncAPIResource):
         Args:
           cursor: Pagination cursor
 
-          page_size: Items per page (20-200, default 20)
+          page_size: Items per page (20-200, default 20). This is an upper bound for paid
+              authenticated calls: remaining credits can reduce the returned page size, and
+              zero affordable results returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -248,6 +273,10 @@ class CommunitiesResource(SyncAPIResource):
                     },
                     community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -290,6 +319,10 @@ class CommunitiesResource(SyncAPIResource):
                 query=maybe_transform(
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -297,9 +330,11 @@ class CommunitiesResource(SyncAPIResource):
     def retrieve_search(
         self,
         *,
+        community_id: str,
         q: str,
         cursor: str | Omit = omit,
-        query_type: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -307,13 +342,22 @@ class CommunitiesResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Search for communities by keyword
+        """Returns tweets, not community records.
+
+        Requires a Community ID.
 
         Args:
+          community_id: Numeric ID of the community whose posts to search
+
           q: Search query
 
           cursor: Pagination cursor for community search
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           query_type: Sort order (Latest or Top)
 
@@ -334,12 +378,18 @@ class CommunitiesResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "page_size": page_size,
                         "query_type": query_type,
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -362,7 +412,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncCommunitiesResourceWithRawResponse(self)
 
@@ -371,7 +421,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncCommunitiesResourceWithStreamingResponse(self)
 
@@ -417,7 +467,14 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 community_create_params.CommunityCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=CommunityCreateResponse,
         )
@@ -463,7 +520,14 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 community_delete_params.CommunityDeleteParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=CommunityDeleteResponse,
         )
@@ -496,7 +560,14 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/communities/{id}/info", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=CommunityRetrieveInfoResponse,
         )
@@ -520,7 +591,9 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         Args:
           cursor: Pagination cursor
 
-          page_size: Items per page (20-200, default 20)
+          page_size: Items per page (20-200, default 20). This is an upper bound for paid
+              authenticated calls: remaining credits can reduce the returned page size, and
+              zero affordable results returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -546,6 +619,10 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     },
                     community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -588,6 +665,10 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -595,9 +676,11 @@ class AsyncCommunitiesResource(AsyncAPIResource):
     async def retrieve_search(
         self,
         *,
+        community_id: str,
         q: str,
         cursor: str | Omit = omit,
-        query_type: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -605,13 +688,22 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Search for communities by keyword
+        """Returns tweets, not community records.
+
+        Requires a Community ID.
 
         Args:
+          community_id: Numeric ID of the community whose posts to search
+
           q: Search query
 
           cursor: Pagination cursor for community search
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           query_type: Sort order (Latest or Top)
 
@@ -632,12 +724,18 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "page_size": page_size,
                         "query_type": query_type,
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )

@@ -30,7 +30,7 @@ class FollowersResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return FollowersResourceWithRawResponse(self)
 
@@ -39,7 +39,7 @@ class FollowersResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return FollowersResourceWithStreamingResponse(self)
 
@@ -59,9 +59,9 @@ class FollowersResource(SyncAPIResource):
         Check if one user follows another
 
         Args:
-          source: Username to check (without @)
+          source: Source username, @username, or X or Twitter profile URL
 
-          target: Target username (without @)
+          target: Target username, @username, or X or Twitter profile URL
 
           extra_headers: Send extra headers
 
@@ -85,6 +85,10 @@ class FollowersResource(SyncAPIResource):
                     },
                     follower_check_params.FollowerCheckParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=FollowerCheckResponse,
         )
@@ -99,7 +103,7 @@ class AsyncFollowersResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncFollowersResourceWithRawResponse(self)
 
@@ -108,7 +112,7 @@ class AsyncFollowersResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncFollowersResourceWithStreamingResponse(self)
 
@@ -128,9 +132,9 @@ class AsyncFollowersResource(AsyncAPIResource):
         Check if one user follows another
 
         Args:
-          source: Username to check (without @)
+          source: Source username, @username, or X or Twitter profile URL
 
-          target: Target username (without @)
+          target: Target username, @username, or X or Twitter profile URL
 
           extra_headers: Send extra headers
 
@@ -154,6 +158,10 @@ class AsyncFollowersResource(AsyncAPIResource):
                     },
                     follower_check_params.FollowerCheckParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=FollowerCheckResponse,
         )

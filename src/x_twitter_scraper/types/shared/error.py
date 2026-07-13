@@ -1,40 +1,14 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing_extensions import Literal
-
 from ..._models import BaseModel
 
 __all__ = ["Error"]
 
 
 class Error(BaseModel):
-    """Error response containing a machine-readable error code."""
+    """Error response.
 
-    error: Literal[
-        "internal_error",
-        "invalid_format",
-        "invalid_id",
-        "invalid_input",
-        "invalid_params",
-        "invalid_tool_type",
-        "invalid_tweet_id",
-        "invalid_tweet_url",
-        "invalid_username",
-        "insufficient_credits",
-        "missing_params",
-        "missing_query",
-        "monitor_already_exists",
-        "monitor_limit_reached",
-        "no_credits",
-        "no_subscription",
-        "not_found",
-        "subscription_inactive",
-        "tweet_not_found",
-        "unauthenticated",
-        "unsupported_field",
-        "user_not_found",
-        "webhook_inactive",
-        "x_api_rate_limited",
-        "x_api_unavailable",
-        "x_api_unauthorized",
-    ]
+    Default v1 returns a legacy string error code. Send `xquik-api-contract: 2026-04-29` to receive the structured best-practice error object.
+    """
+
+    error: Error

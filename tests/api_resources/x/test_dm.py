@@ -25,6 +25,7 @@ class TestDm:
     def test_method_retrieve_history(self, client: XTwitterScraper) -> None:
         dm = client.x.dm.retrieve_history(
             user_id="userId",
+            account="account",
         )
         assert_matches_type(DmRetrieveHistoryResponse, dm, path=["response"])
 
@@ -33,6 +34,7 @@ class TestDm:
     def test_method_retrieve_history_with_all_params(self, client: XTwitterScraper) -> None:
         dm = client.x.dm.retrieve_history(
             user_id="userId",
+            account="account",
             cursor="cursor",
             max_id="maxId",
         )
@@ -43,6 +45,7 @@ class TestDm:
     def test_raw_response_retrieve_history(self, client: XTwitterScraper) -> None:
         response = client.x.dm.with_raw_response.retrieve_history(
             user_id="userId",
+            account="account",
         )
 
         assert response.is_closed is True
@@ -55,6 +58,7 @@ class TestDm:
     def test_streaming_response_retrieve_history(self, client: XTwitterScraper) -> None:
         with client.x.dm.with_streaming_response.retrieve_history(
             user_id="userId",
+            account="account",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -70,6 +74,7 @@ class TestDm:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
             client.x.dm.with_raw_response.retrieve_history(
                 user_id="",
+                account="account",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -90,7 +95,6 @@ class TestDm:
             account="@elonmusk",
             text="Example text content",
             media_ids=["1234567890123456789"],
-            reply_to_message_id="1234567890123456789",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -145,6 +149,7 @@ class TestAsyncDm:
     async def test_method_retrieve_history(self, async_client: AsyncXTwitterScraper) -> None:
         dm = await async_client.x.dm.retrieve_history(
             user_id="userId",
+            account="account",
         )
         assert_matches_type(DmRetrieveHistoryResponse, dm, path=["response"])
 
@@ -153,6 +158,7 @@ class TestAsyncDm:
     async def test_method_retrieve_history_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         dm = await async_client.x.dm.retrieve_history(
             user_id="userId",
+            account="account",
             cursor="cursor",
             max_id="maxId",
         )
@@ -163,6 +169,7 @@ class TestAsyncDm:
     async def test_raw_response_retrieve_history(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.dm.with_raw_response.retrieve_history(
             user_id="userId",
+            account="account",
         )
 
         assert response.is_closed is True
@@ -175,6 +182,7 @@ class TestAsyncDm:
     async def test_streaming_response_retrieve_history(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.dm.with_streaming_response.retrieve_history(
             user_id="userId",
+            account="account",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -190,6 +198,7 @@ class TestAsyncDm:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
             await async_client.x.dm.with_raw_response.retrieve_history(
                 user_id="",
+                account="account",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -210,7 +219,6 @@ class TestAsyncDm:
             account="@elonmusk",
             text="Example text content",
             media_ids=["1234567890123456789"],
-            reply_to_message_id="1234567890123456789",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 

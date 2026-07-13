@@ -31,7 +31,7 @@ class ListsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return ListsResourceWithRawResponse(self)
 
@@ -40,7 +40,7 @@ class ListsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return ListsResourceWithStreamingResponse(self)
 
@@ -49,6 +49,7 @@ class ListsResource(SyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -61,6 +62,11 @@ class ListsResource(SyncAPIResource):
 
         Args:
           cursor: Pagination cursor for list followers
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -79,7 +85,17 @@ class ListsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams),
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    list_retrieve_followers_params.ListRetrieveFollowersParams,
+                ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -129,6 +145,10 @@ class ListsResource(SyncAPIResource):
                     },
                     list_retrieve_members_params.ListRetrieveMembersParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -139,6 +159,7 @@ class ListsResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         include_replies: bool | Omit = omit,
+        page_size: int | Omit = omit,
         since_time: str | Omit = omit,
         until_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -155,6 +176,12 @@ class ListsResource(SyncAPIResource):
           cursor: Pagination cursor for list tweets
 
           include_replies: Include replies (default false)
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           since_time: Unix timestamp - filter after
 
@@ -181,11 +208,16 @@ class ListsResource(SyncAPIResource):
                     {
                         "cursor": cursor,
                         "include_replies": include_replies,
+                        "page_size": page_size,
                         "since_time": since_time,
                         "until_time": until_time,
                     },
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -200,7 +232,7 @@ class AsyncListsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncListsResourceWithRawResponse(self)
 
@@ -209,7 +241,7 @@ class AsyncListsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncListsResourceWithStreamingResponse(self)
 
@@ -218,6 +250,7 @@ class AsyncListsResource(AsyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -230,6 +263,11 @@ class AsyncListsResource(AsyncAPIResource):
 
         Args:
           cursor: Pagination cursor for list followers
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -249,8 +287,16 @@ class AsyncListsResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, list_retrieve_followers_params.ListRetrieveFollowersParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    list_retrieve_followers_params.ListRetrieveFollowersParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -300,6 +346,10 @@ class AsyncListsResource(AsyncAPIResource):
                     },
                     list_retrieve_members_params.ListRetrieveMembersParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -310,6 +360,7 @@ class AsyncListsResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         include_replies: bool | Omit = omit,
+        page_size: int | Omit = omit,
         since_time: str | Omit = omit,
         until_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -326,6 +377,12 @@ class AsyncListsResource(AsyncAPIResource):
           cursor: Pagination cursor for list tweets
 
           include_replies: Include replies (default false)
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           since_time: Unix timestamp - filter after
 
@@ -352,11 +409,16 @@ class AsyncListsResource(AsyncAPIResource):
                     {
                         "cursor": cursor,
                         "include_replies": include_replies,
+                        "page_size": page_size,
                         "since_time": since_time,
                         "until_time": until_time,
                     },
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )

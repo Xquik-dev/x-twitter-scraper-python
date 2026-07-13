@@ -20,10 +20,11 @@ class TweetCreateParams(TypedDict, total=False):
     is_note_tweet: bool
 
     media: SequenceNotStr[str]
-    """Array of public image URLs to attach (max 4).
+    """Array of public media URLs to attach.
 
-    Each URL must be publicly reachable - the browser composer fetches them
-    directly.
+    Supports up to 4 images or exactly 1 MP4 video up to 100 MB. Each URL must be
+    publicly reachable. Attached media adds 2 credits per started MB across all
+    files.
     """
 
     reply_to_tweet_id: str

@@ -35,7 +35,7 @@ class AccountsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AccountsResourceWithRawResponse(self)
 
@@ -44,7 +44,7 @@ class AccountsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AccountsResourceWithStreamingResponse(self)
 
@@ -54,7 +54,6 @@ class AccountsResource(SyncAPIResource):
         email: str,
         password: str,
         username: str,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -73,8 +72,6 @@ class AccountsResource(SyncAPIResource):
 
           username: X username
 
-          proxy_country: Proxy country code
-
           totp_secret: TOTP secret for 2FA
 
           extra_headers: Send extra headers
@@ -92,13 +89,19 @@ class AccountsResource(SyncAPIResource):
                     "email": email,
                     "password": password,
                     "username": username,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountCreateResponse,
         )
@@ -131,7 +134,14 @@ class AccountsResource(SyncAPIResource):
         return self._get(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=XAccountDetail,
         )
@@ -150,7 +160,14 @@ class AccountsResource(SyncAPIResource):
         return self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountListResponse,
         )
@@ -183,7 +200,14 @@ class AccountsResource(SyncAPIResource):
         return self._delete(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -205,7 +229,14 @@ class AccountsResource(SyncAPIResource):
         return self._post(
             "/x/accounts/bulk-retry",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountBulkRetryResponse,
         )
@@ -216,7 +247,6 @@ class AccountsResource(SyncAPIResource):
         *,
         password: str,
         email: str | Omit = omit,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -232,8 +262,6 @@ class AccountsResource(SyncAPIResource):
           password: Updated account password
 
           email: Email for the X account (updates stored email)
-
-          proxy_country: Two-letter country code for login proxy region
 
           totp_secret: TOTP secret for 2FA re-authentication
 
@@ -253,13 +281,19 @@ class AccountsResource(SyncAPIResource):
                 {
                     "password": password,
                     "email": email,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_reauth_params.AccountReauthParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountReauthResponse,
         )
@@ -274,7 +308,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncAccountsResourceWithRawResponse(self)
 
@@ -283,7 +317,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncAccountsResourceWithStreamingResponse(self)
 
@@ -293,7 +327,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         email: str,
         password: str,
         username: str,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -312,8 +345,6 @@ class AsyncAccountsResource(AsyncAPIResource):
 
           username: X username
 
-          proxy_country: Proxy country code
-
           totp_secret: TOTP secret for 2FA
 
           extra_headers: Send extra headers
@@ -331,13 +362,19 @@ class AsyncAccountsResource(AsyncAPIResource):
                     "email": email,
                     "password": password,
                     "username": username,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountCreateResponse,
         )
@@ -370,7 +407,14 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=XAccountDetail,
         )
@@ -389,7 +433,14 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountListResponse,
         )
@@ -422,7 +473,14 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._delete(
             path_template("/x/accounts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountDeleteResponse,
         )
@@ -444,7 +502,14 @@ class AsyncAccountsResource(AsyncAPIResource):
         return await self._post(
             "/x/accounts/bulk-retry",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountBulkRetryResponse,
         )
@@ -455,7 +520,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         *,
         password: str,
         email: str | Omit = omit,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -471,8 +535,6 @@ class AsyncAccountsResource(AsyncAPIResource):
           password: Updated account password
 
           email: Email for the X account (updates stored email)
-
-          proxy_country: Two-letter country code for login proxy region
 
           totp_secret: TOTP secret for 2FA re-authentication
 
@@ -492,13 +554,19 @@ class AsyncAccountsResource(AsyncAPIResource):
                 {
                     "password": password,
                     "email": email,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_reauth_params.AccountReauthParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=AccountReauthResponse,
         )

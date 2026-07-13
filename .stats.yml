@@ -1,4 +1,4 @@
-configured_endpoints: 110
-openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/xquik/x-twitter-scraper-448f3b69552e6515e1df3a34f7f299eb6313dd904b0f3840ea4228b047aa1b6f.yml
-openapi_spec_hash: 94ffa4c398ff0a22c0eab3eae6536e36
-config_hash: 0a29dafd3c416019a49430105808d7d4
+configured_endpoints: 126
+openapi_spec_url: https://storage.googleapis.com/stainless-sdk-openapi-specs/xquik/x-twitter-scraper-aa7303e3e31322d918aa2ba5c8b8e62a64e717c7575bb2a71275becc62be03d4.yml
+openapi_spec_hash: c462a621a6229fe1ddf9f15796e83e44
+config_hash: 9960b2e58e1531916941a110ac5f14aa

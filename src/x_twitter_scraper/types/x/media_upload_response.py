@@ -12,4 +12,7 @@ __all__ = ["MediaUploadResponse"]
 class MediaUploadResponse(BaseModel):
     media_id: str = FieldInfo(alias="mediaId")
 
+    media_url: str = FieldInfo(alias="mediaUrl")
+    """Public media URL for tweet `media` arrays."""
+
     success: Literal[True]

@@ -14,8 +14,5 @@ class AccountReauthParams(TypedDict, total=False):
     email: str
     """Email for the X account (updates stored email)"""
 
-    proxy_country: str
-    """Two-letter country code for login proxy region"""
-
     totp_secret: str
     """TOTP secret for 2FA re-authentication"""

@@ -32,7 +32,7 @@ class RadarResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return RadarResourceWithRawResponse(self)
 
@@ -41,7 +41,7 @@ class RadarResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return RadarResourceWithStreamingResponse(self)
 
@@ -71,11 +71,11 @@ class RadarResource(SyncAPIResource):
 
           category: Filter by category.
 
-          hours: Lookback window in hours (1-168, default 24).
+          hours: Lookback window in hours (1-72, default 6).
 
           limit: Number of items to return (1-100, default 50).
 
-          region: Region filter (us, global, etc.)
+          region: Region filter. Use `global` or a region code such as `US`, `GB`, `TR`, or `ES`.
 
           source: Source filter. One of: github, google_trends, hacker_news, polymarket, reddit,
               trustmrr, wikipedia
@@ -106,6 +106,10 @@ class RadarResource(SyncAPIResource):
                     },
                     radar_retrieve_trending_topics_params.RadarRetrieveTrendingTopicsParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=RadarRetrieveTrendingTopicsResponse,
         )
@@ -120,7 +124,7 @@ class AsyncRadarResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncRadarResourceWithRawResponse(self)
 
@@ -129,7 +133,7 @@ class AsyncRadarResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncRadarResourceWithStreamingResponse(self)
 
@@ -159,11 +163,11 @@ class AsyncRadarResource(AsyncAPIResource):
 
           category: Filter by category.
 
-          hours: Lookback window in hours (1-168, default 24).
+          hours: Lookback window in hours (1-72, default 6).
 
           limit: Number of items to return (1-100, default 50).
 
-          region: Region filter (us, global, etc.)
+          region: Region filter. Use `global` or a region code such as `US`, `GB`, `TR`, or `ES`.
 
           source: Source filter. One of: github, google_trends, hacker_news, polymarket, reddit,
               trustmrr, wikipedia
@@ -194,6 +198,10 @@ class AsyncRadarResource(AsyncAPIResource):
                     },
                     radar_retrieve_trending_topics_params.RadarRetrieveTrendingTopicsParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=RadarRetrieveTrendingTopicsResponse,
         )

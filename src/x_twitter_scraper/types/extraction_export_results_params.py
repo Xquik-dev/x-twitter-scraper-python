@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from typing_extensions import Literal, TypedDict
+from typing_extensions import Literal, Required, TypedDict
 
 __all__ = ["ExtractionExportResultsParams"]
 
 
 class ExtractionExportResultsParams(TypedDict, total=False):
-    format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]
+    format: Required[Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]]
     """Export file format"""
