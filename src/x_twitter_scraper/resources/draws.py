@@ -83,14 +83,7 @@ class DrawsResource(SyncAPIResource):
         return self._get(
             path_template("/draws/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DrawRetrieveResponse,
         )
@@ -140,10 +133,6 @@ class DrawsResource(SyncAPIResource):
                     },
                     draw_list_params.DrawListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=DrawListResponse,
         )
@@ -194,10 +183,6 @@ class DrawsResource(SyncAPIResource):
                     },
                     draw_export_params.DrawExportParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=BinaryAPIResponse,
         )
@@ -260,14 +245,7 @@ class DrawsResource(SyncAPIResource):
                 draw_run_params.DrawRunParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DrawRunResponse,
         )
@@ -323,14 +301,7 @@ class AsyncDrawsResource(AsyncAPIResource):
         return await self._get(
             path_template("/draws/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DrawRetrieveResponse,
         )
@@ -380,10 +351,6 @@ class AsyncDrawsResource(AsyncAPIResource):
                     },
                     draw_list_params.DrawListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=DrawListResponse,
         )
@@ -434,10 +401,6 @@ class AsyncDrawsResource(AsyncAPIResource):
                     },
                     draw_export_params.DrawExportParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=AsyncBinaryAPIResponse,
         )
@@ -500,14 +463,7 @@ class AsyncDrawsResource(AsyncAPIResource):
                 draw_run_params.DrawRunParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DrawRunResponse,
         )

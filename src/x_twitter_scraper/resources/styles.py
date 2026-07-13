@@ -76,14 +76,7 @@ class StylesResource(SyncAPIResource):
         return self._get(
             path_template("/styles/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleProfile,
         )
@@ -129,14 +122,7 @@ class StylesResource(SyncAPIResource):
                 style_update_params.StyleUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleProfile,
         )
@@ -155,14 +141,7 @@ class StylesResource(SyncAPIResource):
         return self._get(
             "/styles",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleListResponse,
         )
@@ -196,14 +175,7 @@ class StylesResource(SyncAPIResource):
         return self._delete(
             path_template("/styles/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=NoneType,
         )
@@ -237,14 +209,7 @@ class StylesResource(SyncAPIResource):
             "/styles",
             body=maybe_transform({"username": username}, style_analyze_params.StyleAnalyzeParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleProfile,
         )
@@ -291,10 +256,6 @@ class StylesResource(SyncAPIResource):
                     },
                     style_compare_params.StyleCompareParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=StyleCompareResponse,
         )
@@ -327,14 +288,7 @@ class StylesResource(SyncAPIResource):
         return self._get(
             path_template("/styles/{id}/performance", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleGetPerformanceResponse,
         )
@@ -390,14 +344,7 @@ class AsyncStylesResource(AsyncAPIResource):
         return await self._get(
             path_template("/styles/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleProfile,
         )
@@ -443,14 +390,7 @@ class AsyncStylesResource(AsyncAPIResource):
                 style_update_params.StyleUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleProfile,
         )
@@ -469,14 +409,7 @@ class AsyncStylesResource(AsyncAPIResource):
         return await self._get(
             "/styles",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleListResponse,
         )
@@ -510,14 +443,7 @@ class AsyncStylesResource(AsyncAPIResource):
         return await self._delete(
             path_template("/styles/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=NoneType,
         )
@@ -551,14 +477,7 @@ class AsyncStylesResource(AsyncAPIResource):
             "/styles",
             body=await async_maybe_transform({"username": username}, style_analyze_params.StyleAnalyzeParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleProfile,
         )
@@ -605,10 +524,6 @@ class AsyncStylesResource(AsyncAPIResource):
                     },
                     style_compare_params.StyleCompareParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=StyleCompareResponse,
         )
@@ -641,14 +556,7 @@ class AsyncStylesResource(AsyncAPIResource):
         return await self._get(
             path_template("/styles/{id}/performance", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=StyleGetPerformanceResponse,
         )

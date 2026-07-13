@@ -2,11 +2,14 @@
 
 ```python
 from x_twitter_scraper.types import (
+    ContentDisclosure,
+    EmbeddedTweet,
     Error,
     EventType,
     PaginatedTweets,
     PaginatedUsers,
     SearchTweet,
+    TweetMedia,
     UserProfile,
 )
 ```
@@ -28,25 +31,6 @@ Methods:
 - <code title="get /account">client.account.<a href="./src/x_twitter_scraper/resources/account.py">retrieve</a>() -> <a href="./src/x_twitter_scraper/types/account_retrieve_response.py">AccountRetrieveResponse</a></code>
 - <code title="put /account/x-identity">client.account.<a href="./src/x_twitter_scraper/resources/account.py">set_x_username</a>(\*\*<a href="src/x_twitter_scraper/types/account_set_x_username_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/account_set_x_username_response.py">AccountSetXUsernameResponse</a></code>
 - <code title="patch /account">client.account.<a href="./src/x_twitter_scraper/resources/account.py">update_locale</a>(\*\*<a href="src/x_twitter_scraper/types/account_update_locale_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/account_update_locale_response.py">AccountUpdateLocaleResponse</a></code>
-
-# APIKeys
-
-Types:
-
-```python
-from x_twitter_scraper.types import (
-    APIKey,
-    APIKeyCreateResponse,
-    APIKeyListResponse,
-    APIKeyRevokeResponse,
-)
-```
-
-Methods:
-
-- <code title="post /api-keys">client.api_keys.<a href="./src/x_twitter_scraper/resources/api_keys.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/api_key_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/api_key_create_response.py">APIKeyCreateResponse</a></code>
-- <code title="get /api-keys">client.api_keys.<a href="./src/x_twitter_scraper/resources/api_keys.py">list</a>() -> <a href="./src/x_twitter_scraper/types/api_key_list_response.py">APIKeyListResponse</a></code>
-- <code title="delete /api-keys/{id}">client.api_keys.<a href="./src/x_twitter_scraper/resources/api_keys.py">revoke</a>(id) -> <a href="./src/x_twitter_scraper/types/api_key_revoke_response.py">APIKeyRevokeResponse</a></code>
 
 # Subscribe
 
@@ -568,7 +552,6 @@ Types:
 
 ```python
 from x_twitter_scraper.types import (
-    CreditQuickTopupBalanceResponse,
     CreditRetrieveBalanceResponse,
     CreditRetrieveTopupStatusResponse,
     CreditTopupBalanceResponse,
@@ -577,7 +560,6 @@ from x_twitter_scraper.types import (
 
 Methods:
 
-- <code title="post /credits/quick-topup">client.credits.<a href="./src/x_twitter_scraper/resources/credits.py">quick_topup_balance</a>(\*\*<a href="src/x_twitter_scraper/types/credit_quick_topup_balance_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/credit_quick_topup_balance_response.py">CreditQuickTopupBalanceResponse</a></code>
 - <code title="get /credits/topup/redirect">client.credits.<a href="./src/x_twitter_scraper/resources/credits.py">redirect_topup_checkout</a>(\*\*<a href="src/x_twitter_scraper/types/credit_redirect_topup_checkout_params.py">params</a>) -> None</code>
 - <code title="get /credits">client.credits.<a href="./src/x_twitter_scraper/resources/credits.py">retrieve_balance</a>() -> <a href="./src/x_twitter_scraper/types/credit_retrieve_balance_response.py">CreditRetrieveBalanceResponse</a></code>
 - <code title="get /credits/topup/status">client.credits.<a href="./src/x_twitter_scraper/resources/credits.py">retrieve_topup_status</a>(\*\*<a href="src/x_twitter_scraper/types/credit_retrieve_topup_status_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/credit_retrieve_topup_status_response.py">CreditRetrieveTopupStatusResponse</a></code>
@@ -589,6 +571,7 @@ Types:
 
 ```python
 from x_twitter_scraper.types import (
+    GuestWalletAmount,
     GuestWalletCreateResponse,
     GuestWalletRetrieveStatusResponse,
     GuestWalletTopupResponse,

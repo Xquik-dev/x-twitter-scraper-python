@@ -82,14 +82,7 @@ class DraftsResource(SyncAPIResource):
                 draft_create_params.DraftCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DraftDetail,
         )
@@ -122,14 +115,7 @@ class DraftsResource(SyncAPIResource):
         return self._get(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DraftDetail,
         )
@@ -179,10 +165,6 @@ class DraftsResource(SyncAPIResource):
                     },
                     draft_list_params.DraftListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=DraftListResponse,
         )
@@ -216,14 +198,7 @@ class DraftsResource(SyncAPIResource):
         return self._delete(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=NoneType,
         )
@@ -287,14 +262,7 @@ class AsyncDraftsResource(AsyncAPIResource):
                 draft_create_params.DraftCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DraftDetail,
         )
@@ -327,14 +295,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         return await self._get(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DraftDetail,
         )
@@ -384,10 +345,6 @@ class AsyncDraftsResource(AsyncAPIResource):
                     },
                     draft_list_params.DraftListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=DraftListResponse,
         )
@@ -421,14 +378,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         return await self._delete(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=NoneType,
         )

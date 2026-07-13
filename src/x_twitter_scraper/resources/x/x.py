@@ -227,14 +227,7 @@ class XResource(SyncAPIResource):
         return self._get(
             path_template("/x/articles/{tweet_id}", tweet_id=tweet_id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=XGetArticleResponse,
         )
@@ -281,10 +274,6 @@ class XResource(SyncAPIResource):
                     },
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -331,10 +320,6 @@ class XResource(SyncAPIResource):
                     },
                     x_get_notifications_params.XGetNotificationsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=XGetNotificationsResponse,
         )
@@ -381,10 +366,6 @@ class XResource(SyncAPIResource):
                     },
                     x_get_trends_params.XGetTrendsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=XGetTrendsResponse,
         )
@@ -495,14 +476,7 @@ class AsyncXResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/articles/{tweet_id}", tweet_id=tweet_id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=XGetArticleResponse,
         )
@@ -549,10 +523,6 @@ class AsyncXResource(AsyncAPIResource):
                     },
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -599,10 +569,6 @@ class AsyncXResource(AsyncAPIResource):
                     },
                     x_get_notifications_params.XGetNotificationsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=XGetNotificationsResponse,
         )
@@ -649,10 +615,6 @@ class AsyncXResource(AsyncAPIResource):
                     },
                     x_get_trends_params.XGetTrendsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=XGetTrendsResponse,
         )

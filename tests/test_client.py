@@ -41,7 +41,6 @@ T = TypeVar("T")
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 api_key = "My API Key"
 bearer_token = "My Bearer Token"
-cookie_session = "My Cookie Session"
 
 
 def _get_params(client: BaseClient[Any, Any]) -> dict[str, str]:
@@ -146,10 +145,6 @@ class TestXTwitterScraper:
         assert copied.bearer_token == "another My Bearer Token"
         assert client.bearer_token == "My Bearer Token"
 
-        copied = client.copy(cookie_session="another My Cookie Session")
-        assert copied.cookie_session == "another My Cookie Session"
-        assert client.cookie_session == "My Cookie Session"
-
     def test_copy_default_options(self, client: XTwitterScraper) -> None:
         # options that have a default are overridden correctly
         copied = client.copy(max_retries=7)
@@ -171,7 +166,6 @@ class TestXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_headers={"X-Foo": "bar"},
         )
@@ -211,7 +205,6 @@ class TestXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_query={"foo": "bar"},
         )
@@ -342,7 +335,6 @@ class TestXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             timeout=httpx.Timeout(0),
         )
@@ -360,7 +352,6 @@ class TestXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=http_client,
             )
@@ -377,7 +368,6 @@ class TestXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=http_client,
             )
@@ -394,7 +384,6 @@ class TestXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=http_client,
             )
@@ -412,7 +401,6 @@ class TestXTwitterScraper:
                     base_url=base_url,
                     api_key=api_key,
                     bearer_token=bearer_token,
-                    cookie_session=cookie_session,
                     _strict_response_validation=True,
                     http_client=cast(Any, http_client),
                 )
@@ -422,7 +410,6 @@ class TestXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_headers={"X-Foo": "bar"},
         )
@@ -434,7 +421,6 @@ class TestXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_headers={
                 "X-Foo": "stainless",
@@ -450,11 +436,7 @@ class TestXTwitterScraper:
 
     def test_validate_headers(self) -> None:
         client = XTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-api-key") == api_key
@@ -463,20 +445,15 @@ class TestXTwitterScraper:
             **{
                 "X_TWITTER_SCRAPER_API_KEY": Omit(),
                 "X_TWITTER_SCRAPER_BEARER_TOKEN": Omit(),
-                "X_TWITTER_SCRAPER_SESSION": Omit(),
             }
         ):
             client2 = XTwitterScraper(
-                base_url=base_url,
-                api_key=None,
-                bearer_token=None,
-                cookie_session=None,
-                _strict_response_validation=True,
+                base_url=base_url, api_key=None, bearer_token=None, _strict_response_validation=True
             )
 
         with pytest.raises(
             TypeError,
-            match="Could not resolve authentication method. Expected one of api_key, bearer_token or cookie_session to be set. Or for one of the `x-api-key`, `Authorization` or `__Host-xquik_session` headers to be explicitly omitted",
+            match="Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `x-api-key` or `Authorization` headers to be explicitly omitted",
         ):
             client2._build_request(FinalRequestOptions(method="get", url="/foo"))
 
@@ -488,7 +465,6 @@ class TestXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_query={"query_param": "bar"},
         )
@@ -688,7 +664,6 @@ class TestXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             http_client=httpx.Client(transport=MockTransport(handler=mock_handler)),
         ) as client:
@@ -790,7 +765,6 @@ class TestXTwitterScraper:
             base_url="https://example.com/from_init",
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
         )
         assert client.base_url == "https://example.com/from_init/"
@@ -803,12 +777,7 @@ class TestXTwitterScraper:
 
     def test_base_url_env(self) -> None:
         with update_env(X_TWITTER_SCRAPER_BASE_URL="http://localhost:5000/from/env"):
-            client = XTwitterScraper(
-                api_key=api_key,
-                bearer_token=bearer_token,
-                cookie_session=cookie_session,
-                _strict_response_validation=True,
-            )
+            client = XTwitterScraper(api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
@@ -818,14 +787,12 @@ class TestXTwitterScraper:
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
             ),
             XTwitterScraper(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=httpx.Client(),
             ),
@@ -850,14 +817,12 @@ class TestXTwitterScraper:
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
             ),
             XTwitterScraper(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=httpx.Client(),
             ),
@@ -882,14 +847,12 @@ class TestXTwitterScraper:
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
             ),
             XTwitterScraper(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=httpx.Client(),
             ),
@@ -909,11 +872,7 @@ class TestXTwitterScraper:
 
     def test_copied_client_does_not_close_http(self) -> None:
         test_client = XTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         assert not test_client.is_closed()
 
@@ -926,11 +885,7 @@ class TestXTwitterScraper:
 
     def test_client_context_manager(self) -> None:
         test_client = XTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         with test_client as c2:
             assert c2 is test_client
@@ -956,7 +911,6 @@ class TestXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 max_retries=cast(Any, None),
             )
@@ -969,22 +923,14 @@ class TestXTwitterScraper:
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
         strict_client = XTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
 
         with pytest.raises(APIResponseValidationError):
             strict_client.get("/foo", cast_to=Model)
 
         non_strict_client = XTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=False,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=False
         )
 
         response = non_strict_client.get("/foo", cast_to=Model)
@@ -1208,10 +1154,6 @@ class TestAsyncXTwitterScraper:
         assert copied.bearer_token == "another My Bearer Token"
         assert async_client.bearer_token == "My Bearer Token"
 
-        copied = async_client.copy(cookie_session="another My Cookie Session")
-        assert copied.cookie_session == "another My Cookie Session"
-        assert async_client.cookie_session == "My Cookie Session"
-
     def test_copy_default_options(self, async_client: AsyncXTwitterScraper) -> None:
         # options that have a default are overridden correctly
         copied = async_client.copy(max_retries=7)
@@ -1233,7 +1175,6 @@ class TestAsyncXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_headers={"X-Foo": "bar"},
         )
@@ -1273,7 +1214,6 @@ class TestAsyncXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_query={"foo": "bar"},
         )
@@ -1406,7 +1346,6 @@ class TestAsyncXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             timeout=httpx.Timeout(0),
         )
@@ -1424,7 +1363,6 @@ class TestAsyncXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=http_client,
             )
@@ -1441,7 +1379,6 @@ class TestAsyncXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=http_client,
             )
@@ -1458,7 +1395,6 @@ class TestAsyncXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=http_client,
             )
@@ -1476,7 +1412,6 @@ class TestAsyncXTwitterScraper:
                     base_url=base_url,
                     api_key=api_key,
                     bearer_token=bearer_token,
-                    cookie_session=cookie_session,
                     _strict_response_validation=True,
                     http_client=cast(Any, http_client),
                 )
@@ -1486,7 +1421,6 @@ class TestAsyncXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_headers={"X-Foo": "bar"},
         )
@@ -1498,7 +1432,6 @@ class TestAsyncXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_headers={
                 "X-Foo": "stainless",
@@ -1514,11 +1447,7 @@ class TestAsyncXTwitterScraper:
 
     def test_validate_headers(self) -> None:
         client = AsyncXTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-api-key") == api_key
@@ -1527,20 +1456,15 @@ class TestAsyncXTwitterScraper:
             **{
                 "X_TWITTER_SCRAPER_API_KEY": Omit(),
                 "X_TWITTER_SCRAPER_BEARER_TOKEN": Omit(),
-                "X_TWITTER_SCRAPER_SESSION": Omit(),
             }
         ):
             client2 = AsyncXTwitterScraper(
-                base_url=base_url,
-                api_key=None,
-                bearer_token=None,
-                cookie_session=None,
-                _strict_response_validation=True,
+                base_url=base_url, api_key=None, bearer_token=None, _strict_response_validation=True
             )
 
         with pytest.raises(
             TypeError,
-            match="Could not resolve authentication method. Expected one of api_key, bearer_token or cookie_session to be set. Or for one of the `x-api-key`, `Authorization` or `__Host-xquik_session` headers to be explicitly omitted",
+            match="Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `x-api-key` or `Authorization` headers to be explicitly omitted",
         ):
             client2._build_request(FinalRequestOptions(method="get", url="/foo"))
 
@@ -1552,7 +1476,6 @@ class TestAsyncXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             default_query={"query_param": "bar"},
         )
@@ -1752,7 +1675,6 @@ class TestAsyncXTwitterScraper:
             base_url=base_url,
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
             http_client=httpx.AsyncClient(transport=MockTransport(handler=mock_handler)),
         ) as client:
@@ -1856,7 +1778,6 @@ class TestAsyncXTwitterScraper:
             base_url="https://example.com/from_init",
             api_key=api_key,
             bearer_token=bearer_token,
-            cookie_session=cookie_session,
             _strict_response_validation=True,
         )
         assert client.base_url == "https://example.com/from_init/"
@@ -1869,12 +1790,7 @@ class TestAsyncXTwitterScraper:
 
     async def test_base_url_env(self) -> None:
         with update_env(X_TWITTER_SCRAPER_BASE_URL="http://localhost:5000/from/env"):
-            client = AsyncXTwitterScraper(
-                api_key=api_key,
-                bearer_token=bearer_token,
-                cookie_session=cookie_session,
-                _strict_response_validation=True,
-            )
+            client = AsyncXTwitterScraper(api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True)
             assert client.base_url == "http://localhost:5000/from/env/"
 
     @pytest.mark.parametrize(
@@ -1884,14 +1800,12 @@ class TestAsyncXTwitterScraper:
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
             ),
             AsyncXTwitterScraper(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=httpx.AsyncClient(),
             ),
@@ -1916,14 +1830,12 @@ class TestAsyncXTwitterScraper:
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
             ),
             AsyncXTwitterScraper(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=httpx.AsyncClient(),
             ),
@@ -1948,14 +1860,12 @@ class TestAsyncXTwitterScraper:
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
             ),
             AsyncXTwitterScraper(
                 base_url="http://localhost:5000/custom/path/",
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 http_client=httpx.AsyncClient(),
             ),
@@ -1975,11 +1885,7 @@ class TestAsyncXTwitterScraper:
 
     async def test_copied_client_does_not_close_http(self) -> None:
         test_client = AsyncXTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         assert not test_client.is_closed()
 
@@ -1993,11 +1899,7 @@ class TestAsyncXTwitterScraper:
 
     async def test_client_context_manager(self) -> None:
         test_client = AsyncXTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         async with test_client as c2:
             assert c2 is test_client
@@ -2025,7 +1927,6 @@ class TestAsyncXTwitterScraper:
                 base_url=base_url,
                 api_key=api_key,
                 bearer_token=bearer_token,
-                cookie_session=cookie_session,
                 _strict_response_validation=True,
                 max_retries=cast(Any, None),
             )
@@ -2038,22 +1939,14 @@ class TestAsyncXTwitterScraper:
         respx_mock.get("/foo").mock(return_value=httpx.Response(200, text="my-custom-format"))
 
         strict_client = AsyncXTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=True,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
 
         with pytest.raises(APIResponseValidationError):
             await strict_client.get("/foo", cast_to=Model)
 
         non_strict_client = AsyncXTwitterScraper(
-            base_url=base_url,
-            api_key=api_key,
-            bearer_token=bearer_token,
-            cookie_session=cookie_session,
-            _strict_response_validation=False,
+            base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=False
         )
 
         response = await non_strict_client.get("/foo", cast_to=Model)

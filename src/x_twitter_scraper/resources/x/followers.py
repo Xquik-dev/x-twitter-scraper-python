@@ -85,10 +85,6 @@ class FollowersResource(SyncAPIResource):
                     },
                     follower_check_params.FollowerCheckParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=FollowerCheckResponse,
         )
@@ -158,10 +154,6 @@ class AsyncFollowersResource(AsyncAPIResource):
                     },
                     follower_check_params.FollowerCheckParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=FollowerCheckResponse,
         )

@@ -103,10 +103,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_list_params.TweetListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -160,10 +156,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_list_by_community_params.TweetListByCommunityParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -249,10 +241,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_list_params.TweetListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -306,10 +294,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_list_by_community_params.TweetListByCommunityParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )

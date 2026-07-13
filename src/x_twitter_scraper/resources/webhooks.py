@@ -90,14 +90,7 @@ class WebhooksResource(SyncAPIResource):
                 webhook_create_params.WebhookCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookCreateResponse,
         )
@@ -143,14 +136,7 @@ class WebhooksResource(SyncAPIResource):
                 webhook_update_params.WebhookUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Webhook,
         )
@@ -169,14 +155,7 @@ class WebhooksResource(SyncAPIResource):
         return self._get(
             "/webhooks",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookListResponse,
         )
@@ -209,14 +188,7 @@ class WebhooksResource(SyncAPIResource):
         return self._delete(
             path_template("/webhooks/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookDeactivateResponse,
         )
@@ -249,14 +221,7 @@ class WebhooksResource(SyncAPIResource):
         return self._get(
             path_template("/webhooks/{id}/deliveries", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookListDeliveriesResponse,
         )
@@ -289,14 +254,7 @@ class WebhooksResource(SyncAPIResource):
         return self._post(
             path_template("/webhooks/{id}/resume", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookResumeResponse,
         )
@@ -329,14 +287,7 @@ class WebhooksResource(SyncAPIResource):
         return self._post(
             path_template("/webhooks/{id}/test", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookTestResponse,
         )
@@ -402,14 +353,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
                 webhook_create_params.WebhookCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookCreateResponse,
         )
@@ -455,14 +399,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
                 webhook_update_params.WebhookUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Webhook,
         )
@@ -481,14 +418,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._get(
             "/webhooks",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookListResponse,
         )
@@ -521,14 +451,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._delete(
             path_template("/webhooks/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookDeactivateResponse,
         )
@@ -561,14 +484,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._get(
             path_template("/webhooks/{id}/deliveries", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookListDeliveriesResponse,
         )
@@ -601,14 +517,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._post(
             path_template("/webhooks/{id}/resume", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookResumeResponse,
         )
@@ -641,14 +550,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._post(
             path_template("/webhooks/{id}/test", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookTestResponse,
         )

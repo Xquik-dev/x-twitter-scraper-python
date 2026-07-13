@@ -103,14 +103,7 @@ class UsersResource(SyncAPIResource):
         return self._get(
             path_template("/x/users/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=UserProfile,
         )
@@ -147,14 +140,7 @@ class UsersResource(SyncAPIResource):
             path_template("/x/users/{id}/remove-follower", id=id),
             body=maybe_transform({"account": account}, user_remove_follower_params.UserRemoveFollowerParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=UserRemoveFollowerResponse,
         )
@@ -193,10 +179,6 @@ class UsersResource(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=UserRetrieveBatchResponse,
         )
@@ -258,10 +240,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_followers_params.UserRetrieveFollowersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -314,10 +292,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -379,10 +353,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_following_params.UserRetrieveFollowingParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -537,10 +507,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_likes_params.UserRetrieveLikesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -695,10 +661,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_media_params.UserRetrieveMediaParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -861,10 +823,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_mentions_params.UserRetrieveMentionsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1023,10 +981,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_replies_params.UserRetrieveRepliesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1073,10 +1027,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_search_params.UserRetrieveSearchParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -1239,10 +1189,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1295,10 +1241,6 @@ class UsersResource(SyncAPIResource):
                     },
                     user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -1357,14 +1299,7 @@ class AsyncUsersResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/users/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=UserProfile,
         )
@@ -1403,14 +1338,7 @@ class AsyncUsersResource(AsyncAPIResource):
                 {"account": account}, user_remove_follower_params.UserRemoveFollowerParams
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=UserRemoveFollowerResponse,
         )
@@ -1449,10 +1377,6 @@ class AsyncUsersResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=UserRetrieveBatchResponse,
         )
@@ -1514,10 +1438,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_followers_params.UserRetrieveFollowersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -1570,10 +1490,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -1635,10 +1551,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_following_params.UserRetrieveFollowingParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -1793,10 +1705,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_likes_params.UserRetrieveLikesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1951,10 +1859,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_media_params.UserRetrieveMediaParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -2117,10 +2021,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_mentions_params.UserRetrieveMentionsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -2279,10 +2179,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_replies_params.UserRetrieveRepliesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -2329,10 +2225,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_search_params.UserRetrieveSearchParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -2495,10 +2387,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -2551,10 +2439,6 @@ class AsyncUsersResource(AsyncAPIResource):
                     },
                     user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )

@@ -76,14 +76,7 @@ class RetweetResource(SyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=maybe_transform({"account": account}, retweet_create_params.RetweetCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=RetweetCreateResponse,
         )
@@ -120,14 +113,7 @@ class RetweetResource(SyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=maybe_transform({"account": account}, retweet_delete_params.RetweetDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=RetweetDeleteResponse,
         )
@@ -187,14 +173,7 @@ class AsyncRetweetResource(AsyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=await async_maybe_transform({"account": account}, retweet_create_params.RetweetCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=RetweetCreateResponse,
         )
@@ -231,14 +210,7 @@ class AsyncRetweetResource(AsyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=await async_maybe_transform({"account": account}, retweet_delete_params.RetweetDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=RetweetDeleteResponse,
         )

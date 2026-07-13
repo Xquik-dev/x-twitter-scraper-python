@@ -85,10 +85,6 @@ class TrendsResource(SyncAPIResource):
                     },
                     trend_list_params.TrendListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=TrendListResponse,
         )
@@ -158,10 +154,6 @@ class AsyncTrendsResource(AsyncAPIResource):
                     },
                     trend_list_params.TrendListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=TrendListResponse,
         )

@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any, cast
-
 import httpx
 
 from ..types import (
     credit_topup_balance_params,
-    credit_quick_topup_balance_params,
     credit_retrieve_topup_status_params,
     credit_redirect_topup_checkout_params,
 )
@@ -25,7 +22,6 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.credit_topup_balance_response import CreditTopupBalanceResponse
 from ..types.credit_retrieve_balance_response import CreditRetrieveBalanceResponse
-from ..types.credit_quick_topup_balance_response import CreditQuickTopupBalanceResponse
 from ..types.credit_retrieve_topup_status_response import CreditRetrieveTopupStatusResponse
 
 __all__ = ["CreditsResource", "AsyncCreditsResource"]
@@ -52,51 +48,6 @@ class CreditsResource(SyncAPIResource):
         For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return CreditsResourceWithStreamingResponse(self)
-
-    def quick_topup_balance(
-        self,
-        *,
-        dollars: float,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CreditQuickTopupBalanceResponse:
-        """
-        Instantly charge saved card for credits
-
-        Args:
-          dollars: Dollar amount for the top-up
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return cast(
-            CreditQuickTopupBalanceResponse,
-            self._post(
-                "/credits/quick-topup",
-                body=maybe_transform(
-                    {"dollars": dollars}, credit_quick_topup_balance_params.CreditQuickTopupBalanceParams
-                ),
-                options=make_request_options(
-                    extra_headers=extra_headers,
-                    extra_query=extra_query,
-                    extra_body=extra_body,
-                    timeout=timeout,
-                    security={"cookie_session": True},
-                ),
-                cast_to=cast(
-                    Any, CreditQuickTopupBalanceResponse
-                ),  # Union types cannot be passed in as arguments in the type system
-            ),
-        )
 
     def redirect_topup_checkout(
         self,
@@ -153,14 +104,7 @@ class CreditsResource(SyncAPIResource):
         return self._get(
             "/credits",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CreditRetrieveBalanceResponse,
         )
@@ -200,10 +144,6 @@ class CreditsResource(SyncAPIResource):
                 query=maybe_transform(
                     {"session_id": session_id}, credit_retrieve_topup_status_params.CreditRetrieveTopupStatusParams
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=CreditRetrieveTopupStatusResponse,
         )
@@ -248,14 +188,7 @@ class CreditsResource(SyncAPIResource):
                 credit_topup_balance_params.CreditTopupBalanceParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CreditTopupBalanceResponse,
         )
@@ -282,51 +215,6 @@ class AsyncCreditsResource(AsyncAPIResource):
         For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncCreditsResourceWithStreamingResponse(self)
-
-    async def quick_topup_balance(
-        self,
-        *,
-        dollars: float,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
-        extra_headers: Headers | None = None,
-        extra_query: Query | None = None,
-        extra_body: Body | None = None,
-        timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CreditQuickTopupBalanceResponse:
-        """
-        Instantly charge saved card for credits
-
-        Args:
-          dollars: Dollar amount for the top-up
-
-          extra_headers: Send extra headers
-
-          extra_query: Add additional query parameters to the request
-
-          extra_body: Add additional JSON properties to the request
-
-          timeout: Override the client-level default timeout for this request, in seconds
-        """
-        return cast(
-            CreditQuickTopupBalanceResponse,
-            await self._post(
-                "/credits/quick-topup",
-                body=await async_maybe_transform(
-                    {"dollars": dollars}, credit_quick_topup_balance_params.CreditQuickTopupBalanceParams
-                ),
-                options=make_request_options(
-                    extra_headers=extra_headers,
-                    extra_query=extra_query,
-                    extra_body=extra_body,
-                    timeout=timeout,
-                    security={"cookie_session": True},
-                ),
-                cast_to=cast(
-                    Any, CreditQuickTopupBalanceResponse
-                ),  # Union types cannot be passed in as arguments in the type system
-            ),
-        )
 
     async def redirect_topup_checkout(
         self,
@@ -383,14 +271,7 @@ class AsyncCreditsResource(AsyncAPIResource):
         return await self._get(
             "/credits",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CreditRetrieveBalanceResponse,
         )
@@ -430,10 +311,6 @@ class AsyncCreditsResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {"session_id": session_id}, credit_retrieve_topup_status_params.CreditRetrieveTopupStatusParams
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=CreditRetrieveTopupStatusResponse,
         )
@@ -478,14 +355,7 @@ class AsyncCreditsResource(AsyncAPIResource):
                 credit_topup_balance_params.CreditTopupBalanceParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CreditTopupBalanceResponse,
         )
@@ -495,9 +365,6 @@ class CreditsResourceWithRawResponse:
     def __init__(self, credits: CreditsResource) -> None:
         self._credits = credits
 
-        self.quick_topup_balance = to_raw_response_wrapper(
-            credits.quick_topup_balance,
-        )
         self.redirect_topup_checkout = to_raw_response_wrapper(
             credits.redirect_topup_checkout,
         )
@@ -516,9 +383,6 @@ class AsyncCreditsResourceWithRawResponse:
     def __init__(self, credits: AsyncCreditsResource) -> None:
         self._credits = credits
 
-        self.quick_topup_balance = async_to_raw_response_wrapper(
-            credits.quick_topup_balance,
-        )
         self.redirect_topup_checkout = async_to_raw_response_wrapper(
             credits.redirect_topup_checkout,
         )
@@ -537,9 +401,6 @@ class CreditsResourceWithStreamingResponse:
     def __init__(self, credits: CreditsResource) -> None:
         self._credits = credits
 
-        self.quick_topup_balance = to_streamed_response_wrapper(
-            credits.quick_topup_balance,
-        )
         self.redirect_topup_checkout = to_streamed_response_wrapper(
             credits.redirect_topup_checkout,
         )
@@ -558,9 +419,6 @@ class AsyncCreditsResourceWithStreamingResponse:
     def __init__(self, credits: AsyncCreditsResource) -> None:
         self._credits = credits
 
-        self.quick_topup_balance = async_to_streamed_response_wrapper(
-            credits.quick_topup_balance,
-        )
         self.redirect_topup_checkout = async_to_streamed_response_wrapper(
             credits.redirect_topup_checkout,
         )

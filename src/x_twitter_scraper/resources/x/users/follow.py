@@ -76,14 +76,7 @@ class FollowResource(SyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=maybe_transform({"account": account}, follow_create_params.FollowCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FollowCreateResponse,
         )
@@ -120,14 +113,7 @@ class FollowResource(SyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=maybe_transform({"account": account}, follow_delete_all_params.FollowDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FollowDeleteAllResponse,
         )
@@ -187,14 +173,7 @@ class AsyncFollowResource(AsyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=await async_maybe_transform({"account": account}, follow_create_params.FollowCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FollowCreateResponse,
         )
@@ -231,14 +210,7 @@ class AsyncFollowResource(AsyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=await async_maybe_transform({"account": account}, follow_delete_all_params.FollowDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=FollowDeleteAllResponse,
         )
