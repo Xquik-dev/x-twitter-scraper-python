@@ -175,6 +175,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_members(
             id="id",
             cursor="cursor",
+            page_size=0,
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 
@@ -466,6 +467,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_members(
             id="id",
             cursor="cursor",
+            page_size=0,
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 

@@ -28,3 +28,6 @@ class AccountRetrieveResponse(BaseModel):
     plan: Literal["active", "inactive"]
 
     credit_info: Optional[CreditInfo] = FieldInfo(alias="creditInfo", default=None)
+
+    x_username: Optional[str] = FieldInfo(alias="xUsername", default=None)
+    """Linked X username, omitted when no X account is connected."""

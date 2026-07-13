@@ -70,7 +70,7 @@ class TweetsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return TweetsResourceWithRawResponse(self)
 
@@ -79,7 +79,7 @@ class TweetsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return TweetsResourceWithStreamingResponse(self)
 
@@ -91,7 +91,6 @@ class TweetsResource(SyncAPIResource):
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
-        media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -107,9 +106,8 @@ class TweetsResource(SyncAPIResource):
         Args:
           account: X account (@username or account ID)
 
-          media: Array of media URLs to attach (mutually exclusive with media_ids)
-
-          media_ids: Array of media IDs to attach (mutually exclusive with media)
+          media: Array of public image URLs to attach (max 4). Each URL must be publicly
+              reachable - the browser composer fetches them directly.
 
           text: Tweet text (optional when media is provided)
 
@@ -130,7 +128,6 @@ class TweetsResource(SyncAPIResource):
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
-                    "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
                     "text": text,
                 },
@@ -505,11 +502,11 @@ class TweetsResource(SyncAPIResource):
 
           limit: Max tweets to return (server paginates internally). Omit for single page (~20).
 
-          query_type: Sort order — Latest (chronological) or Top (engagement-ranked)
+          query_type: Sort order - Latest (chronological) or Top (engagement-ranked)
 
-          since_time: ISO 8601 timestamp — only return tweets after this time
+          since_time: ISO 8601 timestamp - only return tweets after this time
 
-          until_time: ISO 8601 timestamp — only return tweets before this time
+          until_time: ISO 8601 timestamp - only return tweets before this time
 
           extra_headers: Send extra headers
 
@@ -559,7 +556,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncTweetsResourceWithRawResponse(self)
 
@@ -568,7 +565,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncTweetsResourceWithStreamingResponse(self)
 
@@ -580,7 +577,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
-        media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -596,9 +592,8 @@ class AsyncTweetsResource(AsyncAPIResource):
         Args:
           account: X account (@username or account ID)
 
-          media: Array of media URLs to attach (mutually exclusive with media_ids)
-
-          media_ids: Array of media IDs to attach (mutually exclusive with media)
+          media: Array of public image URLs to attach (max 4). Each URL must be publicly
+              reachable - the browser composer fetches them directly.
 
           text: Tweet text (optional when media is provided)
 
@@ -619,7 +614,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
-                    "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
                     "text": text,
                 },
@@ -998,11 +992,11 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           limit: Max tweets to return (server paginates internally). Omit for single page (~20).
 
-          query_type: Sort order — Latest (chronological) or Top (engagement-ranked)
+          query_type: Sort order - Latest (chronological) or Top (engagement-ranked)
 
-          since_time: ISO 8601 timestamp — only return tweets after this time
+          since_time: ISO 8601 timestamp - only return tweets after this time
 
-          until_time: ISO 8601 timestamp — only return tweets before this time
+          until_time: ISO 8601 timestamp - only return tweets before this time
 
           extra_headers: Send extra headers
 

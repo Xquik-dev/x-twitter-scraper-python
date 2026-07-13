@@ -1,7 +1,7 @@
 [project]
 name = "x_twitter_scraper"
-version = "0.4.1"
-description = "Python library for the Xquik API. Not affiliated with X Corp."
+version = "0.4.0"
+description = "The official Python library for the x-twitter-scraper API"
 dynamic = ["readme"]
 license = "Apache-2.0"
 authors = [
@@ -37,11 +37,8 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://docs.xquik.com/sdks/python"
-Documentation = "https://docs.xquik.com/sdks/python"
-Repository = "https://github.com/Xquik-dev/x-twitter-scraper-python"
-Issues = "https://github.com/Xquik-dev/x-twitter-scraper-python/issues"
-Changelog = "https://github.com/Xquik-dev/x-twitter-scraper-python/blob/main/CHANGELOG.md"
+Homepage = "https://github.com/stainless-sdks/x-twitter-scraper-python"
+Repository = "https://github.com/stainless-sdks/x-twitter-scraper-python"
 
 [project.optional-dependencies]
 aiohttp = ["aiohttp", "httpx_aiohttp>=0.1.9"]
@@ -115,7 +112,7 @@ path = "README.md"
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
 # replace relative links with absolute links
 pattern = '\[(.+?)\]\(((?!https?://)\S+?)\)'
-replacement = '[\1](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/\g<2>)'
+replacement = '[\1](https://github.com/stainless-sdks/x-twitter-scraper-python/tree/main/\g<2>)'
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -157,7 +154,7 @@ show_error_codes = true
 #
 # We also exclude our `tests` as mypy doesn't always infer
 # types correctly and Pyright will still catch any type errors.
-exclude = ['src/x_twitter_scraper/_files.py', '_dev/.*.py', 'tests/.*']
+exclude = ["src/x_twitter_scraper/_files.py", "_dev/.*.py", "tests/.*"]
 
 strict_equality = true
 implicit_reexport = true

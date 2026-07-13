@@ -82,6 +82,7 @@ class TestLists:
         list_ = client.x.lists.retrieve_members(
             id="id",
             cursor="cursor",
+            page_size=0,
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -244,6 +245,7 @@ class TestAsyncLists:
         list_ = await async_client.x.lists.retrieve_members(
             id="id",
             cursor="cursor",
+            page_size=0,
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 

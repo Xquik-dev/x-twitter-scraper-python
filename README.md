@@ -1,25 +1,19 @@
-# X (Twitter) Scraper Python SDK: Tweet Search, Profile Tweets, Followers & Posting
-
-> **Xquik is an independent third-party service.** Not affiliated with X Corp.
-> "Twitter" and "X" are trademarks of X Corp.
-
-[![Ask DeepWiki](https://deepwiki.com/badge.svg?url=https%3A%2F%2Fgithub.com%2FXquik-dev%2Fx-twitter-scraper-python)](https://deepwiki.com/Xquik-dev/x-twitter-scraper-python)
-[![Skills.sh x-twitter-scraper Skill](https://skills.sh/b/xquik-dev/x-twitter-scraper)](https://skills.sh/xquik-dev/x-twitter-scraper)
+# Xquik Python SDK for X (Twitter) Scraper API
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
-Xquik Python SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, MCP, and posting automation.
+Xquik Python SDK for the X (Twitter) Scraper API: typed REST, HMAC webhooks, MCP, and docs at https://docs.xquik.com/api-reference/overview.
 
-Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
+Use it to search tweets, look up users, monitor accounts, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
 
 [SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Server](https://xquik.com/mcp) | [TypeScript SDK](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
 
 It is generated with [Stainless](https://www.stainless.com/).
 
-## Tweet Search, Profile Tweets & User Lookup
+## Tweet Search & User Lookup
 
-Build Python services that search tweets, get tweets from profiles, fetch user profiles, check follower relationships, export followers, download media, and inspect timeline data through one typed REST client.
+Build Python services that search tweets, fetch user profiles, check follower relationships, download media, and inspect timeline data through one typed REST client.
 
 ## Real-Time Monitoring & Webhooks
 
@@ -70,9 +64,12 @@ The REST API documentation can be found on [docs.xquik.com](https://docs.xquik.c
 ## Installation
 
 ```sh
-# install from PyPI
-pip install x_twitter_scraper
+# install from this staging repo
+pip install git+ssh://git@github.com/stainless-sdks/x-twitter-scraper-python.git
 ```
+
+> [!NOTE]
+> Once this package is [published to PyPI](https://www.stainless.com/docs/guides/publish), this will become: `pip install x_twitter_scraper`
 
 ## Usage
 
@@ -132,8 +129,8 @@ By default, the async client uses `httpx` for HTTP requests. However, for improv
 You can enable this by installing `aiohttp`:
 
 ```sh
-# install from PyPI
-pip install x_twitter_scraper[aiohttp]
+# install from this staging repo
+pip install 'x_twitter_scraper[aiohttp] @ git+ssh://git@github.com/stainless-sdks/x-twitter-scraper-python.git'
 ```
 
 Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
@@ -205,10 +202,7 @@ from x_twitter_scraper import XTwitterScraper
 client = XTwitterScraper()
 
 try:
-    client.x.tweets.search(
-        q="from:elonmusk",
-        limit=10,
-    )
+    client.account.retrieve()
 except x_twitter_scraper.APIConnectionError as e:
     print("The server could not be reached")
     print(e.__cause__)  # an underlying Exception, likely raised within httpx.
@@ -251,10 +245,7 @@ client = XTwitterScraper(
 )
 
 # Or, configure per-request:
-client.with_options(max_retries=5).x.tweets.search(
-    q="from:elonmusk",
-    limit=10,
-)
+client.with_options(max_retries=5).account.retrieve()
 ```
 
 ### Timeouts
@@ -277,10 +268,7 @@ client = XTwitterScraper(
 )
 
 # Override per-request:
-client.with_options(timeout=5.0).x.tweets.search(
-    q="from:elonmusk",
-    limit=10,
-)
+client.with_options(timeout=5.0).account.retrieve()
 ```
 
 On timeout, an `APITimeoutError` is thrown.
@@ -321,19 +309,16 @@ The "raw" Response object can be accessed by prefixing `.with_raw_response.` to 
 from x_twitter_scraper import XTwitterScraper
 
 client = XTwitterScraper()
-response = client.x.tweets.with_raw_response.search(
-    q="from:elonmusk",
-    limit=10,
-)
+response = client.account.with_raw_response.retrieve()
 print(response.headers.get('X-My-Header'))
 
-tweet = response.parse()  # get the object that `x.tweets.search()` would have returned
-print(tweet.has_next_page)
+account = response.parse()  # get the object that `account.retrieve()` would have returned
+print(account.monitors_allowed)
 ```
 
-These methods return an [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) object.
+These methods return an [`APIResponse`](https://github.com/stainless-sdks/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) object.
 
-The async client returns an [`AsyncAPIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
+The async client returns an [`AsyncAPIResponse`](https://github.com/stainless-sdks/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
 
 #### `.with_streaming_response`
 
@@ -342,10 +327,7 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with client.x.tweets.with_streaming_response.search(
-    q="from:elonmusk",
-    limit=10,
-) as response:
+with client.account.with_streaming_response.retrieve() as response:
     print(response.headers.get("X-My-Header"))
 
     for line in response.iter_lines():
@@ -440,7 +422,7 @@ This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) con
 
 We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-python/issues) with questions, bugs, or suggestions.
+We are keen for your feedback; please open an [issue](https://www.github.com/stainless-sdks/x-twitter-scraper-python/issues) with questions, bugs, or suggestions.
 
 ### Determining the installed version
 
