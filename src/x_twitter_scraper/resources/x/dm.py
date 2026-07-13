@@ -29,7 +29,7 @@ class DmResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return DmResourceWithRawResponse(self)
 
@@ -38,7 +38,7 @@ class DmResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return DmResourceWithStreamingResponse(self)
 
@@ -46,6 +46,7 @@ class DmResource(SyncAPIResource):
         self,
         user_id: str,
         *,
+        account: str,
         cursor: str | Omit = omit,
         max_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -59,6 +60,9 @@ class DmResource(SyncAPIResource):
         Get DM conversation history
 
         Args:
+          account: X handle (without the `@` prefix) of the connected X account used to read the
+              conversation. The account must be a participant in the conversation.
+
           cursor: Pagination cursor for DM history
 
           max_id: Legacy pagination cursor (backward compat)
@@ -82,11 +86,16 @@ class DmResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "account": account,
                         "cursor": cursor,
                         "max_id": max_id,
                     },
                     dm_retrieve_history_params.DmRetrieveHistoryParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DmRetrieveHistoryResponse,
         )
@@ -98,7 +107,6 @@ class DmResource(SyncAPIResource):
         account: str,
         text: str,
         media_ids: SequenceNotStr[str] | Omit = omit,
-        reply_to_message_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -111,6 +119,8 @@ class DmResource(SyncAPIResource):
 
         Args:
           account: X account (@username or ID) sending the DM
+
+          media_ids: Optional array containing exactly 1 uploaded media ID.
 
           extra_headers: Send extra headers
 
@@ -129,12 +139,18 @@ class DmResource(SyncAPIResource):
                     "account": account,
                     "text": text,
                     "media_ids": media_ids,
-                    "reply_to_message_id": reply_to_message_id,
                 },
                 dm_send_params.DmSendParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DmSendResponse,
         )
@@ -147,7 +163,7 @@ class AsyncDmResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncDmResourceWithRawResponse(self)
 
@@ -156,7 +172,7 @@ class AsyncDmResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncDmResourceWithStreamingResponse(self)
 
@@ -164,6 +180,7 @@ class AsyncDmResource(AsyncAPIResource):
         self,
         user_id: str,
         *,
+        account: str,
         cursor: str | Omit = omit,
         max_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -177,6 +194,9 @@ class AsyncDmResource(AsyncAPIResource):
         Get DM conversation history
 
         Args:
+          account: X handle (without the `@` prefix) of the connected X account used to read the
+              conversation. The account must be a participant in the conversation.
+
           cursor: Pagination cursor for DM history
 
           max_id: Legacy pagination cursor (backward compat)
@@ -200,11 +220,16 @@ class AsyncDmResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "account": account,
                         "cursor": cursor,
                         "max_id": max_id,
                     },
                     dm_retrieve_history_params.DmRetrieveHistoryParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DmRetrieveHistoryResponse,
         )
@@ -216,7 +241,6 @@ class AsyncDmResource(AsyncAPIResource):
         account: str,
         text: str,
         media_ids: SequenceNotStr[str] | Omit = omit,
-        reply_to_message_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -229,6 +253,8 @@ class AsyncDmResource(AsyncAPIResource):
 
         Args:
           account: X account (@username or ID) sending the DM
+
+          media_ids: Optional array containing exactly 1 uploaded media ID.
 
           extra_headers: Send extra headers
 
@@ -247,12 +273,18 @@ class AsyncDmResource(AsyncAPIResource):
                     "account": account,
                     "text": text,
                     "media_ids": media_ids,
-                    "reply_to_message_id": reply_to_message_id,
                 },
                 dm_send_params.DmSendParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DmSendResponse,
         )

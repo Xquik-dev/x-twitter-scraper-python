@@ -8,5 +8,8 @@ __all__ = ["CreditTopupBalanceParams"]
 
 
 class CreditTopupBalanceParams(TypedDict, total=False):
-    amount: Required[int]
-    """Amount to top up in credits"""
+    dollars: Required[int]
+    """Amount to top up in US dollars. Minimum 10."""
+
+    locale: str
+    """Optional checkout locale. Defaults to en."""

@@ -33,7 +33,7 @@ class DraftsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return DraftsResourceWithRawResponse(self)
 
@@ -42,7 +42,7 @@ class DraftsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return DraftsResourceWithStreamingResponse(self)
 
@@ -82,7 +82,14 @@ class DraftsResource(SyncAPIResource):
                 draft_create_params.DraftCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DraftDetail,
         )
@@ -115,7 +122,14 @@ class DraftsResource(SyncAPIResource):
         return self._get(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DraftDetail,
         )
@@ -138,7 +152,10 @@ class DraftsResource(SyncAPIResource):
         Args:
           after_cursor: Cursor for pagination
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -162,6 +179,10 @@ class DraftsResource(SyncAPIResource):
                     },
                     draft_list_params.DraftListParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DraftListResponse,
         )
@@ -195,7 +216,14 @@ class DraftsResource(SyncAPIResource):
         return self._delete(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=NoneType,
         )
@@ -210,7 +238,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncDraftsResourceWithRawResponse(self)
 
@@ -219,7 +247,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncDraftsResourceWithStreamingResponse(self)
 
@@ -259,7 +287,14 @@ class AsyncDraftsResource(AsyncAPIResource):
                 draft_create_params.DraftCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DraftDetail,
         )
@@ -292,7 +327,14 @@ class AsyncDraftsResource(AsyncAPIResource):
         return await self._get(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DraftDetail,
         )
@@ -315,7 +357,10 @@ class AsyncDraftsResource(AsyncAPIResource):
         Args:
           after_cursor: Cursor for pagination
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -339,6 +384,10 @@ class AsyncDraftsResource(AsyncAPIResource):
                     },
                     draft_list_params.DraftListParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=DraftListResponse,
         )
@@ -372,7 +421,14 @@ class AsyncDraftsResource(AsyncAPIResource):
         return await self._delete(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=NoneType,
         )

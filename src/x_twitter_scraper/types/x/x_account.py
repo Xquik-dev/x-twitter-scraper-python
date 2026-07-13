@@ -1,5 +1,6 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
+from typing import Optional
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -11,7 +12,9 @@ __all__ = ["XAccount"]
 
 
 class XAccount(BaseModel):
-    """Linked X account summary with username and connection status."""
+    """
+    Linked X account summary with connection status, health, and timestamp metadata.
+    """
 
     id: str
 
@@ -28,6 +31,10 @@ class XAccount(BaseModel):
 
     status: str
 
+    updated_at: datetime = FieldInfo(alias="updatedAt")
+
     x_user_id: str = FieldInfo(alias="xUserId")
 
     x_username: str = FieldInfo(alias="xUsername")
+
+    cookies_obtained_at: Optional[datetime] = FieldInfo(alias="cookiesObtainedAt", default=None)

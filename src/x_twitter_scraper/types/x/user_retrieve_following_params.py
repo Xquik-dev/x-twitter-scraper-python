@@ -10,8 +10,19 @@ __all__ = ["UserRetrieveFollowingParams"]
 
 
 class UserRetrieveFollowingParams(TypedDict, total=False):
+    after: str
+    """Legacy cursor alias. Prefer cursor."""
+
     cursor: str
     """Pagination cursor for following list"""
 
+    limit: int
+    """Legacy page size alias. Prefer pageSize."""
+
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Results per page (20-200, default 200)"""
+    """Maximum user profiles requested from this page (20-200, default 200).
+
+    The response can contain fewer profiles because the source returned fewer or
+    remaining credits cover fewer results. Keep requesting next_cursor while
+    has_next_page is true. The deprecated limit and count aliases remain accepted.
+    """

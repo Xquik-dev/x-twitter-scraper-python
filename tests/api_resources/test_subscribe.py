@@ -25,6 +25,14 @@ class TestSubscribe:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
+        subscribe = client.subscribe.create(
+            tier="pro",
+        )
+        assert_matches_type(SubscribeCreateResponse, subscribe, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.subscribe.with_raw_response.create()
 
@@ -55,6 +63,14 @@ class TestAsyncSubscribe:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         subscribe = await async_client.subscribe.create()
+        assert_matches_type(SubscribeCreateResponse, subscribe, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        subscribe = await async_client.subscribe.create(
+            tier="pro",
+        )
         assert_matches_type(SubscribeCreateResponse, subscribe, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

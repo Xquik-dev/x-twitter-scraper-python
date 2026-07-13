@@ -41,7 +41,6 @@ class TestAccounts:
             email="user@example.com",
             password="s3cur3Pa$$w0rd",
             username="elonmusk",
-            proxy_country="US",
             totp_secret="JBSWY3DPEHPK3PXP",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
@@ -232,7 +231,6 @@ class TestAccounts:
             id="id",
             password="password_value",
             email="user@example.com",
-            proxy_country="US",
             totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])
@@ -297,7 +295,6 @@ class TestAsyncAccounts:
             email="user@example.com",
             password="s3cur3Pa$$w0rd",
             username="elonmusk",
-            proxy_country="US",
             totp_secret="JBSWY3DPEHPK3PXP",
         )
         assert_matches_type(AccountCreateResponse, account, path=["response"])
@@ -488,7 +485,6 @@ class TestAsyncAccounts:
             id="id",
             password="password_value",
             email="user@example.com",
-            proxy_country="US",
             totp_secret="totp_secret_value",
         )
         assert_matches_type(AccountReauthResponse, account, path=["response"])

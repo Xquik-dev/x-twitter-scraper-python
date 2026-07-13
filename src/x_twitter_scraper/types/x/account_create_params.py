@@ -17,8 +17,5 @@ class AccountCreateParams(TypedDict, total=False):
     username: Required[str]
     """X username"""
 
-    proxy_country: str
-    """Proxy country code"""
-
     totp_secret: str
     """TOTP secret for 2FA"""

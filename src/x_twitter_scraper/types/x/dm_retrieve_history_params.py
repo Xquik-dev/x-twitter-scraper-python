@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing_extensions import Annotated, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
 
 from ..._utils import PropertyInfo
 
@@ -10,6 +10,12 @@ __all__ = ["DmRetrieveHistoryParams"]
 
 
 class DmRetrieveHistoryParams(TypedDict, total=False):
+    account: Required[str]
+    """
+    X handle (without the `@` prefix) of the connected X account used to read the
+    conversation. The account must be a participant in the conversation.
+    """
+
     cursor: str
     """Pagination cursor for DM history"""
 

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing_extensions import Literal
+
 import httpx
 
 from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
@@ -30,7 +32,7 @@ class TweetsResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return TweetsResourceWithRawResponse(self)
 
@@ -39,16 +41,18 @@ class TweetsResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return TweetsResourceWithStreamingResponse(self)
 
     def list(
         self,
         *,
+        community_id: str,
         q: str,
         cursor: str | Omit = omit,
-        query_type: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -57,14 +61,22 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets across all communities
+        Requires a Community ID and keyword query.
 
         Args:
-          q: Search query for cross-community tweets
+          community_id: Numeric ID of the community to search
 
-          cursor: Pagination cursor for cross-community results
+          q: Keyword query within the selected community
 
-          query_type: Sort order for cross-community results (Latest or Top)
+          cursor: Pagination cursor for community results
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          query_type: Sort order for community results (Latest or Top)
 
           extra_headers: Send extra headers
 
@@ -83,12 +95,18 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "page_size": page_size,
                         "query_type": query_type,
                     },
                     tweet_list_params.TweetListParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -98,6 +116,7 @@ class TweetsResource(SyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -110,6 +129,12 @@ class TweetsResource(SyncAPIResource):
 
         Args:
           cursor: Pagination cursor for community tweets
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -128,7 +153,17 @@ class TweetsResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, tweet_list_by_community_params.TweetListByCommunityParams),
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    tweet_list_by_community_params.TweetListByCommunityParams,
+                ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -143,7 +178,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncTweetsResourceWithRawResponse(self)
 
@@ -152,16 +187,18 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncTweetsResourceWithStreamingResponse(self)
 
     async def list(
         self,
         *,
+        community_id: str,
         q: str,
         cursor: str | Omit = omit,
-        query_type: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -170,14 +207,22 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets across all communities
+        Requires a Community ID and keyword query.
 
         Args:
-          q: Search query for cross-community tweets
+          community_id: Numeric ID of the community to search
 
-          cursor: Pagination cursor for cross-community results
+          q: Keyword query within the selected community
 
-          query_type: Sort order for cross-community results (Latest or Top)
+          cursor: Pagination cursor for community results
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          query_type: Sort order for community results (Latest or Top)
 
           extra_headers: Send extra headers
 
@@ -196,12 +241,18 @@ class AsyncTweetsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "page_size": page_size,
                         "query_type": query_type,
                     },
                     tweet_list_params.TweetListParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -211,6 +262,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -223,6 +275,12 @@ class AsyncTweetsResource(AsyncAPIResource):
 
         Args:
           cursor: Pagination cursor for community tweets
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -242,8 +300,16 @@ class AsyncTweetsResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, tweet_list_by_community_params.TweetListByCommunityParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    tweet_list_by_community_params.TweetListByCommunityParams,
                 ),
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=PaginatedTweets,
         )

@@ -128,6 +128,14 @@ from .extractions import (
     ExtractionsResourceWithStreamingResponse,
     AsyncExtractionsResourceWithStreamingResponse,
 )
+from .guest_wallets import (
+    GuestWalletsResource,
+    AsyncGuestWalletsResource,
+    GuestWalletsResourceWithRawResponse,
+    AsyncGuestWalletsResourceWithRawResponse,
+    GuestWalletsResourceWithStreamingResponse,
+    AsyncGuestWalletsResourceWithStreamingResponse,
+)
 
 __all__ = [
     "AccountResource",
@@ -226,4 +234,10 @@ __all__ = [
     "AsyncCreditsResourceWithRawResponse",
     "CreditsResourceWithStreamingResponse",
     "AsyncCreditsResourceWithStreamingResponse",
+    "GuestWalletsResource",
+    "AsyncGuestWalletsResource",
+    "GuestWalletsResourceWithRawResponse",
+    "AsyncGuestWalletsResourceWithRawResponse",
+    "GuestWalletsResourceWithStreamingResponse",
+    "AsyncGuestWalletsResourceWithStreamingResponse",
 ]

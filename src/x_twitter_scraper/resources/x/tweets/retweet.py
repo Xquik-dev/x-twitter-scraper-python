@@ -31,7 +31,7 @@ class RetweetResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return RetweetResourceWithRawResponse(self)
 
@@ -40,7 +40,7 @@ class RetweetResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return RetweetResourceWithStreamingResponse(self)
 
@@ -76,7 +76,14 @@ class RetweetResource(SyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=maybe_transform({"account": account}, retweet_create_params.RetweetCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=RetweetCreateResponse,
         )
@@ -113,7 +120,14 @@ class RetweetResource(SyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=maybe_transform({"account": account}, retweet_delete_params.RetweetDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=RetweetDeleteResponse,
         )
@@ -128,7 +142,7 @@ class AsyncRetweetResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncRetweetResourceWithRawResponse(self)
 
@@ -137,7 +151,7 @@ class AsyncRetweetResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncRetweetResourceWithStreamingResponse(self)
 
@@ -173,7 +187,14 @@ class AsyncRetweetResource(AsyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=await async_maybe_transform({"account": account}, retweet_create_params.RetweetCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=RetweetCreateResponse,
         )
@@ -210,7 +231,14 @@ class AsyncRetweetResource(AsyncAPIResource):
             path_template("/x/tweets/{id}/retweet", id=id),
             body=await async_maybe_transform({"account": account}, retweet_delete_params.RetweetDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=RetweetDeleteResponse,
         )

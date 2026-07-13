@@ -19,6 +19,11 @@ class MonitorCreateResponse(BaseModel):
     event_types: List[EventType] = FieldInfo(alias="eventTypes")
     """Array of event types to subscribe to."""
 
+    is_active: bool = FieldInfo(alias="isActive")
+
+    next_billing_at: datetime = FieldInfo(alias="nextBillingAt")
+    """Next hourly credit charge time. New active monitors are due immediately."""
+
     username: str
 
     x_user_id: str = FieldInfo(alias="xUserId")

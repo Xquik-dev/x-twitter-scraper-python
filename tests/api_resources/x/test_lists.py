@@ -31,6 +31,7 @@ class TestLists:
         list_ = client.x.lists.retrieve_followers(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -82,7 +83,7 @@ class TestLists:
         list_ = client.x.lists.retrieve_members(
             id="id",
             cursor="cursor",
-            page_size=0,
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -135,6 +136,7 @@ class TestLists:
             id="id",
             cursor="cursor",
             include_replies=True,
+            page_size=1,
             since_time="sinceTime",
             until_time="untilTime",
         )
@@ -194,6 +196,7 @@ class TestAsyncLists:
         list_ = await async_client.x.lists.retrieve_followers(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -245,7 +248,7 @@ class TestAsyncLists:
         list_ = await async_client.x.lists.retrieve_members(
             id="id",
             cursor="cursor",
-            page_size=0,
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -298,6 +301,7 @@ class TestAsyncLists:
             id="id",
             cursor="cursor",
             include_replies=True,
+            page_size=1,
             since_time="sinceTime",
             until_time="untilTime",
         )

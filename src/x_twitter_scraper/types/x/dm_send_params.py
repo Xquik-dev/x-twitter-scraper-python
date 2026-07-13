@@ -16,5 +16,4 @@ class DmSendParams(TypedDict, total=False):
     text: Required[str]
 
     media_ids: SequenceNotStr[str]
-
-    reply_to_message_id: str
+    """Optional array containing exactly 1 uploaded media ID."""

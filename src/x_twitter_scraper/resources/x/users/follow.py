@@ -31,7 +31,7 @@ class FollowResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return FollowResourceWithRawResponse(self)
 
@@ -40,7 +40,7 @@ class FollowResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return FollowResourceWithStreamingResponse(self)
 
@@ -76,7 +76,14 @@ class FollowResource(SyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=maybe_transform({"account": account}, follow_create_params.FollowCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=FollowCreateResponse,
         )
@@ -113,7 +120,14 @@ class FollowResource(SyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=maybe_transform({"account": account}, follow_delete_all_params.FollowDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=FollowDeleteAllResponse,
         )
@@ -128,7 +142,7 @@ class AsyncFollowResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncFollowResourceWithRawResponse(self)
 
@@ -137,7 +151,7 @@ class AsyncFollowResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncFollowResourceWithStreamingResponse(self)
 
@@ -173,7 +187,14 @@ class AsyncFollowResource(AsyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=await async_maybe_transform({"account": account}, follow_create_params.FollowCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=FollowCreateResponse,
         )
@@ -210,7 +231,14 @@ class AsyncFollowResource(AsyncAPIResource):
             path_template("/x/users/{id}/follow", id=id),
             body=await async_maybe_transform({"account": account}, follow_delete_all_params.FollowDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=FollowDeleteAllResponse,
         )

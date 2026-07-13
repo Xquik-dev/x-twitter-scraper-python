@@ -20,5 +20,6 @@ class WebhookCreateResponse(BaseModel):
     """Array of event types to subscribe to."""
 
     secret: str
+    """Plaintext HMAC signing secret returned only at creation."""
 
     url: str

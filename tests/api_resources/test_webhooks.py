@@ -14,6 +14,7 @@ from x_twitter_scraper.types import (
     WebhookListResponse,
     WebhookTestResponse,
     WebhookCreateResponse,
+    WebhookResumeResponse,
     WebhookDeactivateResponse,
     WebhookListDeliveriesResponse,
 )
@@ -223,6 +224,48 @@ class TestWebhooks:
     def test_path_params_list_deliveries(self, client: XTwitterScraper) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.webhooks.with_raw_response.list_deliveries(
+                "",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_resume(self, client: XTwitterScraper) -> None:
+        webhook = client.webhooks.resume(
+            "id",
+        )
+        assert_matches_type(WebhookResumeResponse, webhook, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_resume(self, client: XTwitterScraper) -> None:
+        response = client.webhooks.with_raw_response.resume(
+            "id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        webhook = response.parse()
+        assert_matches_type(WebhookResumeResponse, webhook, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_resume(self, client: XTwitterScraper) -> None:
+        with client.webhooks.with_streaming_response.resume(
+            "id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            webhook = response.parse()
+            assert_matches_type(WebhookResumeResponse, webhook, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_resume(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.webhooks.with_raw_response.resume(
                 "",
             )
 
@@ -473,6 +516,48 @@ class TestAsyncWebhooks:
     async def test_path_params_list_deliveries(self, async_client: AsyncXTwitterScraper) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.webhooks.with_raw_response.list_deliveries(
+                "",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_resume(self, async_client: AsyncXTwitterScraper) -> None:
+        webhook = await async_client.webhooks.resume(
+            "id",
+        )
+        assert_matches_type(WebhookResumeResponse, webhook, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_resume(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.webhooks.with_raw_response.resume(
+            "id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        webhook = await response.parse()
+        assert_matches_type(WebhookResumeResponse, webhook, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_resume(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.webhooks.with_streaming_response.resume(
+            "id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            webhook = await response.parse()
+            assert_matches_type(WebhookResumeResponse, webhook, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_resume(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.webhooks.with_raw_response.resume(
                 "",
             )
 

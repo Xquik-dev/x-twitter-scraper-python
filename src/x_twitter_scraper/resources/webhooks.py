@@ -23,6 +23,7 @@ from ..types.shared.event_type import EventType
 from ..types.webhook_list_response import WebhookListResponse
 from ..types.webhook_test_response import WebhookTestResponse
 from ..types.webhook_create_response import WebhookCreateResponse
+from ..types.webhook_resume_response import WebhookResumeResponse
 from ..types.webhook_deactivate_response import WebhookDeactivateResponse
 from ..types.webhook_list_deliveries_response import WebhookListDeliveriesResponse
 
@@ -38,7 +39,7 @@ class WebhooksResource(SyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return WebhooksResourceWithRawResponse(self)
 
@@ -47,7 +48,7 @@ class WebhooksResource(SyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return WebhooksResourceWithStreamingResponse(self)
 
@@ -89,7 +90,14 @@ class WebhooksResource(SyncAPIResource):
                 webhook_create_params.WebhookCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookCreateResponse,
         )
@@ -135,7 +143,14 @@ class WebhooksResource(SyncAPIResource):
                 webhook_update_params.WebhookUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=Webhook,
         )
@@ -154,7 +169,14 @@ class WebhooksResource(SyncAPIResource):
         return self._get(
             "/webhooks",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookListResponse,
         )
@@ -187,7 +209,14 @@ class WebhooksResource(SyncAPIResource):
         return self._delete(
             path_template("/webhooks/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookDeactivateResponse,
         )
@@ -220,9 +249,56 @@ class WebhooksResource(SyncAPIResource):
         return self._get(
             path_template("/webhooks/{id}/deliveries", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookListDeliveriesResponse,
+        )
+
+    def resume(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> WebhookResumeResponse:
+        """
+        Test and resume webhook endpoint
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._post(
+            path_template("/webhooks/{id}/resume", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
+            ),
+            cast_to=WebhookResumeResponse,
         )
 
     def test(
@@ -253,7 +329,14 @@ class WebhooksResource(SyncAPIResource):
         return self._post(
             path_template("/webhooks/{id}/test", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookTestResponse,
         )
@@ -268,7 +351,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         This property can be used as a prefix for any HTTP method call to return
         the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
         """
         return AsyncWebhooksResourceWithRawResponse(self)
 
@@ -277,7 +360,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         """
         An alternative to `.with_raw_response` that doesn't eagerly read the response body.
 
-        For more information, see https://www.github.com/stainless-sdks/x-twitter-scraper-python#with_streaming_response
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#with_streaming_response
         """
         return AsyncWebhooksResourceWithStreamingResponse(self)
 
@@ -319,7 +402,14 @@ class AsyncWebhooksResource(AsyncAPIResource):
                 webhook_create_params.WebhookCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookCreateResponse,
         )
@@ -365,7 +455,14 @@ class AsyncWebhooksResource(AsyncAPIResource):
                 webhook_update_params.WebhookUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=Webhook,
         )
@@ -384,7 +481,14 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._get(
             "/webhooks",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookListResponse,
         )
@@ -417,7 +521,14 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._delete(
             path_template("/webhooks/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookDeactivateResponse,
         )
@@ -450,9 +561,56 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._get(
             path_template("/webhooks/{id}/deliveries", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookListDeliveriesResponse,
+        )
+
+    async def resume(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> WebhookResumeResponse:
+        """
+        Test and resume webhook endpoint
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._post(
+            path_template("/webhooks/{id}/resume", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
+            ),
+            cast_to=WebhookResumeResponse,
         )
 
     async def test(
@@ -483,7 +641,14 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._post(
             path_template("/webhooks/{id}/test", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                security={
+                    "api_key": True,
+                    "oauth_bearer": True,
+                },
             ),
             cast_to=WebhookTestResponse,
         )
@@ -507,6 +672,9 @@ class WebhooksResourceWithRawResponse:
         )
         self.list_deliveries = to_raw_response_wrapper(
             webhooks.list_deliveries,
+        )
+        self.resume = to_raw_response_wrapper(
+            webhooks.resume,
         )
         self.test = to_raw_response_wrapper(
             webhooks.test,
@@ -532,6 +700,9 @@ class AsyncWebhooksResourceWithRawResponse:
         self.list_deliveries = async_to_raw_response_wrapper(
             webhooks.list_deliveries,
         )
+        self.resume = async_to_raw_response_wrapper(
+            webhooks.resume,
+        )
         self.test = async_to_raw_response_wrapper(
             webhooks.test,
         )
@@ -556,6 +727,9 @@ class WebhooksResourceWithStreamingResponse:
         self.list_deliveries = to_streamed_response_wrapper(
             webhooks.list_deliveries,
         )
+        self.resume = to_streamed_response_wrapper(
+            webhooks.resume,
+        )
         self.test = to_streamed_response_wrapper(
             webhooks.test,
         )
@@ -579,6 +753,9 @@ class AsyncWebhooksResourceWithStreamingResponse:
         )
         self.list_deliveries = async_to_streamed_response_wrapper(
             webhooks.list_deliveries,
+        )
+        self.resume = async_to_streamed_response_wrapper(
+            webhooks.resume,
         )
         self.test = async_to_streamed_response_wrapper(
             webhooks.test,

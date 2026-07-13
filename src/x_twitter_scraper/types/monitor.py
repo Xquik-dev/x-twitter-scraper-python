@@ -23,6 +23,9 @@ class Monitor(BaseModel):
 
     is_active: bool = FieldInfo(alias="isActive")
 
+    next_billing_at: datetime = FieldInfo(alias="nextBillingAt")
+    """Next hourly credit charge time for this account monitor."""
+
     username: str
 
     x_user_id: str = FieldInfo(alias="xUserId")

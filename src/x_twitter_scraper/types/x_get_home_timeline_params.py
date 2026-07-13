@@ -14,4 +14,4 @@ class XGetHomeTimelineParams(TypedDict, total=False):
     """Pagination cursor for timeline"""
 
     seen_tweet_ids: Annotated[str, PropertyInfo(alias="seenTweetIds")]
-    """Comma-separated tweet IDs to exclude from results"""
+    """Comma-separated tweet IDs to exclude from results. Empty entries are ignored."""
