@@ -49,7 +49,6 @@ if TYPE_CHECKING:
         compose,
         credits,
         support,
-        api_keys,
         monitors,
         webhooks,
         subscribe,
@@ -66,7 +65,6 @@ if TYPE_CHECKING:
     from .resources.account import AccountResource, AsyncAccountResource
     from .resources.compose import ComposeResource, AsyncComposeResource
     from .resources.credits import CreditsResource, AsyncCreditsResource
-    from .resources.api_keys import APIKeysResource, AsyncAPIKeysResource
     from .resources.webhooks import WebhooksResource, AsyncWebhooksResource
     from .resources.subscribe import SubscribeResource, AsyncSubscribeResource
     from .resources.extractions import ExtractionsResource, AsyncExtractionsResource
@@ -90,14 +88,12 @@ class XTwitterScraper(SyncAPIClient):
     # client options
     api_key: str | None
     bearer_token: str | None
-    cookie_session: str | None
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
         bearer_token: str | None = None,
-        cookie_session: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -122,7 +118,6 @@ class XTwitterScraper(SyncAPIClient):
         This automatically infers the following arguments from their corresponding environment variables if they are not provided:
         - `api_key` from `X_TWITTER_SCRAPER_API_KEY`
         - `bearer_token` from `X_TWITTER_SCRAPER_BEARER_TOKEN`
-        - `cookie_session` from `X_TWITTER_SCRAPER_SESSION`
         """
         if api_key is None:
             api_key = os.environ.get("X_TWITTER_SCRAPER_API_KEY")
@@ -131,10 +126,6 @@ class XTwitterScraper(SyncAPIClient):
         if bearer_token is None:
             bearer_token = os.environ.get("X_TWITTER_SCRAPER_BEARER_TOKEN")
         self.bearer_token = bearer_token
-
-        if cookie_session is None:
-            cookie_session = os.environ.get("X_TWITTER_SCRAPER_SESSION")
-        self.cookie_session = cookie_session
 
         if base_url is None:
             base_url = os.environ.get("X_TWITTER_SCRAPER_BASE_URL")
@@ -167,13 +158,6 @@ class XTwitterScraper(SyncAPIClient):
         from .resources.account import AccountResource
 
         return AccountResource(self)
-
-    @cached_property
-    def api_keys(self) -> APIKeysResource:
-        """API key management (session auth only)"""
-        from .resources.api_keys import APIKeysResource
-
-        return APIKeysResource(self)
 
     @cached_property
     def subscribe(self) -> SubscribeResource:
@@ -300,9 +284,6 @@ class XTwitterScraper(SyncAPIClient):
         if security.get("oauth_bearer", False):
             for key, value in self._oauth_bearer.items():
                 headers.setdefault(key, value)
-        if security.get("cookie_session", False):
-            for key, value in self._cookie_session.items():
-                headers.setdefault(key, value)
         return headers
 
     @property
@@ -318,13 +299,6 @@ class XTwitterScraper(SyncAPIClient):
         if bearer_token is None:
             return {}
         return {"Authorization": f"Bearer {bearer_token}"}
-
-    @property
-    def _cookie_session(self) -> dict[str, str]:
-        cookie_session = self.cookie_session
-        if cookie_session is None:
-            return {}
-        return {"__Host-xquik_session": cookie_session}
 
     @property
     @override
@@ -343,11 +317,8 @@ class XTwitterScraper(SyncAPIClient):
         if headers.get("Authorization") or isinstance(custom_headers.get("Authorization"), Omit):
             return
 
-        if headers.get("__Host-xquik_session") or isinstance(custom_headers.get("__Host-xquik_session"), Omit):
-            return
-
         raise TypeError(
-            '"Could not resolve authentication method. Expected one of api_key, bearer_token or cookie_session to be set. Or for one of the `x-api-key`, `Authorization` or `__Host-xquik_session` headers to be explicitly omitted"'
+            '"Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `x-api-key` or `Authorization` headers to be explicitly omitted"'
         )
 
     def copy(
@@ -355,7 +326,6 @@ class XTwitterScraper(SyncAPIClient):
         *,
         api_key: str | None = None,
         bearer_token: str | None = None,
-        cookie_session: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         http_client: httpx.Client | None = None,
@@ -391,7 +361,6 @@ class XTwitterScraper(SyncAPIClient):
         return self.__class__(
             api_key=api_key or self.api_key,
             bearer_token=bearer_token or self.bearer_token,
-            cookie_session=cookie_session or self.cookie_session,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
@@ -443,14 +412,12 @@ class AsyncXTwitterScraper(AsyncAPIClient):
     # client options
     api_key: str | None
     bearer_token: str | None
-    cookie_session: str | None
 
     def __init__(
         self,
         *,
         api_key: str | None = None,
         bearer_token: str | None = None,
-        cookie_session: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         max_retries: int = DEFAULT_MAX_RETRIES,
@@ -475,7 +442,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         This automatically infers the following arguments from their corresponding environment variables if they are not provided:
         - `api_key` from `X_TWITTER_SCRAPER_API_KEY`
         - `bearer_token` from `X_TWITTER_SCRAPER_BEARER_TOKEN`
-        - `cookie_session` from `X_TWITTER_SCRAPER_SESSION`
         """
         if api_key is None:
             api_key = os.environ.get("X_TWITTER_SCRAPER_API_KEY")
@@ -484,10 +450,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         if bearer_token is None:
             bearer_token = os.environ.get("X_TWITTER_SCRAPER_BEARER_TOKEN")
         self.bearer_token = bearer_token
-
-        if cookie_session is None:
-            cookie_session = os.environ.get("X_TWITTER_SCRAPER_SESSION")
-        self.cookie_session = cookie_session
 
         if base_url is None:
             base_url = os.environ.get("X_TWITTER_SCRAPER_BASE_URL")
@@ -520,13 +482,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         from .resources.account import AsyncAccountResource
 
         return AsyncAccountResource(self)
-
-    @cached_property
-    def api_keys(self) -> AsyncAPIKeysResource:
-        """API key management (session auth only)"""
-        from .resources.api_keys import AsyncAPIKeysResource
-
-        return AsyncAPIKeysResource(self)
 
     @cached_property
     def subscribe(self) -> AsyncSubscribeResource:
@@ -653,9 +608,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         if security.get("oauth_bearer", False):
             for key, value in self._oauth_bearer.items():
                 headers.setdefault(key, value)
-        if security.get("cookie_session", False):
-            for key, value in self._cookie_session.items():
-                headers.setdefault(key, value)
         return headers
 
     @property
@@ -671,13 +623,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         if bearer_token is None:
             return {}
         return {"Authorization": f"Bearer {bearer_token}"}
-
-    @property
-    def _cookie_session(self) -> dict[str, str]:
-        cookie_session = self.cookie_session
-        if cookie_session is None:
-            return {}
-        return {"__Host-xquik_session": cookie_session}
 
     @property
     @override
@@ -696,11 +641,8 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         if headers.get("Authorization") or isinstance(custom_headers.get("Authorization"), Omit):
             return
 
-        if headers.get("__Host-xquik_session") or isinstance(custom_headers.get("__Host-xquik_session"), Omit):
-            return
-
         raise TypeError(
-            '"Could not resolve authentication method. Expected one of api_key, bearer_token or cookie_session to be set. Or for one of the `x-api-key`, `Authorization` or `__Host-xquik_session` headers to be explicitly omitted"'
+            '"Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `x-api-key` or `Authorization` headers to be explicitly omitted"'
         )
 
     def copy(
@@ -708,7 +650,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         *,
         api_key: str | None = None,
         bearer_token: str | None = None,
-        cookie_session: str | None = None,
         base_url: str | httpx.URL | None = None,
         timeout: float | Timeout | None | NotGiven = not_given,
         http_client: httpx.AsyncClient | None = None,
@@ -744,7 +685,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         return self.__class__(
             api_key=api_key or self.api_key,
             bearer_token=bearer_token or self.bearer_token,
-            cookie_session=cookie_session or self.cookie_session,
             base_url=base_url or self.base_url,
             timeout=self.timeout if isinstance(timeout, NotGiven) else timeout,
             http_client=http_client,
@@ -804,13 +744,6 @@ class XTwitterScraperWithRawResponse:
         from .resources.account import AccountResourceWithRawResponse
 
         return AccountResourceWithRawResponse(self._client.account)
-
-    @cached_property
-    def api_keys(self) -> api_keys.APIKeysResourceWithRawResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import APIKeysResourceWithRawResponse
-
-        return APIKeysResourceWithRawResponse(self._client.api_keys)
 
     @cached_property
     def subscribe(self) -> subscribe.SubscribeResourceWithRawResponse:
@@ -930,13 +863,6 @@ class AsyncXTwitterScraperWithRawResponse:
         return AsyncAccountResourceWithRawResponse(self._client.account)
 
     @cached_property
-    def api_keys(self) -> api_keys.AsyncAPIKeysResourceWithRawResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import AsyncAPIKeysResourceWithRawResponse
-
-        return AsyncAPIKeysResourceWithRawResponse(self._client.api_keys)
-
-    @cached_property
     def subscribe(self) -> subscribe.AsyncSubscribeResourceWithRawResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import AsyncSubscribeResourceWithRawResponse
@@ -1054,13 +980,6 @@ class XTwitterScraperWithStreamedResponse:
         return AccountResourceWithStreamingResponse(self._client.account)
 
     @cached_property
-    def api_keys(self) -> api_keys.APIKeysResourceWithStreamingResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import APIKeysResourceWithStreamingResponse
-
-        return APIKeysResourceWithStreamingResponse(self._client.api_keys)
-
-    @cached_property
     def subscribe(self) -> subscribe.SubscribeResourceWithStreamingResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithStreamingResponse
@@ -1176,13 +1095,6 @@ class AsyncXTwitterScraperWithStreamedResponse:
         from .resources.account import AsyncAccountResourceWithStreamingResponse
 
         return AsyncAccountResourceWithStreamingResponse(self._client.account)
-
-    @cached_property
-    def api_keys(self) -> api_keys.AsyncAPIKeysResourceWithStreamingResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import AsyncAPIKeysResourceWithStreamingResponse
-
-        return AsyncAPIKeysResourceWithStreamingResponse(self._client.api_keys)
 
     @cached_property
     def subscribe(self) -> subscribe.AsyncSubscribeResourceWithStreamingResponse:

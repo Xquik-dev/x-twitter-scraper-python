@@ -86,10 +86,6 @@ class BookmarksResource(SyncAPIResource):
                     },
                     bookmark_list_params.BookmarkListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -108,14 +104,7 @@ class BookmarksResource(SyncAPIResource):
         return self._get(
             "/x/bookmarks/folders",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=BookmarkRetrieveFoldersResponse,
         )
@@ -185,10 +174,6 @@ class AsyncBookmarksResource(AsyncAPIResource):
                     },
                     bookmark_list_params.BookmarkListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -207,14 +192,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         return await self._get(
             "/x/bookmarks/folders",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=BookmarkRetrieveFoldersResponse,
         )

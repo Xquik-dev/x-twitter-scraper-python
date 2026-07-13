@@ -109,10 +109,6 @@ class ExtractionsResource(SyncAPIResource):
                     },
                     extraction_retrieve_params.ExtractionRetrieveParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=ExtractionRetrieveResponse,
         )
@@ -195,10 +191,6 @@ class ExtractionsResource(SyncAPIResource):
                     },
                     extraction_list_params.ExtractionListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=ExtractionListResponse,
         )
@@ -415,14 +407,7 @@ class ExtractionsResource(SyncAPIResource):
                 extraction_estimate_cost_params.ExtractionEstimateCostParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ExtractionEstimateCostResponse,
         )
@@ -466,10 +451,6 @@ class ExtractionsResource(SyncAPIResource):
                 query=maybe_transform(
                     {"format": format}, extraction_export_results_params.ExtractionExportResultsParams
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=BinaryAPIResponse,
         )
@@ -684,14 +665,7 @@ class ExtractionsResource(SyncAPIResource):
                 extraction_run_params.ExtractionRunParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ExtractionRunResponse,
         )
@@ -764,10 +738,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     },
                     extraction_retrieve_params.ExtractionRetrieveParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=ExtractionRetrieveResponse,
         )
@@ -850,10 +820,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     },
                     extraction_list_params.ExtractionListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=ExtractionListResponse,
         )
@@ -1070,14 +1036,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 extraction_estimate_cost_params.ExtractionEstimateCostParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ExtractionEstimateCostResponse,
         )
@@ -1121,10 +1080,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {"format": format}, extraction_export_results_params.ExtractionExportResultsParams
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=AsyncBinaryAPIResponse,
         )
@@ -1339,14 +1294,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 extraction_run_params.ExtractionRunParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ExtractionRunResponse,
         )

@@ -119,14 +119,7 @@ class ComposeResource(SyncAPIResource):
                 compose_create_params.ComposeCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ComposeCreateResponse,
         )
@@ -228,14 +221,7 @@ class AsyncComposeResource(AsyncAPIResource):
                 compose_create_params.ComposeCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ComposeCreateResponse,
         )

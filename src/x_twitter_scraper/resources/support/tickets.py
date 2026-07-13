@@ -83,14 +83,7 @@ class TicketsResource(SyncAPIResource):
                 ticket_create_params.TicketCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketCreateResponse,
         )
@@ -123,14 +116,7 @@ class TicketsResource(SyncAPIResource):
         return self._get(
             path_template("/support/tickets/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketRetrieveResponse,
         )
@@ -165,14 +151,7 @@ class TicketsResource(SyncAPIResource):
             path_template("/support/tickets/{id}", id=id),
             body=maybe_transform({"status": status}, ticket_update_params.TicketUpdateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketUpdateResponse,
         )
@@ -191,14 +170,7 @@ class TicketsResource(SyncAPIResource):
         return self._get(
             "/support/tickets",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketListResponse,
         )
@@ -233,14 +205,7 @@ class TicketsResource(SyncAPIResource):
             path_template("/support/tickets/{id}/messages", id=id),
             body=maybe_transform({"body": body}, ticket_reply_params.TicketReplyParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketReplyResponse,
         )
@@ -302,14 +267,7 @@ class AsyncTicketsResource(AsyncAPIResource):
                 ticket_create_params.TicketCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketCreateResponse,
         )
@@ -342,14 +300,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         return await self._get(
             path_template("/support/tickets/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketRetrieveResponse,
         )
@@ -384,14 +335,7 @@ class AsyncTicketsResource(AsyncAPIResource):
             path_template("/support/tickets/{id}", id=id),
             body=await async_maybe_transform({"status": status}, ticket_update_params.TicketUpdateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketUpdateResponse,
         )
@@ -410,14 +354,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         return await self._get(
             "/support/tickets",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketListResponse,
         )
@@ -452,14 +389,7 @@ class AsyncTicketsResource(AsyncAPIResource):
             path_template("/support/tickets/{id}/messages", id=id),
             body=await async_maybe_transform({"body": body}, ticket_reply_params.TicketReplyParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TicketReplyResponse,
         )

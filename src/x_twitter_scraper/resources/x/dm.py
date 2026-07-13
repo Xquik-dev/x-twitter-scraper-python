@@ -92,10 +92,6 @@ class DmResource(SyncAPIResource):
                     },
                     dm_retrieve_history_params.DmRetrieveHistoryParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=DmRetrieveHistoryResponse,
         )
@@ -143,14 +139,7 @@ class DmResource(SyncAPIResource):
                 dm_send_params.DmSendParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DmSendResponse,
         )
@@ -226,10 +215,6 @@ class AsyncDmResource(AsyncAPIResource):
                     },
                     dm_retrieve_history_params.DmRetrieveHistoryParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=DmRetrieveHistoryResponse,
         )
@@ -277,14 +262,7 @@ class AsyncDmResource(AsyncAPIResource):
                 dm_send_params.DmSendParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=DmSendResponse,
         )

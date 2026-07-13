@@ -121,14 +121,7 @@ class CommunitiesResource(SyncAPIResource):
                 community_create_params.CommunityCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CommunityCreateResponse,
         )
@@ -174,14 +167,7 @@ class CommunitiesResource(SyncAPIResource):
                 community_delete_params.CommunityDeleteParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CommunityDeleteResponse,
         )
@@ -214,14 +200,7 @@ class CommunitiesResource(SyncAPIResource):
         return self._get(
             path_template("/x/communities/{id}/info", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CommunityRetrieveInfoResponse,
         )
@@ -273,10 +252,6 @@ class CommunitiesResource(SyncAPIResource):
                     },
                     community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -319,10 +294,6 @@ class CommunitiesResource(SyncAPIResource):
                 query=maybe_transform(
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -386,10 +357,6 @@ class CommunitiesResource(SyncAPIResource):
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -467,14 +434,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 community_create_params.CommunityCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CommunityCreateResponse,
         )
@@ -520,14 +480,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 community_delete_params.CommunityDeleteParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CommunityDeleteResponse,
         )
@@ -560,14 +513,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/communities/{id}/info", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=CommunityRetrieveInfoResponse,
         )
@@ -619,10 +565,6 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     },
                     community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -665,10 +607,6 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -732,10 +670,6 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )

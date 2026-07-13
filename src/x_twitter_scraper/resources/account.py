@@ -61,14 +61,7 @@ class AccountResource(SyncAPIResource):
         return self._get(
             "/account",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountRetrieveResponse,
         )
@@ -102,14 +95,7 @@ class AccountResource(SyncAPIResource):
             "/account/x-identity",
             body=maybe_transform({"username": username}, account_set_x_username_params.AccountSetXUsernameParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountSetXUsernameResponse,
         )
@@ -141,14 +127,7 @@ class AccountResource(SyncAPIResource):
             "/account",
             body=maybe_transform({"locale": locale}, account_update_locale_params.AccountUpdateLocaleParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountUpdateLocaleResponse,
         )
@@ -190,14 +169,7 @@ class AsyncAccountResource(AsyncAPIResource):
         return await self._get(
             "/account",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountRetrieveResponse,
         )
@@ -233,14 +205,7 @@ class AsyncAccountResource(AsyncAPIResource):
                 {"username": username}, account_set_x_username_params.AccountSetXUsernameParams
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountSetXUsernameResponse,
         )
@@ -274,14 +239,7 @@ class AsyncAccountResource(AsyncAPIResource):
                 {"locale": locale}, account_update_locale_params.AccountUpdateLocaleParams
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=AccountUpdateLocaleResponse,
         )

@@ -5,23 +5,15 @@ from datetime import datetime
 from typing_extensions import Literal
 
 from .._models import BaseModel
+from .guest_wallet_amount import GuestWalletAmount
 
-__all__ = ["GuestWalletRetrieveStatusResponse", "LatestPurchase", "LatestPurchaseAmount", "TopUp"]
-
-
-class LatestPurchaseAmount(BaseModel):
-    """Confirmed USD amount for a guest wallet purchase."""
-
-    amount_minor: int
-    """USD amount in cents. Accepted range is $10-$250."""
-
-    currency: Literal["usd"]
+__all__ = ["GuestWalletRetrieveStatusResponse", "LatestPurchase", "TopUp"]
 
 
 class LatestPurchase(BaseModel):
     """Latest guest wallet purchase fulfillment state."""
 
-    amount: LatestPurchaseAmount
+    amount: GuestWalletAmount
     """Confirmed USD amount for a guest wallet purchase."""
 
     checkout_url: Optional[str] = None

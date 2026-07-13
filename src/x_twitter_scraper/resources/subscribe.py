@@ -75,14 +75,7 @@ class SubscribeResource(SyncAPIResource):
             "/subscribe",
             body=maybe_transform({"tier": tier}, subscribe_create_params.SubscribeCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=SubscribeCreateResponse,
         )
@@ -140,14 +133,7 @@ class AsyncSubscribeResource(AsyncAPIResource):
             "/subscribe",
             body=await async_maybe_transform({"tier": tier}, subscribe_create_params.SubscribeCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=SubscribeCreateResponse,
         )

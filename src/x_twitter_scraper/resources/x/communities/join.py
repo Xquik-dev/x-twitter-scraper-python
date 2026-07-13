@@ -76,14 +76,7 @@ class JoinResource(SyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_create_params.JoinCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=JoinCreateResponse,
         )
@@ -120,14 +113,7 @@ class JoinResource(SyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=JoinDeleteAllResponse,
         )
@@ -187,14 +173,7 @@ class AsyncJoinResource(AsyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_create_params.JoinCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=JoinCreateResponse,
         )
@@ -231,14 +210,7 @@ class AsyncJoinResource(AsyncAPIResource):
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=JoinDeleteAllResponse,
         )

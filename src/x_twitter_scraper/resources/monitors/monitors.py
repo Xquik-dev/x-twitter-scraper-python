@@ -104,14 +104,7 @@ class MonitorsResource(SyncAPIResource):
                 monitor_create_params.MonitorCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MonitorCreateResponse,
         )
@@ -144,14 +137,7 @@ class MonitorsResource(SyncAPIResource):
         return self._get(
             path_template("/monitors/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Monitor,
         )
@@ -195,14 +181,7 @@ class MonitorsResource(SyncAPIResource):
                 monitor_update_params.MonitorUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Monitor,
         )
@@ -221,14 +200,7 @@ class MonitorsResource(SyncAPIResource):
         return self._get(
             "/monitors",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MonitorListResponse,
         )
@@ -261,14 +233,7 @@ class MonitorsResource(SyncAPIResource):
         return self._delete(
             path_template("/monitors/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MonitorDeactivateResponse,
         )
@@ -343,14 +308,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
                 monitor_create_params.MonitorCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MonitorCreateResponse,
         )
@@ -383,14 +341,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         return await self._get(
             path_template("/monitors/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Monitor,
         )
@@ -434,14 +385,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
                 monitor_update_params.MonitorUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=Monitor,
         )
@@ -460,14 +404,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         return await self._get(
             "/monitors",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MonitorListResponse,
         )
@@ -500,14 +437,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         return await self._delete(
             path_template("/monitors/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MonitorDeactivateResponse,
         )

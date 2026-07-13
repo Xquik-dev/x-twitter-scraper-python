@@ -73,14 +73,7 @@ class EventsResource(SyncAPIResource):
         return self._get(
             path_template("/events/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=EventDetail,
         )
@@ -138,10 +131,6 @@ class EventsResource(SyncAPIResource):
                     },
                     event_list_params.EventListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=EventListResponse,
         )
@@ -197,14 +186,7 @@ class AsyncEventsResource(AsyncAPIResource):
         return await self._get(
             path_template("/events/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=EventDetail,
         )
@@ -262,10 +244,6 @@ class AsyncEventsResource(AsyncAPIResource):
                     },
                     event_list_params.EventListParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=EventListResponse,
         )

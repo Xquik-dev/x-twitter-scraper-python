@@ -92,10 +92,6 @@ class ListsResource(SyncAPIResource):
                     },
                     list_retrieve_followers_params.ListRetrieveFollowersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -145,10 +141,6 @@ class ListsResource(SyncAPIResource):
                     },
                     list_retrieve_members_params.ListRetrieveMembersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -214,10 +206,6 @@ class ListsResource(SyncAPIResource):
                     },
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -293,10 +281,6 @@ class AsyncListsResource(AsyncAPIResource):
                     },
                     list_retrieve_followers_params.ListRetrieveFollowersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -346,10 +330,6 @@ class AsyncListsResource(AsyncAPIResource):
                     },
                     list_retrieve_members_params.ListRetrieveMembersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -415,10 +395,6 @@ class AsyncListsResource(AsyncAPIResource):
                     },
                     list_retrieve_tweets_params.ListRetrieveTweetsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )

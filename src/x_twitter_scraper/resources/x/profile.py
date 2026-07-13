@@ -96,14 +96,7 @@ class ProfileResource(SyncAPIResource):
                 profile_update_params.ProfileUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ProfileUpdateResponse,
         )
@@ -154,14 +147,7 @@ class ProfileResource(SyncAPIResource):
             body=maybe_transform(body, profile_update_avatar_params.ProfileUpdateAvatarParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ProfileUpdateAvatarResponse,
         )
@@ -212,14 +198,7 @@ class ProfileResource(SyncAPIResource):
             body=maybe_transform(body, profile_update_banner_params.ProfileUpdateBannerParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ProfileUpdateBannerResponse,
         )
@@ -295,14 +274,7 @@ class AsyncProfileResource(AsyncAPIResource):
                 profile_update_params.ProfileUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ProfileUpdateResponse,
         )
@@ -353,14 +325,7 @@ class AsyncProfileResource(AsyncAPIResource):
             body=await async_maybe_transform(body, profile_update_avatar_params.ProfileUpdateAvatarParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ProfileUpdateAvatarResponse,
         )
@@ -411,14 +376,7 @@ class AsyncProfileResource(AsyncAPIResource):
             body=await async_maybe_transform(body, profile_update_banner_params.ProfileUpdateBannerParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=ProfileUpdateBannerResponse,
         )

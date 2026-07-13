@@ -106,10 +106,6 @@ class RadarResource(SyncAPIResource):
                     },
                     radar_retrieve_trending_topics_params.RadarRetrieveTrendingTopicsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=RadarRetrieveTrendingTopicsResponse,
         )
@@ -198,10 +194,6 @@ class AsyncRadarResource(AsyncAPIResource):
                     },
                     radar_retrieve_trending_topics_params.RadarRetrieveTrendingTopicsParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=RadarRetrieveTrendingTopicsResponse,
         )

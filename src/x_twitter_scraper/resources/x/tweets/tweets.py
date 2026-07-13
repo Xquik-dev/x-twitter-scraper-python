@@ -137,14 +137,7 @@ class TweetsResource(SyncAPIResource):
                 tweet_create_params.TweetCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TweetCreateResponse,
         )
@@ -177,14 +170,7 @@ class TweetsResource(SyncAPIResource):
         return self._get(
             path_template("/x/tweets/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TweetRetrieveResponse,
         )
@@ -222,10 +208,6 @@ class TweetsResource(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform({"ids": ids}, tweet_list_params.TweetListParams),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -262,14 +244,7 @@ class TweetsResource(SyncAPIResource):
             path_template("/x/tweets/{id}", id=id),
             body=maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TweetDeleteResponse,
         )
@@ -322,10 +297,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_get_favoriters_params.TweetGetFavoritersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -492,10 +463,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_get_quotes_params.TweetGetQuotesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -658,10 +625,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_get_replies_params.TweetGetRepliesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -714,10 +677,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_get_retweeters_params.TweetGetRetweetersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -771,10 +730,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_get_thread_params.TweetGetThreadParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -965,10 +920,6 @@ class TweetsResource(SyncAPIResource):
                     },
                     tweet_search_params.TweetSearchParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1056,14 +1007,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                 tweet_create_params.TweetCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TweetCreateResponse,
         )
@@ -1096,14 +1040,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/tweets/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TweetRetrieveResponse,
         )
@@ -1141,10 +1078,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform({"ids": ids}, tweet_list_params.TweetListParams),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1181,14 +1114,7 @@ class AsyncTweetsResource(AsyncAPIResource):
             path_template("/x/tweets/{id}", id=id),
             body=await async_maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=TweetDeleteResponse,
         )
@@ -1241,10 +1167,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_get_favoriters_params.TweetGetFavoritersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -1411,10 +1333,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_get_quotes_params.TweetGetQuotesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1577,10 +1495,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_get_replies_params.TweetGetRepliesParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1633,10 +1547,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_get_retweeters_params.TweetGetRetweetersParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedUsers,
         )
@@ -1690,10 +1600,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_get_thread_params.TweetGetThreadParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )
@@ -1884,10 +1790,6 @@ class AsyncTweetsResource(AsyncAPIResource):
                     },
                     tweet_search_params.TweetSearchParams,
                 ),
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
             ),
             cast_to=PaginatedTweets,
         )

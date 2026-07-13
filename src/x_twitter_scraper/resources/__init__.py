@@ -88,14 +88,6 @@ from .support import (
     SupportResourceWithStreamingResponse,
     AsyncSupportResourceWithStreamingResponse,
 )
-from .api_keys import (
-    APIKeysResource,
-    AsyncAPIKeysResource,
-    APIKeysResourceWithRawResponse,
-    AsyncAPIKeysResourceWithRawResponse,
-    APIKeysResourceWithStreamingResponse,
-    AsyncAPIKeysResourceWithStreamingResponse,
-)
 from .monitors import (
     MonitorsResource,
     AsyncMonitorsResource,
@@ -144,12 +136,6 @@ __all__ = [
     "AsyncAccountResourceWithRawResponse",
     "AccountResourceWithStreamingResponse",
     "AsyncAccountResourceWithStreamingResponse",
-    "APIKeysResource",
-    "AsyncAPIKeysResource",
-    "APIKeysResourceWithRawResponse",
-    "AsyncAPIKeysResourceWithRawResponse",
-    "APIKeysResourceWithStreamingResponse",
-    "AsyncAPIKeysResourceWithStreamingResponse",
     "SubscribeResource",
     "AsyncSubscribeResource",
     "SubscribeResourceWithRawResponse",

@@ -93,14 +93,7 @@ class MediaResource(SyncAPIResource):
                 media_download_params.MediaDownloadParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MediaDownloadResponse,
         )
@@ -151,14 +144,7 @@ class MediaResource(SyncAPIResource):
             body=maybe_transform(body, media_upload_params.MediaUploadParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MediaUploadResponse,
         )
@@ -232,14 +218,7 @@ class AsyncMediaResource(AsyncAPIResource):
                 media_download_params.MediaDownloadParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MediaDownloadResponse,
         )
@@ -290,14 +269,7 @@ class AsyncMediaResource(AsyncAPIResource):
             body=await async_maybe_transform(body, media_upload_params.MediaUploadParams),
             files=files,
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=MediaUploadResponse,
         )

@@ -874,7 +874,6 @@ elif not TYPE_CHECKING:  # TODO: condition is weird
 class SecurityOptions(TypedDict, total=False):
     api_key: bool
     oauth_bearer: bool
-    cookie_session: bool
 
 
 class FinalRequestOptionsInput(TypedDict, total=False):
@@ -908,7 +907,6 @@ class FinalRequestOptions(pydantic.BaseModel):
     security: SecurityOptions = {
         "api_key": True,
         "oauth_bearer": True,
-        "cookie_session": True,
     }
 
     content: Union[bytes, bytearray, IO[bytes], Iterable[bytes], AsyncIterable[bytes], None] = None

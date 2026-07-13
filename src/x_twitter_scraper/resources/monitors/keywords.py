@@ -92,14 +92,7 @@ class KeywordsResource(SyncAPIResource):
                 keyword_create_params.KeywordCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordCreateResponse,
         )
@@ -132,14 +125,7 @@ class KeywordsResource(SyncAPIResource):
         return self._get(
             path_template("/monitors/keywords/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordRetrieveResponse,
         )
@@ -183,14 +169,7 @@ class KeywordsResource(SyncAPIResource):
                 keyword_update_params.KeywordUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordUpdateResponse,
         )
@@ -209,14 +188,7 @@ class KeywordsResource(SyncAPIResource):
         return self._get(
             "/monitors/keywords",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordListResponse,
         )
@@ -249,14 +221,7 @@ class KeywordsResource(SyncAPIResource):
         return self._delete(
             path_template("/monitors/keywords/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordDeactivateResponse,
         )
@@ -326,14 +291,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
                 keyword_create_params.KeywordCreateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordCreateResponse,
         )
@@ -366,14 +324,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         return await self._get(
             path_template("/monitors/keywords/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordRetrieveResponse,
         )
@@ -417,14 +368,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
                 keyword_update_params.KeywordUpdateParams,
             ),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordUpdateResponse,
         )
@@ -443,14 +387,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         return await self._get(
             "/monitors/keywords",
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordListResponse,
         )
@@ -483,14 +420,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         return await self._delete(
             path_template("/monitors/keywords/{id}", id=id),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=KeywordDeactivateResponse,
         )

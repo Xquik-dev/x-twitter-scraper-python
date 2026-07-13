@@ -76,14 +76,7 @@ class LikeResource(SyncAPIResource):
             path_template("/x/tweets/{id}/like", id=id),
             body=maybe_transform({"account": account}, like_create_params.LikeCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=LikeCreateResponse,
         )
@@ -120,14 +113,7 @@ class LikeResource(SyncAPIResource):
             path_template("/x/tweets/{id}/like", id=id),
             body=maybe_transform({"account": account}, like_delete_params.LikeDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=LikeDeleteResponse,
         )
@@ -187,14 +173,7 @@ class AsyncLikeResource(AsyncAPIResource):
             path_template("/x/tweets/{id}/like", id=id),
             body=await async_maybe_transform({"account": account}, like_create_params.LikeCreateParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=LikeCreateResponse,
         )
@@ -231,14 +210,7 @@ class AsyncLikeResource(AsyncAPIResource):
             path_template("/x/tweets/{id}/like", id=id),
             body=await async_maybe_transform({"account": account}, like_delete_params.LikeDeleteParams),
             options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                security={
-                    "api_key": True,
-                    "oauth_bearer": True,
-                },
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=LikeDeleteResponse,
         )
