@@ -1,6 +1,6 @@
 [project]
 name = "x_twitter_scraper"
-version = "0.4.1"
+version = "0.4.2"
 description = "Python library for the Xquik API. Not affiliated with X Corp."
 dynamic = ["readme"]
 license = "Apache-2.0"
@@ -17,11 +17,10 @@ dependencies = [
   "sniffio",
 ]
 
-requires-python = ">= 3.9"
+requires-python = ">= 3.10"
 classifiers = [
   "Typing :: Typed",
   "Intended Audience :: Developers",
-  "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
@@ -44,7 +43,7 @@ Issues = "https://github.com/Xquik-dev/x-twitter-scraper-python/issues"
 Changelog = "https://github.com/Xquik-dev/x-twitter-scraper-python/blob/main/CHANGELOG.md"
 
 [project.optional-dependencies]
-aiohttp = ["aiohttp", "httpx_aiohttp>=0.1.9"]
+aiohttp = ["aiohttp>=3.14.1", "httpx_aiohttp>=0.1.9"]
 
 [tool.uv]
 managed = true
@@ -59,8 +58,8 @@ conflicts = [
 [dependency-groups]
 # version pins are in uv.lock
 dev = [
-    "pyright==1.1.399",
-    "mypy==1.17",
+    "pyright==1.1.411",
+    "mypy==2.3.0",
     "respx",
     "pytest",
     "pytest-asyncio",
@@ -80,7 +79,7 @@ pydantic-v2 = [
 ]
 
 [build-system]
-requires = ["hatchling==1.26.3", "hatch-fancy-pypi-readme"]
+requires = ["hatchling==1.31.0", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build]
@@ -132,7 +131,7 @@ filterwarnings = [
 # there are a couple of flags that are still disabled by
 # default in strict mode as they are experimental and niche.
 typeCheckingMode = "strict"
-pythonVersion = "3.9"
+pythonVersion = "3.10"
 
 exclude = [
     "_dev",
@@ -192,17 +191,10 @@ cache_fine_grained = true
 # and would not be worth it.
 disable_error_code = "func-returns-value,overload-cannot-match"
 
-# https://github.com/python/mypy/issues/12162
-[[tool.mypy.overrides]]
-module = "black.files.*"
-ignore_errors = true
-ignore_missing_imports = true
-
-
 [tool.ruff]
 line-length = 120
 output-format = "grouped"
-target-version = "py38"
+target-version = "py310"
 
 [tool.ruff.format]
 docstring-code-format = true

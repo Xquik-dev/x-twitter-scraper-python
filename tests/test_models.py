@@ -563,6 +563,9 @@ def test_forwards_compat_model_dump_method() -> None:
         with pytest.raises(ValueError, match="warnings is only supported in Pydantic v2"):
             m.model_dump(warnings=False)
 
+        with pytest.raises(ValueError, match="polymorphic_serialization is only supported in Pydantic v2"):
+            m.model_dump(polymorphic_serialization=True)
+
 
 def test_compat_method_no_error_for_warnings() -> None:
     class Model(BaseModel):
@@ -628,6 +631,9 @@ def test_forwards_compat_model_dump_json_method() -> None:
 
         with pytest.raises(ValueError, match="warnings is only supported in Pydantic v2"):
             m.model_dump_json(warnings=False)
+
+        with pytest.raises(ValueError, match="polymorphic_serialization is only supported in Pydantic v2"):
+            m.model_dump_json(polymorphic_serialization=True)
 
 
 def test_type_compat() -> None:

@@ -455,7 +455,7 @@ print(x_twitter_scraper.__version__)
 
 ## Requirements
 
-Python 3.9 or higher.
+Python 3.10 or higher.
 
 ## Contributing
 

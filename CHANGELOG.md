@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.2 (2026-07-14)
+
+Full Changelog: [v0.4.1...v0.4.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.4.1...v0.4.2)
+
+### Security
+
+* replace long-lived PyPI credentials with trusted publishing
+* isolate builds from OIDC publishing and protect release tags
+* update audited dependencies and require supported Python 3.10 or higher
+
 ## 0.4.1 (2026-04-25)
 
 Full Changelog: [v0.4.0...v0.4.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.4.0...v0.4.1)

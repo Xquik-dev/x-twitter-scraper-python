@@ -16,9 +16,15 @@ on:
 
 permissions: {}
 
+concurrency:
+  group: context7-refresh-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   refresh:
+    name: Refresh Context7 docs
     runs-on: ubuntu-latest
+    environment: context7
     steps:
       - name: Trigger Context7 refresh
         env:
