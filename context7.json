@@ -1,7 +1,7 @@
 {
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "Xquik Python SDK",
-  "description": "Xquik Python SDK for X/Twitter workflows: typed sync and async clients for tweet search, user lookup, webhooks, MCP, monitors, and extractions. Not affiliated with X Corp.",
+  "description": "Xquik Python REST SDK for X/Twitter workflows: typed sync and async clients for tweet search, user lookup, webhooks, monitors, and extractions. Not affiliated with X Corp.",
   "branch": "main",
   "excludeFolders": [
     ".devcontainer",
@@ -29,7 +29,8 @@
   "rules": [
     "Install from PyPI package x_twitter_scraper, then import x_twitter_scraper.",
     "Authenticate with XTwitterScraper api_key or the X_TWITTER_SCRAPER_API_KEY environment variable.",
-    "Use README.md first for install, authentication, first request, retries, raw responses, uploads, pagination, webhooks, MCP, and common workflows.",
+    "Use README.md first for install, authentication, first request, retries, raw responses, uploads, pagination, webhooks, and common workflows.",
+    "For remote agent access, link to https://docs.xquik.com/mcp/overview. The MCP server is separate from this REST SDK and prefers OAuth 2.1.",
     "Use api.md for the generated resource map, method names, request parameters, response types, and endpoint coverage.",
     "Use pyproject.toml for package name, license, project URLs, Python version, dependency metadata, and package file includes.",
     "Use src/x_twitter_scraper/resources and src/x_twitter_scraper/types for generated Python method names and typed request parameters.",
