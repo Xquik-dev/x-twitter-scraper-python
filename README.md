@@ -28,8 +28,17 @@ Create monitors for X accounts, receive HMAC-signed webhook events, and query ev
 ## AI Agent Workflows With MCP
 
 Keep application code on the typed REST SDK. For MCP clients, add
-`https://xquik.com/mcp` and complete OAuth 2.1 in the browser. API keys remain a
-fallback for noninteractive clients.
+`https://xquik.com/mcp`, then follow the [current client compatibility
+path](https://docs.xquik.com/mcp/overview#client-compatibility). OAuth-capable
+clients complete OAuth 2.1 in the browser. API-key fallback is client-specific.
+ChatGPT custom apps require OAuth.
+
+> **Codex OAuth compatibility:** Affected Codex releases discard the RFC 9207
+> `iss` callback value even though Xquik returns it. If Codex reports
+> `Authorization server response missing required issuer: expected https://xquik.com`,
+> use `XQUIK_API_KEY` through the Codex `bearer_token_env_var` setting. Follow the
+> [Codex OAuth troubleshooting guide](https://docs.xquik.com/guides/troubleshooting#codex-oauth-issuer-validation-error)
+> and track [openai/codex#31573](https://github.com/openai/codex/issues/31573).
 
 ## Giveaway Draws & Extractions
 
