@@ -49,6 +49,7 @@ class JoinResource(SyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -72,6 +73,7 @@ class JoinResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_create_params.JoinCreateParams),
@@ -86,6 +88,7 @@ class JoinResource(SyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -109,6 +112,7 @@ class JoinResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._delete(
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),
@@ -146,6 +150,7 @@ class AsyncJoinResource(AsyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -169,6 +174,7 @@ class AsyncJoinResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_create_params.JoinCreateParams),
@@ -183,6 +189,7 @@ class AsyncJoinResource(AsyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -206,6 +213,7 @@ class AsyncJoinResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._delete(
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),

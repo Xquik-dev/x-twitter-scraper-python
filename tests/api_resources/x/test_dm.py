@@ -84,6 +84,7 @@ class TestDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -94,6 +95,7 @@ class TestDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
             media_ids=["1234567890123456789"],
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
@@ -105,6 +107,7 @@ class TestDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -119,6 +122,7 @@ class TestDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -136,6 +140,7 @@ class TestDm:
                 user_id="",
                 account="@elonmusk",
                 text="Example text content",
+                idempotency_key="Idempotency-Key",
             )
 
 
@@ -208,6 +213,7 @@ class TestAsyncDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -218,6 +224,7 @@ class TestAsyncDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
             media_ids=["1234567890123456789"],
         )
         assert_matches_type(DmSendResponse, dm, path=["response"])
@@ -229,6 +236,7 @@ class TestAsyncDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -243,6 +251,7 @@ class TestAsyncDm:
             user_id="userId",
             account="@elonmusk",
             text="Example text content",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -260,4 +269,5 @@ class TestAsyncDm:
                 user_id="",
                 account="@elonmusk",
                 text="Example text content",
+                idempotency_key="Idempotency-Key",
             )

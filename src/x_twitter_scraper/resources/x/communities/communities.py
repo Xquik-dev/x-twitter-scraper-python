@@ -84,6 +84,7 @@ class CommunitiesResource(SyncAPIResource):
         *,
         account: str,
         name: str,
+        idempotency_key: str,
         description: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -110,6 +111,7 @@ class CommunitiesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             "/x/communities",
             body=maybe_transform(
@@ -132,6 +134,7 @@ class CommunitiesResource(SyncAPIResource):
         *,
         account: str,
         community_name: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -157,6 +160,7 @@ class CommunitiesResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._delete(
             path_template("/x/communities/{id}", id=id),
             body=maybe_transform(
@@ -397,6 +401,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         *,
         account: str,
         name: str,
+        idempotency_key: str,
         description: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -423,6 +428,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             "/x/communities",
             body=await async_maybe_transform(
@@ -445,6 +451,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         *,
         account: str,
         community_name: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -470,6 +477,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._delete(
             path_template("/x/communities/{id}", id=id),
             body=await async_maybe_transform(

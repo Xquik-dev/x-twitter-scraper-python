@@ -70,6 +70,7 @@ class TestUsers:
         user = client.x.users.remove_follower(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(UserRemoveFollowerResponse, user, path=["response"])
 
@@ -79,6 +80,7 @@ class TestUsers:
         response = client.x.users.with_raw_response.remove_follower(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -92,6 +94,7 @@ class TestUsers:
         with client.x.users.with_streaming_response.remove_follower(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -108,6 +111,7 @@ class TestUsers:
             client.x.users.with_raw_response.remove_follower(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -843,6 +847,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.remove_follower(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(UserRemoveFollowerResponse, user, path=["response"])
 
@@ -852,6 +857,7 @@ class TestAsyncUsers:
         response = await async_client.x.users.with_raw_response.remove_follower(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -865,6 +871,7 @@ class TestAsyncUsers:
         async with async_client.x.users.with_streaming_response.remove_follower(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -881,6 +888,7 @@ class TestAsyncUsers:
             await async_client.x.users.with_raw_response.remove_follower(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

@@ -26,6 +26,7 @@ class TestRetweet:
         retweet = client.x.tweets.retweet.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
@@ -35,6 +36,7 @@ class TestRetweet:
         response = client.x.tweets.retweet.with_raw_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -48,6 +50,7 @@ class TestRetweet:
         with client.x.tweets.retweet.with_streaming_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -64,6 +67,7 @@ class TestRetweet:
             client.x.tweets.retweet.with_raw_response.create(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -72,6 +76,7 @@ class TestRetweet:
         retweet = client.x.tweets.retweet.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
@@ -81,6 +86,7 @@ class TestRetweet:
         response = client.x.tweets.retweet.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -94,6 +100,7 @@ class TestRetweet:
         with client.x.tweets.retweet.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -110,6 +117,7 @@ class TestRetweet:
             client.x.tweets.retweet.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
 
@@ -124,6 +132,7 @@ class TestAsyncRetweet:
         retweet = await async_client.x.tweets.retweet.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
@@ -133,6 +142,7 @@ class TestAsyncRetweet:
         response = await async_client.x.tweets.retweet.with_raw_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -146,6 +156,7 @@ class TestAsyncRetweet:
         async with async_client.x.tweets.retweet.with_streaming_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -162,6 +173,7 @@ class TestAsyncRetweet:
             await async_client.x.tweets.retweet.with_raw_response.create(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -170,6 +182,7 @@ class TestAsyncRetweet:
         retweet = await async_client.x.tweets.retweet.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
@@ -179,6 +192,7 @@ class TestAsyncRetweet:
         response = await async_client.x.tweets.retweet.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -192,6 +206,7 @@ class TestAsyncRetweet:
         async with async_client.x.tweets.retweet.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -208,4 +223,5 @@ class TestAsyncRetweet:
             await async_client.x.tweets.retweet.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )

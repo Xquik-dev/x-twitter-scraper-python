@@ -65,6 +65,7 @@ class TestMedia:
         media = client.x.media.upload(
             account="@elonmusk",
             url="https://example.com/image.png",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -74,6 +75,7 @@ class TestMedia:
         response = client.x.media.with_raw_response.upload(
             account="@elonmusk",
             url="https://example.com/image.png",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -87,6 +89,7 @@ class TestMedia:
         with client.x.media.with_streaming_response.upload(
             account="@elonmusk",
             url="https://example.com/image.png",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -147,6 +150,7 @@ class TestAsyncMedia:
         media = await async_client.x.media.upload(
             account="@elonmusk",
             url="https://example.com/image.png",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -156,6 +160,7 @@ class TestAsyncMedia:
         response = await async_client.x.media.with_raw_response.upload(
             account="@elonmusk",
             url="https://example.com/image.png",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -169,6 +174,7 @@ class TestAsyncMedia:
         async with async_client.x.media.with_streaming_response.upload(
             account="@elonmusk",
             url="https://example.com/image.png",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

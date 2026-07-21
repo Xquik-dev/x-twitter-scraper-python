@@ -26,6 +26,7 @@ class TestLike:
         like = client.x.tweets.like.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(LikeCreateResponse, like, path=["response"])
 
@@ -35,6 +36,7 @@ class TestLike:
         response = client.x.tweets.like.with_raw_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -48,6 +50,7 @@ class TestLike:
         with client.x.tweets.like.with_streaming_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -64,6 +67,7 @@ class TestLike:
             client.x.tweets.like.with_raw_response.create(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -72,6 +76,7 @@ class TestLike:
         like = client.x.tweets.like.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(LikeDeleteResponse, like, path=["response"])
 
@@ -81,6 +86,7 @@ class TestLike:
         response = client.x.tweets.like.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -94,6 +100,7 @@ class TestLike:
         with client.x.tweets.like.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -110,6 +117,7 @@ class TestLike:
             client.x.tweets.like.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
 
@@ -124,6 +132,7 @@ class TestAsyncLike:
         like = await async_client.x.tweets.like.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(LikeCreateResponse, like, path=["response"])
 
@@ -133,6 +142,7 @@ class TestAsyncLike:
         response = await async_client.x.tweets.like.with_raw_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -146,6 +156,7 @@ class TestAsyncLike:
         async with async_client.x.tweets.like.with_streaming_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -162,6 +173,7 @@ class TestAsyncLike:
             await async_client.x.tweets.like.with_raw_response.create(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -170,6 +182,7 @@ class TestAsyncLike:
         like = await async_client.x.tweets.like.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(LikeDeleteResponse, like, path=["response"])
 
@@ -179,6 +192,7 @@ class TestAsyncLike:
         response = await async_client.x.tweets.like.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -192,6 +206,7 @@ class TestAsyncLike:
         async with async_client.x.tweets.like.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -208,4 +223,5 @@ class TestAsyncLike:
             await async_client.x.tweets.like.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )

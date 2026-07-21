@@ -52,6 +52,7 @@ class ProfileResource(SyncAPIResource):
         self,
         *,
         account: str,
+        idempotency_key: str,
         description: str | Omit = omit,
         location: str | Omit = omit,
         name: str | Omit = omit,
@@ -83,6 +84,7 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._patch(
             "/x/profile",
             body=maybe_transform(
@@ -106,6 +108,7 @@ class ProfileResource(SyncAPIResource):
         *,
         account: str,
         url: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -129,6 +132,7 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -141,7 +145,7 @@ class ProfileResource(SyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers["Content-Type"] = "multipart/form-data"
         return self._patch(
             "/x/profile/avatar",
             body=maybe_transform(body, profile_update_avatar_params.ProfileUpdateAvatarParams),
@@ -157,6 +161,7 @@ class ProfileResource(SyncAPIResource):
         *,
         account: str,
         url: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -180,6 +185,7 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -192,7 +198,7 @@ class ProfileResource(SyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers["Content-Type"] = "multipart/form-data"
         return self._patch(
             "/x/profile/banner",
             body=maybe_transform(body, profile_update_banner_params.ProfileUpdateBannerParams),
@@ -230,6 +236,7 @@ class AsyncProfileResource(AsyncAPIResource):
         self,
         *,
         account: str,
+        idempotency_key: str,
         description: str | Omit = omit,
         location: str | Omit = omit,
         name: str | Omit = omit,
@@ -261,6 +268,7 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._patch(
             "/x/profile",
             body=await async_maybe_transform(
@@ -284,6 +292,7 @@ class AsyncProfileResource(AsyncAPIResource):
         *,
         account: str,
         url: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -307,6 +316,7 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -319,7 +329,7 @@ class AsyncProfileResource(AsyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers["Content-Type"] = "multipart/form-data"
         return await self._patch(
             "/x/profile/avatar",
             body=await async_maybe_transform(body, profile_update_avatar_params.ProfileUpdateAvatarParams),
@@ -335,6 +345,7 @@ class AsyncProfileResource(AsyncAPIResource):
         *,
         account: str,
         url: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -358,6 +369,7 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -370,7 +382,7 @@ class AsyncProfileResource(AsyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers["Content-Type"] = "multipart/form-data"
         return await self._patch(
             "/x/profile/banner",
             body=await async_maybe_transform(body, profile_update_banner_params.ProfileUpdateBannerParams),

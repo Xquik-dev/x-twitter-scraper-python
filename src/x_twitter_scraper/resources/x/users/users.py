@@ -113,6 +113,7 @@ class UsersResource(SyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -136,6 +137,7 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             path_template("/x/users/{id}/remove-follower", id=id),
             body=maybe_transform({"account": account}, user_remove_follower_params.UserRemoveFollowerParams),
@@ -1309,6 +1311,7 @@ class AsyncUsersResource(AsyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -1332,6 +1335,7 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             path_template("/x/users/{id}/remove-follower", id=id),
             body=await async_maybe_transform(

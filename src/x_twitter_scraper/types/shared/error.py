@@ -1,7 +1,9 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import Union
+from typing import Union, Optional
 from typing_extensions import Literal, TypeAlias
+
+from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
@@ -76,7 +78,6 @@ class ErrorValueStructuredError(BaseModel):
         "x_user_lookup_failed",
         "x_write_ambiguous",
         "x_write_failed",
-        "x_write_unconfirmed",
     ]
 
     message: str
@@ -160,7 +161,6 @@ ErrorValue: TypeAlias = Union[
         "x_user_lookup_failed",
         "x_write_ambiguous",
         "x_write_failed",
-        "x_write_unconfirmed",
     ],
     ErrorValueStructuredError,
 ]
@@ -173,3 +173,15 @@ class Error(BaseModel):
     """
 
     error: ErrorValue
+
+    message: Optional[str] = None
+    """Human-readable error guidance."""
+
+    reason: Optional[str] = None
+    """Machine-readable reason for a login cooldown."""
+
+    retry_after: Optional[int] = FieldInfo(alias="retryAfter", default=None)
+    """Required wait in seconds."""
+
+    retry_after_ms: Optional[int] = FieldInfo(alias="retryAfterMs", default=None)
+    """Required wait in milliseconds."""

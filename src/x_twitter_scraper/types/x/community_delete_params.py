@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
+
+from ..._utils import PropertyInfo
 
 __all__ = ["CommunityDeleteParams"]
 
@@ -13,3 +15,5 @@ class CommunityDeleteParams(TypedDict, total=False):
 
     community_name: Required[str]
     """Community name for confirmation"""
+
+    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]
