@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
+
+from ..._utils import PropertyInfo
 
 __all__ = ["TicketCreateParams"]
 
@@ -11,3 +13,5 @@ class TicketCreateParams(TypedDict, total=False):
     body: Required[str]
 
     subject: Required[str]
+
+    idempotency_key: Annotated[str, PropertyInfo(alias="Idempotency-Key")]

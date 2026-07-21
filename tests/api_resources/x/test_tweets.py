@@ -28,6 +28,7 @@ class TestTweets:
     def test_method_create(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -36,7 +37,7 @@ class TestTweets:
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
             account="@elonmusk",
-            attachment_url="https://x.com/elonmusk/status/1234567890",
+            idempotency_key="Idempotency-Key",
             community_id="1500000000000000000",
             is_note_tweet=False,
             media=["https://example.com/video.mp4"],
@@ -50,6 +51,7 @@ class TestTweets:
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.with_raw_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -62,6 +64,7 @@ class TestTweets:
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.tweets.with_streaming_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -153,6 +156,7 @@ class TestTweets:
         tweet = client.x.tweets.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
 
@@ -162,6 +166,7 @@ class TestTweets:
         response = client.x.tweets.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -175,6 +180,7 @@ class TestTweets:
         with client.x.tweets.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -191,6 +197,7 @@ class TestTweets:
             client.x.tweets.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -597,6 +604,7 @@ class TestAsyncTweets:
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -605,7 +613,7 @@ class TestAsyncTweets:
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
             account="@elonmusk",
-            attachment_url="https://x.com/elonmusk/status/1234567890",
+            idempotency_key="Idempotency-Key",
             community_id="1500000000000000000",
             is_note_tweet=False,
             media=["https://example.com/video.mp4"],
@@ -619,6 +627,7 @@ class TestAsyncTweets:
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.with_raw_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -631,6 +640,7 @@ class TestAsyncTweets:
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.with_streaming_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -722,6 +732,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
 
@@ -731,6 +742,7 @@ class TestAsyncTweets:
         response = await async_client.x.tweets.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -744,6 +756,7 @@ class TestAsyncTweets:
         async with async_client.x.tweets.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -760,6 +773,7 @@ class TestAsyncTweets:
             await async_client.x.tweets.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

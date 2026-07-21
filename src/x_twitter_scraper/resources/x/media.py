@@ -26,8 +26,6 @@ __all__ = ["MediaResource", "AsyncMediaResource"]
 
 
 class MediaResource(SyncAPIResource):
-    """Media upload and download"""
-
     @cached_property
     def with_raw_response(self) -> MediaResourceWithRawResponse:
         """
@@ -103,6 +101,7 @@ class MediaResource(SyncAPIResource):
         *,
         account: str,
         url: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -126,6 +125,7 @@ class MediaResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -138,7 +138,7 @@ class MediaResource(SyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers["Content-Type"] = "multipart/form-data"
         return self._post(
             "/x/media",
             body=maybe_transform(body, media_upload_params.MediaUploadParams),
@@ -151,8 +151,6 @@ class MediaResource(SyncAPIResource):
 
 
 class AsyncMediaResource(AsyncAPIResource):
-    """Media upload and download"""
-
     @cached_property
     def with_raw_response(self) -> AsyncMediaResourceWithRawResponse:
         """
@@ -228,6 +226,7 @@ class AsyncMediaResource(AsyncAPIResource):
         *,
         account: str,
         url: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -251,6 +250,7 @@ class AsyncMediaResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -263,7 +263,7 @@ class AsyncMediaResource(AsyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers["Content-Type"] = "multipart/form-data"
         return await self._post(
             "/x/media",
             body=await async_maybe_transform(body, media_upload_params.MediaUploadParams),

@@ -89,7 +89,7 @@ class TweetsResource(SyncAPIResource):
         self,
         *,
         account: str,
-        attachment_url: str | Omit = omit,
+        idempotency_key: str,
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
@@ -122,12 +122,12 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             "/x/tweets",
             body=maybe_transform(
                 {
                     "account": account,
-                    "attachment_url": attachment_url,
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
@@ -217,6 +217,7 @@ class TweetsResource(SyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -240,6 +241,7 @@ class TweetsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
@@ -262,8 +264,11 @@ class TweetsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List users who liked a tweet
+        """Returns liker profiles that X makes visible for the post.
+
+        X can withhold liker
+        identities even when the post reports likes. In that case this endpoint returns
+        424 `favoriters_unavailable` instead of a misleading empty success.
 
         Args:
           cursor: Pagination cursor for favoriters
@@ -507,8 +512,13 @@ class TweetsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        List replies to a tweet
+        """Returns visible replies.
+
+        For an unfiltered first page, Xquik compares a terminal
+        page with the post's reported reply count. If the page is visibly incomplete,
+        the endpoint returns 424 `replies_incomplete` instead of presenting partial
+        coverage as complete. Use tweet search with a `conversation_id:{id}` query as
+        the broader fallback.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -959,7 +969,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         self,
         *,
         account: str,
-        attachment_url: str | Omit = omit,
+        idempotency_key: str,
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
@@ -992,12 +1002,12 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             "/x/tweets",
             body=await async_maybe_transform(
                 {
                     "account": account,
-                    "attachment_url": attachment_url,
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
@@ -1087,6 +1097,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -1110,6 +1121,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=await async_maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
@@ -1132,8 +1144,11 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List users who liked a tweet
+        """Returns liker profiles that X makes visible for the post.
+
+        X can withhold liker
+        identities even when the post reports likes. In that case this endpoint returns
+        424 `favoriters_unavailable` instead of a misleading empty success.
 
         Args:
           cursor: Pagination cursor for favoriters
@@ -1377,8 +1392,13 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        List replies to a tweet
+        """Returns visible replies.
+
+        For an unfiltered first page, Xquik compares a terminal
+        page with the post's reported reply count. If the page is visibly incomplete,
+        the endpoint returns 424 `replies_incomplete` instead of presenting partial
+        coverage as complete. Use tweet search with a `conversation_id:{id}` query as
+        the broader fallback.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,

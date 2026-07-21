@@ -34,6 +34,16 @@ class TestTickets:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
+        ticket = client.support.tickets.create(
+            body="I am unable to connect my X account. Please help.",
+            subject="Cannot connect X account",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(TicketCreateResponse, ticket, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.create(
             body="I am unable to connect my X account. Please help.",
@@ -187,6 +197,16 @@ class TestTickets:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_reply_with_all_params(self, client: XTwitterScraper) -> None:
+        ticket = client.support.tickets.reply(
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
+            body="Thank you for the update.",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(TicketReplyResponse, ticket, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_reply(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
@@ -234,6 +254,16 @@ class TestAsyncTickets:
         ticket = await async_client.support.tickets.create(
             body="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
+        )
+        assert_matches_type(TicketCreateResponse, ticket, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        ticket = await async_client.support.tickets.create(
+            body="I am unable to connect my X account. Please help.",
+            subject="Cannot connect X account",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
@@ -387,6 +417,16 @@ class TestAsyncTickets:
         ticket = await async_client.support.tickets.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
             body="Thank you for the update.",
+        )
+        assert_matches_type(TicketReplyResponse, ticket, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_reply_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        ticket = await async_client.support.tickets.reply(
+            id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
+            body="Thank you for the update.",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 

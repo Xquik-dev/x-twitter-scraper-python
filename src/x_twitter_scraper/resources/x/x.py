@@ -147,7 +147,6 @@ class XResource(SyncAPIResource):
 
     @cached_property
     def media(self) -> MediaResource:
-        """Media upload and download"""
         return MediaResource(self._client)
 
     @cached_property
@@ -396,7 +395,6 @@ class AsyncXResource(AsyncAPIResource):
 
     @cached_property
     def media(self) -> AsyncMediaResource:
-        """Media upload and download"""
         return AsyncMediaResource(self._client)
 
     @cached_property
@@ -661,7 +659,6 @@ class XResourceWithRawResponse:
 
     @cached_property
     def media(self) -> MediaResourceWithRawResponse:
-        """Media upload and download"""
         return MediaResourceWithRawResponse(self._x.media)
 
     @cached_property
@@ -735,7 +732,6 @@ class AsyncXResourceWithRawResponse:
 
     @cached_property
     def media(self) -> AsyncMediaResourceWithRawResponse:
-        """Media upload and download"""
         return AsyncMediaResourceWithRawResponse(self._x.media)
 
     @cached_property
@@ -809,7 +805,6 @@ class XResourceWithStreamingResponse:
 
     @cached_property
     def media(self) -> MediaResourceWithStreamingResponse:
-        """Media upload and download"""
         return MediaResourceWithStreamingResponse(self._x.media)
 
     @cached_property
@@ -883,7 +878,6 @@ class AsyncXResourceWithStreamingResponse:
 
     @cached_property
     def media(self) -> AsyncMediaResourceWithStreamingResponse:
-        """Media upload and download"""
         return AsyncMediaResourceWithStreamingResponse(self._x.media)
 
     @cached_property

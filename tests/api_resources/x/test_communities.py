@@ -28,6 +28,7 @@ class TestCommunities:
         community = client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -37,6 +38,7 @@ class TestCommunities:
         community = client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
             description="A community for Tesla enthusiasts",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
@@ -47,6 +49,7 @@ class TestCommunities:
         response = client.x.communities.with_raw_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -60,6 +63,7 @@ class TestCommunities:
         with client.x.communities.with_streaming_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -76,6 +80,7 @@ class TestCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityDeleteResponse, community, path=["response"])
 
@@ -86,6 +91,7 @@ class TestCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -100,6 +106,7 @@ class TestCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -117,6 +124,7 @@ class TestCommunities:
                 id="",
                 account="@elonmusk",
                 community_name="Tesla Fans",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -325,6 +333,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -334,6 +343,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
             description="A community for Tesla enthusiasts",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
@@ -344,6 +354,7 @@ class TestAsyncCommunities:
         response = await async_client.x.communities.with_raw_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -357,6 +368,7 @@ class TestAsyncCommunities:
         async with async_client.x.communities.with_streaming_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -373,6 +385,7 @@ class TestAsyncCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityDeleteResponse, community, path=["response"])
 
@@ -383,6 +396,7 @@ class TestAsyncCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -397,6 +411,7 @@ class TestAsyncCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -414,6 +429,7 @@ class TestAsyncCommunities:
                 id="",
                 account="@elonmusk",
                 community_name="Tesla Fans",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

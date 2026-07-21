@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
+
+from ..._utils import PropertyInfo
 
 __all__ = ["ProfileUpdateBannerParams"]
 
@@ -13,3 +15,5 @@ class ProfileUpdateBannerParams(TypedDict, total=False):
 
     url: Required[str]
     """HTTPS URL to the banner image to download"""
+
+    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]

@@ -26,6 +26,7 @@ class TestProfile:
     def test_method_update(self, client: XTwitterScraper) -> None:
         profile = client.x.profile.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
@@ -34,6 +35,7 @@ class TestProfile:
     def test_method_update_with_all_params(self, client: XTwitterScraper) -> None:
         profile = client.x.profile.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
             description="description_value",
             location="location_value",
             name="Example Name",
@@ -46,6 +48,7 @@ class TestProfile:
     def test_raw_response_update(self, client: XTwitterScraper) -> None:
         response = client.x.profile.with_raw_response.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -58,6 +61,7 @@ class TestProfile:
     def test_streaming_response_update(self, client: XTwitterScraper) -> None:
         with client.x.profile.with_streaming_response.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -73,6 +77,7 @@ class TestProfile:
         profile = client.x.profile.update_avatar(
             account="@elonmusk",
             url="https://example.com/avatar.png",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
@@ -82,6 +87,7 @@ class TestProfile:
         response = client.x.profile.with_raw_response.update_avatar(
             account="@elonmusk",
             url="https://example.com/avatar.png",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -95,6 +101,7 @@ class TestProfile:
         with client.x.profile.with_streaming_response.update_avatar(
             account="@elonmusk",
             url="https://example.com/avatar.png",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -110,6 +117,7 @@ class TestProfile:
         profile = client.x.profile.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
@@ -119,6 +127,7 @@ class TestProfile:
         response = client.x.profile.with_raw_response.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -132,6 +141,7 @@ class TestProfile:
         with client.x.profile.with_streaming_response.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -152,6 +162,7 @@ class TestAsyncProfile:
     async def test_method_update(self, async_client: AsyncXTwitterScraper) -> None:
         profile = await async_client.x.profile.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
@@ -160,6 +171,7 @@ class TestAsyncProfile:
     async def test_method_update_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         profile = await async_client.x.profile.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
             description="description_value",
             location="location_value",
             name="Example Name",
@@ -172,6 +184,7 @@ class TestAsyncProfile:
     async def test_raw_response_update(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.profile.with_raw_response.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -184,6 +197,7 @@ class TestAsyncProfile:
     async def test_streaming_response_update(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.profile.with_streaming_response.update(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -199,6 +213,7 @@ class TestAsyncProfile:
         profile = await async_client.x.profile.update_avatar(
             account="@elonmusk",
             url="https://example.com/avatar.png",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
@@ -208,6 +223,7 @@ class TestAsyncProfile:
         response = await async_client.x.profile.with_raw_response.update_avatar(
             account="@elonmusk",
             url="https://example.com/avatar.png",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -221,6 +237,7 @@ class TestAsyncProfile:
         async with async_client.x.profile.with_streaming_response.update_avatar(
             account="@elonmusk",
             url="https://example.com/avatar.png",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -236,6 +253,7 @@ class TestAsyncProfile:
         profile = await async_client.x.profile.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
@@ -245,6 +263,7 @@ class TestAsyncProfile:
         response = await async_client.x.profile.with_raw_response.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -258,6 +277,7 @@ class TestAsyncProfile:
         async with async_client.x.profile.with_streaming_response.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
