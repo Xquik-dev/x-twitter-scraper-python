@@ -1,6 +1,6 @@
 [project]
 name = "x_twitter_scraper"
-version = "0.4.2"
+version = "0.4.3"
 description = "Python library for the Xquik API. Not affiliated with X Corp."
 dynamic = ["readme"]
 license = "Apache-2.0"
