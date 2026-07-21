@@ -44,6 +44,7 @@ jobs:
         # Google's mutable :v1 runtime image, which this repository cannot pin.
         uses: google/clusterfuzzlite/actions/build_fuzzers@82652fb49e77bc29c35da1167bb286e93c6bcc05 # v1
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           language: python
           sanitizer: address
 
