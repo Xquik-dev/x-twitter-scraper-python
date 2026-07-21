@@ -77,14 +77,14 @@ class TicketsResource(SyncAPIResource):
           timeout: Override the client-level default timeout for this request, in seconds
         """
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
-        body = deepcopy_with_paths(
+        request_body = deepcopy_with_paths(
             {
                 "body": body,
                 "subject": subject,
             },
             [["attachments", "<array>"]],
         )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(cast(Mapping[str, object], request_body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
@@ -92,7 +92,7 @@ class TicketsResource(SyncAPIResource):
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return self._post(
             "/support/tickets",
-            body=maybe_transform(body, ticket_create_params.TicketCreateParams),
+            body=maybe_transform(request_body, ticket_create_params.TicketCreateParams),
             files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -215,8 +215,8 @@ class TicketsResource(SyncAPIResource):
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
-        body = deepcopy_with_paths({"body": body}, [["attachments", "<array>"]])
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        request_body = deepcopy_with_paths({"body": body}, [["attachments", "<array>"]])
+        files = extract_files(cast(Mapping[str, object], request_body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
@@ -224,7 +224,7 @@ class TicketsResource(SyncAPIResource):
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return self._post(
             path_template("/support/tickets/{id}/messages", id=id),
-            body=maybe_transform(body, ticket_reply_params.TicketReplyParams),
+            body=maybe_transform(request_body, ticket_reply_params.TicketReplyParams),
             files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -281,14 +281,14 @@ class AsyncTicketsResource(AsyncAPIResource):
           timeout: Override the client-level default timeout for this request, in seconds
         """
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
-        body = deepcopy_with_paths(
+        request_body = deepcopy_with_paths(
             {
                 "body": body,
                 "subject": subject,
             },
             [["attachments", "<array>"]],
         )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(cast(Mapping[str, object], request_body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
@@ -296,7 +296,7 @@ class AsyncTicketsResource(AsyncAPIResource):
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return await self._post(
             "/support/tickets",
-            body=await async_maybe_transform(body, ticket_create_params.TicketCreateParams),
+            body=await async_maybe_transform(request_body, ticket_create_params.TicketCreateParams),
             files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
@@ -419,8 +419,8 @@ class AsyncTicketsResource(AsyncAPIResource):
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
-        body = deepcopy_with_paths({"body": body}, [["attachments", "<array>"]])
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        request_body = deepcopy_with_paths({"body": body}, [["attachments", "<array>"]])
+        files = extract_files(cast(Mapping[str, object], request_body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
@@ -428,7 +428,7 @@ class AsyncTicketsResource(AsyncAPIResource):
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return await self._post(
             path_template("/support/tickets/{id}/messages", id=id),
-            body=await async_maybe_transform(body, ticket_reply_params.TicketReplyParams),
+            body=await async_maybe_transform(request_body, ticket_reply_params.TicketReplyParams),
             files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
