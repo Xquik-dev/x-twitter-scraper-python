@@ -1,0 +1,57 @@
+name: ClusterFuzzLite
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".clusterfuzzlite/**"
+      - ".github/workflows/fuzz.yml"
+      - "pyproject.toml"
+      - "src/**"
+      - "uv.lock"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".clusterfuzzlite/**"
+      - ".github/workflows/fuzz.yml"
+      - "pyproject.toml"
+      - "src/**"
+      - "uv.lock"
+  schedule:
+    - cron: "19 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: clusterfuzzlite-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fuzz:
+    name: Fuzz Query Strings
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build fuzzers
+        # The action commit is immutable. Its upstream action.yml still selects
+        # Google's mutable :v1 runtime image, which this repository cannot pin.
+        uses: google/clusterfuzzlite/actions/build_fuzzers@82652fb49e77bc29c35da1167bb286e93c6bcc05 # v1
+        with:
+          language: python
+          sanitizer: address
+
+      - name: Run fuzzers
+        uses: google/clusterfuzzlite/actions/run_fuzzers@82652fb49e77bc29c35da1167bb286e93c6bcc05 # v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          language: python
+          mode: batch
+          sanitizer: address
+          fuzz-seconds: 180
