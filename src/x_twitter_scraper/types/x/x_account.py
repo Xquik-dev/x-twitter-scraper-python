@@ -21,12 +21,12 @@ class XAccount(BaseModel):
     created_at: datetime = FieldInfo(alias="createdAt")
 
     health: Literal["healthy", "locked", "needsReauth", "recovering", "suspended", "temporaryIssue"]
-    """Derived login/cookie health.
+    """Derived connection health.
 
-    `healthy` = cookies valid. `needsReauth` = user must submit fresh credentials.
+    `healthy` = session active. `needsReauth` = user must submit fresh credentials.
     `locked` = X locked the account; unlock on x.com first. `suspended` = X banned
     the account. `recovering` = past cooldown, will auto-retry on next use.
-    `temporaryIssue` = transient backend problem; retry shortly.
+    `temporaryIssue` = temporary connection problem; retry shortly.
     """
 
     status: str
