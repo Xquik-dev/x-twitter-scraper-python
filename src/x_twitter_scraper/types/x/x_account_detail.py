@@ -12,7 +12,7 @@ __all__ = ["XAccountDetail"]
 
 
 class XAccountDetail(BaseModel):
-    """Full X account details with status, cookies, and update timestamp."""
+    """Connected X account details with health and timestamp metadata."""
 
     id: str
 

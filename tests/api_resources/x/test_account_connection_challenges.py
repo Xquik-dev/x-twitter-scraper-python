@@ -24,7 +24,7 @@ class TestAccountConnectionChallenges:
     def test_method_submit(self, client: XTwitterScraper) -> None:
         account_connection_challenge = client.x.account_connection_challenges.submit(
             id="id",
-            email_code="123456",
+            email_code="<EMAIL_VERIFICATION_CODE>",
         )
         assert_matches_type(AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"])
 
@@ -33,7 +33,7 @@ class TestAccountConnectionChallenges:
     def test_raw_response_submit(self, client: XTwitterScraper) -> None:
         response = client.x.account_connection_challenges.with_raw_response.submit(
             id="id",
-            email_code="123456",
+            email_code="<EMAIL_VERIFICATION_CODE>",
         )
 
         assert response.is_closed is True
@@ -46,7 +46,7 @@ class TestAccountConnectionChallenges:
     def test_streaming_response_submit(self, client: XTwitterScraper) -> None:
         with client.x.account_connection_challenges.with_streaming_response.submit(
             id="id",
-            email_code="123456",
+            email_code="<EMAIL_VERIFICATION_CODE>",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -64,7 +64,7 @@ class TestAccountConnectionChallenges:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.account_connection_challenges.with_raw_response.submit(
                 id="",
-                email_code="123456",
+                email_code="<EMAIL_VERIFICATION_CODE>",
             )
 
 
@@ -78,7 +78,7 @@ class TestAsyncAccountConnectionChallenges:
     async def test_method_submit(self, async_client: AsyncXTwitterScraper) -> None:
         account_connection_challenge = await async_client.x.account_connection_challenges.submit(
             id="id",
-            email_code="123456",
+            email_code="<EMAIL_VERIFICATION_CODE>",
         )
         assert_matches_type(AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"])
 
@@ -87,7 +87,7 @@ class TestAsyncAccountConnectionChallenges:
     async def test_raw_response_submit(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.account_connection_challenges.with_raw_response.submit(
             id="id",
-            email_code="123456",
+            email_code="<EMAIL_VERIFICATION_CODE>",
         )
 
         assert response.is_closed is True
@@ -100,7 +100,7 @@ class TestAsyncAccountConnectionChallenges:
     async def test_streaming_response_submit(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.account_connection_challenges.with_streaming_response.submit(
             id="id",
-            email_code="123456",
+            email_code="<EMAIL_VERIFICATION_CODE>",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -118,5 +118,5 @@ class TestAsyncAccountConnectionChallenges:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.account_connection_challenges.with_raw_response.submit(
                 id="",
-                email_code="123456",
+                email_code="<EMAIL_VERIFICATION_CODE>",
             )
