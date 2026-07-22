@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.1 (2026-07-22)
+
+Full Changelog: [v0.5.0...v0.5.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.5.0...v0.5.1)
+
+### Chores
+
+* sync generated SDK contracts ([5873bd3](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/5873bd3a62b3f1fa9ff76e9f729527e8a9f0f57f))
+
 ## 0.5.0 (2026-07-22)
 
 Full Changelog: [v0.4.3...v0.5.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.4.3...v0.5.0)
