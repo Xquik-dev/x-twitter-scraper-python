@@ -10,7 +10,7 @@ __all__ = ["TicketCreateParams"]
 
 
 class TicketCreateParams(TypedDict, total=False):
-    body: Required[str]
+    content: Required[Annotated[str, PropertyInfo(alias="body")]]
 
     subject: Required[str]
 

@@ -54,7 +54,7 @@ class TicketsResource(SyncAPIResource):
     def create(
         self,
         *,
-        body: str,
+        content: str,
         subject: str,
         idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -79,7 +79,7 @@ class TicketsResource(SyncAPIResource):
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
-                "body": body,
+                "content": content,
                 "subject": subject,
             },
             [["attachments", "<array>"]],
@@ -191,7 +191,7 @@ class TicketsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        body: str,
+        content: str,
         idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -215,7 +215,7 @@ class TicketsResource(SyncAPIResource):
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
-        body = deepcopy_with_paths({"body": body}, [["attachments", "<array>"]])
+        body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
         files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
@@ -258,7 +258,7 @@ class AsyncTicketsResource(AsyncAPIResource):
     async def create(
         self,
         *,
-        body: str,
+        content: str,
         subject: str,
         idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -283,7 +283,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
         body = deepcopy_with_paths(
             {
-                "body": body,
+                "content": content,
                 "subject": subject,
             },
             [["attachments", "<array>"]],
@@ -395,7 +395,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        body: str,
+        content: str,
         idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -419,7 +419,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
         extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
-        body = deepcopy_with_paths({"body": body}, [["attachments", "<array>"]])
+        body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
         files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
