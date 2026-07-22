@@ -196,7 +196,7 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def monitors(self) -> MonitorsResource:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         from .resources.monitors import MonitorsResource
 
         return MonitorsResource(self)
@@ -520,7 +520,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def monitors(self) -> AsyncMonitorsResource:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         from .resources.monitors import AsyncMonitorsResource
 
         return AsyncMonitorsResource(self)
@@ -782,7 +782,7 @@ class XTwitterScraperWithRawResponse:
 
     @cached_property
     def monitors(self) -> monitors.MonitorsResourceWithRawResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         from .resources.monitors import MonitorsResourceWithRawResponse
 
         return MonitorsResourceWithRawResponse(self._client.monitors)
@@ -899,7 +899,7 @@ class AsyncXTwitterScraperWithRawResponse:
 
     @cached_property
     def monitors(self) -> monitors.AsyncMonitorsResourceWithRawResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         from .resources.monitors import AsyncMonitorsResourceWithRawResponse
 
         return AsyncMonitorsResourceWithRawResponse(self._client.monitors)
@@ -1016,7 +1016,7 @@ class XTwitterScraperWithStreamedResponse:
 
     @cached_property
     def monitors(self) -> monitors.MonitorsResourceWithStreamingResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         from .resources.monitors import MonitorsResourceWithStreamingResponse
 
         return MonitorsResourceWithStreamingResponse(self._client.monitors)
@@ -1133,7 +1133,7 @@ class AsyncXTwitterScraperWithStreamedResponse:
 
     @cached_property
     def monitors(self) -> monitors.AsyncMonitorsResourceWithStreamingResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         from .resources.monitors import AsyncMonitorsResourceWithStreamingResponse
 
         return AsyncMonitorsResourceWithStreamingResponse(self._client.monitors)

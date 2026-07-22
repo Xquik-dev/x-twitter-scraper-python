@@ -1,35 +1,133 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import List, Union, Optional
+from typing_extensions import Literal, TypeAlias
 
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 
-__all__ = ["ComposeCreateResponse"]
+__all__ = [
+    "ComposeCreateResponse",
+    "ComposePrepareResult",
+    "ComposePrepareResultContentRule",
+    "ComposePrepareResultEngagementMultiplier",
+    "ComposePrepareResultScorerWeight",
+    "ComposePrepareResultSavedStyle",
+    "ComposeRefineResult",
+    "ComposeRefineResultExamplePattern",
+    "ComposeScoreResult",
+    "ComposeScoreResultChecklist",
+]
 
 
-class ComposeCreateResponse(BaseModel):
-    feedback: Optional[str] = None
-    """AI feedback on the draft"""
+class ComposePrepareResultContentRule(BaseModel):
+    rule: str
 
-    score: Optional[float] = None
-    """Engagement score (0-100)"""
 
-    suggestions: Optional[List[str]] = None
-    """Improvement suggestions"""
+class ComposePrepareResultEngagementMultiplier(BaseModel):
+    action: str
+    """Human-readable published signal name."""
 
-    text: Optional[str] = None
-    """Generated or refined tweet text"""
+    multiplier: Literal["Production weight not published by X"]
 
-    if TYPE_CHECKING:
-        # Some versions of Pydantic <2.8.0 have a bug and don’t allow assigning a
-        # value to this field, so for compatibility we avoid doing it at runtime.
-        __pydantic_extra__: Dict[str, object] = FieldInfo(init=False)  # pyright: ignore[reportIncompatibleVariableOverride]
 
-        # Stub to indicate that arbitrary properties are accepted.
-        # To access properties that are not valid identifiers you can use `getattr`, e.g.
-        # `getattr(obj, '$type')`
-        def __getattr__(self, attr: str) -> object: ...
-    else:
-        __pydantic_extra__: Dict[str, object]
+class ComposePrepareResultScorerWeight(BaseModel):
+    context: str
+    """Signal direction and publication limit."""
+
+    signal: str
+    """Signal name from X's public ranking repository."""
+
+    weight: None = None
+    """X does not publish the production weight."""
+
+
+class ComposePrepareResultSavedStyle(BaseModel):
+    tweet_count: int = FieldInfo(alias="tweetCount")
+
+    username: str
+
+
+class ComposePrepareResult(BaseModel):
+    content_rules: List[ComposePrepareResultContentRule] = FieldInfo(alias="contentRules")
+    """Xquik editorial heuristics, ordered for the goal."""
+
+    engagement_multipliers: List[ComposePrepareResultEngagementMultiplier] = FieldInfo(alias="engagementMultipliers")
+    """Published engagement signal names. Production multipliers are not published."""
+
+    engagement_velocity: str = FieldInfo(alias="engagementVelocity")
+    """Publication limit for timing and decay claims."""
+
+    follow_up_questions: List[str] = FieldInfo(alias="followUpQuestions")
+
+    intent_url: str = FieldInfo(alias="intentUrl")
+    """X post intent seeded with the topic."""
+
+    next_step: str = FieldInfo(alias="nextStep")
+
+    scorer_weights: List[ComposePrepareResultScorerWeight] = FieldInfo(alias="scorerWeights")
+    """Published signal names with unpublished weights as null."""
+
+    source: str
+    """Signal source and evidence limits."""
+
+    top_penalties: List[str] = FieldInfo(alias="topPenalties")
+    """Negative engagement predictions in the public model."""
+
+    saved_styles: Optional[List[ComposePrepareResultSavedStyle]] = FieldInfo(alias="savedStyles", default=None)
+    """Style analyses saved to the account."""
+
+    style_note: Optional[str] = FieldInfo(alias="styleNote", default=None)
+    """Next action when no cached style is available."""
+
+    style_tweets: Optional[List[str]] = FieldInfo(alias="styleTweets", default=None)
+    """Cached examples for the requested style username."""
+
+
+class ComposeRefineResultExamplePattern(BaseModel):
+    description: str
+
+    pattern: str
+
+
+class ComposeRefineResult(BaseModel):
+    composition_guidance: List[str] = FieldInfo(alias="compositionGuidance")
+    """Goal, tone, media, and editorial guidance."""
+
+    example_patterns: List[ComposeRefineResultExamplePattern] = FieldInfo(alias="examplePatterns")
+
+    intent_url: str = FieldInfo(alias="intentUrl")
+    """X post intent seeded with the topic."""
+
+    next_step: str = FieldInfo(alias="nextStep")
+
+
+class ComposeScoreResultChecklist(BaseModel):
+    factor: str
+
+    passed: bool
+
+    suggestion: Optional[str] = None
+    """Present only when the check fails."""
+
+
+class ComposeScoreResult(BaseModel):
+    checklist: List[ComposeScoreResultChecklist]
+    """Deterministic editorial checks. Not a reach prediction."""
+
+    next_step: str = FieldInfo(alias="nextStep")
+
+    passed: bool
+
+    passed_count: int = FieldInfo(alias="passedCount")
+
+    top_suggestion: str = FieldInfo(alias="topSuggestion")
+
+    total_checks: Literal[9] = FieldInfo(alias="totalChecks")
+
+    intent_url: Optional[str] = FieldInfo(alias="intentUrl", default=None)
+    """Present only when every check passes."""
+
+
+ComposeCreateResponse: TypeAlias = Union[ComposePrepareResult, ComposeRefineResult, ComposeScoreResult]

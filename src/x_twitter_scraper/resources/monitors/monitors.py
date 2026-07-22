@@ -36,11 +36,11 @@ __all__ = ["MonitorsResource", "AsyncMonitorsResource"]
 
 
 class MonitorsResource(SyncAPIResource):
-    """Real-time X account monitoring"""
+    """X account monitoring with 1-second checks"""
 
     @cached_property
     def keywords(self) -> KeywordsResource:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         return KeywordsResource(self._client)
 
     @cached_property
@@ -74,7 +74,7 @@ class MonitorsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorCreateResponse:
-        """Creates an instant monitor.
+        """Creates an account monitor.
 
         Monitors are unlimited. Active monitors check every
         1 second and cost 21 credits per hour. Events and webhook deliveries are
@@ -240,11 +240,11 @@ class MonitorsResource(SyncAPIResource):
 
 
 class AsyncMonitorsResource(AsyncAPIResource):
-    """Real-time X account monitoring"""
+    """X account monitoring with 1-second checks"""
 
     @cached_property
     def keywords(self) -> AsyncKeywordsResource:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         return AsyncKeywordsResource(self._client)
 
     @cached_property
@@ -278,7 +278,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorCreateResponse:
-        """Creates an instant monitor.
+        """Creates an account monitor.
 
         Monitors are unlimited. Active monitors check every
         1 second and cost 21 credits per hour. Events and webhook deliveries are
@@ -465,7 +465,7 @@ class MonitorsResourceWithRawResponse:
 
     @cached_property
     def keywords(self) -> KeywordsResourceWithRawResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         return KeywordsResourceWithRawResponse(self._monitors.keywords)
 
 
@@ -491,7 +491,7 @@ class AsyncMonitorsResourceWithRawResponse:
 
     @cached_property
     def keywords(self) -> AsyncKeywordsResourceWithRawResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         return AsyncKeywordsResourceWithRawResponse(self._monitors.keywords)
 
 
@@ -517,7 +517,7 @@ class MonitorsResourceWithStreamingResponse:
 
     @cached_property
     def keywords(self) -> KeywordsResourceWithStreamingResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         return KeywordsResourceWithStreamingResponse(self._monitors.keywords)
 
 
@@ -543,5 +543,5 @@ class AsyncMonitorsResourceWithStreamingResponse:
 
     @cached_property
     def keywords(self) -> AsyncKeywordsResourceWithStreamingResponse:
-        """Real-time X account monitoring"""
+        """X account monitoring with 1-second checks"""
         return AsyncKeywordsResourceWithStreamingResponse(self._monitors.keywords)
