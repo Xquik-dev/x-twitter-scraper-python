@@ -29,7 +29,7 @@ __all__ = ["KeywordsResource", "AsyncKeywordsResource"]
 
 
 class KeywordsResource(SyncAPIResource):
-    """Real-time X account monitoring"""
+    """X account monitoring with 1-second checks"""
 
     @cached_property
     def with_raw_response(self) -> KeywordsResourceWithRawResponse:
@@ -62,12 +62,11 @@ class KeywordsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordCreateResponse:
-        """Creates an instant keyword monitor.
+        """Creates a keyword monitor.
 
-        Keyword monitors are unlimited. Active
-        monitors check every 1 second and cost 21 credits per hour. Events and webhook
-        deliveries are included. Creation requires available credits for the first
-        hourly charge.
+        Keyword monitors are unlimited. Active monitors check
+        every 1 second and cost 21 credits per hour. Events and webhook deliveries are
+        included. Creation requires available credits for the first hourly charge.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -228,7 +227,7 @@ class KeywordsResource(SyncAPIResource):
 
 
 class AsyncKeywordsResource(AsyncAPIResource):
-    """Real-time X account monitoring"""
+    """X account monitoring with 1-second checks"""
 
     @cached_property
     def with_raw_response(self) -> AsyncKeywordsResourceWithRawResponse:
@@ -261,12 +260,11 @@ class AsyncKeywordsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordCreateResponse:
-        """Creates an instant keyword monitor.
+        """Creates a keyword monitor.
 
-        Keyword monitors are unlimited. Active
-        monitors check every 1 second and cost 21 credits per hour. Events and webhook
-        deliveries are included. Creation requires available credits for the first
-        hourly charge.
+        Keyword monitors are unlimited. Active monitors check
+        every 1 second and cost 21 credits per hour. Events and webhook deliveries are
+        included. Creation requires available credits for the first hourly charge.
 
         Args:
           event_types: Array of event types to subscribe to.

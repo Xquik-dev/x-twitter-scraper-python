@@ -18,10 +18,10 @@ class MonitorBilling(BaseModel):
     """Credits charged each hour for currently active monitors."""
 
     credits_per_active_monitor_day: str = FieldInfo(alias="creditsPerActiveMonitorDay")
-    """Estimated daily credits for 1 active instant monitor."""
+    """Rounded daily estimate for 1 active monitor."""
 
     credits_per_active_monitor_hour: str = FieldInfo(alias="creditsPerActiveMonitorHour")
-    """Hourly credits charged for 1 active instant monitor."""
+    """Hourly credits charged for 1 active monitor."""
 
     events_included: bool = FieldInfo(alias="eventsIncluded")
     """Webhook and event deliveries are included in monitor billing."""

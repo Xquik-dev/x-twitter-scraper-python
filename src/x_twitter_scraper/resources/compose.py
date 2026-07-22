@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
-from typing_extensions import Literal
+from typing import Any, cast
+from typing_extensions import Literal, overload
 
 import httpx
 
 from ..types import compose_create_params
 from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from .._utils import maybe_transform, async_maybe_transform
+from .._utils import required_args, maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
 from .._response import (
@@ -45,20 +46,14 @@ class ComposeResource(SyncAPIResource):
         """
         return ComposeResourceWithStreamingResponse(self)
 
+    @overload
     def create(
         self,
         *,
-        step: Literal["compose", "refine", "score"],
-        additional_context: str | Omit = omit,
-        call_to_action: str | Omit = omit,
-        draft: str | Omit = omit,
+        step: Literal["compose"],
+        topic: str,
         goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
-        has_link: bool | Omit = omit,
-        has_media: bool | Omit = omit,
-        media_type: Literal["photo", "video", "none"] | Omit = omit,
         style_username: str | Omit = omit,
-        tone: str | Omit = omit,
-        topic: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -66,31 +61,19 @@ class ComposeResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """
-        Compose, refine, or score a tweet
+        """Run one step of Xquik's three-step writing workflow.
+
+        Compose returns questions
+        and editorial rules. Refine returns goal-specific guidance. Score applies
+        deterministic text checks. It does not predict reach or expose X ranking
+        weights.
 
         Args:
-          step: Workflow step
+          topic: Subject for the post.
 
-          additional_context: Extra context or URLs (refine)
+          goal: Editorial goal used to order the rules and questions.
 
-          call_to_action: Desired call to action (refine)
-
-          draft: Tweet draft text to evaluate (score)
-
-          goal: Optimization goal
-
-          has_link: Whether a link is attached (score)
-
-          has_media: Whether media is attached (score)
-
-          media_type: Media type (refine)
-
-          style_username: Cached style username for voice matching (compose)
-
-          tone: Desired tone (refine)
-
-          topic: Tweet topic (compose, refine)
+          style_username: Username from a style analysis saved to this account.
 
           extra_headers: Send extra headers
 
@@ -100,28 +83,144 @@ class ComposeResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._post(
-            "/compose",
-            body=maybe_transform(
-                {
-                    "step": step,
-                    "additional_context": additional_context,
-                    "call_to_action": call_to_action,
-                    "draft": draft,
-                    "goal": goal,
-                    "has_link": has_link,
-                    "has_media": has_media,
-                    "media_type": media_type,
-                    "style_username": style_username,
-                    "tone": tone,
-                    "topic": topic,
-                },
-                compose_create_params.ComposeCreateParams,
+        ...
+
+    @overload
+    def create(
+        self,
+        *,
+        goal: Literal["engagement", "followers", "authority", "conversation"],
+        step: Literal["refine"],
+        tone: str,
+        topic: str,
+        additional_context: str | Omit = omit,
+        call_to_action: str | Omit = omit,
+        media_type: Literal["photo", "video", "none"] | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ComposeCreateResponse:
+        """Run one step of Xquik's three-step writing workflow.
+
+        Compose returns questions
+        and editorial rules. Refine returns goal-specific guidance. Score applies
+        deterministic text checks. It does not predict reach or expose X ranking
+        weights.
+
+        Args:
+          goal: Editorial goal for the guidance.
+
+          tone: Requested writing tone.
+
+          topic: Subject for the post.
+
+          additional_context: Audience, constraints, sources, or other writing context.
+
+          call_to_action: Specific action the draft should request.
+
+          media_type: Planned media type.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        ...
+
+    @overload
+    def create(
+        self,
+        *,
+        draft: str,
+        step: Literal["score"],
+        has_link: bool | Omit = omit,
+        has_media: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ComposeCreateResponse:
+        """Run one step of Xquik's three-step writing workflow.
+
+        Compose returns questions
+        and editorial rules. Refine returns goal-specific guidance. Score applies
+        deterministic text checks. It does not predict reach or expose X ranking
+        weights.
+
+        Args:
+          draft: Full post text for deterministic editorial checks.
+
+          has_link: True when a separate link card is attached.
+
+          has_media: Accepted for backward compatibility. Text checks ignore this field.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        ...
+
+    @required_args(["step", "topic"], ["goal", "step", "tone", "topic"], ["draft", "step"])
+    def create(
+        self,
+        *,
+        step: Literal["compose"] | Literal["refine"] | Literal["score"],
+        topic: str | Omit = omit,
+        goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
+        style_username: str | Omit = omit,
+        tone: str | Omit = omit,
+        additional_context: str | Omit = omit,
+        call_to_action: str | Omit = omit,
+        media_type: Literal["photo", "video", "none"] | Omit = omit,
+        draft: str | Omit = omit,
+        has_link: bool | Omit = omit,
+        has_media: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ComposeCreateResponse:
+        return cast(
+            ComposeCreateResponse,
+            self._post(
+                "/compose",
+                body=maybe_transform(
+                    {
+                        "step": step,
+                        "topic": topic,
+                        "goal": goal,
+                        "style_username": style_username,
+                        "tone": tone,
+                        "additional_context": additional_context,
+                        "call_to_action": call_to_action,
+                        "media_type": media_type,
+                        "draft": draft,
+                        "has_link": has_link,
+                        "has_media": has_media,
+                    },
+                    compose_create_params.ComposeCreateParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(
+                    Any, ComposeCreateResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=ComposeCreateResponse,
         )
 
 
@@ -147,20 +246,14 @@ class AsyncComposeResource(AsyncAPIResource):
         """
         return AsyncComposeResourceWithStreamingResponse(self)
 
+    @overload
     async def create(
         self,
         *,
-        step: Literal["compose", "refine", "score"],
-        additional_context: str | Omit = omit,
-        call_to_action: str | Omit = omit,
-        draft: str | Omit = omit,
+        step: Literal["compose"],
+        topic: str,
         goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
-        has_link: bool | Omit = omit,
-        has_media: bool | Omit = omit,
-        media_type: Literal["photo", "video", "none"] | Omit = omit,
         style_username: str | Omit = omit,
-        tone: str | Omit = omit,
-        topic: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -168,31 +261,19 @@ class AsyncComposeResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """
-        Compose, refine, or score a tweet
+        """Run one step of Xquik's three-step writing workflow.
+
+        Compose returns questions
+        and editorial rules. Refine returns goal-specific guidance. Score applies
+        deterministic text checks. It does not predict reach or expose X ranking
+        weights.
 
         Args:
-          step: Workflow step
+          topic: Subject for the post.
 
-          additional_context: Extra context or URLs (refine)
+          goal: Editorial goal used to order the rules and questions.
 
-          call_to_action: Desired call to action (refine)
-
-          draft: Tweet draft text to evaluate (score)
-
-          goal: Optimization goal
-
-          has_link: Whether a link is attached (score)
-
-          has_media: Whether media is attached (score)
-
-          media_type: Media type (refine)
-
-          style_username: Cached style username for voice matching (compose)
-
-          tone: Desired tone (refine)
-
-          topic: Tweet topic (compose, refine)
+          style_username: Username from a style analysis saved to this account.
 
           extra_headers: Send extra headers
 
@@ -202,28 +283,144 @@ class AsyncComposeResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return await self._post(
-            "/compose",
-            body=await async_maybe_transform(
-                {
-                    "step": step,
-                    "additional_context": additional_context,
-                    "call_to_action": call_to_action,
-                    "draft": draft,
-                    "goal": goal,
-                    "has_link": has_link,
-                    "has_media": has_media,
-                    "media_type": media_type,
-                    "style_username": style_username,
-                    "tone": tone,
-                    "topic": topic,
-                },
-                compose_create_params.ComposeCreateParams,
+        ...
+
+    @overload
+    async def create(
+        self,
+        *,
+        goal: Literal["engagement", "followers", "authority", "conversation"],
+        step: Literal["refine"],
+        tone: str,
+        topic: str,
+        additional_context: str | Omit = omit,
+        call_to_action: str | Omit = omit,
+        media_type: Literal["photo", "video", "none"] | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ComposeCreateResponse:
+        """Run one step of Xquik's three-step writing workflow.
+
+        Compose returns questions
+        and editorial rules. Refine returns goal-specific guidance. Score applies
+        deterministic text checks. It does not predict reach or expose X ranking
+        weights.
+
+        Args:
+          goal: Editorial goal for the guidance.
+
+          tone: Requested writing tone.
+
+          topic: Subject for the post.
+
+          additional_context: Audience, constraints, sources, or other writing context.
+
+          call_to_action: Specific action the draft should request.
+
+          media_type: Planned media type.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        ...
+
+    @overload
+    async def create(
+        self,
+        *,
+        draft: str,
+        step: Literal["score"],
+        has_link: bool | Omit = omit,
+        has_media: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ComposeCreateResponse:
+        """Run one step of Xquik's three-step writing workflow.
+
+        Compose returns questions
+        and editorial rules. Refine returns goal-specific guidance. Score applies
+        deterministic text checks. It does not predict reach or expose X ranking
+        weights.
+
+        Args:
+          draft: Full post text for deterministic editorial checks.
+
+          has_link: True when a separate link card is attached.
+
+          has_media: Accepted for backward compatibility. Text checks ignore this field.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        ...
+
+    @required_args(["step", "topic"], ["goal", "step", "tone", "topic"], ["draft", "step"])
+    async def create(
+        self,
+        *,
+        step: Literal["compose"] | Literal["refine"] | Literal["score"],
+        topic: str | Omit = omit,
+        goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
+        style_username: str | Omit = omit,
+        tone: str | Omit = omit,
+        additional_context: str | Omit = omit,
+        call_to_action: str | Omit = omit,
+        media_type: Literal["photo", "video", "none"] | Omit = omit,
+        draft: str | Omit = omit,
+        has_link: bool | Omit = omit,
+        has_media: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ComposeCreateResponse:
+        return cast(
+            ComposeCreateResponse,
+            await self._post(
+                "/compose",
+                body=await async_maybe_transform(
+                    {
+                        "step": step,
+                        "topic": topic,
+                        "goal": goal,
+                        "style_username": style_username,
+                        "tone": tone,
+                        "additional_context": additional_context,
+                        "call_to_action": call_to_action,
+                        "media_type": media_type,
+                        "draft": draft,
+                        "has_link": has_link,
+                        "has_media": has_media,
+                    },
+                    compose_create_params.ComposeCreateParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(
+                    Any, ComposeCreateResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=ComposeCreateResponse,
         )
 
 
