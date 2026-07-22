@@ -19,35 +19,30 @@ class TestCompose:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_method_create(self, client: XTwitterScraper) -> None:
+    def test_method_create_overload_1(self, client: XTwitterScraper) -> None:
         compose = client.compose.create(
             step="compose",
+            topic="PostgreSQL query planning",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
+    def test_method_create_with_all_params_overload_1(self, client: XTwitterScraper) -> None:
         compose = client.compose.create(
             step="compose",
-            additional_context="https://x.com/elonmusk/status/1234567890",
-            call_to_action="Follow for more",
-            draft="AI is changing everything. Here's why.",
+            topic="PostgreSQL query planning",
             goal="engagement",
-            has_link=False,
-            has_media=False,
-            media_type="none",
-            style_username="elonmusk",
-            tone="professional",
-            topic="AI trends in 2025",
+            style_username="x",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_raw_response_create(self, client: XTwitterScraper) -> None:
+    def test_raw_response_create_overload_1(self, client: XTwitterScraper) -> None:
         response = client.compose.with_raw_response.create(
             step="compose",
+            topic="PostgreSQL query planning",
         )
 
         assert response.is_closed is True
@@ -57,9 +52,115 @@ class TestCompose:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_streaming_response_create(self, client: XTwitterScraper) -> None:
+    def test_streaming_response_create_overload_1(self, client: XTwitterScraper) -> None:
         with client.compose.with_streaming_response.create(
             step="compose",
+            topic="PostgreSQL query planning",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            compose = response.parse()
+            assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_create_overload_2(self, client: XTwitterScraper) -> None:
+        compose = client.compose.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_create_with_all_params_overload_2(self, client: XTwitterScraper) -> None:
+        compose = client.compose.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+            additional_context="x",
+            call_to_action="x",
+            media_type="photo",
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_create_overload_2(self, client: XTwitterScraper) -> None:
+        response = client.compose.with_raw_response.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        compose = response.parse()
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_create_overload_2(self, client: XTwitterScraper) -> None:
+        with client.compose.with_streaming_response.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            compose = response.parse()
+            assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_create_overload_3(self, client: XTwitterScraper) -> None:
+        compose = client.compose.create(
+            draft="x",
+            step="score",
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_create_with_all_params_overload_3(self, client: XTwitterScraper) -> None:
+        compose = client.compose.create(
+            draft="x",
+            step="score",
+            has_link=True,
+            has_media=True,
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_create_overload_3(self, client: XTwitterScraper) -> None:
+        response = client.compose.with_raw_response.create(
+            draft="x",
+            step="score",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        compose = response.parse()
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_create_overload_3(self, client: XTwitterScraper) -> None:
+        with client.compose.with_streaming_response.create(
+            draft="x",
+            step="score",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -77,35 +178,30 @@ class TestAsyncCompose:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
+    async def test_method_create_overload_1(self, async_client: AsyncXTwitterScraper) -> None:
         compose = await async_client.compose.create(
             step="compose",
+            topic="PostgreSQL query planning",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+    async def test_method_create_with_all_params_overload_1(self, async_client: AsyncXTwitterScraper) -> None:
         compose = await async_client.compose.create(
             step="compose",
-            additional_context="https://x.com/elonmusk/status/1234567890",
-            call_to_action="Follow for more",
-            draft="AI is changing everything. Here's why.",
+            topic="PostgreSQL query planning",
             goal="engagement",
-            has_link=False,
-            has_media=False,
-            media_type="none",
-            style_username="elonmusk",
-            tone="professional",
-            topic="AI trends in 2025",
+            style_username="x",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
+    async def test_raw_response_create_overload_1(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.compose.with_raw_response.create(
             step="compose",
+            topic="PostgreSQL query planning",
         )
 
         assert response.is_closed is True
@@ -115,9 +211,115 @@ class TestAsyncCompose:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
+    async def test_streaming_response_create_overload_1(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.compose.with_streaming_response.create(
             step="compose",
+            topic="PostgreSQL query planning",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            compose = await response.parse()
+            assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_overload_2(self, async_client: AsyncXTwitterScraper) -> None:
+        compose = await async_client.compose.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_with_all_params_overload_2(self, async_client: AsyncXTwitterScraper) -> None:
+        compose = await async_client.compose.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+            additional_context="x",
+            call_to_action="x",
+            media_type="photo",
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_create_overload_2(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.compose.with_raw_response.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        compose = await response.parse()
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_create_overload_2(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.compose.with_streaming_response.create(
+            goal="engagement",
+            step="refine",
+            tone="professional",
+            topic="x",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            compose = await response.parse()
+            assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_overload_3(self, async_client: AsyncXTwitterScraper) -> None:
+        compose = await async_client.compose.create(
+            draft="x",
+            step="score",
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_with_all_params_overload_3(self, async_client: AsyncXTwitterScraper) -> None:
+        compose = await async_client.compose.create(
+            draft="x",
+            step="score",
+            has_link=True,
+            has_media=True,
+        )
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_create_overload_3(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.compose.with_raw_response.create(
+            draft="x",
+            step="score",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        compose = await response.parse()
+        assert_matches_type(ComposeCreateResponse, compose, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_create_overload_3(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.compose.with_streaming_response.create(
+            draft="x",
+            step="score",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
