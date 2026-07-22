@@ -12,19 +12,24 @@ __all__ = ["TicketRetrieveResponse", "Message", "MessageAttachment"]
 
 
 class MessageAttachment(BaseModel):
+    """Downloadable image or video attached to a support message."""
+
     content_type: Literal[
         "image/jpeg", "image/png", "image/gif", "image/webp", "video/mp4", "video/quicktime", "video/webm"
     ] = FieldInfo(alias="contentType")
+    """Validated media type."""
 
     filename: str
 
     kind: Literal["image", "video"]
+    """Attachment media class."""
 
     public_id: str = FieldInfo(alias="publicId")
 
     size_bytes: int = FieldInfo(alias="sizeBytes")
 
     status: Literal["pending", "ready", "failed"]
+    """Storage processing state."""
 
     url: str
 

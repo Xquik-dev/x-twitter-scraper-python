@@ -333,16 +333,16 @@ class ExtractionsResource(SyncAPIResource):
 
           retweets_of_tweet_id: Estimate only retweets of this tweet ID (tweet_search_extractor)
 
-          search_query: Required for tweet_search_extractor & community_search.
+          search_query: Query used to price tweet_search_extractor or community_search.
 
           since_date: Estimate start date in YYYY-MM-DD format (tweet_search_extractor)
 
-          target_community_id: Required for community_post_extractor & community_search.
+          target_community_id: Community ID used to price community_post_extractor or community_search.
 
-          target_list_id: Required for list_follower_explorer, list_member_extractor &
+          target_list_id: List ID used to price list_follower_explorer, list_member_extractor, or
               list_post_extractor.
 
-          target_space_id: Required for space_explorer.
+          target_space_id: Space ID used to price space_explorer.
 
           to_user: Estimate replies sent to this username (tweet_search_extractor)
 
@@ -962,16 +962,16 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           retweets_of_tweet_id: Estimate only retweets of this tweet ID (tweet_search_extractor)
 
-          search_query: Required for tweet_search_extractor & community_search.
+          search_query: Query used to price tweet_search_extractor or community_search.
 
           since_date: Estimate start date in YYYY-MM-DD format (tweet_search_extractor)
 
-          target_community_id: Required for community_post_extractor & community_search.
+          target_community_id: Community ID used to price community_post_extractor or community_search.
 
-          target_list_id: Required for list_follower_explorer, list_member_extractor &
+          target_list_id: List ID used to price list_follower_explorer, list_member_extractor, or
               list_post_extractor.
 
-          target_space_id: Required for space_explorer.
+          target_space_id: Space ID used to price space_explorer.
 
           to_user: Estimate replies sent to this username (tweet_search_extractor)
 

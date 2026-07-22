@@ -11,7 +11,7 @@ __all__ = ["UserRetrieveFollowingParams"]
 
 class UserRetrieveFollowingParams(TypedDict, total=False):
     after: str
-    """Legacy cursor alias. Prefer cursor."""
+    """Deprecated following cursor alias. Prefer cursor."""
 
     cursor: str
     """Pagination cursor for following list"""

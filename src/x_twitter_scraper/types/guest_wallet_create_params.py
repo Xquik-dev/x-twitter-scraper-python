@@ -11,7 +11,7 @@ __all__ = ["GuestWalletCreateParams"]
 
 class GuestWalletCreateParams(TypedDict, total=False):
     amount_minor: Required[int]
-    """Confirmed USD amount in cents."""
+    """USD cents accepted for this checkout."""
 
     currency: Required[Literal["usd"]]
 

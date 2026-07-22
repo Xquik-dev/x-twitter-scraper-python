@@ -9,4 +9,4 @@ __all__ = ["CreditRetrieveTopupStatusParams"]
 
 class CreditRetrieveTopupStatusParams(TypedDict, total=False):
     session_id: Required[str]
-    """Billing session ID returned by the top-up billing flow."""
+    """Top-up session ID to inspect."""
