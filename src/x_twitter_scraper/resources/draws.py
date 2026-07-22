@@ -91,7 +91,7 @@ class DrawsResource(SyncAPIResource):
     def list(
         self,
         *,
-        after: str | Omit = omit,
+        cursor: str | Omit = omit,
         limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -104,9 +104,12 @@ class DrawsResource(SyncAPIResource):
         List draws
 
         Args:
-          after: Cursor for keyset pagination
+          cursor: Cursor for keyset pagination from prior response next_cursor
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -125,7 +128,7 @@ class DrawsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
-                        "after": after,
+                        "cursor": cursor,
                         "limit": limit,
                     },
                     draw_list_params.DrawListParams,
@@ -138,7 +141,7 @@ class DrawsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"] | Omit = omit,
+        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
         type: Literal["winners", "entries"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -206,8 +209,12 @@ class DrawsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRunResponse:
-        """
-        Run giveaway draw
+        """Runs a giveaway draw from a source tweet.
+
+        The draw first checks the minimum
+        credits needed to inspect the source tweet and at least one candidate. Remaining
+        credits cap how many replies and retweeters can be inspected before filters and
+        winner selection run.
 
         Args:
           extra_headers: Send extra headers
@@ -302,7 +309,7 @@ class AsyncDrawsResource(AsyncAPIResource):
     async def list(
         self,
         *,
-        after: str | Omit = omit,
+        cursor: str | Omit = omit,
         limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -315,9 +322,12 @@ class AsyncDrawsResource(AsyncAPIResource):
         List draws
 
         Args:
-          after: Cursor for keyset pagination
+          cursor: Cursor for keyset pagination from prior response next_cursor
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -336,7 +346,7 @@ class AsyncDrawsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
-                        "after": after,
+                        "cursor": cursor,
                         "limit": limit,
                     },
                     draw_list_params.DrawListParams,
@@ -349,7 +359,7 @@ class AsyncDrawsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"] | Omit = omit,
+        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
         type: Literal["winners", "entries"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -417,8 +427,12 @@ class AsyncDrawsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRunResponse:
-        """
-        Run giveaway draw
+        """Runs a giveaway draw from a source tweet.
+
+        The draw first checks the minimum
+        credits needed to inspect the source tweet and at least one candidate. Remaining
+        credits cap how many replies and retweeters can be inspected before filters and
+        winner selection run.
 
         Args:
           extra_headers: Send extra headers

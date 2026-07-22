@@ -9,7 +9,10 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper.types.x import CommunityActionResult
+from x_twitter_scraper.types.x.communities import (
+    JoinCreateResponse,
+    JoinDeleteAllResponse,
+)
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -23,8 +26,9 @@ class TestJoin:
         join = client.x.communities.join.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinCreateResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -32,12 +36,13 @@ class TestJoin:
         response = client.x.communities.join.with_raw_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         join = response.parse()
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinCreateResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -45,12 +50,13 @@ class TestJoin:
         with client.x.communities.join.with_streaming_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             join = response.parse()
-            assert_matches_type(CommunityActionResult, join, path=["response"])
+            assert_matches_type(JoinCreateResponse, join, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -61,6 +67,7 @@ class TestJoin:
             client.x.communities.join.with_raw_response.create(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -69,8 +76,9 @@ class TestJoin:
         join = client.x.communities.join.delete_all(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -78,12 +86,13 @@ class TestJoin:
         response = client.x.communities.join.with_raw_response.delete_all(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         join = response.parse()
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -91,12 +100,13 @@ class TestJoin:
         with client.x.communities.join.with_streaming_response.delete_all(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             join = response.parse()
-            assert_matches_type(CommunityActionResult, join, path=["response"])
+            assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -107,6 +117,7 @@ class TestJoin:
             client.x.communities.join.with_raw_response.delete_all(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
 
@@ -121,8 +132,9 @@ class TestAsyncJoin:
         join = await async_client.x.communities.join.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinCreateResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -130,12 +142,13 @@ class TestAsyncJoin:
         response = await async_client.x.communities.join.with_raw_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         join = await response.parse()
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinCreateResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -143,12 +156,13 @@ class TestAsyncJoin:
         async with async_client.x.communities.join.with_streaming_response.create(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             join = await response.parse()
-            assert_matches_type(CommunityActionResult, join, path=["response"])
+            assert_matches_type(JoinCreateResponse, join, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -159,6 +173,7 @@ class TestAsyncJoin:
             await async_client.x.communities.join.with_raw_response.create(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -167,8 +182,9 @@ class TestAsyncJoin:
         join = await async_client.x.communities.join.delete_all(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -176,12 +192,13 @@ class TestAsyncJoin:
         response = await async_client.x.communities.join.with_raw_response.delete_all(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         join = await response.parse()
-        assert_matches_type(CommunityActionResult, join, path=["response"])
+        assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -189,12 +206,13 @@ class TestAsyncJoin:
         async with async_client.x.communities.join.with_streaming_response.delete_all(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             join = await response.parse()
-            assert_matches_type(CommunityActionResult, join, path=["response"])
+            assert_matches_type(JoinDeleteAllResponse, join, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -205,4 +223,5 @@ class TestAsyncJoin:
             await async_client.x.communities.join.with_raw_response.delete_all(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )

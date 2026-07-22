@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing_extensions import Literal
+
 import httpx
 
 from .join import (
@@ -82,6 +84,7 @@ class CommunitiesResource(SyncAPIResource):
         *,
         account: str,
         name: str,
+        idempotency_key: str,
         description: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -108,6 +111,7 @@ class CommunitiesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             "/x/communities",
             body=maybe_transform(
@@ -130,6 +134,7 @@ class CommunitiesResource(SyncAPIResource):
         *,
         account: str,
         community_name: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -155,6 +160,7 @@ class CommunitiesResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._delete(
             path_template("/x/communities/{id}", id=id),
             body=maybe_transform(
@@ -208,6 +214,7 @@ class CommunitiesResource(SyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -220,6 +227,10 @@ class CommunitiesResource(SyncAPIResource):
 
         Args:
           cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 20). This is an upper bound for paid
+              authenticated calls: remaining credits can reduce the returned page size, and
+              zero affordable results returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -239,7 +250,11 @@ class CommunitiesResource(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform(
-                    {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -290,9 +305,11 @@ class CommunitiesResource(SyncAPIResource):
     def retrieve_search(
         self,
         *,
+        community_id: str,
         q: str,
         cursor: str | Omit = omit,
-        query_type: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -300,13 +317,22 @@ class CommunitiesResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Search for communities by keyword
+        """Returns tweets, not community records.
+
+        Requires a Community ID.
 
         Args:
+          community_id: Numeric ID of the community whose posts to search
+
           q: Search query
 
           cursor: Pagination cursor for community search
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           query_type: Sort order (Latest or Top)
 
@@ -327,8 +353,10 @@ class CommunitiesResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "page_size": page_size,
                         "query_type": query_type,
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
@@ -373,6 +401,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         *,
         account: str,
         name: str,
+        idempotency_key: str,
         description: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -399,6 +428,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             "/x/communities",
             body=await async_maybe_transform(
@@ -421,6 +451,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         *,
         account: str,
         community_name: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -446,6 +477,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._delete(
             path_template("/x/communities/{id}", id=id),
             body=await async_maybe_transform(
@@ -499,6 +531,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -511,6 +544,10 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
         Args:
           cursor: Pagination cursor
+
+          page_size: Items per page (20-200, default 20). This is an upper bound for paid
+              authenticated calls: remaining credits can reduce the returned page size, and
+              zero affordable results returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -530,7 +567,11 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, community_retrieve_members_params.CommunityRetrieveMembersParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -581,9 +622,11 @@ class AsyncCommunitiesResource(AsyncAPIResource):
     async def retrieve_search(
         self,
         *,
+        community_id: str,
         q: str,
         cursor: str | Omit = omit,
-        query_type: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -591,13 +634,22 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Search for communities by keyword
+        """Returns tweets, not community records.
+
+        Requires a Community ID.
 
         Args:
+          community_id: Numeric ID of the community whose posts to search
+
           q: Search query
 
           cursor: Pagination cursor for community search
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
 
           query_type: Sort order (Latest or Top)
 
@@ -618,8 +670,10 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "page_size": page_size,
                         "query_type": query_type,
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,

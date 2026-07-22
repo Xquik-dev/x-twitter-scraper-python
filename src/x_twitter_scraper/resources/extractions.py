@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Union
+from datetime import date
 from typing_extensions import Literal
 
 import httpx
@@ -41,7 +43,7 @@ __all__ = ["ExtractionsResource", "AsyncExtractionsResource"]
 
 
 class ExtractionsResource(SyncAPIResource):
-    """Bulk data extraction (20 tool types)"""
+    """Bulk data extraction (23 tool types)"""
 
     @cached_property
     def with_raw_response(self) -> ExtractionsResourceWithRawResponse:
@@ -66,7 +68,7 @@ class ExtractionsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        after: str | Omit = omit,
+        cursor: str | Omit = omit,
         limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -79,7 +81,7 @@ class ExtractionsResource(SyncAPIResource):
         Get extraction results
 
         Args:
-          after: Cursor for keyset pagination
+          cursor: Cursor for keyset pagination from prior response next_cursor
 
           limit: Maximum number of results to return (1-1000, default 100)
 
@@ -102,7 +104,7 @@ class ExtractionsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
-                        "after": after,
+                        "cursor": cursor,
                         "limit": limit,
                     },
                     extraction_retrieve_params.ExtractionRetrieveParams,
@@ -114,7 +116,7 @@ class ExtractionsResource(SyncAPIResource):
     def list(
         self,
         *,
-        after: str | Omit = omit,
+        cursor: str | Omit = omit,
         limit: int | Omit = omit,
         status: Literal["running", "completed", "failed"] | Omit = omit,
         tool_type: Literal[
@@ -123,6 +125,7 @@ class ExtractionsResource(SyncAPIResource):
             "community_moderator_explorer",
             "community_post_extractor",
             "community_search",
+            "favoriters",
             "follower_explorer",
             "following_explorer",
             "list_follower_explorer",
@@ -137,6 +140,8 @@ class ExtractionsResource(SyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_likes",
+            "user_media",
             "verified_follower_explorer",
         ]
         | Omit = omit,
@@ -151,9 +156,12 @@ class ExtractionsResource(SyncAPIResource):
         List extraction jobs
 
         Args:
-          after: Cursor for keyset pagination
+          cursor: Cursor for keyset pagination from prior response next_cursor
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           status: Filter by job status
 
@@ -176,7 +184,7 @@ class ExtractionsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
-                        "after": after,
+                        "cursor": cursor,
                         "limit": limit,
                         "status": status,
                         "tool_type": tool_type,
@@ -196,6 +204,7 @@ class ExtractionsResource(SyncAPIResource):
             "community_moderator_explorer",
             "community_post_extractor",
             "community_search",
+            "favoriters",
             "follower_explorer",
             "following_explorer",
             "list_follower_explorer",
@@ -210,17 +219,48 @@ class ExtractionsResource(SyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_likes",
+            "user_media",
             "verified_follower_explorer",
         ],
         advanced_query: str | Omit = omit,
+        any_words: str | Omit = omit,
+        bounding_box: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        list_id: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        place: str | Omit = omit,
+        place_country: str | Omit = omit,
+        point_radius: str | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        results_limit: int | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         search_query: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
         target_community_id: str | Omit = omit,
         target_list_id: str | Omit = omit,
         target_space_id: str | Omit = omit,
         target_tweet_id: str | Omit = omit,
         target_username: str | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -236,9 +276,81 @@ class ExtractionsResource(SyncAPIResource):
 
           advanced_query: Raw advanced query string appended to the estimate (tweet_search_extractor)
 
+          any_words: Alternative words or quoted phrases for estimated results. Separate with spaces,
+              commas, or lines.
+
+          bounding_box: Geo bounding box used for estimation, e.g. -74.1 40.6 -73.9 40.8
+              (tweet_search_extractor)
+
+          cashtags: Cashtags applied to the estimate, separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter used for estimation (tweet_search_extractor)
+
           exact_phrase: Exact phrase filter for search estimation
 
-          exclude_words: Words excluded from estimated search results
+          exclude_words: Words or quoted phrases excluded from estimated results. Separate with spaces,
+              commas, or lines.
+
+          from_user: Estimate only tweets from this author username (tweet_search_extractor)
+
+          hashtags: Hashtags applied to the estimate, separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Estimate only replies to this tweet ID (tweet_search_extractor)
+
+          language: Language code used for estimate filtering (tweet_search_extractor)
+
+          list_id: Estimate search results within this list ID (tweet_search_extractor)
+
+          media_type: Media type used for estimate filtering (tweet_search_extractor)
+
+          mentioning: Estimate tweets mentioning this username (tweet_search_extractor)
+
+          min_faves: Minimum likes threshold for estimated results (tweet_search_extractor)
+
+          min_quotes: Minimum quote count threshold for estimated results (tweet_search_extractor)
+
+          min_replies: Minimum replies threshold for estimated results (tweet_search_extractor)
+
+          min_retweets: Minimum retweets threshold for estimated results (tweet_search_extractor)
+
+          place: Estimate search results within this place ID (tweet_search_extractor)
+
+          place_country: Estimate search results within this country code (tweet_search_extractor)
+
+          point_radius: Geo point radius used for estimation, e.g. -73.99 40.73 25mi
+              (tweet_search_extractor)
+
+          quotes: Quote mode used for estimation (tweet_search_extractor)
+
+          quotes_of_tweet_id: Estimate only quotes of this tweet ID (tweet_search_extractor)
+
+          replies: Reply mode used for estimation (tweet_search_extractor)
+
+          results_limit: Maximum number of results to estimate. When set, the estimate caps projected
+              results to this value.
+
+          retweets: Retweet mode used for estimation (tweet_search_extractor)
+
+          retweets_of_tweet_id: Estimate only retweets of this tweet ID (tweet_search_extractor)
+
+          search_query: Query used to price tweet_search_extractor or community_search.
+
+          since_date: Estimate start date in YYYY-MM-DD format (tweet_search_extractor)
+
+          target_community_id: Community ID used to price community_post_extractor or community_search.
+
+          target_list_id: List ID used to price list_follower_explorer, list_member_extractor, or
+              list_post_extractor.
+
+          target_space_id: Space ID used to price space_explorer.
+
+          to_user: Estimate replies sent to this username (tweet_search_extractor)
+
+          until_date: Estimate end date in YYYY-MM-DD format (tweet_search_extractor)
+
+          url: URL substring or domain filter used for estimation (tweet_search_extractor)
+
+          verified_only: Estimate only verified authors (tweet_search_extractor)
 
           extra_headers: Send extra headers
 
@@ -254,14 +366,43 @@ class ExtractionsResource(SyncAPIResource):
                 {
                     "tool_type": tool_type,
                     "advanced_query": advanced_query,
+                    "any_words": any_words,
+                    "bounding_box": bounding_box,
+                    "cashtags": cashtags,
+                    "conversation_id": conversation_id,
                     "exact_phrase": exact_phrase,
                     "exclude_words": exclude_words,
+                    "from_user": from_user,
+                    "hashtags": hashtags,
+                    "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                    "language": language,
+                    "list_id": list_id,
+                    "media_type": media_type,
+                    "mentioning": mentioning,
+                    "min_faves": min_faves,
+                    "min_quotes": min_quotes,
+                    "min_replies": min_replies,
+                    "min_retweets": min_retweets,
+                    "place": place,
+                    "place_country": place_country,
+                    "point_radius": point_radius,
+                    "quotes": quotes,
+                    "quotes_of_tweet_id": quotes_of_tweet_id,
+                    "replies": replies,
+                    "results_limit": results_limit,
+                    "retweets": retweets,
+                    "retweets_of_tweet_id": retweets_of_tweet_id,
                     "search_query": search_query,
+                    "since_date": since_date,
                     "target_community_id": target_community_id,
                     "target_list_id": target_list_id,
                     "target_space_id": target_space_id,
                     "target_tweet_id": target_tweet_id,
                     "target_username": target_username,
+                    "to_user": to_user,
+                    "until_date": until_date,
+                    "url": url,
+                    "verified_only": verified_only,
                 },
                 extraction_estimate_cost_params.ExtractionEstimateCostParams,
             ),
@@ -275,7 +416,7 @@ class ExtractionsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"] | Omit = omit,
+        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -323,6 +464,7 @@ class ExtractionsResource(SyncAPIResource):
             "community_moderator_explorer",
             "community_post_extractor",
             "community_search",
+            "favoriters",
             "follower_explorer",
             "following_explorer",
             "list_follower_explorer",
@@ -337,17 +479,48 @@ class ExtractionsResource(SyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_likes",
+            "user_media",
             "verified_follower_explorer",
         ],
         advanced_query: str | Omit = omit,
+        any_words: str | Omit = omit,
+        bounding_box: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        list_id: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        place: str | Omit = omit,
+        place_country: str | Omit = omit,
+        point_radius: str | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        results_limit: int | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         search_query: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
         target_community_id: str | Omit = omit,
         target_list_id: str | Omit = omit,
         target_space_id: str | Omit = omit,
         target_tweet_id: str | Omit = omit,
         target_username: str | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -363,9 +536,79 @@ class ExtractionsResource(SyncAPIResource):
 
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines. (tweet_search_extractor)
+
+          bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
+
+          cashtags: Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+
+          conversation_id: Conversation ID filter (tweet_search_extractor)
+
           exact_phrase: Exact phrase to match (tweet_search_extractor)
 
-          exclude_words: Words to exclude from results (tweet_search_extractor)
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+              (tweet_search_extractor)
+
+          from_user: Filter by author username (tweet_search_extractor)
+
+          hashtags: Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+
+          in_reply_to_tweet_id: Only replies to this tweet ID (tweet_search_extractor)
+
+          language: Language code filter (tweet_search_extractor)
+
+          list_id: Search within a list ID (tweet_search_extractor)
+
+          media_type: Media type filter (tweet_search_extractor)
+
+          mentioning: Filter tweets mentioning a username (tweet_search_extractor)
+
+          min_faves: Minimum likes threshold (tweet_search_extractor)
+
+          min_quotes: Minimum quote count threshold (tweet_search_extractor)
+
+          min_replies: Minimum replies threshold (tweet_search_extractor)
+
+          min_retweets: Minimum retweets threshold (tweet_search_extractor)
+
+          place: Search within a place ID (tweet_search_extractor)
+
+          place_country: Search within a country code (tweet_search_extractor)
+
+          point_radius: Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
+
+          quotes: Quote mode (tweet_search_extractor)
+
+          quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
+
+          replies: Reply mode (tweet_search_extractor)
+
+          results_limit: Maximum number of results to extract. When set, the extraction stops after
+              reaching this limit.
+
+          retweets: Retweet mode (tweet_search_extractor)
+
+          retweets_of_tweet_id: Only retweets of this tweet ID (tweet_search_extractor)
+
+          search_query: Required for tweet_search_extractor & community_search.
+
+          since_date: Start date YYYY-MM-DD (tweet_search_extractor)
+
+          target_community_id: Required for community_post_extractor & community_search.
+
+          target_list_id: Required for list_follower_explorer, list_member_extractor &
+              list_post_extractor.
+
+          target_space_id: Required for space_explorer.
+
+          to_user: Filter replies sent to a username (tweet_search_extractor)
+
+          until_date: End date YYYY-MM-DD (tweet_search_extractor)
+
+          url: URL substring or domain filter (tweet_search_extractor)
+
+          verified_only: Only verified authors (tweet_search_extractor)
 
           extra_headers: Send extra headers
 
@@ -381,14 +624,43 @@ class ExtractionsResource(SyncAPIResource):
                 {
                     "tool_type": tool_type,
                     "advanced_query": advanced_query,
+                    "any_words": any_words,
+                    "bounding_box": bounding_box,
+                    "cashtags": cashtags,
+                    "conversation_id": conversation_id,
                     "exact_phrase": exact_phrase,
                     "exclude_words": exclude_words,
+                    "from_user": from_user,
+                    "hashtags": hashtags,
+                    "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                    "language": language,
+                    "list_id": list_id,
+                    "media_type": media_type,
+                    "mentioning": mentioning,
+                    "min_faves": min_faves,
+                    "min_quotes": min_quotes,
+                    "min_replies": min_replies,
+                    "min_retweets": min_retweets,
+                    "place": place,
+                    "place_country": place_country,
+                    "point_radius": point_radius,
+                    "quotes": quotes,
+                    "quotes_of_tweet_id": quotes_of_tweet_id,
+                    "replies": replies,
+                    "results_limit": results_limit,
+                    "retweets": retweets,
+                    "retweets_of_tweet_id": retweets_of_tweet_id,
                     "search_query": search_query,
+                    "since_date": since_date,
                     "target_community_id": target_community_id,
                     "target_list_id": target_list_id,
                     "target_space_id": target_space_id,
                     "target_tweet_id": target_tweet_id,
                     "target_username": target_username,
+                    "to_user": to_user,
+                    "until_date": until_date,
+                    "url": url,
+                    "verified_only": verified_only,
                 },
                 extraction_run_params.ExtractionRunParams,
             ),
@@ -400,7 +672,7 @@ class ExtractionsResource(SyncAPIResource):
 
 
 class AsyncExtractionsResource(AsyncAPIResource):
-    """Bulk data extraction (20 tool types)"""
+    """Bulk data extraction (23 tool types)"""
 
     @cached_property
     def with_raw_response(self) -> AsyncExtractionsResourceWithRawResponse:
@@ -425,7 +697,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        after: str | Omit = omit,
+        cursor: str | Omit = omit,
         limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -438,7 +710,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         Get extraction results
 
         Args:
-          after: Cursor for keyset pagination
+          cursor: Cursor for keyset pagination from prior response next_cursor
 
           limit: Maximum number of results to return (1-1000, default 100)
 
@@ -461,7 +733,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
-                        "after": after,
+                        "cursor": cursor,
                         "limit": limit,
                     },
                     extraction_retrieve_params.ExtractionRetrieveParams,
@@ -473,7 +745,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
     async def list(
         self,
         *,
-        after: str | Omit = omit,
+        cursor: str | Omit = omit,
         limit: int | Omit = omit,
         status: Literal["running", "completed", "failed"] | Omit = omit,
         tool_type: Literal[
@@ -482,6 +754,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "community_moderator_explorer",
             "community_post_extractor",
             "community_search",
+            "favoriters",
             "follower_explorer",
             "following_explorer",
             "list_follower_explorer",
@@ -496,6 +769,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_likes",
+            "user_media",
             "verified_follower_explorer",
         ]
         | Omit = omit,
@@ -510,9 +785,12 @@ class AsyncExtractionsResource(AsyncAPIResource):
         List extraction jobs
 
         Args:
-          after: Cursor for keyset pagination
+          cursor: Cursor for keyset pagination from prior response next_cursor
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           status: Filter by job status
 
@@ -535,7 +813,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
-                        "after": after,
+                        "cursor": cursor,
                         "limit": limit,
                         "status": status,
                         "tool_type": tool_type,
@@ -555,6 +833,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "community_moderator_explorer",
             "community_post_extractor",
             "community_search",
+            "favoriters",
             "follower_explorer",
             "following_explorer",
             "list_follower_explorer",
@@ -569,17 +848,48 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_likes",
+            "user_media",
             "verified_follower_explorer",
         ],
         advanced_query: str | Omit = omit,
+        any_words: str | Omit = omit,
+        bounding_box: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        list_id: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        place: str | Omit = omit,
+        place_country: str | Omit = omit,
+        point_radius: str | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        results_limit: int | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         search_query: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
         target_community_id: str | Omit = omit,
         target_list_id: str | Omit = omit,
         target_space_id: str | Omit = omit,
         target_tweet_id: str | Omit = omit,
         target_username: str | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -595,9 +905,81 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           advanced_query: Raw advanced query string appended to the estimate (tweet_search_extractor)
 
+          any_words: Alternative words or quoted phrases for estimated results. Separate with spaces,
+              commas, or lines.
+
+          bounding_box: Geo bounding box used for estimation, e.g. -74.1 40.6 -73.9 40.8
+              (tweet_search_extractor)
+
+          cashtags: Cashtags applied to the estimate, separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter used for estimation (tweet_search_extractor)
+
           exact_phrase: Exact phrase filter for search estimation
 
-          exclude_words: Words excluded from estimated search results
+          exclude_words: Words or quoted phrases excluded from estimated results. Separate with spaces,
+              commas, or lines.
+
+          from_user: Estimate only tweets from this author username (tweet_search_extractor)
+
+          hashtags: Hashtags applied to the estimate, separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Estimate only replies to this tweet ID (tweet_search_extractor)
+
+          language: Language code used for estimate filtering (tweet_search_extractor)
+
+          list_id: Estimate search results within this list ID (tweet_search_extractor)
+
+          media_type: Media type used for estimate filtering (tweet_search_extractor)
+
+          mentioning: Estimate tweets mentioning this username (tweet_search_extractor)
+
+          min_faves: Minimum likes threshold for estimated results (tweet_search_extractor)
+
+          min_quotes: Minimum quote count threshold for estimated results (tweet_search_extractor)
+
+          min_replies: Minimum replies threshold for estimated results (tweet_search_extractor)
+
+          min_retweets: Minimum retweets threshold for estimated results (tweet_search_extractor)
+
+          place: Estimate search results within this place ID (tweet_search_extractor)
+
+          place_country: Estimate search results within this country code (tweet_search_extractor)
+
+          point_radius: Geo point radius used for estimation, e.g. -73.99 40.73 25mi
+              (tweet_search_extractor)
+
+          quotes: Quote mode used for estimation (tweet_search_extractor)
+
+          quotes_of_tweet_id: Estimate only quotes of this tweet ID (tweet_search_extractor)
+
+          replies: Reply mode used for estimation (tweet_search_extractor)
+
+          results_limit: Maximum number of results to estimate. When set, the estimate caps projected
+              results to this value.
+
+          retweets: Retweet mode used for estimation (tweet_search_extractor)
+
+          retweets_of_tweet_id: Estimate only retweets of this tweet ID (tweet_search_extractor)
+
+          search_query: Query used to price tweet_search_extractor or community_search.
+
+          since_date: Estimate start date in YYYY-MM-DD format (tweet_search_extractor)
+
+          target_community_id: Community ID used to price community_post_extractor or community_search.
+
+          target_list_id: List ID used to price list_follower_explorer, list_member_extractor, or
+              list_post_extractor.
+
+          target_space_id: Space ID used to price space_explorer.
+
+          to_user: Estimate replies sent to this username (tweet_search_extractor)
+
+          until_date: Estimate end date in YYYY-MM-DD format (tweet_search_extractor)
+
+          url: URL substring or domain filter used for estimation (tweet_search_extractor)
+
+          verified_only: Estimate only verified authors (tweet_search_extractor)
 
           extra_headers: Send extra headers
 
@@ -613,14 +995,43 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 {
                     "tool_type": tool_type,
                     "advanced_query": advanced_query,
+                    "any_words": any_words,
+                    "bounding_box": bounding_box,
+                    "cashtags": cashtags,
+                    "conversation_id": conversation_id,
                     "exact_phrase": exact_phrase,
                     "exclude_words": exclude_words,
+                    "from_user": from_user,
+                    "hashtags": hashtags,
+                    "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                    "language": language,
+                    "list_id": list_id,
+                    "media_type": media_type,
+                    "mentioning": mentioning,
+                    "min_faves": min_faves,
+                    "min_quotes": min_quotes,
+                    "min_replies": min_replies,
+                    "min_retweets": min_retweets,
+                    "place": place,
+                    "place_country": place_country,
+                    "point_radius": point_radius,
+                    "quotes": quotes,
+                    "quotes_of_tweet_id": quotes_of_tweet_id,
+                    "replies": replies,
+                    "results_limit": results_limit,
+                    "retweets": retweets,
+                    "retweets_of_tweet_id": retweets_of_tweet_id,
                     "search_query": search_query,
+                    "since_date": since_date,
                     "target_community_id": target_community_id,
                     "target_list_id": target_list_id,
                     "target_space_id": target_space_id,
                     "target_tweet_id": target_tweet_id,
                     "target_username": target_username,
+                    "to_user": to_user,
+                    "until_date": until_date,
+                    "url": url,
+                    "verified_only": verified_only,
                 },
                 extraction_estimate_cost_params.ExtractionEstimateCostParams,
             ),
@@ -634,7 +1045,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"] | Omit = omit,
+        format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -682,6 +1093,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "community_moderator_explorer",
             "community_post_extractor",
             "community_search",
+            "favoriters",
             "follower_explorer",
             "following_explorer",
             "list_follower_explorer",
@@ -696,17 +1108,48 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_likes",
+            "user_media",
             "verified_follower_explorer",
         ],
         advanced_query: str | Omit = omit,
+        any_words: str | Omit = omit,
+        bounding_box: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        list_id: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        place: str | Omit = omit,
+        place_country: str | Omit = omit,
+        point_radius: str | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        results_limit: int | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         search_query: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
         target_community_id: str | Omit = omit,
         target_list_id: str | Omit = omit,
         target_space_id: str | Omit = omit,
         target_tweet_id: str | Omit = omit,
         target_username: str | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -722,9 +1165,79 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines. (tweet_search_extractor)
+
+          bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
+
+          cashtags: Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+
+          conversation_id: Conversation ID filter (tweet_search_extractor)
+
           exact_phrase: Exact phrase to match (tweet_search_extractor)
 
-          exclude_words: Words to exclude from results (tweet_search_extractor)
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+              (tweet_search_extractor)
+
+          from_user: Filter by author username (tweet_search_extractor)
+
+          hashtags: Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+
+          in_reply_to_tweet_id: Only replies to this tweet ID (tweet_search_extractor)
+
+          language: Language code filter (tweet_search_extractor)
+
+          list_id: Search within a list ID (tweet_search_extractor)
+
+          media_type: Media type filter (tweet_search_extractor)
+
+          mentioning: Filter tweets mentioning a username (tweet_search_extractor)
+
+          min_faves: Minimum likes threshold (tweet_search_extractor)
+
+          min_quotes: Minimum quote count threshold (tweet_search_extractor)
+
+          min_replies: Minimum replies threshold (tweet_search_extractor)
+
+          min_retweets: Minimum retweets threshold (tweet_search_extractor)
+
+          place: Search within a place ID (tweet_search_extractor)
+
+          place_country: Search within a country code (tweet_search_extractor)
+
+          point_radius: Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
+
+          quotes: Quote mode (tweet_search_extractor)
+
+          quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
+
+          replies: Reply mode (tweet_search_extractor)
+
+          results_limit: Maximum number of results to extract. When set, the extraction stops after
+              reaching this limit.
+
+          retweets: Retweet mode (tweet_search_extractor)
+
+          retweets_of_tweet_id: Only retweets of this tweet ID (tweet_search_extractor)
+
+          search_query: Required for tweet_search_extractor & community_search.
+
+          since_date: Start date YYYY-MM-DD (tweet_search_extractor)
+
+          target_community_id: Required for community_post_extractor & community_search.
+
+          target_list_id: Required for list_follower_explorer, list_member_extractor &
+              list_post_extractor.
+
+          target_space_id: Required for space_explorer.
+
+          to_user: Filter replies sent to a username (tweet_search_extractor)
+
+          until_date: End date YYYY-MM-DD (tweet_search_extractor)
+
+          url: URL substring or domain filter (tweet_search_extractor)
+
+          verified_only: Only verified authors (tweet_search_extractor)
 
           extra_headers: Send extra headers
 
@@ -740,14 +1253,43 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 {
                     "tool_type": tool_type,
                     "advanced_query": advanced_query,
+                    "any_words": any_words,
+                    "bounding_box": bounding_box,
+                    "cashtags": cashtags,
+                    "conversation_id": conversation_id,
                     "exact_phrase": exact_phrase,
                     "exclude_words": exclude_words,
+                    "from_user": from_user,
+                    "hashtags": hashtags,
+                    "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                    "language": language,
+                    "list_id": list_id,
+                    "media_type": media_type,
+                    "mentioning": mentioning,
+                    "min_faves": min_faves,
+                    "min_quotes": min_quotes,
+                    "min_replies": min_replies,
+                    "min_retweets": min_retweets,
+                    "place": place,
+                    "place_country": place_country,
+                    "point_radius": point_radius,
+                    "quotes": quotes,
+                    "quotes_of_tweet_id": quotes_of_tweet_id,
+                    "replies": replies,
+                    "results_limit": results_limit,
+                    "retweets": retweets,
+                    "retweets_of_tweet_id": retweets_of_tweet_id,
                     "search_query": search_query,
+                    "since_date": since_date,
                     "target_community_id": target_community_id,
                     "target_list_id": target_list_id,
                     "target_space_id": target_space_id,
                     "target_tweet_id": target_tweet_id,
                     "target_username": target_username,
+                    "to_user": to_user,
+                    "until_date": until_date,
+                    "url": url,
+                    "verified_only": verified_only,
                 },
                 extraction_run_params.ExtractionRunParams,
             ),

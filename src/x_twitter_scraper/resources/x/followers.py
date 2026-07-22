@@ -59,9 +59,9 @@ class FollowersResource(SyncAPIResource):
         Check if one user follows another
 
         Args:
-          source: Username to check (without @)
+          source: Source username, @username, or X or Twitter profile URL
 
-          target: Target username (without @)
+          target: Target username, @username, or X or Twitter profile URL
 
           extra_headers: Send extra headers
 
@@ -128,9 +128,9 @@ class AsyncFollowersResource(AsyncAPIResource):
         Check if one user follows another
 
         Args:
-          source: Username to check (without @)
+          source: Source username, @username, or X or Twitter profile URL
 
-          target: Target username (without @)
+          target: Target username, @username, or X or Twitter profile URL
 
           extra_headers: Send extra headers
 

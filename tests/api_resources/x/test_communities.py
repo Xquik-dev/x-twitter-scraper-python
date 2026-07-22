@@ -28,6 +28,7 @@ class TestCommunities:
         community = client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -37,6 +38,7 @@ class TestCommunities:
         community = client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
             description="A community for Tesla enthusiasts",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
@@ -47,6 +49,7 @@ class TestCommunities:
         response = client.x.communities.with_raw_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -60,6 +63,7 @@ class TestCommunities:
         with client.x.communities.with_streaming_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -76,6 +80,7 @@ class TestCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityDeleteResponse, community, path=["response"])
 
@@ -86,6 +91,7 @@ class TestCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -100,6 +106,7 @@ class TestCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -117,6 +124,7 @@ class TestCommunities:
                 id="",
                 account="@elonmusk",
                 community_name="Tesla Fans",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -175,6 +183,7 @@ class TestCommunities:
         community = client.x.communities.retrieve_members(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 
@@ -267,6 +276,7 @@ class TestCommunities:
     @parametrize
     def test_method_retrieve_search(self, client: XTwitterScraper) -> None:
         community = client.x.communities.retrieve_search(
+            community_id="321669910225",
             q="q",
         )
         assert_matches_type(PaginatedTweets, community, path=["response"])
@@ -275,9 +285,11 @@ class TestCommunities:
     @parametrize
     def test_method_retrieve_search_with_all_params(self, client: XTwitterScraper) -> None:
         community = client.x.communities.retrieve_search(
+            community_id="321669910225",
             q="q",
             cursor="cursor",
-            query_type="queryType",
+            page_size=1,
+            query_type="Latest",
         )
         assert_matches_type(PaginatedTweets, community, path=["response"])
 
@@ -285,6 +297,7 @@ class TestCommunities:
     @parametrize
     def test_raw_response_retrieve_search(self, client: XTwitterScraper) -> None:
         response = client.x.communities.with_raw_response.retrieve_search(
+            community_id="321669910225",
             q="q",
         )
 
@@ -297,6 +310,7 @@ class TestCommunities:
     @parametrize
     def test_streaming_response_retrieve_search(self, client: XTwitterScraper) -> None:
         with client.x.communities.with_streaming_response.retrieve_search(
+            community_id="321669910225",
             q="q",
         ) as response:
             assert not response.is_closed
@@ -319,6 +333,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
 
@@ -328,6 +343,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
             description="A community for Tesla enthusiasts",
         )
         assert_matches_type(CommunityCreateResponse, community, path=["response"])
@@ -338,6 +354,7 @@ class TestAsyncCommunities:
         response = await async_client.x.communities.with_raw_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -351,6 +368,7 @@ class TestAsyncCommunities:
         async with async_client.x.communities.with_streaming_response.create(
             account="@elonmusk",
             name="Example Name",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -367,6 +385,7 @@ class TestAsyncCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(CommunityDeleteResponse, community, path=["response"])
 
@@ -377,6 +396,7 @@ class TestAsyncCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -391,6 +411,7 @@ class TestAsyncCommunities:
             id="id",
             account="@elonmusk",
             community_name="Tesla Fans",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -408,6 +429,7 @@ class TestAsyncCommunities:
                 id="",
                 account="@elonmusk",
                 community_name="Tesla Fans",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -466,6 +488,7 @@ class TestAsyncCommunities:
         community = await async_client.x.communities.retrieve_members(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 
@@ -558,6 +581,7 @@ class TestAsyncCommunities:
     @parametrize
     async def test_method_retrieve_search(self, async_client: AsyncXTwitterScraper) -> None:
         community = await async_client.x.communities.retrieve_search(
+            community_id="321669910225",
             q="q",
         )
         assert_matches_type(PaginatedTweets, community, path=["response"])
@@ -566,9 +590,11 @@ class TestAsyncCommunities:
     @parametrize
     async def test_method_retrieve_search_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         community = await async_client.x.communities.retrieve_search(
+            community_id="321669910225",
             q="q",
             cursor="cursor",
-            query_type="queryType",
+            page_size=1,
+            query_type="Latest",
         )
         assert_matches_type(PaginatedTweets, community, path=["response"])
 
@@ -576,6 +602,7 @@ class TestAsyncCommunities:
     @parametrize
     async def test_raw_response_retrieve_search(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.with_raw_response.retrieve_search(
+            community_id="321669910225",
             q="q",
         )
 
@@ -588,6 +615,7 @@ class TestAsyncCommunities:
     @parametrize
     async def test_streaming_response_retrieve_search(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.with_streaming_response.retrieve_search(
+            community_id="321669910225",
             q="q",
         ) as response:
             assert not response.is_closed

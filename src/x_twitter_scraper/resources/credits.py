@@ -4,8 +4,12 @@ from __future__ import annotations
 
 import httpx
 
-from ..types import credit_topup_balance_params
-from .._types import Body, Query, Headers, NotGiven, not_given
+from ..types import (
+    credit_topup_balance_params,
+    credit_retrieve_topup_status_params,
+    credit_redirect_topup_checkout_params,
+)
+from .._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -18,6 +22,7 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.credit_topup_balance_response import CreditTopupBalanceResponse
 from ..types.credit_retrieve_balance_response import CreditRetrieveBalanceResponse
+from ..types.credit_retrieve_topup_status_response import CreditRetrieveTopupStatusResponse
 
 __all__ = ["CreditsResource", "AsyncCreditsResource"]
 
@@ -44,6 +49,47 @@ class CreditsResource(SyncAPIResource):
         """
         return CreditsResourceWithStreamingResponse(self)
 
+    def redirect_topup_checkout(
+        self,
+        *,
+        session_id: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> None:
+        """
+        Redirect to an active top-up payment page
+
+        Args:
+          session_id: Billing session ID returned by the top-up billing flow.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return self._get(
+            "/credits/topup/redirect",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {"session_id": session_id}, credit_redirect_topup_checkout_params.CreditRedirectTopupCheckoutParams
+                ),
+                security={},
+            ),
+            cast_to=NoneType,
+        )
+
     def retrieve_balance(
         self,
         *,
@@ -63,10 +109,50 @@ class CreditsResource(SyncAPIResource):
             cast_to=CreditRetrieveBalanceResponse,
         )
 
+    def retrieve_topup_status(
+        self,
+        *,
+        session_id: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> CreditRetrieveTopupStatusResponse:
+        """
+        Get top-up billing status
+
+        Args:
+          session_id: Top-up session ID to inspect.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._get(
+            "/credits/topup/status",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {"session_id": session_id}, credit_retrieve_topup_status_params.CreditRetrieveTopupStatusParams
+                ),
+            ),
+            cast_to=CreditRetrieveTopupStatusResponse,
+        )
+
     def topup_balance(
         self,
         *,
-        amount: int,
+        dollars: int,
+        locale: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -74,11 +160,15 @@ class CreditsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditTopupBalanceResponse:
-        """
-        Top up credits balance
+        """Create a Stripe Checkout session only after the user confirms.
+
+        The request never
+        completes payment or adds credits by itself.
 
         Args:
-          amount: Amount to top up in credits
+          dollars: Amount to top up in US dollars. Minimum 10.
+
+          locale: Optional checkout locale. Defaults to en.
 
           extra_headers: Send extra headers
 
@@ -90,7 +180,13 @@ class CreditsResource(SyncAPIResource):
         """
         return self._post(
             "/credits/topup",
-            body=maybe_transform({"amount": amount}, credit_topup_balance_params.CreditTopupBalanceParams),
+            body=maybe_transform(
+                {
+                    "dollars": dollars,
+                    "locale": locale,
+                },
+                credit_topup_balance_params.CreditTopupBalanceParams,
+            ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -120,6 +216,47 @@ class AsyncCreditsResource(AsyncAPIResource):
         """
         return AsyncCreditsResourceWithStreamingResponse(self)
 
+    async def redirect_topup_checkout(
+        self,
+        *,
+        session_id: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> None:
+        """
+        Redirect to an active top-up payment page
+
+        Args:
+          session_id: Billing session ID returned by the top-up billing flow.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        return await self._get(
+            "/credits/topup/redirect",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {"session_id": session_id}, credit_redirect_topup_checkout_params.CreditRedirectTopupCheckoutParams
+                ),
+                security={},
+            ),
+            cast_to=NoneType,
+        )
+
     async def retrieve_balance(
         self,
         *,
@@ -139,10 +276,50 @@ class AsyncCreditsResource(AsyncAPIResource):
             cast_to=CreditRetrieveBalanceResponse,
         )
 
+    async def retrieve_topup_status(
+        self,
+        *,
+        session_id: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> CreditRetrieveTopupStatusResponse:
+        """
+        Get top-up billing status
+
+        Args:
+          session_id: Top-up session ID to inspect.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._get(
+            "/credits/topup/status",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {"session_id": session_id}, credit_retrieve_topup_status_params.CreditRetrieveTopupStatusParams
+                ),
+            ),
+            cast_to=CreditRetrieveTopupStatusResponse,
+        )
+
     async def topup_balance(
         self,
         *,
-        amount: int,
+        dollars: int,
+        locale: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -150,11 +327,15 @@ class AsyncCreditsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditTopupBalanceResponse:
-        """
-        Top up credits balance
+        """Create a Stripe Checkout session only after the user confirms.
+
+        The request never
+        completes payment or adds credits by itself.
 
         Args:
-          amount: Amount to top up in credits
+          dollars: Amount to top up in US dollars. Minimum 10.
+
+          locale: Optional checkout locale. Defaults to en.
 
           extra_headers: Send extra headers
 
@@ -166,7 +347,13 @@ class AsyncCreditsResource(AsyncAPIResource):
         """
         return await self._post(
             "/credits/topup",
-            body=await async_maybe_transform({"amount": amount}, credit_topup_balance_params.CreditTopupBalanceParams),
+            body=await async_maybe_transform(
+                {
+                    "dollars": dollars,
+                    "locale": locale,
+                },
+                credit_topup_balance_params.CreditTopupBalanceParams,
+            ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -178,8 +365,14 @@ class CreditsResourceWithRawResponse:
     def __init__(self, credits: CreditsResource) -> None:
         self._credits = credits
 
+        self.redirect_topup_checkout = to_raw_response_wrapper(
+            credits.redirect_topup_checkout,
+        )
         self.retrieve_balance = to_raw_response_wrapper(
             credits.retrieve_balance,
+        )
+        self.retrieve_topup_status = to_raw_response_wrapper(
+            credits.retrieve_topup_status,
         )
         self.topup_balance = to_raw_response_wrapper(
             credits.topup_balance,
@@ -190,8 +383,14 @@ class AsyncCreditsResourceWithRawResponse:
     def __init__(self, credits: AsyncCreditsResource) -> None:
         self._credits = credits
 
+        self.redirect_topup_checkout = async_to_raw_response_wrapper(
+            credits.redirect_topup_checkout,
+        )
         self.retrieve_balance = async_to_raw_response_wrapper(
             credits.retrieve_balance,
+        )
+        self.retrieve_topup_status = async_to_raw_response_wrapper(
+            credits.retrieve_topup_status,
         )
         self.topup_balance = async_to_raw_response_wrapper(
             credits.topup_balance,
@@ -202,8 +401,14 @@ class CreditsResourceWithStreamingResponse:
     def __init__(self, credits: CreditsResource) -> None:
         self._credits = credits
 
+        self.redirect_topup_checkout = to_streamed_response_wrapper(
+            credits.redirect_topup_checkout,
+        )
         self.retrieve_balance = to_streamed_response_wrapper(
             credits.retrieve_balance,
+        )
+        self.retrieve_topup_status = to_streamed_response_wrapper(
+            credits.retrieve_topup_status,
         )
         self.topup_balance = to_streamed_response_wrapper(
             credits.topup_balance,
@@ -214,8 +419,14 @@ class AsyncCreditsResourceWithStreamingResponse:
     def __init__(self, credits: AsyncCreditsResource) -> None:
         self._credits = credits
 
+        self.redirect_topup_checkout = async_to_streamed_response_wrapper(
+            credits.redirect_topup_checkout,
+        )
         self.retrieve_balance = async_to_streamed_response_wrapper(
             credits.retrieve_balance,
+        )
+        self.retrieve_topup_status = async_to_streamed_response_wrapper(
+            credits.retrieve_topup_status,
         )
         self.topup_balance = async_to_streamed_response_wrapper(
             credits.topup_balance,

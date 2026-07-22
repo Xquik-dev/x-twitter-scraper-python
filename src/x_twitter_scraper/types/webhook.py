@@ -2,6 +2,7 @@
 
 from typing import List
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -16,10 +17,22 @@ class Webhook(BaseModel):
 
     id: str
 
+    consecutive_failures: int = FieldInfo(alias="consecutiveFailures")
+    """Consecutive failed delivery attempts since the last success."""
+
     created_at: datetime = FieldInfo(alias="createdAt")
+
+    delivery_status: Literal["active", "paused", "needs_attention"] = FieldInfo(alias="deliveryStatus")
+    """Endpoint delivery state.
+
+    needs_attention means delivery stopped after repeated failures.
+    """
 
     event_types: List[EventType] = FieldInfo(alias="eventTypes")
     """Array of event types to subscribe to."""
+
+    failure_hard_cap: int = FieldInfo(alias="failureHardCap")
+    """Consecutive delivery failures that pause the endpoint."""
 
     is_active: bool = FieldInfo(alias="isActive")
 

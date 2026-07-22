@@ -14,6 +14,7 @@ class DrawDetail(BaseModel):
     """Full giveaway draw with tweet metrics, entries, and timing."""
 
     id: str
+    """Draw public ID."""
 
     created_at: datetime = FieldInfo(alias="createdAt")
 

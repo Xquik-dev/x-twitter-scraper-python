@@ -9,4 +9,7 @@ __all__ = ["UserRetrieveBatchParams"]
 
 class UserRetrieveBatchParams(TypedDict, total=False):
     ids: Required[str]
-    """Comma-separated user IDs (max 100)"""
+    """Comma-separated numeric user IDs (1-100 values).
+
+    Duplicate IDs are ignored while preserving first-seen order.
+    """

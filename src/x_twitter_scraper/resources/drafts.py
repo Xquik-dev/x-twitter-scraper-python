@@ -138,7 +138,10 @@ class DraftsResource(SyncAPIResource):
         Args:
           after_cursor: Cursor for pagination
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -315,7 +318,10 @@ class AsyncDraftsResource(AsyncAPIResource):
         Args:
           after_cursor: Cursor for pagination
 
-          limit: Maximum number of items to return (1-100, default 50)
+          limit: Maximum number of items to return (1-100, default 50). For paid per-result
+              endpoints, the returned count may be lower when remaining credits cannot cover
+              the requested page. If zero paid results are affordable, the endpoint returns
+              402 insufficient_credits.
 
           extra_headers: Send extra headers
 

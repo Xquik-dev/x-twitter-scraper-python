@@ -33,7 +33,7 @@ class TestDraws:
     @parametrize
     def test_method_retrieve(self, client: XTwitterScraper) -> None:
         draw = client.draws.retrieve(
-            "id",
+            "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         )
         assert_matches_type(DrawRetrieveResponse, draw, path=["response"])
 
@@ -41,7 +41,7 @@ class TestDraws:
     @parametrize
     def test_raw_response_retrieve(self, client: XTwitterScraper) -> None:
         response = client.draws.with_raw_response.retrieve(
-            "id",
+            "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         )
 
         assert response.is_closed is True
@@ -53,7 +53,7 @@ class TestDraws:
     @parametrize
     def test_streaming_response_retrieve(self, client: XTwitterScraper) -> None:
         with client.draws.with_streaming_response.retrieve(
-            "id",
+            "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -81,7 +81,7 @@ class TestDraws:
     @parametrize
     def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
         draw = client.draws.list(
-            after="after",
+            cursor="cursor",
             limit=1,
         )
         assert_matches_type(DrawListResponse, draw, path=["response"])
@@ -111,9 +111,12 @@ class TestDraws:
     @parametrize
     @pytest.mark.respx(base_url=base_url)
     def test_method_export(self, client: XTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
         draw = client.draws.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
+            format="csv",
         )
         assert draw.is_closed
         assert draw.json() == {"foo": "bar"}
@@ -123,9 +126,11 @@ class TestDraws:
     @parametrize
     @pytest.mark.respx(base_url=base_url)
     def test_method_export_with_all_params(self, client: XTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
         draw = client.draws.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
             format="csv",
             type="winners",
         )
@@ -137,10 +142,13 @@ class TestDraws:
     @parametrize
     @pytest.mark.respx(base_url=base_url)
     def test_raw_response_export(self, client: XTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
 
         draw = client.draws.with_raw_response.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
+            format="csv",
         )
 
         assert draw.is_closed is True
@@ -151,9 +159,12 @@ class TestDraws:
     @parametrize
     @pytest.mark.respx(base_url=base_url)
     def test_streaming_response_export(self, client: XTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
         with client.draws.with_streaming_response.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
+            format="csv",
         ) as draw:
             assert not draw.is_closed
             assert draw.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -170,6 +181,7 @@ class TestDraws:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.draws.with_raw_response.export(
                 id="",
+                format="csv",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -235,7 +247,7 @@ class TestAsyncDraws:
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         draw = await async_client.draws.retrieve(
-            "id",
+            "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         )
         assert_matches_type(DrawRetrieveResponse, draw, path=["response"])
 
@@ -243,7 +255,7 @@ class TestAsyncDraws:
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.draws.with_raw_response.retrieve(
-            "id",
+            "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         )
 
         assert response.is_closed is True
@@ -255,7 +267,7 @@ class TestAsyncDraws:
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.draws.with_streaming_response.retrieve(
-            "id",
+            "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -283,7 +295,7 @@ class TestAsyncDraws:
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         draw = await async_client.draws.list(
-            after="after",
+            cursor="cursor",
             limit=1,
         )
         assert_matches_type(DrawListResponse, draw, path=["response"])
@@ -313,9 +325,12 @@ class TestAsyncDraws:
     @parametrize
     @pytest.mark.respx(base_url=base_url)
     async def test_method_export(self, async_client: AsyncXTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
         draw = await async_client.draws.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
+            format="csv",
         )
         assert draw.is_closed
         assert await draw.json() == {"foo": "bar"}
@@ -327,9 +342,11 @@ class TestAsyncDraws:
     async def test_method_export_with_all_params(
         self, async_client: AsyncXTwitterScraper, respx_mock: MockRouter
     ) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
         draw = await async_client.draws.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
             format="csv",
             type="winners",
         )
@@ -341,10 +358,13 @@ class TestAsyncDraws:
     @parametrize
     @pytest.mark.respx(base_url=base_url)
     async def test_raw_response_export(self, async_client: AsyncXTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
 
         draw = await async_client.draws.with_raw_response.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
+            format="csv",
         )
 
         assert draw.is_closed is True
@@ -355,9 +375,12 @@ class TestAsyncDraws:
     @parametrize
     @pytest.mark.respx(base_url=base_url)
     async def test_streaming_response_export(self, async_client: AsyncXTwitterScraper, respx_mock: MockRouter) -> None:
-        respx_mock.get("/draws/id/export").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export").mock(
+            return_value=httpx.Response(200, json={"foo": "bar"})
+        )
         async with async_client.draws.with_streaming_response.export(
-            id="id",
+            id="f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
+            format="csv",
         ) as draw:
             assert not draw.is_closed
             assert draw.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -374,6 +397,7 @@ class TestAsyncDraws:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.draws.with_raw_response.export(
                 id="",
+                format="csv",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

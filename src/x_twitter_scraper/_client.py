@@ -20,7 +20,11 @@ from ._types import (
     RequestOptions,
     not_given,
 )
-from ._utils import is_given, get_async_library
+from ._utils import (
+    is_given,
+    is_mapping_t,
+    get_async_library,
+)
 from ._compat import cached_property
 from ._models import SecurityOptions
 from ._version import __version__
@@ -45,11 +49,11 @@ if TYPE_CHECKING:
         compose,
         credits,
         support,
-        api_keys,
         monitors,
         webhooks,
         subscribe,
         extractions,
+        guest_wallets,
     )
     from .resources.x.x import XResource, AsyncXResource
     from .resources.draws import DrawsResource, AsyncDrawsResource
@@ -61,12 +65,12 @@ if TYPE_CHECKING:
     from .resources.account import AccountResource, AsyncAccountResource
     from .resources.compose import ComposeResource, AsyncComposeResource
     from .resources.credits import CreditsResource, AsyncCreditsResource
-    from .resources.api_keys import APIKeysResource, AsyncAPIKeysResource
-    from .resources.monitors import MonitorsResource, AsyncMonitorsResource
     from .resources.webhooks import WebhooksResource, AsyncWebhooksResource
     from .resources.subscribe import SubscribeResource, AsyncSubscribeResource
     from .resources.extractions import ExtractionsResource, AsyncExtractionsResource
+    from .resources.guest_wallets import GuestWalletsResource, AsyncGuestWalletsResource
     from .resources.support.support import SupportResource, AsyncSupportResource
+    from .resources.monitors.monitors import MonitorsResource, AsyncMonitorsResource
 
 __all__ = [
     "Timeout",
@@ -128,6 +132,15 @@ class XTwitterScraper(SyncAPIClient):
         if base_url is None:
             base_url = f"https://xquik.com/api/v1"
 
+        custom_headers_env = os.environ.get("X_TWITTER_SCRAPER_CUSTOM_HEADERS")
+        if custom_headers_env is not None:
+            parsed: dict[str, str] = {}
+            for line in custom_headers_env.split("\n"):
+                colon = line.find(":")
+                if colon >= 0:
+                    parsed[line[:colon].strip()] = line[colon + 1 :].strip()
+            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+
         super().__init__(
             version=__version__,
             base_url=base_url,
@@ -145,13 +158,6 @@ class XTwitterScraper(SyncAPIClient):
         from .resources.account import AccountResource
 
         return AccountResource(self)
-
-    @cached_property
-    def api_keys(self) -> APIKeysResource:
-        """API key management (session auth only)"""
-        from .resources.api_keys import APIKeysResource
-
-        return APIKeysResource(self)
 
     @cached_property
     def subscribe(self) -> SubscribeResource:
@@ -204,7 +210,7 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def extractions(self) -> ExtractionsResource:
-        """Bulk data extraction (20 tool types)"""
+        """Bulk data extraction (23 tool types)"""
         from .resources.extractions import ExtractionsResource
 
         return ExtractionsResource(self)
@@ -250,6 +256,13 @@ class XTwitterScraper(SyncAPIClient):
         return CreditsResource(self)
 
     @cached_property
+    def guest_wallets(self) -> GuestWalletsResource:
+        """Accountless prepaid access for paid read endpoints"""
+        from .resources.guest_wallets import GuestWalletsResource
+
+        return GuestWalletsResource(self)
+
+    @cached_property
     def with_raw_response(self) -> XTwitterScraperWithRawResponse:
         return XTwitterScraperWithRawResponse(self)
 
@@ -264,17 +277,21 @@ class XTwitterScraper(SyncAPIClient):
 
     @override
     def _auth_headers(self, security: SecurityOptions) -> dict[str, str]:
-        return {
-            **(self._api_key if security.get("api_key", False) else {}),
-            **(self._oauth_bearer if security.get("oauth_bearer", False) else {}),
-        }
+        headers: dict[str, str] = {}
+        if security.get("api_key", False):
+            for key, value in self._api_key.items():
+                headers.setdefault(key, value)
+        if security.get("oauth_bearer", False):
+            for key, value in self._oauth_bearer.items():
+                headers.setdefault(key, value)
+        return headers
 
     @property
     def _api_key(self) -> dict[str, str]:
         api_key = self.api_key
         if api_key is None:
             return {}
-        return {"X-Api-Key": api_key}
+        return {"x-api-key": api_key}
 
     @property
     def _oauth_bearer(self) -> dict[str, str]:
@@ -294,14 +311,14 @@ class XTwitterScraper(SyncAPIClient):
 
     @override
     def _validate_headers(self, headers: Headers, custom_headers: Headers) -> None:
-        if headers.get("X-Api-Key") or isinstance(custom_headers.get("X-Api-Key"), Omit):
+        if headers.get("x-api-key") or isinstance(custom_headers.get("x-api-key"), Omit):
             return
 
         if headers.get("Authorization") or isinstance(custom_headers.get("Authorization"), Omit):
             return
 
         raise TypeError(
-            '"Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"'
+            '"Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `x-api-key` or `Authorization` headers to be explicitly omitted"'
         )
 
     def copy(
@@ -439,6 +456,15 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         if base_url is None:
             base_url = f"https://xquik.com/api/v1"
 
+        custom_headers_env = os.environ.get("X_TWITTER_SCRAPER_CUSTOM_HEADERS")
+        if custom_headers_env is not None:
+            parsed: dict[str, str] = {}
+            for line in custom_headers_env.split("\n"):
+                colon = line.find(":")
+                if colon >= 0:
+                    parsed[line[:colon].strip()] = line[colon + 1 :].strip()
+            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+
         super().__init__(
             version=__version__,
             base_url=base_url,
@@ -456,13 +482,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         from .resources.account import AsyncAccountResource
 
         return AsyncAccountResource(self)
-
-    @cached_property
-    def api_keys(self) -> AsyncAPIKeysResource:
-        """API key management (session auth only)"""
-        from .resources.api_keys import AsyncAPIKeysResource
-
-        return AsyncAPIKeysResource(self)
 
     @cached_property
     def subscribe(self) -> AsyncSubscribeResource:
@@ -515,7 +534,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def extractions(self) -> AsyncExtractionsResource:
-        """Bulk data extraction (20 tool types)"""
+        """Bulk data extraction (23 tool types)"""
         from .resources.extractions import AsyncExtractionsResource
 
         return AsyncExtractionsResource(self)
@@ -561,6 +580,13 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         return AsyncCreditsResource(self)
 
     @cached_property
+    def guest_wallets(self) -> AsyncGuestWalletsResource:
+        """Accountless prepaid access for paid read endpoints"""
+        from .resources.guest_wallets import AsyncGuestWalletsResource
+
+        return AsyncGuestWalletsResource(self)
+
+    @cached_property
     def with_raw_response(self) -> AsyncXTwitterScraperWithRawResponse:
         return AsyncXTwitterScraperWithRawResponse(self)
 
@@ -575,17 +601,21 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @override
     def _auth_headers(self, security: SecurityOptions) -> dict[str, str]:
-        return {
-            **(self._api_key if security.get("api_key", False) else {}),
-            **(self._oauth_bearer if security.get("oauth_bearer", False) else {}),
-        }
+        headers: dict[str, str] = {}
+        if security.get("api_key", False):
+            for key, value in self._api_key.items():
+                headers.setdefault(key, value)
+        if security.get("oauth_bearer", False):
+            for key, value in self._oauth_bearer.items():
+                headers.setdefault(key, value)
+        return headers
 
     @property
     def _api_key(self) -> dict[str, str]:
         api_key = self.api_key
         if api_key is None:
             return {}
-        return {"X-Api-Key": api_key}
+        return {"x-api-key": api_key}
 
     @property
     def _oauth_bearer(self) -> dict[str, str]:
@@ -605,14 +635,14 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @override
     def _validate_headers(self, headers: Headers, custom_headers: Headers) -> None:
-        if headers.get("X-Api-Key") or isinstance(custom_headers.get("X-Api-Key"), Omit):
+        if headers.get("x-api-key") or isinstance(custom_headers.get("x-api-key"), Omit):
             return
 
         if headers.get("Authorization") or isinstance(custom_headers.get("Authorization"), Omit):
             return
 
         raise TypeError(
-            '"Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `X-Api-Key` or `Authorization` headers to be explicitly omitted"'
+            '"Could not resolve authentication method. Expected either api_key or bearer_token to be set. Or for one of the `x-api-key` or `Authorization` headers to be explicitly omitted"'
         )
 
     def copy(
@@ -716,13 +746,6 @@ class XTwitterScraperWithRawResponse:
         return AccountResourceWithRawResponse(self._client.account)
 
     @cached_property
-    def api_keys(self) -> api_keys.APIKeysResourceWithRawResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import APIKeysResourceWithRawResponse
-
-        return APIKeysResourceWithRawResponse(self._client.api_keys)
-
-    @cached_property
     def subscribe(self) -> subscribe.SubscribeResourceWithRawResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithRawResponse
@@ -773,7 +796,7 @@ class XTwitterScraperWithRawResponse:
 
     @cached_property
     def extractions(self) -> extractions.ExtractionsResourceWithRawResponse:
-        """Bulk data extraction (20 tool types)"""
+        """Bulk data extraction (23 tool types)"""
         from .resources.extractions import ExtractionsResourceWithRawResponse
 
         return ExtractionsResourceWithRawResponse(self._client.extractions)
@@ -818,6 +841,13 @@ class XTwitterScraperWithRawResponse:
 
         return CreditsResourceWithRawResponse(self._client.credits)
 
+    @cached_property
+    def guest_wallets(self) -> guest_wallets.GuestWalletsResourceWithRawResponse:
+        """Accountless prepaid access for paid read endpoints"""
+        from .resources.guest_wallets import GuestWalletsResourceWithRawResponse
+
+        return GuestWalletsResourceWithRawResponse(self._client.guest_wallets)
+
 
 class AsyncXTwitterScraperWithRawResponse:
     _client: AsyncXTwitterScraper
@@ -831,13 +861,6 @@ class AsyncXTwitterScraperWithRawResponse:
         from .resources.account import AsyncAccountResourceWithRawResponse
 
         return AsyncAccountResourceWithRawResponse(self._client.account)
-
-    @cached_property
-    def api_keys(self) -> api_keys.AsyncAPIKeysResourceWithRawResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import AsyncAPIKeysResourceWithRawResponse
-
-        return AsyncAPIKeysResourceWithRawResponse(self._client.api_keys)
 
     @cached_property
     def subscribe(self) -> subscribe.AsyncSubscribeResourceWithRawResponse:
@@ -890,7 +913,7 @@ class AsyncXTwitterScraperWithRawResponse:
 
     @cached_property
     def extractions(self) -> extractions.AsyncExtractionsResourceWithRawResponse:
-        """Bulk data extraction (20 tool types)"""
+        """Bulk data extraction (23 tool types)"""
         from .resources.extractions import AsyncExtractionsResourceWithRawResponse
 
         return AsyncExtractionsResourceWithRawResponse(self._client.extractions)
@@ -935,6 +958,13 @@ class AsyncXTwitterScraperWithRawResponse:
 
         return AsyncCreditsResourceWithRawResponse(self._client.credits)
 
+    @cached_property
+    def guest_wallets(self) -> guest_wallets.AsyncGuestWalletsResourceWithRawResponse:
+        """Accountless prepaid access for paid read endpoints"""
+        from .resources.guest_wallets import AsyncGuestWalletsResourceWithRawResponse
+
+        return AsyncGuestWalletsResourceWithRawResponse(self._client.guest_wallets)
+
 
 class XTwitterScraperWithStreamedResponse:
     _client: XTwitterScraper
@@ -948,13 +978,6 @@ class XTwitterScraperWithStreamedResponse:
         from .resources.account import AccountResourceWithStreamingResponse
 
         return AccountResourceWithStreamingResponse(self._client.account)
-
-    @cached_property
-    def api_keys(self) -> api_keys.APIKeysResourceWithStreamingResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import APIKeysResourceWithStreamingResponse
-
-        return APIKeysResourceWithStreamingResponse(self._client.api_keys)
 
     @cached_property
     def subscribe(self) -> subscribe.SubscribeResourceWithStreamingResponse:
@@ -1007,7 +1030,7 @@ class XTwitterScraperWithStreamedResponse:
 
     @cached_property
     def extractions(self) -> extractions.ExtractionsResourceWithStreamingResponse:
-        """Bulk data extraction (20 tool types)"""
+        """Bulk data extraction (23 tool types)"""
         from .resources.extractions import ExtractionsResourceWithStreamingResponse
 
         return ExtractionsResourceWithStreamingResponse(self._client.extractions)
@@ -1052,6 +1075,13 @@ class XTwitterScraperWithStreamedResponse:
 
         return CreditsResourceWithStreamingResponse(self._client.credits)
 
+    @cached_property
+    def guest_wallets(self) -> guest_wallets.GuestWalletsResourceWithStreamingResponse:
+        """Accountless prepaid access for paid read endpoints"""
+        from .resources.guest_wallets import GuestWalletsResourceWithStreamingResponse
+
+        return GuestWalletsResourceWithStreamingResponse(self._client.guest_wallets)
+
 
 class AsyncXTwitterScraperWithStreamedResponse:
     _client: AsyncXTwitterScraper
@@ -1065,13 +1095,6 @@ class AsyncXTwitterScraperWithStreamedResponse:
         from .resources.account import AsyncAccountResourceWithStreamingResponse
 
         return AsyncAccountResourceWithStreamingResponse(self._client.account)
-
-    @cached_property
-    def api_keys(self) -> api_keys.AsyncAPIKeysResourceWithStreamingResponse:
-        """API key management (session auth only)"""
-        from .resources.api_keys import AsyncAPIKeysResourceWithStreamingResponse
-
-        return AsyncAPIKeysResourceWithStreamingResponse(self._client.api_keys)
 
     @cached_property
     def subscribe(self) -> subscribe.AsyncSubscribeResourceWithStreamingResponse:
@@ -1124,7 +1147,7 @@ class AsyncXTwitterScraperWithStreamedResponse:
 
     @cached_property
     def extractions(self) -> extractions.AsyncExtractionsResourceWithStreamingResponse:
-        """Bulk data extraction (20 tool types)"""
+        """Bulk data extraction (23 tool types)"""
         from .resources.extractions import AsyncExtractionsResourceWithStreamingResponse
 
         return AsyncExtractionsResourceWithStreamingResponse(self._client.extractions)
@@ -1168,6 +1191,13 @@ class AsyncXTwitterScraperWithStreamedResponse:
         from .resources.credits import AsyncCreditsResourceWithStreamingResponse
 
         return AsyncCreditsResourceWithStreamingResponse(self._client.credits)
+
+    @cached_property
+    def guest_wallets(self) -> guest_wallets.AsyncGuestWalletsResourceWithStreamingResponse:
+        """Accountless prepaid access for paid read endpoints"""
+        from .resources.guest_wallets import AsyncGuestWalletsResourceWithStreamingResponse
+
+        return AsyncGuestWalletsResourceWithStreamingResponse(self._client.guest_wallets)
 
 
 Client = XTwitterScraper

@@ -12,4 +12,4 @@ class XGetNotificationsParams(TypedDict, total=False):
     """Pagination cursor for notifications"""
 
     type: Literal["All", "Verified", "Mentions"]
-    """Notification type filter"""
+    """Notification type filter. Unrecognized values fall back to All."""

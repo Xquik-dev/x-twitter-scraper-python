@@ -2,16 +2,18 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
 
-from ..._types import FileTypes
+from ..._utils import PropertyInfo
 
 __all__ = ["ProfileUpdateAvatarParams"]
 
 
 class ProfileUpdateAvatarParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or ID) for avatar update"""
+    """X account (@username or ID) receiving avatar from URL"""
 
-    file: Required[FileTypes]
-    """Avatar image (max 716KB)"""
+    url: Required[str]
+    """HTTPS URL to the avatar image to download"""
+
+    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]

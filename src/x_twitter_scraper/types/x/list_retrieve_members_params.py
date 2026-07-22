@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import TypedDict
+from typing_extensions import Annotated, TypedDict
+
+from ..._utils import PropertyInfo
 
 __all__ = ["ListRetrieveMembersParams"]
 
@@ -10,3 +12,6 @@ __all__ = ["ListRetrieveMembersParams"]
 class ListRetrieveMembersParams(TypedDict, total=False):
     cursor: str
     """Pagination cursor for list members"""
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Members per page (20-200, default 20)"""

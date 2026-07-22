@@ -1,17 +1,26 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing_extensions import Literal
+from typing import Union, Optional
+from typing_extensions import Literal, TypeAlias
+
+from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
-__all__ = ["Error"]
+__all__ = ["Error", "ErrorValue", "ErrorValueStructuredError"]
 
 
-class Error(BaseModel):
-    """Error response containing a machine-readable error code."""
-
-    error: Literal[
+class ErrorValueStructuredError(BaseModel):
+    code: Literal[
         "internal_error",
+        "account_already_connected",
+        "account_needs_reauth",
+        "account_not_found",
+        "account_required",
+        "account_restricted",
+        "api_key_limit_reached",
+        "article_not_found",
+        "dm_not_permitted",
         "invalid_format",
         "invalid_id",
         "invalid_input",
@@ -19,21 +28,226 @@ class Error(BaseModel):
         "invalid_tool_type",
         "invalid_tweet_id",
         "invalid_tweet_url",
+        "invalid_user_id",
+        "invalid_user_ids",
         "invalid_username",
+        "invalid_json",
         "insufficient_credits",
+        "login_cooldown",
+        "login_failed",
+        "media_download_failed",
         "missing_params",
         "missing_query",
         "monitor_already_exists",
-        "monitor_limit_reached",
+        "no_media",
         "no_credits",
         "no_subscription",
         "not_found",
+        "payment_failed",
+        "rate_limit_exceeded",
+        "service_unavailable",
+        "style_not_found",
         "subscription_inactive",
         "tweet_not_found",
         "unauthenticated",
+        "unsupported_field",
         "user_not_found",
+        "body_too_large",
+        "checkout_unavailable",
+        "connection_challenge_expired",
+        "connection_challenge_inactive",
+        "draft_not_found",
+        "favoriters_unavailable",
+        "forbidden",
+        "guest_wallet_unavailable",
+        "guest_wallets_disabled",
+        "guest_wallets_unavailable",
+        "idempotency_conflict",
+        "idempotency_key_conflict",
+        "invalid_community_id",
+        "invalid_idempotency_key",
+        "invalid_list_id",
+        "invalid_payment_amount",
+        "invalid_range",
+        "login_rate_limited",
+        "missing_idempotency_key",
+        "missing_ids",
+        "no_cached_style",
+        "passkey_required",
+        "rate_limited",
+        "read_request_timeout",
+        "replies_incomplete",
+        "support_media_rate_limit",
+        "support_request_rate_limit",
+        "too_many_ids",
+        "unknown_field",
+        "unsupported_media_type",
         "webhook_inactive",
+        "write_tracking_unavailable",
+        "x_write_unconfirmed",
+        "x_account_feature_required",
+        "x_account_protected",
+        "x_account_suspended",
         "x_api_rate_limited",
         "x_api_unavailable",
         "x_api_unauthorized",
+        "x_auth_failure",
+        "x_content_too_long",
+        "x_daily_limit",
+        "x_dm_not_allowed",
+        "x_duplicate_action",
+        "x_login_auth_failed",
+        "x_login_challenge",
+        "x_login_denied",
+        "x_login_failed",
+        "x_login_proxy_error",
+        "x_login_rate_limited",
+        "x_login_service_unavailable",
+        "x_login_suspended",
+        "x_rate_limited",
+        "x_rejected",
+        "x_target_not_found",
+        "x_transient_error",
+        "x_user_lookup_failed",
+        "x_write_ambiguous",
+        "x_write_failed",
     ]
+
+    message: str
+
+    type: Literal[
+        "api_error",
+        "authentication_error",
+        "billing_error",
+        "dependency_error",
+        "invalid_request_error",
+        "permission_error",
+        "rate_limit_error",
+    ]
+
+
+ErrorValue: TypeAlias = Union[
+    Literal[
+        "internal_error",
+        "account_already_connected",
+        "account_needs_reauth",
+        "account_not_found",
+        "account_required",
+        "account_restricted",
+        "api_key_limit_reached",
+        "article_not_found",
+        "dm_not_permitted",
+        "invalid_format",
+        "invalid_id",
+        "invalid_input",
+        "invalid_params",
+        "invalid_tool_type",
+        "invalid_tweet_id",
+        "invalid_tweet_url",
+        "invalid_user_id",
+        "invalid_user_ids",
+        "invalid_username",
+        "invalid_json",
+        "insufficient_credits",
+        "login_cooldown",
+        "login_failed",
+        "media_download_failed",
+        "missing_params",
+        "missing_query",
+        "monitor_already_exists",
+        "no_media",
+        "no_credits",
+        "no_subscription",
+        "not_found",
+        "payment_failed",
+        "rate_limit_exceeded",
+        "service_unavailable",
+        "style_not_found",
+        "subscription_inactive",
+        "tweet_not_found",
+        "unauthenticated",
+        "unsupported_field",
+        "user_not_found",
+        "body_too_large",
+        "checkout_unavailable",
+        "connection_challenge_expired",
+        "connection_challenge_inactive",
+        "draft_not_found",
+        "favoriters_unavailable",
+        "forbidden",
+        "guest_wallet_unavailable",
+        "guest_wallets_disabled",
+        "guest_wallets_unavailable",
+        "idempotency_conflict",
+        "idempotency_key_conflict",
+        "invalid_community_id",
+        "invalid_idempotency_key",
+        "invalid_list_id",
+        "invalid_payment_amount",
+        "invalid_range",
+        "login_rate_limited",
+        "missing_idempotency_key",
+        "missing_ids",
+        "no_cached_style",
+        "passkey_required",
+        "rate_limited",
+        "read_request_timeout",
+        "replies_incomplete",
+        "support_media_rate_limit",
+        "support_request_rate_limit",
+        "too_many_ids",
+        "unknown_field",
+        "unsupported_media_type",
+        "webhook_inactive",
+        "write_tracking_unavailable",
+        "x_write_unconfirmed",
+        "x_account_feature_required",
+        "x_account_protected",
+        "x_account_suspended",
+        "x_api_rate_limited",
+        "x_api_unavailable",
+        "x_api_unauthorized",
+        "x_auth_failure",
+        "x_content_too_long",
+        "x_daily_limit",
+        "x_dm_not_allowed",
+        "x_duplicate_action",
+        "x_login_auth_failed",
+        "x_login_challenge",
+        "x_login_denied",
+        "x_login_failed",
+        "x_login_proxy_error",
+        "x_login_rate_limited",
+        "x_login_service_unavailable",
+        "x_login_suspended",
+        "x_rate_limited",
+        "x_rejected",
+        "x_target_not_found",
+        "x_transient_error",
+        "x_user_lookup_failed",
+        "x_write_ambiguous",
+        "x_write_failed",
+    ],
+    ErrorValueStructuredError,
+]
+
+
+class Error(BaseModel):
+    """Error response.
+
+    Default v1 returns a legacy string error code. Send `xquik-api-contract: 2026-04-29` to receive the structured best-practice error object.
+    """
+
+    error: ErrorValue
+
+    message: Optional[str] = None
+    """Human-readable error guidance."""
+
+    reason: Optional[str] = None
+    """Machine-readable reason for a login cooldown."""
+
+    retry_after: Optional[int] = FieldInfo(alias="retryAfter", default=None)
+    """Seconds until the next permitted request."""
+
+    retry_after_ms: Optional[int] = FieldInfo(alias="retryAfterMs", default=None)
+    """Required wait in milliseconds."""

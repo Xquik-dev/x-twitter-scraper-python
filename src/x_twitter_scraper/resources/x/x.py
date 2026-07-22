@@ -89,6 +89,14 @@ from .tweets.tweets import (
     TweetsResourceWithStreamingResponse,
     AsyncTweetsResourceWithStreamingResponse,
 )
+from .write_actions import (
+    WriteActionsResource,
+    AsyncWriteActionsResource,
+    WriteActionsResourceWithRawResponse,
+    AsyncWriteActionsResourceWithRawResponse,
+    WriteActionsResourceWithStreamingResponse,
+    AsyncWriteActionsResourceWithStreamingResponse,
+)
 from ..._base_client import make_request_options
 from .communities.communities import (
     CommunitiesResource,
@@ -99,6 +107,14 @@ from .communities.communities import (
     AsyncCommunitiesResourceWithStreamingResponse,
 )
 from ...types.x_get_trends_response import XGetTrendsResponse
+from .account_connection_challenges import (
+    AccountConnectionChallengesResource,
+    AsyncAccountConnectionChallengesResource,
+    AccountConnectionChallengesResourceWithRawResponse,
+    AsyncAccountConnectionChallengesResourceWithRawResponse,
+    AccountConnectionChallengesResourceWithStreamingResponse,
+    AsyncAccountConnectionChallengesResourceWithStreamingResponse,
+)
 from ...types.x_get_article_response import XGetArticleResponse
 from ...types.shared.paginated_tweets import PaginatedTweets
 from ...types.x_get_notifications_response import XGetNotificationsResponse
@@ -108,12 +124,16 @@ __all__ = ["XResource", "AsyncXResource"]
 
 class XResource(SyncAPIResource):
     @cached_property
+    def write_actions(self) -> WriteActionsResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return WriteActionsResource(self._client)
+
+    @cached_property
     def tweets(self) -> TweetsResource:
         return TweetsResource(self._client)
 
     @cached_property
     def users(self) -> UsersResource:
-        """Look up, search, and explore user profiles and relationships"""
         return UsersResource(self._client)
 
     @cached_property
@@ -127,7 +147,6 @@ class XResource(SyncAPIResource):
 
     @cached_property
     def media(self) -> MediaResource:
-        """Media upload and download"""
         return MediaResource(self._client)
 
     @cached_property
@@ -143,6 +162,11 @@ class XResource(SyncAPIResource):
     def accounts(self) -> AccountsResource:
         """Connected X account management"""
         return AccountsResource(self._client)
+
+    @cached_property
+    def account_connection_challenges(self) -> AccountConnectionChallengesResource:
+        """Connected X account management"""
+        return AccountConnectionChallengesResource(self._client)
 
     @cached_property
     def bookmarks(self) -> BookmarksResource:
@@ -185,7 +209,8 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetArticleResponse:
         """
-        Retrieve the full content of an X Article (long-form post) by tweet ID.
+        Retrieve the full content of an X Article (long-form post) by numeric tweet ID.
+        Returns article_not_found when the tweet is valid but is not an X Article.
 
         Args:
           extra_headers: Send extra headers
@@ -224,7 +249,7 @@ class XResource(SyncAPIResource):
         Args:
           cursor: Pagination cursor for timeline
 
-          seen_tweet_ids: Comma-separated tweet IDs to exclude from results
+          seen_tweet_ids: Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
 
           extra_headers: Send extra headers
 
@@ -270,7 +295,7 @@ class XResource(SyncAPIResource):
         Args:
           cursor: Pagination cursor for notifications
 
-          type: Notification type filter
+          type: Notification type filter. Unrecognized values fall back to All.
 
           extra_headers: Send extra headers
 
@@ -347,12 +372,16 @@ class XResource(SyncAPIResource):
 
 class AsyncXResource(AsyncAPIResource):
     @cached_property
+    def write_actions(self) -> AsyncWriteActionsResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncWriteActionsResource(self._client)
+
+    @cached_property
     def tweets(self) -> AsyncTweetsResource:
         return AsyncTweetsResource(self._client)
 
     @cached_property
     def users(self) -> AsyncUsersResource:
-        """Look up, search, and explore user profiles and relationships"""
         return AsyncUsersResource(self._client)
 
     @cached_property
@@ -366,7 +395,6 @@ class AsyncXResource(AsyncAPIResource):
 
     @cached_property
     def media(self) -> AsyncMediaResource:
-        """Media upload and download"""
         return AsyncMediaResource(self._client)
 
     @cached_property
@@ -382,6 +410,11 @@ class AsyncXResource(AsyncAPIResource):
     def accounts(self) -> AsyncAccountsResource:
         """Connected X account management"""
         return AsyncAccountsResource(self._client)
+
+    @cached_property
+    def account_connection_challenges(self) -> AsyncAccountConnectionChallengesResource:
+        """Connected X account management"""
+        return AsyncAccountConnectionChallengesResource(self._client)
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResource:
@@ -424,7 +457,8 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetArticleResponse:
         """
-        Retrieve the full content of an X Article (long-form post) by tweet ID.
+        Retrieve the full content of an X Article (long-form post) by numeric tweet ID.
+        Returns article_not_found when the tweet is valid but is not an X Article.
 
         Args:
           extra_headers: Send extra headers
@@ -463,7 +497,7 @@ class AsyncXResource(AsyncAPIResource):
         Args:
           cursor: Pagination cursor for timeline
 
-          seen_tweet_ids: Comma-separated tweet IDs to exclude from results
+          seen_tweet_ids: Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
 
           extra_headers: Send extra headers
 
@@ -509,7 +543,7 @@ class AsyncXResource(AsyncAPIResource):
         Args:
           cursor: Pagination cursor for notifications
 
-          type: Notification type filter
+          type: Notification type filter. Unrecognized values fall back to All.
 
           extra_headers: Send extra headers
 
@@ -602,12 +636,16 @@ class XResourceWithRawResponse:
         )
 
     @cached_property
+    def write_actions(self) -> WriteActionsResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return WriteActionsResourceWithRawResponse(self._x.write_actions)
+
+    @cached_property
     def tweets(self) -> TweetsResourceWithRawResponse:
         return TweetsResourceWithRawResponse(self._x.tweets)
 
     @cached_property
     def users(self) -> UsersResourceWithRawResponse:
-        """Look up, search, and explore user profiles and relationships"""
         return UsersResourceWithRawResponse(self._x.users)
 
     @cached_property
@@ -621,7 +659,6 @@ class XResourceWithRawResponse:
 
     @cached_property
     def media(self) -> MediaResourceWithRawResponse:
-        """Media upload and download"""
         return MediaResourceWithRawResponse(self._x.media)
 
     @cached_property
@@ -637,6 +674,11 @@ class XResourceWithRawResponse:
     def accounts(self) -> AccountsResourceWithRawResponse:
         """Connected X account management"""
         return AccountsResourceWithRawResponse(self._x.accounts)
+
+    @cached_property
+    def account_connection_challenges(self) -> AccountConnectionChallengesResourceWithRawResponse:
+        """Connected X account management"""
+        return AccountConnectionChallengesResourceWithRawResponse(self._x.account_connection_challenges)
 
     @cached_property
     def bookmarks(self) -> BookmarksResourceWithRawResponse:
@@ -667,12 +709,16 @@ class AsyncXResourceWithRawResponse:
         )
 
     @cached_property
+    def write_actions(self) -> AsyncWriteActionsResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncWriteActionsResourceWithRawResponse(self._x.write_actions)
+
+    @cached_property
     def tweets(self) -> AsyncTweetsResourceWithRawResponse:
         return AsyncTweetsResourceWithRawResponse(self._x.tweets)
 
     @cached_property
     def users(self) -> AsyncUsersResourceWithRawResponse:
-        """Look up, search, and explore user profiles and relationships"""
         return AsyncUsersResourceWithRawResponse(self._x.users)
 
     @cached_property
@@ -686,7 +732,6 @@ class AsyncXResourceWithRawResponse:
 
     @cached_property
     def media(self) -> AsyncMediaResourceWithRawResponse:
-        """Media upload and download"""
         return AsyncMediaResourceWithRawResponse(self._x.media)
 
     @cached_property
@@ -702,6 +747,11 @@ class AsyncXResourceWithRawResponse:
     def accounts(self) -> AsyncAccountsResourceWithRawResponse:
         """Connected X account management"""
         return AsyncAccountsResourceWithRawResponse(self._x.accounts)
+
+    @cached_property
+    def account_connection_challenges(self) -> AsyncAccountConnectionChallengesResourceWithRawResponse:
+        """Connected X account management"""
+        return AsyncAccountConnectionChallengesResourceWithRawResponse(self._x.account_connection_challenges)
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResourceWithRawResponse:
@@ -732,12 +782,16 @@ class XResourceWithStreamingResponse:
         )
 
     @cached_property
+    def write_actions(self) -> WriteActionsResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return WriteActionsResourceWithStreamingResponse(self._x.write_actions)
+
+    @cached_property
     def tweets(self) -> TweetsResourceWithStreamingResponse:
         return TweetsResourceWithStreamingResponse(self._x.tweets)
 
     @cached_property
     def users(self) -> UsersResourceWithStreamingResponse:
-        """Look up, search, and explore user profiles and relationships"""
         return UsersResourceWithStreamingResponse(self._x.users)
 
     @cached_property
@@ -751,7 +805,6 @@ class XResourceWithStreamingResponse:
 
     @cached_property
     def media(self) -> MediaResourceWithStreamingResponse:
-        """Media upload and download"""
         return MediaResourceWithStreamingResponse(self._x.media)
 
     @cached_property
@@ -767,6 +820,11 @@ class XResourceWithStreamingResponse:
     def accounts(self) -> AccountsResourceWithStreamingResponse:
         """Connected X account management"""
         return AccountsResourceWithStreamingResponse(self._x.accounts)
+
+    @cached_property
+    def account_connection_challenges(self) -> AccountConnectionChallengesResourceWithStreamingResponse:
+        """Connected X account management"""
+        return AccountConnectionChallengesResourceWithStreamingResponse(self._x.account_connection_challenges)
 
     @cached_property
     def bookmarks(self) -> BookmarksResourceWithStreamingResponse:
@@ -797,12 +855,16 @@ class AsyncXResourceWithStreamingResponse:
         )
 
     @cached_property
+    def write_actions(self) -> AsyncWriteActionsResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncWriteActionsResourceWithStreamingResponse(self._x.write_actions)
+
+    @cached_property
     def tweets(self) -> AsyncTweetsResourceWithStreamingResponse:
         return AsyncTweetsResourceWithStreamingResponse(self._x.tweets)
 
     @cached_property
     def users(self) -> AsyncUsersResourceWithStreamingResponse:
-        """Look up, search, and explore user profiles and relationships"""
         return AsyncUsersResourceWithStreamingResponse(self._x.users)
 
     @cached_property
@@ -816,7 +878,6 @@ class AsyncXResourceWithStreamingResponse:
 
     @cached_property
     def media(self) -> AsyncMediaResourceWithStreamingResponse:
-        """Media upload and download"""
         return AsyncMediaResourceWithStreamingResponse(self._x.media)
 
     @cached_property
@@ -832,6 +893,11 @@ class AsyncXResourceWithStreamingResponse:
     def accounts(self) -> AsyncAccountsResourceWithStreamingResponse:
         """Connected X account management"""
         return AsyncAccountsResourceWithStreamingResponse(self._x.accounts)
+
+    @cached_property
+    def account_connection_challenges(self) -> AsyncAccountConnectionChallengesResourceWithStreamingResponse:
+        """Connected X account management"""
+        return AsyncAccountConnectionChallengesResourceWithStreamingResponse(self._x.account_connection_challenges)
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResourceWithStreamingResponse:

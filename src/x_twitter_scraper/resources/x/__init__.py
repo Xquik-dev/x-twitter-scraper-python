@@ -88,8 +88,30 @@ from .communities import (
     CommunitiesResourceWithStreamingResponse,
     AsyncCommunitiesResourceWithStreamingResponse,
 )
+from .write_actions import (
+    WriteActionsResource,
+    AsyncWriteActionsResource,
+    WriteActionsResourceWithRawResponse,
+    AsyncWriteActionsResourceWithRawResponse,
+    WriteActionsResourceWithStreamingResponse,
+    AsyncWriteActionsResourceWithStreamingResponse,
+)
+from .account_connection_challenges import (
+    AccountConnectionChallengesResource,
+    AsyncAccountConnectionChallengesResource,
+    AccountConnectionChallengesResourceWithRawResponse,
+    AsyncAccountConnectionChallengesResourceWithRawResponse,
+    AccountConnectionChallengesResourceWithStreamingResponse,
+    AsyncAccountConnectionChallengesResourceWithStreamingResponse,
+)
 
 __all__ = [
+    "WriteActionsResource",
+    "AsyncWriteActionsResource",
+    "WriteActionsResourceWithRawResponse",
+    "AsyncWriteActionsResourceWithRawResponse",
+    "WriteActionsResourceWithStreamingResponse",
+    "AsyncWriteActionsResourceWithStreamingResponse",
     "TweetsResource",
     "AsyncTweetsResource",
     "TweetsResourceWithRawResponse",
@@ -138,6 +160,12 @@ __all__ = [
     "AsyncAccountsResourceWithRawResponse",
     "AccountsResourceWithStreamingResponse",
     "AsyncAccountsResourceWithStreamingResponse",
+    "AccountConnectionChallengesResource",
+    "AsyncAccountConnectionChallengesResource",
+    "AccountConnectionChallengesResourceWithRawResponse",
+    "AsyncAccountConnectionChallengesResourceWithRawResponse",
+    "AccountConnectionChallengesResourceWithStreamingResponse",
+    "AsyncAccountConnectionChallengesResourceWithStreamingResponse",
     "BookmarksResource",
     "AsyncBookmarksResource",
     "BookmarksResourceWithRawResponse",

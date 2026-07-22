@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+from typing import Mapping, cast
 from typing_extensions import Literal
 
 import httpx
 
-from ..._types import Body, Query, Headers, NotGiven, not_given
-from ..._utils import path_template, maybe_transform, async_maybe_transform
+from ..._files import deepcopy_with_paths
+from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
+from ..._utils import extract_files, path_template, maybe_transform, strip_not_given, async_maybe_transform
 from ..._compat import cached_property
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
@@ -52,8 +54,9 @@ class TicketsResource(SyncAPIResource):
     def create(
         self,
         *,
-        body: str,
+        content: str,
         subject: str,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -73,15 +76,24 @@ class TicketsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        body = deepcopy_with_paths(
+            {
+                "content": content,
+                "subject": subject,
+            },
+            [["attachments", "<array>"]],
+        )
+        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return self._post(
             "/support/tickets",
-            body=maybe_transform(
-                {
-                    "body": body,
-                    "subject": subject,
-                },
-                ticket_create_params.TicketCreateParams,
-            ),
+            body=maybe_transform(body, ticket_create_params.TicketCreateParams),
+            files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -179,7 +191,8 @@ class TicketsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        body: str,
+        content: str,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -201,9 +214,18 @@ class TicketsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
+        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return self._post(
             path_template("/support/tickets/{id}/messages", id=id),
-            body=maybe_transform({"body": body}, ticket_reply_params.TicketReplyParams),
+            body=maybe_transform(body, ticket_reply_params.TicketReplyParams),
+            files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -236,8 +258,9 @@ class AsyncTicketsResource(AsyncAPIResource):
     async def create(
         self,
         *,
-        body: str,
+        content: str,
         subject: str,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -257,15 +280,24 @@ class AsyncTicketsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        body = deepcopy_with_paths(
+            {
+                "content": content,
+                "subject": subject,
+            },
+            [["attachments", "<array>"]],
+        )
+        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return await self._post(
             "/support/tickets",
-            body=await async_maybe_transform(
-                {
-                    "body": body,
-                    "subject": subject,
-                },
-                ticket_create_params.TicketCreateParams,
-            ),
+            body=await async_maybe_transform(body, ticket_create_params.TicketCreateParams),
+            files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -363,7 +395,8 @@ class AsyncTicketsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        body: str,
+        content: str,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -385,9 +418,18 @@ class AsyncTicketsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
+        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        if files:
+            # It should be noted that the actual Content-Type header that will be
+            # sent to the server will contain a `boundary` parameter, e.g.
+            # multipart/form-data; boundary=---abc--
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
         return await self._post(
             path_template("/support/tickets/{id}/messages", id=id),
-            body=await async_maybe_transform({"body": body}, ticket_reply_params.TicketReplyParams),
+            body=await async_maybe_transform(body, ticket_reply_params.TicketReplyParams),
+            files=files,
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),

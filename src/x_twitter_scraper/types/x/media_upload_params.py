@@ -2,18 +2,18 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
 
-from ..._types import FileTypes
+from ..._utils import PropertyInfo
 
 __all__ = ["MediaUploadParams"]
 
 
 class MediaUploadParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or ID) uploading media"""
+    """X account (@username or ID) uploading media from URL"""
 
-    file: Required[FileTypes]
-    """Media file to upload"""
+    url: Required[str]
+    """HTTPS URL to download and upload as media"""
 
-    is_long_video: bool
+    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]

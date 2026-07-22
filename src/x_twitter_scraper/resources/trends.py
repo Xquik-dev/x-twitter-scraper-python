@@ -59,9 +59,9 @@ class TrendsResource(SyncAPIResource):
         Get trending hashtags and topics by region (alias)
 
         Args:
-          count: Number of trending topics to return (1-50, default 30)
+          count: Number of trending topics returned (1-50, default 30)
 
-          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          woeid: Region Yahoo WOEID code (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
 
           extra_headers: Send extra headers
 
@@ -128,9 +128,9 @@ class AsyncTrendsResource(AsyncAPIResource):
         Get trending hashtags and topics by region (alias)
 
         Args:
-          count: Number of trending topics to return (1-50, default 30)
+          count: Number of trending topics returned (1-50, default 30)
 
-          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          woeid: Region Yahoo WOEID code (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
 
           extra_headers: Send extra headers
 

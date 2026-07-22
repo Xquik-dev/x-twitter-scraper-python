@@ -54,7 +54,6 @@ class AccountsResource(SyncAPIResource):
         email: str,
         password: str,
         username: str,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -73,8 +72,6 @@ class AccountsResource(SyncAPIResource):
 
           username: X username
 
-          proxy_country: Proxy country code
-
           totp_secret: TOTP secret for 2FA
 
           extra_headers: Send extra headers
@@ -92,7 +89,6 @@ class AccountsResource(SyncAPIResource):
                     "email": email,
                     "password": password,
                     "username": username,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_create_params.AccountCreateParams,
@@ -216,7 +212,6 @@ class AccountsResource(SyncAPIResource):
         *,
         password: str,
         email: str | Omit = omit,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -232,8 +227,6 @@ class AccountsResource(SyncAPIResource):
           password: Updated account password
 
           email: Email for the X account (updates stored email)
-
-          proxy_country: Two-letter country code for login proxy region
 
           totp_secret: TOTP secret for 2FA re-authentication
 
@@ -253,7 +246,6 @@ class AccountsResource(SyncAPIResource):
                 {
                     "password": password,
                     "email": email,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_reauth_params.AccountReauthParams,
@@ -293,7 +285,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         email: str,
         password: str,
         username: str,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -312,8 +303,6 @@ class AsyncAccountsResource(AsyncAPIResource):
 
           username: X username
 
-          proxy_country: Proxy country code
-
           totp_secret: TOTP secret for 2FA
 
           extra_headers: Send extra headers
@@ -331,7 +320,6 @@ class AsyncAccountsResource(AsyncAPIResource):
                     "email": email,
                     "password": password,
                     "username": username,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_create_params.AccountCreateParams,
@@ -455,7 +443,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         *,
         password: str,
         email: str | Omit = omit,
-        proxy_country: str | Omit = omit,
         totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -471,8 +458,6 @@ class AsyncAccountsResource(AsyncAPIResource):
           password: Updated account password
 
           email: Email for the X account (updates stored email)
-
-          proxy_country: Two-letter country code for login proxy region
 
           totp_secret: TOTP secret for 2FA re-authentication
 
@@ -492,7 +477,6 @@ class AsyncAccountsResource(AsyncAPIResource):
                 {
                     "password": password,
                     "email": email,
-                    "proxy_country": proxy_country,
                     "totp_secret": totp_secret,
                 },
                 account_reauth_params.AccountReauthParams,

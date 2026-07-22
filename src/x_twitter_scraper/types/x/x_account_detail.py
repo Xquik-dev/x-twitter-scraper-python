@@ -12,7 +12,7 @@ __all__ = ["XAccountDetail"]
 
 
 class XAccountDetail(BaseModel):
-    """Full X account details including proxy, cookies, and update timestamp."""
+    """Connected X account details with health and timestamp metadata."""
 
     id: str
 
@@ -27,7 +27,5 @@ class XAccountDetail(BaseModel):
     x_username: str = FieldInfo(alias="xUsername")
 
     cookies_obtained_at: Optional[datetime] = FieldInfo(alias="cookiesObtainedAt", default=None)
-
-    proxy_country: Optional[str] = FieldInfo(alias="proxyCountry", default=None)
 
     updated_at: Optional[datetime] = FieldInfo(alias="updatedAt", default=None)

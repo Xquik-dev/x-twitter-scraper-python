@@ -46,6 +46,7 @@ class DmResource(SyncAPIResource):
         self,
         user_id: str,
         *,
+        account: str,
         cursor: str | Omit = omit,
         max_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -59,6 +60,9 @@ class DmResource(SyncAPIResource):
         Get DM conversation history
 
         Args:
+          account: X handle (without the `@` prefix) of the connected X account used to read the
+              conversation. The account must be a participant in the conversation.
+
           cursor: Pagination cursor for DM history
 
           max_id: Legacy pagination cursor (backward compat)
@@ -82,6 +86,7 @@ class DmResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "account": account,
                         "cursor": cursor,
                         "max_id": max_id,
                     },
@@ -97,8 +102,8 @@ class DmResource(SyncAPIResource):
         *,
         account: str,
         text: str,
+        idempotency_key: str,
         media_ids: SequenceNotStr[str] | Omit = omit,
-        reply_to_message_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -112,6 +117,8 @@ class DmResource(SyncAPIResource):
         Args:
           account: X account (@username or ID) sending the DM
 
+          media_ids: Optional array containing exactly 1 uploaded media ID.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -122,6 +129,7 @@ class DmResource(SyncAPIResource):
         """
         if not user_id:
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             path_template("/x/dm/{user_id}", user_id=user_id),
             body=maybe_transform(
@@ -129,7 +137,6 @@ class DmResource(SyncAPIResource):
                     "account": account,
                     "text": text,
                     "media_ids": media_ids,
-                    "reply_to_message_id": reply_to_message_id,
                 },
                 dm_send_params.DmSendParams,
             ),
@@ -164,6 +171,7 @@ class AsyncDmResource(AsyncAPIResource):
         self,
         user_id: str,
         *,
+        account: str,
         cursor: str | Omit = omit,
         max_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -177,6 +185,9 @@ class AsyncDmResource(AsyncAPIResource):
         Get DM conversation history
 
         Args:
+          account: X handle (without the `@` prefix) of the connected X account used to read the
+              conversation. The account must be a participant in the conversation.
+
           cursor: Pagination cursor for DM history
 
           max_id: Legacy pagination cursor (backward compat)
@@ -200,6 +211,7 @@ class AsyncDmResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "account": account,
                         "cursor": cursor,
                         "max_id": max_id,
                     },
@@ -215,8 +227,8 @@ class AsyncDmResource(AsyncAPIResource):
         *,
         account: str,
         text: str,
+        idempotency_key: str,
         media_ids: SequenceNotStr[str] | Omit = omit,
-        reply_to_message_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -230,6 +242,8 @@ class AsyncDmResource(AsyncAPIResource):
         Args:
           account: X account (@username or ID) sending the DM
 
+          media_ids: Optional array containing exactly 1 uploaded media ID.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -240,6 +254,7 @@ class AsyncDmResource(AsyncAPIResource):
         """
         if not user_id:
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             path_template("/x/dm/{user_id}", user_id=user_id),
             body=await async_maybe_transform(
@@ -247,7 +262,6 @@ class AsyncDmResource(AsyncAPIResource):
                     "account": account,
                     "text": text,
                     "media_ids": media_ids,
-                    "reply_to_message_id": reply_to_message_id,
                 },
                 dm_send_params.DmSendParams,
             ),

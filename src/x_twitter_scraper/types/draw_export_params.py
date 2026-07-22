@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing_extensions import Literal, TypedDict
+from typing_extensions import Literal, Required, TypedDict
 
 __all__ = ["DrawExportParams"]
 
 
 class DrawExportParams(TypedDict, total=False):
-    format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]
+    format: Required[Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]]
     """Export output format"""
 
     type: Literal["winners", "entries"]

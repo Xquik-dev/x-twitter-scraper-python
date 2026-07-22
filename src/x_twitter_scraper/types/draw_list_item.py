@@ -14,6 +14,7 @@ class DrawListItem(BaseModel):
     """Giveaway draw summary with entry counts and status."""
 
     id: str
+    """Draw public ID for detail responses."""
 
     created_at: datetime = FieldInfo(alias="createdAt")
 

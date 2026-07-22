@@ -11,8 +11,14 @@ __all__ = ["MediaDownloadParams"]
 
 
 class MediaDownloadParams(TypedDict, total=False):
+    tweet_id: Annotated[str, PropertyInfo(alias="tweetId")]
+    """Numeric tweet ID alias for tweetInput"""
+
     tweet_ids: Annotated[SequenceNotStr[str], PropertyInfo(alias="tweetIds")]
-    """Array of tweet URLs or IDs (bulk, max 50)"""
+    """Array of tweet URLs or IDs (bulk, max 50 string items)"""
 
     tweet_input: Annotated[str, PropertyInfo(alias="tweetInput")]
     """Tweet URL or ID (single tweet)"""
+
+    tweet_url: Annotated[str, PropertyInfo(alias="tweetUrl")]
+    """Tweet URL alias for tweetInput"""

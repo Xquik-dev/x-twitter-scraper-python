@@ -21,6 +21,7 @@ class TestTweets:
     @parametrize
     def test_method_list(self, client: XTwitterScraper) -> None:
         tweet = client.x.communities.tweets.list(
+            community_id="321669910225",
             q="q",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
@@ -29,9 +30,11 @@ class TestTweets:
     @parametrize
     def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.communities.tweets.list(
+            community_id="321669910225",
             q="q",
             cursor="cursor",
-            query_type="queryType",
+            page_size=1,
+            query_type="Latest",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -39,6 +42,7 @@ class TestTweets:
     @parametrize
     def test_raw_response_list(self, client: XTwitterScraper) -> None:
         response = client.x.communities.tweets.with_raw_response.list(
+            community_id="321669910225",
             q="q",
         )
 
@@ -51,6 +55,7 @@ class TestTweets:
     @parametrize
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.x.communities.tweets.with_streaming_response.list(
+            community_id="321669910225",
             q="q",
         ) as response:
             assert not response.is_closed
@@ -75,6 +80,7 @@ class TestTweets:
         tweet = client.x.communities.tweets.list_by_community(
             id="id",
             cursor="cursor",
+            page_size=1,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -122,6 +128,7 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.communities.tweets.list(
+            community_id="321669910225",
             q="q",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
@@ -130,9 +137,11 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.communities.tweets.list(
+            community_id="321669910225",
             q="q",
             cursor="cursor",
-            query_type="queryType",
+            page_size=1,
+            query_type="Latest",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -140,6 +149,7 @@ class TestAsyncTweets:
     @parametrize
     async def test_raw_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.tweets.with_raw_response.list(
+            community_id="321669910225",
             q="q",
         )
 
@@ -152,6 +162,7 @@ class TestAsyncTweets:
     @parametrize
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.tweets.with_streaming_response.list(
+            community_id="321669910225",
             q="q",
         ) as response:
             assert not response.is_closed
@@ -176,6 +187,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.communities.tweets.list_by_community(
             id="id",
             cursor="cursor",
+            page_size=1,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 

@@ -9,6 +9,7 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
+from x_twitter_scraper._utils import parse_date
 from x_twitter_scraper.types.x import (
     TweetCreateResponse,
     TweetDeleteResponse,
@@ -27,6 +28,7 @@ class TestTweets:
     def test_method_create(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -35,11 +37,10 @@ class TestTweets:
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.create(
             account="@elonmusk",
-            attachment_url="https://x.com/elonmusk/status/1234567890",
+            idempotency_key="Idempotency-Key",
             community_id="1500000000000000000",
             is_note_tweet=False,
-            media=["https://example.com/image.jpg"],
-            media_ids=["1234567890123456789"],
+            media=["https://example.com/video.mp4"],
             reply_to_tweet_id="1234567890",
             text="Just launched our new feature!",
         )
@@ -50,6 +51,7 @@ class TestTweets:
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.tweets.with_raw_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -62,6 +64,7 @@ class TestTweets:
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.tweets.with_streaming_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -153,6 +156,7 @@ class TestTweets:
         tweet = client.x.tweets.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
 
@@ -162,6 +166,7 @@ class TestTweets:
         response = client.x.tweets.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -175,6 +180,7 @@ class TestTweets:
         with client.x.tweets.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -191,6 +197,7 @@ class TestTweets:
             client.x.tweets.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -207,6 +214,7 @@ class TestTweets:
         tweet = client.x.tweets.get_favoriters(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -257,10 +265,36 @@ class TestTweets:
     def test_method_get_quotes_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.get_quotes(
             id="id",
+            any_words="anyWords",
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            from_user="fromUser",
+            hashtags="hashtags",
             include_replies=True,
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            media_type="images",
+            mentioning="mentioning",
+            min_faves=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
             since_time="sinceTime",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
             until_time="untilTime",
+            url="url",
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -311,9 +345,35 @@ class TestTweets:
     def test_method_get_replies_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.get_replies(
             id="id",
+            any_words="anyWords",
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            media_type="images",
+            mentioning="mentioning",
+            min_faves=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
             since_time="sinceTime",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
             until_time="untilTime",
+            url="url",
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -365,6 +425,7 @@ class TestTweets:
         tweet = client.x.tweets.get_retweeters(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -416,6 +477,7 @@ class TestTweets:
         tweet = client.x.tweets.get_thread(
             id="id",
             cursor="cursor",
+            page_size=1,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -466,11 +528,42 @@ class TestTweets:
     def test_method_search_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.search(
             q="q",
+            advanced_query="advancedQuery",
+            any_words="anyWords",
+            bounding_box="boundingBox",
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
             limit=200,
+            list_id="listId",
+            media_type="images",
+            mentioning="mentioning",
+            min_faves=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            place="place",
+            place_country="placeCountry",
+            point_radius="pointRadius",
             query_type="Latest",
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
             since_time="sinceTime",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
             until_time="untilTime",
+            url="url",
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -511,6 +604,7 @@ class TestAsyncTweets:
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetCreateResponse, tweet, path=["response"])
 
@@ -519,11 +613,10 @@ class TestAsyncTweets:
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.create(
             account="@elonmusk",
-            attachment_url="https://x.com/elonmusk/status/1234567890",
+            idempotency_key="Idempotency-Key",
             community_id="1500000000000000000",
             is_note_tweet=False,
-            media=["https://example.com/image.jpg"],
-            media_ids=["1234567890123456789"],
+            media=["https://example.com/video.mp4"],
             reply_to_tweet_id="1234567890",
             text="Just launched our new feature!",
         )
@@ -534,6 +627,7 @@ class TestAsyncTweets:
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.tweets.with_raw_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -546,6 +640,7 @@ class TestAsyncTweets:
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.tweets.with_streaming_response.create(
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -637,6 +732,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TweetDeleteResponse, tweet, path=["response"])
 
@@ -646,6 +742,7 @@ class TestAsyncTweets:
         response = await async_client.x.tweets.with_raw_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         )
 
         assert response.is_closed is True
@@ -659,6 +756,7 @@ class TestAsyncTweets:
         async with async_client.x.tweets.with_streaming_response.delete(
             id="id",
             account="@elonmusk",
+            idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -675,6 +773,7 @@ class TestAsyncTweets:
             await async_client.x.tweets.with_raw_response.delete(
                 id="",
                 account="@elonmusk",
+                idempotency_key="Idempotency-Key",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -691,6 +790,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_favoriters(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -741,10 +841,36 @@ class TestAsyncTweets:
     async def test_method_get_quotes_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.get_quotes(
             id="id",
+            any_words="anyWords",
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            from_user="fromUser",
+            hashtags="hashtags",
             include_replies=True,
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            media_type="images",
+            mentioning="mentioning",
+            min_faves=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
             since_time="sinceTime",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
             until_time="untilTime",
+            url="url",
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -795,9 +921,35 @@ class TestAsyncTweets:
     async def test_method_get_replies_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.get_replies(
             id="id",
+            any_words="anyWords",
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            media_type="images",
+            mentioning="mentioning",
+            min_faves=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
             since_time="sinceTime",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
             until_time="untilTime",
+            url="url",
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -849,6 +1001,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_retweeters(
             id="id",
             cursor="cursor",
+            page_size=20,
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -900,6 +1053,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_thread(
             id="id",
             cursor="cursor",
+            page_size=1,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -950,11 +1104,42 @@ class TestAsyncTweets:
     async def test_method_search_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.search(
             q="q",
+            advanced_query="advancedQuery",
+            any_words="anyWords",
+            bounding_box="boundingBox",
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
             limit=200,
+            list_id="listId",
+            media_type="images",
+            mentioning="mentioning",
+            min_faves=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            place="place",
+            place_country="placeCountry",
+            point_radius="pointRadius",
             query_type="Latest",
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
             since_time="sinceTime",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
             until_time="untilTime",
+            url="url",
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 

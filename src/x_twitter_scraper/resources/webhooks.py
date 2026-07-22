@@ -23,6 +23,7 @@ from ..types.shared.event_type import EventType
 from ..types.webhook_list_response import WebhookListResponse
 from ..types.webhook_test_response import WebhookTestResponse
 from ..types.webhook_create_response import WebhookCreateResponse
+from ..types.webhook_resume_response import WebhookResumeResponse
 from ..types.webhook_deactivate_response import WebhookDeactivateResponse
 from ..types.webhook_list_deliveries_response import WebhookListDeliveriesResponse
 
@@ -223,6 +224,39 @@ class WebhooksResource(SyncAPIResource):
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=WebhookListDeliveriesResponse,
+        )
+
+    def resume(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> WebhookResumeResponse:
+        """
+        Test and resume webhook endpoint
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._post(
+            path_template("/webhooks/{id}/resume", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=WebhookResumeResponse,
         )
 
     def test(
@@ -455,6 +489,39 @@ class AsyncWebhooksResource(AsyncAPIResource):
             cast_to=WebhookListDeliveriesResponse,
         )
 
+    async def resume(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> WebhookResumeResponse:
+        """
+        Test and resume webhook endpoint
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._post(
+            path_template("/webhooks/{id}/resume", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=WebhookResumeResponse,
+        )
+
     async def test(
         self,
         id: str,
@@ -508,6 +575,9 @@ class WebhooksResourceWithRawResponse:
         self.list_deliveries = to_raw_response_wrapper(
             webhooks.list_deliveries,
         )
+        self.resume = to_raw_response_wrapper(
+            webhooks.resume,
+        )
         self.test = to_raw_response_wrapper(
             webhooks.test,
         )
@@ -531,6 +601,9 @@ class AsyncWebhooksResourceWithRawResponse:
         )
         self.list_deliveries = async_to_raw_response_wrapper(
             webhooks.list_deliveries,
+        )
+        self.resume = async_to_raw_response_wrapper(
+            webhooks.resume,
         )
         self.test = async_to_raw_response_wrapper(
             webhooks.test,
@@ -556,6 +629,9 @@ class WebhooksResourceWithStreamingResponse:
         self.list_deliveries = to_streamed_response_wrapper(
             webhooks.list_deliveries,
         )
+        self.resume = to_streamed_response_wrapper(
+            webhooks.resume,
+        )
         self.test = to_streamed_response_wrapper(
             webhooks.test,
         )
@@ -579,6 +655,9 @@ class AsyncWebhooksResourceWithStreamingResponse:
         )
         self.list_deliveries = async_to_streamed_response_wrapper(
             webhooks.list_deliveries,
+        )
+        self.resume = async_to_streamed_response_wrapper(
+            webhooks.resume,
         )
         self.test = async_to_streamed_response_wrapper(
             webhooks.test,

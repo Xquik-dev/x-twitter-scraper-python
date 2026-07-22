@@ -88,14 +88,6 @@ from .support import (
     SupportResourceWithStreamingResponse,
     AsyncSupportResourceWithStreamingResponse,
 )
-from .api_keys import (
-    APIKeysResource,
-    AsyncAPIKeysResource,
-    APIKeysResourceWithRawResponse,
-    AsyncAPIKeysResourceWithRawResponse,
-    APIKeysResourceWithStreamingResponse,
-    AsyncAPIKeysResourceWithStreamingResponse,
-)
 from .monitors import (
     MonitorsResource,
     AsyncMonitorsResource,
@@ -128,6 +120,14 @@ from .extractions import (
     ExtractionsResourceWithStreamingResponse,
     AsyncExtractionsResourceWithStreamingResponse,
 )
+from .guest_wallets import (
+    GuestWalletsResource,
+    AsyncGuestWalletsResource,
+    GuestWalletsResourceWithRawResponse,
+    AsyncGuestWalletsResourceWithRawResponse,
+    GuestWalletsResourceWithStreamingResponse,
+    AsyncGuestWalletsResourceWithStreamingResponse,
+)
 
 __all__ = [
     "AccountResource",
@@ -136,12 +136,6 @@ __all__ = [
     "AsyncAccountResourceWithRawResponse",
     "AccountResourceWithStreamingResponse",
     "AsyncAccountResourceWithStreamingResponse",
-    "APIKeysResource",
-    "AsyncAPIKeysResource",
-    "APIKeysResourceWithRawResponse",
-    "AsyncAPIKeysResourceWithRawResponse",
-    "APIKeysResourceWithStreamingResponse",
-    "AsyncAPIKeysResourceWithStreamingResponse",
     "SubscribeResource",
     "AsyncSubscribeResource",
     "SubscribeResourceWithRawResponse",
@@ -226,4 +220,10 @@ __all__ = [
     "AsyncCreditsResourceWithRawResponse",
     "CreditsResourceWithStreamingResponse",
     "AsyncCreditsResourceWithStreamingResponse",
+    "GuestWalletsResource",
+    "AsyncGuestWalletsResource",
+    "GuestWalletsResourceWithRawResponse",
+    "AsyncGuestWalletsResourceWithRawResponse",
+    "GuestWalletsResourceWithStreamingResponse",
+    "AsyncGuestWalletsResourceWithStreamingResponse",
 ]

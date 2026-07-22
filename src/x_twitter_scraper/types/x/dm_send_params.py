@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
 
 from ..._types import SequenceNotStr
+from ..._utils import PropertyInfo
 
 __all__ = ["DmSendParams"]
 
@@ -15,6 +16,7 @@ class DmSendParams(TypedDict, total=False):
 
     text: Required[str]
 
-    media_ids: SequenceNotStr[str]
+    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]
 
-    reply_to_message_id: str
+    media_ids: SequenceNotStr[str]
+    """Optional array containing exactly 1 uploaded media ID."""

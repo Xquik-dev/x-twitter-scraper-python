@@ -69,7 +69,7 @@ class TestEvents:
     @parametrize
     def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
         event = client.events.list(
-            after="after",
+            cursor="cursor",
             event_type="tweet.new",
             limit=1,
             monitor_id="monitorId",
@@ -156,7 +156,7 @@ class TestAsyncEvents:
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         event = await async_client.events.list(
-            after="after",
+            cursor="cursor",
             event_type="tweet.new",
             limit=1,
             monitor_id="monitorId",

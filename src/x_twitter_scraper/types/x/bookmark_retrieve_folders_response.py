@@ -17,5 +17,7 @@ class BookmarkRetrieveFoldersResponse(BaseModel):
     folders: List[Folder]
 
     has_next_page: bool
+    """Always false for the current bookmark folder route"""
 
     next_cursor: str
+    """Always empty for the current bookmark folder route"""

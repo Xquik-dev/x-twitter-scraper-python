@@ -9,7 +9,7 @@ __all__ = ["FollowerCheckParams"]
 
 class FollowerCheckParams(TypedDict, total=False):
     source: Required[str]
-    """Username to check (without @)"""
+    """Source username, @username, or X or Twitter profile URL"""
 
     target: Required[str]
-    """Target username (without @)"""
+    """Target username, @username, or X or Twitter profile URL"""

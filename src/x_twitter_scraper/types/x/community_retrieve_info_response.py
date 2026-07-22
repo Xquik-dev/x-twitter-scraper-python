@@ -4,7 +4,17 @@ from typing import List, Optional
 
 from ..._models import BaseModel
 
-__all__ = ["CommunityRetrieveInfoResponse", "Community", "CommunityPrimaryTopic", "CommunityRule"]
+__all__ = ["CommunityRetrieveInfoResponse", "Community", "CommunityCreator", "CommunityPrimaryTopic", "CommunityRule"]
+
+
+class CommunityCreator(BaseModel):
+    id: str
+
+    username: str
+
+    verified: bool
+
+    name: Optional[str] = None
 
 
 class CommunityPrimaryTopic(BaseModel):
@@ -35,8 +45,19 @@ class Community(BaseModel):
     created_at: Optional[str] = None
     """Community creation timestamp"""
 
+    creator: Optional[CommunityCreator] = None
+
     description: Optional[str] = None
     """About text for the community"""
+
+    invites_policy: Optional[str] = None
+    """Invitation policy"""
+
+    is_member: Optional[bool] = None
+    """Whether the authenticated viewer is a member"""
+
+    is_nsfw: Optional[bool] = None
+    """Whether the community is marked sensitive"""
 
     join_policy: Optional[str] = None
     """Join policy (open or restricted)"""
@@ -52,6 +73,9 @@ class Community(BaseModel):
 
     primary_topic: Optional[CommunityPrimaryTopic] = None
     """Primary topic"""
+
+    role: Optional[str] = None
+    """Authenticated viewer's community role"""
 
     rules: Optional[List[CommunityRule]] = None
     """Community rules"""

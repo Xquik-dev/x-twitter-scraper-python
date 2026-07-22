@@ -6,29 +6,42 @@ from typing import List
 
 import httpx
 
-from ..types import monitor_create_params, monitor_update_params
-from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from .._utils import path_template, maybe_transform, async_maybe_transform
-from .._compat import cached_property
-from .._resource import SyncAPIResource, AsyncAPIResource
-from .._response import (
+from ...types import monitor_create_params, monitor_update_params
+from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
+from ..._utils import path_template, maybe_transform, async_maybe_transform
+from .keywords import (
+    KeywordsResource,
+    AsyncKeywordsResource,
+    KeywordsResourceWithRawResponse,
+    AsyncKeywordsResourceWithRawResponse,
+    KeywordsResourceWithStreamingResponse,
+    AsyncKeywordsResourceWithStreamingResponse,
+)
+from ..._compat import cached_property
+from ..._resource import SyncAPIResource, AsyncAPIResource
+from ..._response import (
     to_raw_response_wrapper,
     to_streamed_response_wrapper,
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
-from .._base_client import make_request_options
-from ..types.monitor import Monitor
-from ..types.shared.event_type import EventType
-from ..types.monitor_list_response import MonitorListResponse
-from ..types.monitor_create_response import MonitorCreateResponse
-from ..types.monitor_deactivate_response import MonitorDeactivateResponse
+from ..._base_client import make_request_options
+from ...types.monitor import Monitor
+from ...types.shared.event_type import EventType
+from ...types.monitor_list_response import MonitorListResponse
+from ...types.monitor_create_response import MonitorCreateResponse
+from ...types.monitor_deactivate_response import MonitorDeactivateResponse
 
 __all__ = ["MonitorsResource", "AsyncMonitorsResource"]
 
 
 class MonitorsResource(SyncAPIResource):
     """Real-time X account monitoring"""
+
+    @cached_property
+    def keywords(self) -> KeywordsResource:
+        """Real-time X account monitoring"""
+        return KeywordsResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> MonitorsResourceWithRawResponse:
@@ -61,8 +74,12 @@ class MonitorsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorCreateResponse:
-        """
-        Create monitor
+        """Creates an instant monitor.
+
+        Monitors are unlimited. Active monitors check every
+        1 second and cost 21 credits per hour. Events and webhook deliveries are
+        included. Creation requires available credits for the first hourly charge and
+        username lookup.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -200,7 +217,7 @@ class MonitorsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorDeactivateResponse:
         """
-        Deactivate monitor
+        Delete monitor
 
         Args:
           extra_headers: Send extra headers
@@ -224,6 +241,11 @@ class MonitorsResource(SyncAPIResource):
 
 class AsyncMonitorsResource(AsyncAPIResource):
     """Real-time X account monitoring"""
+
+    @cached_property
+    def keywords(self) -> AsyncKeywordsResource:
+        """Real-time X account monitoring"""
+        return AsyncKeywordsResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> AsyncMonitorsResourceWithRawResponse:
@@ -256,8 +278,12 @@ class AsyncMonitorsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorCreateResponse:
-        """
-        Create monitor
+        """Creates an instant monitor.
+
+        Monitors are unlimited. Active monitors check every
+        1 second and cost 21 credits per hour. Events and webhook deliveries are
+        included. Creation requires available credits for the first hourly charge and
+        username lookup.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -395,7 +421,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorDeactivateResponse:
         """
-        Deactivate monitor
+        Delete monitor
 
         Args:
           extra_headers: Send extra headers
@@ -437,6 +463,11 @@ class MonitorsResourceWithRawResponse:
             monitors.deactivate,
         )
 
+    @cached_property
+    def keywords(self) -> KeywordsResourceWithRawResponse:
+        """Real-time X account monitoring"""
+        return KeywordsResourceWithRawResponse(self._monitors.keywords)
+
 
 class AsyncMonitorsResourceWithRawResponse:
     def __init__(self, monitors: AsyncMonitorsResource) -> None:
@@ -457,6 +488,11 @@ class AsyncMonitorsResourceWithRawResponse:
         self.deactivate = async_to_raw_response_wrapper(
             monitors.deactivate,
         )
+
+    @cached_property
+    def keywords(self) -> AsyncKeywordsResourceWithRawResponse:
+        """Real-time X account monitoring"""
+        return AsyncKeywordsResourceWithRawResponse(self._monitors.keywords)
 
 
 class MonitorsResourceWithStreamingResponse:
@@ -479,6 +515,11 @@ class MonitorsResourceWithStreamingResponse:
             monitors.deactivate,
         )
 
+    @cached_property
+    def keywords(self) -> KeywordsResourceWithStreamingResponse:
+        """Real-time X account monitoring"""
+        return KeywordsResourceWithStreamingResponse(self._monitors.keywords)
+
 
 class AsyncMonitorsResourceWithStreamingResponse:
     def __init__(self, monitors: AsyncMonitorsResource) -> None:
@@ -499,3 +540,8 @@ class AsyncMonitorsResourceWithStreamingResponse:
         self.deactivate = async_to_streamed_response_wrapper(
             monitors.deactivate,
         )
+
+    @cached_property
+    def keywords(self) -> AsyncKeywordsResourceWithStreamingResponse:
+        """Real-time X account monitoring"""
+        return AsyncKeywordsResourceWithStreamingResponse(self._monitors.keywords)

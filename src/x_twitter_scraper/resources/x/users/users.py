@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from typing import Union
+from datetime import date
+from typing_extensions import Literal
+
 import httpx
 
 from .follow import (
@@ -19,8 +23,10 @@ from ....types.x import (
     user_retrieve_batch_params,
     user_retrieve_likes_params,
     user_retrieve_media_params,
+    user_remove_follower_params,
     user_retrieve_search_params,
     user_retrieve_tweets_params,
+    user_retrieve_replies_params,
     user_retrieve_mentions_params,
     user_retrieve_followers_params,
     user_retrieve_following_params,
@@ -38,13 +44,13 @@ from ...._base_client import make_request_options
 from ....types.shared.user_profile import UserProfile
 from ....types.shared.paginated_users import PaginatedUsers
 from ....types.shared.paginated_tweets import PaginatedTweets
+from ....types.x.user_retrieve_batch_response import UserRetrieveBatchResponse
+from ....types.x.user_remove_follower_response import UserRemoveFollowerResponse
 
 __all__ = ["UsersResource", "AsyncUsersResource"]
 
 
 class UsersResource(SyncAPIResource):
-    """Look up, search, and explore user profiles and relationships"""
-
     @cached_property
     def follow(self) -> FollowResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -102,6 +108,45 @@ class UsersResource(SyncAPIResource):
             cast_to=UserProfile,
         )
 
+    def remove_follower(
+        self,
+        id: str,
+        *,
+        account: str,
+        idempotency_key: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRemoveFollowerResponse:
+        """
+        Remove follower
+
+        Args:
+          account: X account identifier (@username or account ID)
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        return self._post(
+            path_template("/x/users/{id}/remove-follower", id=id),
+            body=maybe_transform({"account": account}, user_remove_follower_params.UserRemoveFollowerParams),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=UserRemoveFollowerResponse,
+        )
+
     def retrieve_batch(
         self,
         *,
@@ -112,12 +157,13 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedUsers:
+    ) -> UserRetrieveBatchResponse:
         """
         Look up multiple users by IDs in one call
 
         Args:
-          ids: Comma-separated user IDs (max 100)
+          ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
+              preserving first-seen order.
 
           extra_headers: Send extra headers
 
@@ -136,14 +182,16 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
             ),
-            cast_to=PaginatedUsers,
+            cast_to=UserRetrieveBatchResponse,
         )
 
     def retrieve_followers(
         self,
         id: str,
         *,
+        after: str | Omit = omit,
         cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -152,13 +200,21 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List followers of a user
+        """List followers of a user
 
         Args:
+          after: Legacy cursor alias.
+
+        Prefer cursor.
+
           cursor: Pagination cursor for followers list
 
-          page_size: Items per page (20-200, default 200)
+          limit: Legacy integer page size alias for following lists. Prefer pageSize.
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -179,7 +235,9 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "after": after,
                         "cursor": cursor,
+                        "limit": limit,
                         "page_size": page_size,
                     },
                     user_retrieve_followers_params.UserRetrieveFollowersParams,
@@ -193,6 +251,7 @@ class UsersResource(SyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -205,6 +264,11 @@ class UsersResource(SyncAPIResource):
 
         Args:
           cursor: Pagination cursor for followers-you-know
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -224,7 +288,11 @@ class UsersResource(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform(
-                    {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -234,7 +302,9 @@ class UsersResource(SyncAPIResource):
         self,
         id: str,
         *,
+        after: str | Omit = omit,
         cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -243,13 +313,21 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List accounts a user follows
+        """List accounts a user follows
 
         Args:
+          after: Deprecated following cursor alias.
+
+        Prefer cursor.
+
           cursor: Pagination cursor for following list
 
-          page_size: Results per page (20-200, default 200)
+          limit: Legacy page size alias. Prefer pageSize.
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -270,7 +348,9 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "after": after,
                         "cursor": cursor,
+                        "limit": limit,
                         "page_size": page_size,
                     },
                     user_retrieve_following_params.UserRetrieveFollowingParams,
@@ -283,7 +363,33 @@ class UsersResource(SyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -295,7 +401,64 @@ class UsersResource(SyncAPIResource):
         List tweets liked by a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for liked tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -314,7 +477,38 @@ class UsersResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams),
+                query=maybe_transform(
+                    {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
+                        "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_likes_params.UserRetrieveLikesParams,
+                ),
             ),
             cast_to=PaginatedTweets,
         )
@@ -323,7 +517,33 @@ class UsersResource(SyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -335,7 +555,64 @@ class UsersResource(SyncAPIResource):
         List media tweets posted by a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for media tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -354,7 +631,38 @@ class UsersResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams),
+                query=maybe_transform(
+                    {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
+                        "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_media_params.UserRetrieveMediaParams,
+                ),
             ),
             cast_to=PaginatedTweets,
         )
@@ -363,9 +671,35 @@ class UsersResource(SyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
         since_time: str | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -377,11 +711,68 @@ class UsersResource(SyncAPIResource):
         List tweets mentioning a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for mentions
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
 
           since_time: Unix timestamp - return mentions after this time
 
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
           until_time: Unix timestamp - return mentions before this time
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -402,11 +793,195 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
                         "since_time": since_time,
+                        "to_user": to_user,
+                        "until_date": until_date,
                         "until_time": until_time,
+                        "url": url,
+                        "verified_only": verified_only,
                     },
                     user_retrieve_mentions_params.UserRetrieveMentionsParams,
+                ),
+            ),
+            cast_to=PaginatedTweets,
+        )
+
+    def retrieve_replies(
+        self,
+        id: str,
+        *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
+        cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        include_parent_tweet: bool | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> PaginatedTweets:
+        """
+        Returns the user's timeline with replies included by default.
+
+        Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
+          cursor: Pagination cursor for user replies
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          include_parent_tweet: Include each reply's parent tweet.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/users/{id}/replies", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
+                        "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "include_parent_tweet": include_parent_tweet,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_replies_params.UserRetrieveRepliesParams,
                 ),
             ),
             cast_to=PaginatedTweets,
@@ -462,9 +1037,35 @@ class UsersResource(SyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
         include_parent_tweet: bool | Omit = omit,
         include_replies: bool | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -476,11 +1077,68 @@ class UsersResource(SyncAPIResource):
         List recent tweets posted by a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for user tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
 
           include_parent_tweet: Include parent tweet for replies
 
           include_replies: Include reply tweets
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -501,9 +1159,35 @@ class UsersResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
                         "include_parent_tweet": include_parent_tweet,
                         "include_replies": include_replies,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
                     },
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
@@ -516,6 +1200,7 @@ class UsersResource(SyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -528,6 +1213,11 @@ class UsersResource(SyncAPIResource):
 
         Args:
           cursor: Pagination cursor for verified followers
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -547,7 +1237,11 @@ class UsersResource(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform(
-                    {"cursor": cursor}, user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -555,8 +1249,6 @@ class UsersResource(SyncAPIResource):
 
 
 class AsyncUsersResource(AsyncAPIResource):
-    """Look up, search, and explore user profiles and relationships"""
-
     @cached_property
     def follow(self) -> AsyncFollowResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -614,6 +1306,47 @@ class AsyncUsersResource(AsyncAPIResource):
             cast_to=UserProfile,
         )
 
+    async def remove_follower(
+        self,
+        id: str,
+        *,
+        account: str,
+        idempotency_key: str,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRemoveFollowerResponse:
+        """
+        Remove follower
+
+        Args:
+          account: X account identifier (@username or account ID)
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        return await self._post(
+            path_template("/x/users/{id}/remove-follower", id=id),
+            body=await async_maybe_transform(
+                {"account": account}, user_remove_follower_params.UserRemoveFollowerParams
+            ),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=UserRemoveFollowerResponse,
+        )
+
     async def retrieve_batch(
         self,
         *,
@@ -624,12 +1357,13 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedUsers:
+    ) -> UserRetrieveBatchResponse:
         """
         Look up multiple users by IDs in one call
 
         Args:
-          ids: Comma-separated user IDs (max 100)
+          ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
+              preserving first-seen order.
 
           extra_headers: Send extra headers
 
@@ -648,14 +1382,16 @@ class AsyncUsersResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
             ),
-            cast_to=PaginatedUsers,
+            cast_to=UserRetrieveBatchResponse,
         )
 
     async def retrieve_followers(
         self,
         id: str,
         *,
+        after: str | Omit = omit,
         cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -664,13 +1400,21 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List followers of a user
+        """List followers of a user
 
         Args:
+          after: Legacy cursor alias.
+
+        Prefer cursor.
+
           cursor: Pagination cursor for followers list
 
-          page_size: Items per page (20-200, default 200)
+          limit: Legacy integer page size alias for following lists. Prefer pageSize.
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -691,7 +1435,9 @@ class AsyncUsersResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "after": after,
                         "cursor": cursor,
+                        "limit": limit,
                         "page_size": page_size,
                     },
                     user_retrieve_followers_params.UserRetrieveFollowersParams,
@@ -705,6 +1451,7 @@ class AsyncUsersResource(AsyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -717,6 +1464,11 @@ class AsyncUsersResource(AsyncAPIResource):
 
         Args:
           cursor: Pagination cursor for followers-you-know
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -736,7 +1488,11 @@ class AsyncUsersResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_followers_you_know_params.UserRetrieveFollowersYouKnowParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -746,7 +1502,9 @@ class AsyncUsersResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        after: str | Omit = omit,
         cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -755,13 +1513,21 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List accounts a user follows
+        """List accounts a user follows
 
         Args:
+          after: Deprecated following cursor alias.
+
+        Prefer cursor.
+
           cursor: Pagination cursor for following list
 
-          page_size: Results per page (20-200, default 200)
+          limit: Legacy page size alias. Prefer pageSize.
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -782,7 +1548,9 @@ class AsyncUsersResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "after": after,
                         "cursor": cursor,
+                        "limit": limit,
                         "page_size": page_size,
                     },
                     user_retrieve_following_params.UserRetrieveFollowingParams,
@@ -795,7 +1563,33 @@ class AsyncUsersResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -807,7 +1601,64 @@ class AsyncUsersResource(AsyncAPIResource):
         List tweets liked by a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for liked tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -827,7 +1678,36 @@ class AsyncUsersResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, user_retrieve_likes_params.UserRetrieveLikesParams
+                    {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
+                        "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_likes_params.UserRetrieveLikesParams,
                 ),
             ),
             cast_to=PaginatedTweets,
@@ -837,7 +1717,33 @@ class AsyncUsersResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -849,7 +1755,64 @@ class AsyncUsersResource(AsyncAPIResource):
         List media tweets posted by a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for media tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -869,7 +1832,36 @@ class AsyncUsersResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, user_retrieve_media_params.UserRetrieveMediaParams
+                    {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
+                        "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_media_params.UserRetrieveMediaParams,
                 ),
             ),
             cast_to=PaginatedTweets,
@@ -879,9 +1871,35 @@ class AsyncUsersResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
         since_time: str | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -893,11 +1911,68 @@ class AsyncUsersResource(AsyncAPIResource):
         List tweets mentioning a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for mentions
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
 
           since_time: Unix timestamp - return mentions after this time
 
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
           until_time: Unix timestamp - return mentions before this time
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -918,11 +1993,195 @@ class AsyncUsersResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
                         "since_time": since_time,
+                        "to_user": to_user,
+                        "until_date": until_date,
                         "until_time": until_time,
+                        "url": url,
+                        "verified_only": verified_only,
                     },
                     user_retrieve_mentions_params.UserRetrieveMentionsParams,
+                ),
+            ),
+            cast_to=PaginatedTweets,
+        )
+
+    async def retrieve_replies(
+        self,
+        id: str,
+        *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
+        cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        include_parent_tweet: bool | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> PaginatedTweets:
+        """
+        Returns the user's timeline with replies included by default.
+
+        Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
+          cursor: Pagination cursor for user replies
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          include_parent_tweet: Include each reply's parent tweet.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/users/{id}/replies", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
+                        "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "include_parent_tweet": include_parent_tweet,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_replies_params.UserRetrieveRepliesParams,
                 ),
             ),
             cast_to=PaginatedTweets,
@@ -978,9 +2237,35 @@ class AsyncUsersResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
         include_parent_tweet: bool | Omit = omit,
         include_replies: bool | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -992,11 +2277,68 @@ class AsyncUsersResource(AsyncAPIResource):
         List recent tweets posted by a user
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for user tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
 
           include_parent_tweet: Include parent tweet for replies
 
           include_replies: Include reply tweets
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_faves: Minimum likes threshold.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          page_size: Maximum items requested from this page (1-100, default 20). The response can
+              contain fewer items because the source returned fewer, filters removed items, or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true, even when a page is empty. The deprecated limit and count
+              aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -1017,9 +2359,35 @@ class AsyncUsersResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "any_words": any_words,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
                         "include_parent_tweet": include_parent_tweet,
                         "include_replies": include_replies,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
                     },
                     user_retrieve_tweets_params.UserRetrieveTweetsParams,
                 ),
@@ -1032,6 +2400,7 @@ class AsyncUsersResource(AsyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        page_size: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -1044,6 +2413,11 @@ class AsyncUsersResource(AsyncAPIResource):
 
         Args:
           cursor: Pagination cursor for verified followers
+
+          page_size: Maximum user profiles requested from this page (20-200, default 200). The
+              response can contain fewer profiles because the source returned fewer or
+              remaining credits cover fewer results. Keep requesting next_cursor while
+              has_next_page is true. The deprecated limit and count aliases remain accepted.
 
           extra_headers: Send extra headers
 
@@ -1063,7 +2437,11 @@ class AsyncUsersResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams
+                    {
+                        "cursor": cursor,
+                        "page_size": page_size,
+                    },
+                    user_retrieve_verified_followers_params.UserRetrieveVerifiedFollowersParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -1076,6 +2454,9 @@ class UsersResourceWithRawResponse:
 
         self.retrieve = to_raw_response_wrapper(
             users.retrieve,
+        )
+        self.remove_follower = to_raw_response_wrapper(
+            users.remove_follower,
         )
         self.retrieve_batch = to_raw_response_wrapper(
             users.retrieve_batch,
@@ -1097,6 +2478,9 @@ class UsersResourceWithRawResponse:
         )
         self.retrieve_mentions = to_raw_response_wrapper(
             users.retrieve_mentions,
+        )
+        self.retrieve_replies = to_raw_response_wrapper(
+            users.retrieve_replies,
         )
         self.retrieve_search = to_raw_response_wrapper(
             users.retrieve_search,
@@ -1121,6 +2505,9 @@ class AsyncUsersResourceWithRawResponse:
         self.retrieve = async_to_raw_response_wrapper(
             users.retrieve,
         )
+        self.remove_follower = async_to_raw_response_wrapper(
+            users.remove_follower,
+        )
         self.retrieve_batch = async_to_raw_response_wrapper(
             users.retrieve_batch,
         )
@@ -1141,6 +2528,9 @@ class AsyncUsersResourceWithRawResponse:
         )
         self.retrieve_mentions = async_to_raw_response_wrapper(
             users.retrieve_mentions,
+        )
+        self.retrieve_replies = async_to_raw_response_wrapper(
+            users.retrieve_replies,
         )
         self.retrieve_search = async_to_raw_response_wrapper(
             users.retrieve_search,
@@ -1165,6 +2555,9 @@ class UsersResourceWithStreamingResponse:
         self.retrieve = to_streamed_response_wrapper(
             users.retrieve,
         )
+        self.remove_follower = to_streamed_response_wrapper(
+            users.remove_follower,
+        )
         self.retrieve_batch = to_streamed_response_wrapper(
             users.retrieve_batch,
         )
@@ -1185,6 +2578,9 @@ class UsersResourceWithStreamingResponse:
         )
         self.retrieve_mentions = to_streamed_response_wrapper(
             users.retrieve_mentions,
+        )
+        self.retrieve_replies = to_streamed_response_wrapper(
+            users.retrieve_replies,
         )
         self.retrieve_search = to_streamed_response_wrapper(
             users.retrieve_search,
@@ -1209,6 +2605,9 @@ class AsyncUsersResourceWithStreamingResponse:
         self.retrieve = async_to_streamed_response_wrapper(
             users.retrieve,
         )
+        self.remove_follower = async_to_streamed_response_wrapper(
+            users.remove_follower,
+        )
         self.retrieve_batch = async_to_streamed_response_wrapper(
             users.retrieve_batch,
         )
@@ -1229,6 +2628,9 @@ class AsyncUsersResourceWithStreamingResponse:
         )
         self.retrieve_mentions = async_to_streamed_response_wrapper(
             users.retrieve_mentions,
+        )
+        self.retrieve_replies = async_to_streamed_response_wrapper(
+            users.retrieve_replies,
         )
         self.retrieve_search = async_to_streamed_response_wrapper(
             users.retrieve_search,

@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
+
+from ..._utils import PropertyInfo
 
 __all__ = ["TweetDeleteParams"]
 
@@ -10,3 +12,5 @@ __all__ = ["TweetDeleteParams"]
 class TweetDeleteParams(TypedDict, total=False):
     account: Required[str]
     """X account identifier (@username or account ID)"""
+
+    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]

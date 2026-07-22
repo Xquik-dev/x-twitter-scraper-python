@@ -16,7 +16,8 @@ from ...._response import (
 )
 from ...._base_client import make_request_options
 from ....types.x.communities import join_create_params, join_delete_all_params
-from ....types.x.community_action_result import CommunityActionResult
+from ....types.x.communities.join_create_response import JoinCreateResponse
+from ....types.x.communities.join_delete_all_response import JoinDeleteAllResponse
 
 __all__ = ["JoinResource", "AsyncJoinResource"]
 
@@ -48,13 +49,14 @@ class JoinResource(SyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinCreateResponse:
         """
         Join community
 
@@ -71,13 +73,14 @@ class JoinResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_create_params.JoinCreateParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinCreateResponse,
         )
 
     def delete_all(
@@ -85,13 +88,14 @@ class JoinResource(SyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinDeleteAllResponse:
         """
         Leave community
 
@@ -108,13 +112,14 @@ class JoinResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._delete(
             path_template("/x/communities/{id}/join", id=id),
             body=maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinDeleteAllResponse,
         )
 
 
@@ -145,13 +150,14 @@ class AsyncJoinResource(AsyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinCreateResponse:
         """
         Join community
 
@@ -168,13 +174,14 @@ class AsyncJoinResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_create_params.JoinCreateParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinCreateResponse,
         )
 
     async def delete_all(
@@ -182,13 +189,14 @@ class AsyncJoinResource(AsyncAPIResource):
         id: str,
         *,
         account: str,
+        idempotency_key: str,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityActionResult:
+    ) -> JoinDeleteAllResponse:
         """
         Leave community
 
@@ -205,13 +213,14 @@ class AsyncJoinResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._delete(
             path_template("/x/communities/{id}/join", id=id),
             body=await async_maybe_transform({"account": account}, join_delete_all_params.JoinDeleteAllParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=CommunityActionResult,
+            cast_to=JoinDeleteAllResponse,
         )
 
 

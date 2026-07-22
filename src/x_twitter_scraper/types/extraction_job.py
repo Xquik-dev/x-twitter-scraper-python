@@ -26,6 +26,7 @@ class ExtractionJob(BaseModel):
         "community_moderator_explorer",
         "community_post_extractor",
         "community_search",
+        "favoriters",
         "follower_explorer",
         "following_explorer",
         "list_follower_explorer",
@@ -40,6 +41,8 @@ class ExtractionJob(BaseModel):
         "space_explorer",
         "thread_extractor",
         "tweet_search_extractor",
+        "user_likes",
+        "user_media",
         "verified_follower_explorer",
     ] = FieldInfo(alias="toolType")
     """Identifier for the extraction tool used to run a job."""
