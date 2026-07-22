@@ -27,7 +27,7 @@ class TestTickets:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         ticket = client.support.tickets.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
         )
         assert_matches_type(TicketCreateResponse, ticket, path=["response"])
@@ -36,7 +36,7 @@ class TestTickets:
     @parametrize
     def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
         ticket = client.support.tickets.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
             idempotency_key="Idempotency-Key",
         )
@@ -46,7 +46,7 @@ class TestTickets:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
         )
 
@@ -59,7 +59,7 @@ class TestTickets:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.support.tickets.with_streaming_response.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
         ) as response:
             assert not response.is_closed
@@ -191,7 +191,7 @@ class TestTickets:
     def test_method_reply(self, client: XTwitterScraper) -> None:
         ticket = client.support.tickets.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
         )
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
@@ -200,7 +200,7 @@ class TestTickets:
     def test_method_reply_with_all_params(self, client: XTwitterScraper) -> None:
         ticket = client.support.tickets.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
             idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
@@ -210,7 +210,7 @@ class TestTickets:
     def test_raw_response_reply(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
         )
 
         assert response.is_closed is True
@@ -223,7 +223,7 @@ class TestTickets:
     def test_streaming_response_reply(self, client: XTwitterScraper) -> None:
         with client.support.tickets.with_streaming_response.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -239,7 +239,7 @@ class TestTickets:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.support.tickets.with_raw_response.reply(
                 id="",
-                body="Thank you for the update.",
+                content="Thank you for the update.",
             )
 
 
@@ -252,7 +252,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
         )
         assert_matches_type(TicketCreateResponse, ticket, path=["response"])
@@ -261,7 +261,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
             idempotency_key="Idempotency-Key",
         )
@@ -271,7 +271,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.support.tickets.with_raw_response.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
         )
 
@@ -284,7 +284,7 @@ class TestAsyncTickets:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.support.tickets.with_streaming_response.create(
-            body="I am unable to connect my X account. Please help.",
+            content="I am unable to connect my X account. Please help.",
             subject="Cannot connect X account",
         ) as response:
             assert not response.is_closed
@@ -416,7 +416,7 @@ class TestAsyncTickets:
     async def test_method_reply(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
         )
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
@@ -425,7 +425,7 @@ class TestAsyncTickets:
     async def test_method_reply_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
             idempotency_key="Idempotency-Key",
         )
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
@@ -435,7 +435,7 @@ class TestAsyncTickets:
     async def test_raw_response_reply(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.support.tickets.with_raw_response.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
         )
 
         assert response.is_closed is True
@@ -448,7 +448,7 @@ class TestAsyncTickets:
     async def test_streaming_response_reply(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.support.tickets.with_streaming_response.reply(
             id="tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
-            body="Thank you for the update.",
+            content="Thank you for the update.",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -464,5 +464,5 @@ class TestAsyncTickets:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.support.tickets.with_raw_response.reply(
                 id="",
-                body="Thank you for the update.",
+                content="Thank you for the update.",
             )

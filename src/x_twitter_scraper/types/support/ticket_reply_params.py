@@ -10,6 +10,6 @@ __all__ = ["TicketReplyParams"]
 
 
 class TicketReplyParams(TypedDict, total=False):
-    body: Required[str]
+    content: Required[Annotated[str, PropertyInfo(alias="body")]]
 
     idempotency_key: Annotated[str, PropertyInfo(alias="Idempotency-Key")]
