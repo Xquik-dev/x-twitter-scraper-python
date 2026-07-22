@@ -143,22 +143,22 @@ class ExtractionEstimateCostParams(TypedDict, total=False):
     """Estimate only retweets of this tweet ID (tweet_search_extractor)"""
 
     search_query: Annotated[str, PropertyInfo(alias="searchQuery")]
-    """Required for tweet_search_extractor & community_search."""
+    """Query used to price tweet_search_extractor or community_search."""
 
     since_date: Annotated[Union[str, date], PropertyInfo(alias="sinceDate", format="iso8601")]
     """Estimate start date in YYYY-MM-DD format (tweet_search_extractor)"""
 
     target_community_id: Annotated[str, PropertyInfo(alias="targetCommunityId")]
-    """Required for community_post_extractor & community_search."""
+    """Community ID used to price community_post_extractor or community_search."""
 
     target_list_id: Annotated[str, PropertyInfo(alias="targetListId")]
     """
-    Required for list_follower_explorer, list_member_extractor &
+    List ID used to price list_follower_explorer, list_member_extractor, or
     list_post_extractor.
     """
 
     target_space_id: Annotated[str, PropertyInfo(alias="targetSpaceId")]
-    """Required for space_explorer."""
+    """Space ID used to price space_explorer."""
 
     target_tweet_id: Annotated[str, PropertyInfo(alias="targetTweetId")]
 

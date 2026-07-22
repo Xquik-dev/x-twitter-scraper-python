@@ -316,7 +316,7 @@ class UsersResource(SyncAPIResource):
         """List accounts a user follows
 
         Args:
-          after: Legacy cursor alias.
+          after: Deprecated following cursor alias.
 
         Prefer cursor.
 
@@ -889,7 +889,7 @@ class UsersResource(SyncAPIResource):
 
           hashtags: Hashtags separated by spaces, commas, or lines.
 
-          include_parent_tweet: Include parent tweet for replies
+          include_parent_tweet: Include each reply's parent tweet.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -1516,7 +1516,7 @@ class AsyncUsersResource(AsyncAPIResource):
         """List accounts a user follows
 
         Args:
-          after: Legacy cursor alias.
+          after: Deprecated following cursor alias.
 
         Prefer cursor.
 
@@ -2089,7 +2089,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           hashtags: Hashtags separated by spaces, commas, or lines.
 
-          include_parent_tweet: Include parent tweet for replies
+          include_parent_tweet: Include each reply's parent tweet.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 

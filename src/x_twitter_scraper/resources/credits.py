@@ -124,7 +124,7 @@ class CreditsResource(SyncAPIResource):
         Get top-up billing status
 
         Args:
-          session_id: Billing session ID returned by the top-up billing flow.
+          session_id: Top-up session ID to inspect.
 
           extra_headers: Send extra headers
 
@@ -291,7 +291,7 @@ class AsyncCreditsResource(AsyncAPIResource):
         Get top-up billing status
 
         Args:
-          session_id: Billing session ID returned by the top-up billing flow.
+          session_id: Top-up session ID to inspect.
 
           extra_headers: Send extra headers
 

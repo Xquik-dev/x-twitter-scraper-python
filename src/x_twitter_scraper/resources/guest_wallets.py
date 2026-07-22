@@ -68,7 +68,7 @@ class GuestWalletsResource(SyncAPIResource):
         replay returns the same key.
 
         Args:
-          amount_minor: Confirmed USD amount in cents.
+          amount_minor: USD cents accepted for this checkout.
 
           extra_headers: Send extra headers
 
@@ -147,7 +147,7 @@ class GuestWalletsResource(SyncAPIResource):
         Xquik web page.
 
         Args:
-          amount_minor: Confirmed USD amount in cents.
+          amount_minor: USD cents accepted for this checkout.
 
           extra_headers: Send extra headers
 
@@ -221,7 +221,7 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
         replay returns the same key.
 
         Args:
-          amount_minor: Confirmed USD amount in cents.
+          amount_minor: USD cents accepted for this checkout.
 
           extra_headers: Send extra headers
 
@@ -300,7 +300,7 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
         Xquik web page.
 
         Args:
-          amount_minor: Confirmed USD amount in cents.
+          amount_minor: USD cents accepted for this checkout.
 
           extra_headers: Send extra headers
 

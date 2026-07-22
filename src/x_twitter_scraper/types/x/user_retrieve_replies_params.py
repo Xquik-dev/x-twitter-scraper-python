@@ -40,7 +40,7 @@ class UserRetrieveRepliesParams(TypedDict, total=False):
     """Hashtags separated by spaces, commas, or lines."""
 
     include_parent_tweet: Annotated[bool, PropertyInfo(alias="includeParentTweet")]
-    """Include parent tweet for replies"""
+    """Include each reply's parent tweet."""
 
     in_reply_to_tweet_id: Annotated[str, PropertyInfo(alias="inReplyToTweetId")]
     """Only replies to this tweet ID."""

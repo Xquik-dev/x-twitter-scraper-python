@@ -50,7 +50,7 @@ class SearchTweet(BaseModel):
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
-    """Start and end offsets for rendered tweet text"""
+    """Rendered text's start and end offsets."""
 
     entities: Optional[Dict[str, object]] = None
     """
@@ -59,13 +59,13 @@ class SearchTweet(BaseModel):
     """
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
-    """Tweet ID being replied to"""
+    """ID of the tweet this result replies to."""
 
     in_reply_to_user_id: Optional[str] = FieldInfo(alias="inReplyToUserId", default=None)
-    """User ID being replied to"""
+    """ID of the user this result replies to."""
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
-    """Username being replied to"""
+    """Username this result replies to."""
 
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
     """Whether the tweet has limited reply permissions"""
@@ -80,7 +80,7 @@ class SearchTweet(BaseModel):
     """True when this search result is a reply"""
 
     lang: Optional[str] = None
-    """Tweet language code"""
+    """Search result language code."""
 
     media: Optional[List[TweetMedia]] = None
     """Search-result media attachments, omitted when no media is present"""
@@ -107,4 +107,4 @@ class SearchTweet(BaseModel):
     type: Optional[str] = None
 
     url: Optional[str] = None
-    """Tweet permalink URL"""
+    """Search result permalink."""
