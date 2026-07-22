@@ -108,14 +108,8 @@ $ ./scripts/format
 
 ## Publishing and releases
 
-Changes made to this repository via the automated release PR pipeline should publish to PyPI automatically. If
-the changes aren't made through the automated pipeline, you may want to make releases manually.
-
-### Publish with a GitHub workflow
-
-You can release to package managers by using [the `Publish PyPI` GitHub action](https://www.github.com/Xquik-dev/x-twitter-scraper-python/actions/workflows/publish-pypi.yml). This requires a setup organization or repository secret to be set up.
-
-### Publish manually
-
-If you need to manually release a package, you can run the `bin/publish-pypi` script with a `PYPI_TOKEN` set on
-the environment.
+Publish an immutable `v*` GitHub release after the release commit reaches `main`.
+The [Publish PyPI workflow](https://github.com/Xquik-dev/x-twitter-scraper-python/actions/workflows/publish-pypi.yml)
+builds the distributions separately, then publishes them through PyPI trusted
+publishing from the protected `pypi` environment. Manual runs must target a
+version tag.

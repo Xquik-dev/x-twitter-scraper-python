@@ -1,0 +1,19 @@
+title = "Xquik Gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Ignore generated non-secret metadata and examples"
+condition = "AND"
+paths = [
+  '''^\.stats\.yml$''',
+  '''(?i)(^|/)(src/resources|test|tests|.*Tests|pkg/cmd)/.*(guest.?wallet|webhook).*''',
+  '''(^|/)guestwallet_test\.go$''',
+]
+regexTarget = "line"
+regexes = [
+  '''(?i)openapi_spec_hash''',
+  '''(?i)idempotency.?key''',
+  '''(?i)(expectedSecret|\bSecret\s*=)''',
+]

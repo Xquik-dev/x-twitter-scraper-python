@@ -1,19 +1,26 @@
-# Xquik Python SDK for X (Twitter) Scraper API
+# X (Twitter) Scraper Python SDK: Tweet Search, Profile Tweets, Followers & Posting
+
+> **Xquik is an independent third-party service.** Not affiliated with X Corp.
+> "Twitter" and "X" are trademarks of X Corp.
+
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg?url=https%3A%2F%2Fgithub.com%2FXquik-dev%2Fx-twitter-scraper-python)](https://deepwiki.com/Xquik-dev/x-twitter-scraper-python)
+[![Skills.sh x-twitter-scraper Skill](https://skills.sh/b/xquik-dev/x-twitter-scraper)](https://skills.sh/xquik-dev/x-twitter-scraper)
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
-Xquik Python SDK for the X (Twitter) Scraper API: typed REST, HMAC webhooks, MCP, and docs at https://docs.xquik.com/api-reference/overview.
+Xquik Python SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, and posting automation.
 
-Use it to search tweets, look up users, monitor accounts, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
+Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
 
-[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Server](https://xquik.com/mcp) | [TypeScript SDK](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
+[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [OAuth-First MCP Guide](https://docs.xquik.com/mcp/overview) | [TypeScript SDK](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
 
 It is generated with [Stainless](https://www.stainless.com/).
 
-## Tweet Search & User Lookup
+## Tweet Search, Profile Tweets & User Lookup
 
-Build Python services that search tweets, fetch user profiles, check follower relationships, download media, and inspect timeline data through one typed REST client.
+Build Python services that search tweets, get tweets from profiles, fetch user profiles, check follower relationships, export followers, download media, and inspect timeline data through one typed REST client.
 
 ## Real-Time Monitoring & Webhooks
 
@@ -21,7 +28,18 @@ Create monitors for X accounts, receive HMAC-signed webhook events, and query ev
 
 ## AI Agent Workflows With MCP
 
-Connect agent systems to Xquik through the MCP server while keeping custom product code on the typed REST SDK.
+Keep application code on the typed REST SDK. For MCP clients, add
+`https://xquik.com/mcp`, then follow the [current client compatibility
+path](https://docs.xquik.com/mcp/overview#client-compatibility). OAuth-capable
+clients complete OAuth 2.1 in the browser. API-key fallback is client-specific.
+ChatGPT custom apps require OAuth.
+
+> **Codex OAuth compatibility:** Affected Codex releases discard the RFC 9207
+> `iss` callback value even though Xquik returns it. If Codex reports
+> `Authorization server response missing required issuer: expected https://xquik.com`,
+> use `XQUIK_API_KEY` through the Codex `bearer_token_env_var` setting. Follow the
+> [Codex OAuth troubleshooting guide](https://docs.xquik.com/guides/troubleshooting#codex-oauth-issuer-validation-error)
+> and track [openai/codex#31573](https://github.com/openai/codex/issues/31573).
 
 ## Giveaway Draws & Extractions
 
@@ -55,7 +73,7 @@ Start with the [REST API overview](https://docs.xquik.com/api-reference/overview
 
 ### Can this work with AI agents?
 
-Yes. Use the SDK in your app code and the [MCP server](https://xquik.com/mcp) for MCP-compatible agent clients.
+Yes. Use the SDK in your app code and follow the [MCP guide](https://docs.xquik.com/mcp/overview) for agent clients.
 
 ## Documentation
 
@@ -165,6 +183,24 @@ Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typ
 
 Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
 
+## File uploads
+
+Request parameters that correspond to file uploads can be passed as `bytes`, or a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance or a tuple of `(filename, contents, media type)`.
+
+```python
+from pathlib import Path
+from x_twitter_scraper import XTwitterScraper
+
+client = XTwitterScraper()
+
+client.x.media.upload(
+    account="@elonmusk",
+    file=Path("/path/to/file"),
+)
+```
+
+The async client uses the exact same interface. If you pass a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance, the file contents will be read asynchronously automatically.
+
 ## Handling errors
 
 When the library is unable to connect to the API (for example, due to network connection problems or a timeout), a subclass of `x_twitter_scraper.APIConnectionError` is raised.
@@ -181,7 +217,10 @@ from x_twitter_scraper import XTwitterScraper
 client = XTwitterScraper()
 
 try:
-    client.account.retrieve()
+    client.x.tweets.search(
+        q="from:elonmusk",
+        limit=10,
+    )
 except x_twitter_scraper.APIConnectionError as e:
     print("The server could not be reached")
     print(e.__cause__)  # an underlying Exception, likely raised within httpx.
@@ -224,7 +263,10 @@ client = XTwitterScraper(
 )
 
 # Or, configure per-request:
-client.with_options(max_retries=5).account.retrieve()
+client.with_options(max_retries=5).x.tweets.search(
+    q="from:elonmusk",
+    limit=10,
+)
 ```
 
 ### Timeouts
@@ -247,7 +289,10 @@ client = XTwitterScraper(
 )
 
 # Override per-request:
-client.with_options(timeout=5.0).account.retrieve()
+client.with_options(timeout=5.0).x.tweets.search(
+    q="from:elonmusk",
+    limit=10,
+)
 ```
 
 On timeout, an `APITimeoutError` is thrown.
@@ -288,11 +333,14 @@ The "raw" Response object can be accessed by prefixing `.with_raw_response.` to 
 from x_twitter_scraper import XTwitterScraper
 
 client = XTwitterScraper()
-response = client.account.with_raw_response.retrieve()
+response = client.x.tweets.with_raw_response.search(
+    q="from:elonmusk",
+    limit=10,
+)
 print(response.headers.get('X-My-Header'))
 
-account = response.parse()  # get the object that `account.retrieve()` would have returned
-print(account.monitor_billing)
+tweet = response.parse()  # get the object that `x.tweets.search()` would have returned
+print(tweet.has_next_page)
 ```
 
 These methods return an [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) object.
@@ -306,7 +354,10 @@ The above interface eagerly reads the full response body when you make the reque
 To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
 
 ```python
-with client.account.with_streaming_response.retrieve() as response:
+with client.x.tweets.with_streaming_response.search(
+    q="from:elonmusk",
+    limit=10,
+) as response:
     print(response.headers.get("X-My-Header"))
 
     for line in response.iter_lines():
@@ -416,7 +467,7 @@ print(x_twitter_scraper.__version__)
 
 ## Requirements
 
-Python 3.9 or higher.
+Python 3.10 or higher.
 
 ## Contributing
 

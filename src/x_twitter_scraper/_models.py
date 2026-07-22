@@ -290,6 +290,7 @@ class BaseModel(pydantic.BaseModel):
             warnings: bool | Literal["none", "warn", "error"] = True,
             fallback: Callable[[Any], Any] | None = None,
             serialize_as_any: bool = False,
+            polymorphic_serialization: bool | None = None,
         ) -> dict[str, Any]:
             """Usage docs: https://docs.pydantic.dev/2.4/concepts/serialization/#modelmodel_dump
 
@@ -315,6 +316,7 @@ class BaseModel(pydantic.BaseModel):
                 fallback: A function to call when an unknown value is encountered. If not provided,
                     a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError] error is raised.
                 serialize_as_any: Whether to serialize fields with duck-typing serialization behavior.
+                polymorphic_serialization: Whether to serialize model subclasses polymorphically.
 
             Returns:
                 A dictionary representation of the model.
@@ -329,6 +331,8 @@ class BaseModel(pydantic.BaseModel):
                 raise ValueError("context is only supported in Pydantic v2")
             if serialize_as_any != False:
                 raise ValueError("serialize_as_any is only supported in Pydantic v2")
+            if polymorphic_serialization is not None:
+                raise ValueError("polymorphic_serialization is only supported in Pydantic v2")
             if fallback is not None:
                 raise ValueError("fallback is only supported in Pydantic v2")
             if exclude_computed_fields != False:
@@ -362,6 +366,7 @@ class BaseModel(pydantic.BaseModel):
             warnings: bool | Literal["none", "warn", "error"] = True,
             fallback: Callable[[Any], Any] | None = None,
             serialize_as_any: bool = False,
+            polymorphic_serialization: bool | None = None,
         ) -> str:
             """Usage docs: https://docs.pydantic.dev/2.4/concepts/serialization/#modelmodel_dump_json
 
@@ -377,6 +382,7 @@ class BaseModel(pydantic.BaseModel):
                 exclude_none: Whether to exclude fields that have a value of `None`.
                 round_trip: Whether to use serialization/deserialization between JSON and class instance.
                 warnings: Whether to show any warnings that occurred during serialization.
+                polymorphic_serialization: Whether to serialize model subclasses polymorphically.
 
             Returns:
                 A JSON string representation of the model.
@@ -389,6 +395,8 @@ class BaseModel(pydantic.BaseModel):
                 raise ValueError("context is only supported in Pydantic v2")
             if serialize_as_any != False:
                 raise ValueError("serialize_as_any is only supported in Pydantic v2")
+            if polymorphic_serialization is not None:
+                raise ValueError("polymorphic_serialization is only supported in Pydantic v2")
             if fallback is not None:
                 raise ValueError("fallback is only supported in Pydantic v2")
             if ensure_ascii != False:

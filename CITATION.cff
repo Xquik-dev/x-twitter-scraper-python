@@ -4,8 +4,8 @@ title: Xquik Python SDK for the X (Twitter) Scraper API
 type: software
 authors:
   - name: Xquik
-version: 0.4.0
-date-released: 2026-04-22
+version: 0.4.3
+date-released: 2026-07-21
 url: https://github.com/Xquik-dev/x-twitter-scraper-python
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-python
 license: Apache-2.0
@@ -15,6 +15,5 @@ keywords:
   - SDK
   - REST API
   - webhooks
-  - MCP
   - X
   - Twitter scraper
