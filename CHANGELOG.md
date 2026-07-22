@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.5.0 (2026-07-22)
+
+Full Changelog: [v0.4.3...v0.5.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.4.3...v0.5.0)
+
+### Features
+
+* **api:** propagate durable write actions ([71d3e5f](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/71d3e5f072f8f3d15bf65e1b2f2ab2d5404479dd))
+* **api:** propagate production write-action contract ([8d10d43](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/8d10d435084eae9d61d8ddc72efe9a76f5cdc133))
+
 ## 0.4.2 (2026-07-14)
 
 Full Changelog: [v0.4.1...v0.4.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.4.1...v0.4.2)
