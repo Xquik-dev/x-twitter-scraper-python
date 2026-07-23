@@ -59,12 +59,13 @@ conflicts = [
 [dependency-groups]
 # version pins are in uv.lock
 dev = [
+    "coverage==7.15.2",
     "pyright==1.1.411",
     "mypy==2.3.0",
     "respx",
     "pytest",
     "pytest-asyncio",
-    "ruff",
+    "ruff==0.15.22",
     "time-machine",
     "dirty-equals>=0.6.0",
     "importlib-metadata>=6.7.0",

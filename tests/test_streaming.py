@@ -6,7 +6,7 @@ import httpx
 import pytest
 
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper._streaming import Stream, AsyncStream, ServerSentEvent
+from x_twitter_scraper._streaming import Stream, SSEDecoder, AsyncStream, ServerSentEvent
 
 
 @pytest.mark.asyncio
@@ -220,6 +220,28 @@ async def test_multi_byte_character_multiple_chunks(
     sse = await iter_next(iterator)
     assert sse.event is None
     assert sse.json() == {"content": "известни"}
+
+
+def test_decoder_handles_comments_ids_retries_and_unknown_fields() -> None:
+    decoder = SSEDecoder()
+    assert decoder.decode(": keep-alive") is None
+    assert decoder.decode("id: event-id") is None
+    assert decoder.decode("id: ignored\0value") is None
+    assert decoder.decode("retry: 250") is None
+    assert decoder.decode("unknown: ignored") is None
+    assert decoder.decode("data: payload") is None
+
+    event = decoder.decode("")
+    assert event is not None
+    assert event.id == "event-id"
+    assert event.retry == 250
+    assert event.data == "payload"
+
+
+def test_decoder_ignores_invalid_retry_and_empty_events() -> None:
+    decoder = SSEDecoder()
+    assert decoder.decode("retry: invalid") is None
+    assert decoder.decode("") is None
 
 
 async def to_aiter(iter: Iterator[bytes]) -> AsyncIterator[bytes]:

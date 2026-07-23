@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from typing import Sequence
+from typing import Sequence, cast
 
 import pytest
 
-from x_twitter_scraper._types import FileTypes, ArrayFormat
+from x_twitter_scraper._types import FileTypes, ArrayFormat, not_given
 from x_twitter_scraper._utils import extract_files
 
 
@@ -89,3 +89,23 @@ def test_array_format_controls_file_field_names(
 
     nested = {"items": [{"file": b"a"}, {"file": b"b"}]}
     assert extract_files(nested, paths=[["items", "<array>", "file"]], array_format=array_format) == expected_nested
+
+
+def test_extracts_file_list_without_array_marker() -> None:
+    query = {"files": [b"a", b"b"]}
+    assert extract_files(query, paths=[["files"]]) == [("files[]", b"a"), ("files[]", b"b")]
+    assert query == {}
+
+
+def test_ignores_omitted_and_non_container_values() -> None:
+    omitted = {"file": not_given}
+    assert extract_files(omitted, paths=[["file"]]) == []
+
+    non_container = {"item": "value"}
+    assert extract_files(non_container, paths=[["item", "file"]]) == []
+
+
+def test_rejects_unknown_file_array_format() -> None:
+    query = {"files": [b"a"]}
+    with pytest.raises(NotImplementedError, match="Unknown array_format value"):
+        extract_files(query, paths=[["files"]], array_format=cast(ArrayFormat, "unknown"))

@@ -1,115 +1,107 @@
-## Setting up the environment
+# Contributing
 
-### With `uv`
+Thank you for improving the Xquik Python SDK.
 
-We use [uv](https://docs.astral.sh/uv/) to manage dependencies because it will automatically provision a Python environment with the expected Python version. To set it up, run:
+Read [GOVERNANCE.md](GOVERNANCE.md) before proposing major changes.
 
-```sh
-$ ./scripts/bootstrap
-```
+Follow the shared [Xquik contribution policy][contribution-policy].
 
-Or [install uv manually](https://docs.astral.sh/uv/getting-started/installation/) and run:
+## Set Up
 
-```sh
-$ uv sync --all-extras
-```
-
-You can then run scripts using `uv run python script.py` or by manually activating the virtual environment:
+Install `uv`, then run:
 
 ```sh
-# manually activate - https://docs.python.org/3/library/venv.html#how-venvs-work
-$ source .venv/bin/activate
-
-# now you can omit the `uv run` prefix
-$ python script.py
+./scripts/bootstrap
 ```
 
-### Without `uv`
+The bootstrap installs supported Python runtimes and locked dependencies.
 
-Alternatively if you don't want to install `uv`, you can stick with the standard `pip` setup by ensuring you have the Python version specified in `.python-version`, create a virtual environment however you desire and then install dependencies using this command:
+Without `uv`, install `requirements-dev.lock` inside an isolated environment.
+
+Never commit credentials or runtime environment files.
+
+## Generated Code
+
+Most SDK files come from the public OpenAPI contract.
+
+Preserve generated method names and response contracts.
+
+Avoid generated-file changes when a generator fix exists.
+
+Place stable examples outside generated directories.
+
+## Verify Changes
+
+Run focused tests while editing.
+
+Run every gate before requesting review.
 
 ```sh
-$ pip install -r requirements-dev.lock
+./scripts/lint
+./scripts/test
+./scripts/coverage
+./scripts/audit
+uvx --from reuse==6.2.0 reuse lint
+./scripts/check-reproducible
 ```
 
-## Modifying/Adding code
+Statement coverage must remain at least 90%.
 
-Most of the SDK is generated code. Modifications to code will be persisted between generations, but may
-result in merge conflicts between manual patches and changes from the generator. The generator will never
-modify the contents of the `src/x_twitter_scraper/lib/` and `examples/` directories.
+Branch coverage must remain at least 80%.
 
-## Adding and running examples
+Add regression tests for every corrected defect.
 
-All files in the `examples/` directory are not modified by the generator and can be freely edited or added to.
+`TEST_API_BASE_URL` accepts literal loopback addresses only.
 
-```py
-# add an example to examples/<your-example>.py
+This guard prevents tests from mutating remote services.
 
-#!/usr/bin/env -S uv run python
-…
-```
+## Build From Source
+
+Build both public distributions:
 
 ```sh
-$ chmod +x examples/<your-example>.py
-# run the example against your api
-$ ./examples/<your-example>.py
+uv build
 ```
 
-## Using the repository from source
+Install the wheel inside a clean environment for integration testing.
 
-If you’d like to use the repository from source, you can either install from git or link to a cloned repository:
+## Submit Changes
 
-To install via git:
+Keep pull requests focused.
+
+Explain user-visible behavior and public contract effects.
+
+Link relevant issues and public API contracts.
+
+Use clear Conventional Commit subjects when practical.
+
+Sign every commit with the Developer Certificate of Origin.
 
 ```sh
-$ pip install git+ssh://git@github.com/Xquik-dev/x-twitter-scraper-python.git
+git commit --signoff
 ```
 
-Alternatively, you can build from source and install the wheel file:
+Another human must review maintainer-authored, nontrivial changes.
 
-Building this package will create two files in the `dist/` directory, a `.tar.gz` containing the source files and a `.whl` that can be used to install the package efficiently.
+Reviewers follow the shared [review policy][review-policy].
 
-To create a distributable version of the library, all you have to do is run this command:
+Address every review comment before merging.
 
-```sh
-$ uv build
-# or
-$ python -m build
-```
+## Report Security Issues
 
-Then to install:
+Never disclose suspected vulnerabilities in public issues.
 
-```sh
-$ pip install ./path-to-wheel-file.whl
-```
+Follow [SECURITY.md](SECURITY.md) for private reporting.
 
-## Running tests
+## Releases
 
-```sh
-$ ./scripts/test
-```
+Publish an immutable `v*` release after its commit reaches `main`.
 
-## Linting and formatting
+The protected `pypi` environment uses PyPI trusted publishing.
 
-This repository uses [ruff](https://github.com/astral-sh/ruff) and
-[black](https://github.com/psf/black) to format the code in the repository.
+Manual workflow runs must target a version tag.
 
-To lint:
+[contribution-policy]: https://github.com/Xquik-dev/.github/blob/main/CONTRIBUTING.md
+[review-policy]: https://github.com/Xquik-dev/.github/blob/main/REVIEWING.md
 
-```sh
-$ ./scripts/lint
-```
-
-To format and fix all ruff issues automatically:
-
-```sh
-$ ./scripts/format
-```
-
-## Publishing and releases
-
-Publish an immutable `v*` GitHub release after the release commit reaches `main`.
-The [Publish PyPI workflow](https://github.com/Xquik-dev/x-twitter-scraper-python/actions/workflows/publish-pypi.yml)
-builds the distributions separately, then publishes them through PyPI trusted
-publishing from the protected `pypi` environment. Manual runs must target a
-version tag.
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

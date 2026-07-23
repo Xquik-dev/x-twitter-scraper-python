@@ -74,7 +74,7 @@ class CreditsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", "x-api-key": omit, **(extra_headers or {})}
         return self._get(
             "/credits/topup/redirect",
             options=make_request_options(
@@ -241,7 +241,7 @@ class AsyncCreditsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", "x-api-key": omit, **(extra_headers or {})}
         return await self._get(
             "/credits/topup/redirect",
             options=make_request_options(

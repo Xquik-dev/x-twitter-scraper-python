@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import Generic, TypeVar, cast
 
+import pytest
+
 from x_twitter_scraper._utils import extract_type_var_from_base
 
 _T = TypeVar("_T")
@@ -71,3 +73,22 @@ def test_extract_type_var_generic_subclass_different_ordering_multiple() -> None
     assert extract_type_var_from_base(typ, index=0, generic_bases=generic_bases) == int
     assert extract_type_var_from_base(typ, index=1, generic_bases=generic_bases) == str
     assert extract_type_var_from_base(typ, index=2, generic_bases=generic_bases) == type(None)
+
+
+def test_extract_type_var_rejects_unrelated_generic_base() -> None:
+    with pytest.raises(RuntimeError, match="Could not find the generic base class"):
+        extract_type_var_from_base(
+            SubclassGeneric[int],
+            index=0,
+            generic_bases=cast("tuple[type, ...]", (BaseGenericMultipleTypeArgs,)),
+        )
+
+
+def test_extract_type_var_uses_custom_failure_message() -> None:
+    with pytest.raises(RuntimeError, match="custom failure"):
+        extract_type_var_from_base(
+            int,
+            index=0,
+            generic_bases=cast("tuple[type, ...]", (BaseGeneric,)),
+            failure_message="custom failure",
+        )

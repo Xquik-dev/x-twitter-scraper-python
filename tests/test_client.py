@@ -258,7 +258,10 @@ class TestXTwitterScraper:
             copy_param = copy_signature.parameters.get(name)
             assert copy_param is not None, f"copy() signature is missing the {name} param"
 
-    @pytest.mark.skipif(sys.version_info >= (3, 10), reason="fails because of a memory leak that started from 3.12")
+    @pytest.mark.skipif(
+        sys.version_info >= (3, 10),
+        reason="known tracer-sensitive allocation regression on supported CPython versions",
+    )
     def test_copy_build_request(self, client: XTwitterScraper) -> None:
         options = FinalRequestOptions(method="get", url="/foo")
 
@@ -1267,7 +1270,10 @@ class TestAsyncXTwitterScraper:
             copy_param = copy_signature.parameters.get(name)
             assert copy_param is not None, f"copy() signature is missing the {name} param"
 
-    @pytest.mark.skipif(sys.version_info >= (3, 10), reason="fails because of a memory leak that started from 3.12")
+    @pytest.mark.skipif(
+        sys.version_info >= (3, 10),
+        reason="known tracer-sensitive allocation regression on supported CPython versions",
+    )
     def test_copy_build_request(self, async_client: AsyncXTwitterScraper) -> None:
         options = FinalRequestOptions(method="get", url="/foo")
 

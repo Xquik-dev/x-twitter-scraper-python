@@ -125,9 +125,9 @@ def extract_type_var_from_base(
     # because it is intended to be for internal use only, however there does
     # not seem to be a way to resolve generic TypeVars for inherited subclasses
     # without using it.
-    if isinstance(cls, InheritsGeneric):
+    if hasattr(cls, "__orig_bases__"):
         target_base_class: Any | None = None
-        for base in cls.__orig_bases__:
+        for base in cast(InheritsGeneric, cls).__orig_bases__:
             if base.__origin__ in generic_bases:
                 target_base_class = base
                 break

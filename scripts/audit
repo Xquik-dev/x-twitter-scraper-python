@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+echo "==> Synchronizing the locked audit environment"
+uv sync --locked --all-extras --group pydantic-v2
+
+site_packages="$(uv run python -c 'import site; print(site.getsitepackages()[0])')"
+
+echo "==> Auditing installed locked dependencies"
+uvx --from pip-audit==2.10.1 pip-audit --strict --path "$site_packages"

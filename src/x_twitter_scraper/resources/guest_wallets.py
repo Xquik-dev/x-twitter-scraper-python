@@ -7,7 +7,7 @@ from typing_extensions import Literal
 import httpx
 
 from ..types import guest_wallet_topup_params, guest_wallet_create_params
-from .._types import Body, Query, Headers, NotGiven, not_given
+from .._types import Body, Query, Headers, NotGiven, omit, not_given
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -78,7 +78,7 @@ class GuestWalletsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"x-api-key": omit, "Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return self._post(
             "/guest-wallets",
             body=maybe_transform(
@@ -231,7 +231,7 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"x-api-key": omit, "Idempotency-Key": idempotency_key, **(extra_headers or {})}
         return await self._post(
             "/guest-wallets",
             body=await async_maybe_transform(
