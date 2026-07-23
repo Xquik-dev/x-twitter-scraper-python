@@ -18,15 +18,15 @@ permissions:
   contents: read
 
 concurrency:
-  group: ci-${{ github.workflow }}-${{ github.ref }}
+  group: ci-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 jobs:
   lint:
-    timeout-minutes: 10
-    name: lint
+    timeout-minutes: 15
+    name: Lint & Licensing
     runs-on: ubuntu-24.04
-    if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork) && (github.event_name != 'push' || github.event.head_commit.message != 'codegen metadata')
+    if: github.event_name == 'pull_request' || github.event.head_commit.message != 'codegen metadata'
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -45,10 +45,13 @@ jobs:
       - name: Run lints
         run: ./scripts/lint
 
+      - name: Check licensing
+        uses: fsfe/reuse-action@676e2d560c9a403aa252096d99fcab3e1132b0f5 # v6.0.0
+
   build:
-    if: (github.event_name == 'push' || github.event.pull_request.head.repo.fork) && (github.event_name != 'push' || github.event.head_commit.message != 'codegen metadata')
+    if: github.event_name == 'pull_request' || github.event.head_commit.message != 'codegen metadata'
     timeout-minutes: 10
-    name: build
+    name: Build & Reproducibility
     runs-on: ubuntu-24.04
     steps:
       - name: Check out repository
@@ -62,17 +65,19 @@ jobs:
           enable-cache: false
           version: "0.11.6"
 
-      - name: Install dependencies
-        run: uv sync --locked --all-extras
+      - name: Verify reproducible distributions
+        run: ./scripts/check-reproducible
 
-      - name: Run build
-        run: uv build
+      - name: Build distributions
+        run: SOURCE_DATE_EPOCH=946684800 uv build
+
+      - name: Check package metadata
+        run: uvx --from twine==6.2.0 twine check dist/*
 
   test:
-    timeout-minutes: 10
-    name: test
+    timeout-minutes: 20
+    name: Tests & Coverage
     runs-on: ubuntu-24.04
-    if: github.event_name == 'push' || github.event.pull_request.head.repo.fork
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -90,3 +95,25 @@ jobs:
 
       - name: Run tests
         run: ./scripts/test
+
+      - name: Enforce coverage
+        run: ./scripts/coverage
+
+  security:
+    timeout-minutes: 15
+    name: Dependency Security
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@11f9893b081a58869d3b5fccaea48c9e9e46f990 # v8.3.2
+        with:
+          enable-cache: false
+          version: "0.11.6"
+
+      - name: Audit locked dependencies
+        run: ./scripts/audit

@@ -3,6 +3,7 @@ from __future__ import annotations
 import datetime
 from typing import Union
 
+import pytest
 import pydantic
 
 from x_twitter_scraper import _compat
@@ -124,3 +125,7 @@ class TestOpenapiDumps:
         data = {"model": model_with_values}
         json_bytes = openapi_dumps(data)
         assert json_bytes == b'{"model":{"name":"Frank","email":"frank@example.com","phone":null}}'
+
+    def test_rejects_unsupported_objects(self) -> None:
+        with pytest.raises(TypeError, match="is not JSON serializable"):
+            openapi_dumps(object())

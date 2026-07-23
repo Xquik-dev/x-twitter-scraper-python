@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+coverage_workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-coverage.XXXXXX")"
+trap 'rm -rf -- "$coverage_workspace"' EXIT
+
+python_min=">=3.10.0"
+python_max=">=3.14.0"
+
+run_coverage() {
+  local python_spec="$1"
+  local pydantic_group="$2"
+  local run_name="$3"
+  local run_log="$coverage_workspace/$run_name.log"
+
+  echo "==> Covering $run_name"
+  if COVERAGE_FILE="$coverage_workspace/.coverage" \
+    UV_PYTHON="$python_spec" \
+    uv run --isolated --all-extras --group="$pydantic_group" \
+      coverage run \
+      --parallel-mode \
+      --branch \
+      --source=src/x_twitter_scraper \
+      -m pytest -n 0 -q >"$run_log" 2>&1; then
+    tail -2 "$run_log"
+    return
+  fi
+
+  sed -n '1,$p' "$run_log" >&2
+  return 1
+}
+
+run_coverage "$python_min" pydantic-v2 python-min-pydantic-v2
+run_coverage "$python_min" pydantic-v1 python-min-pydantic-v1
+run_coverage "$python_max" pydantic-v2 python-max-pydantic-v2
+
+export COVERAGE_FILE="$coverage_workspace/.coverage"
+export UV_PYTHON="$python_max"
+
+uv run --isolated --all-extras coverage combine "$coverage_workspace"
+uv run --isolated --all-extras coverage json -o "$coverage_workspace/report.json"
+uv run --isolated --all-extras python scripts/verify_coverage.py "$coverage_workspace/report.json"

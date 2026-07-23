@@ -23,6 +23,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
 
       - name: Install uv
@@ -31,8 +32,18 @@ jobs:
           enable-cache: false
           version: "0.11.6"
 
+      - name: Verify reproducible distributions
+        run: ./scripts/check-reproducible
+
+      - name: Verify release tag and ancestry
+        shell: bash
+        run: |
+          package_version="$(python3 -c 'import tomllib; print(tomllib.load(open("pyproject.toml", "rb"))["project"]["version"])')"
+          test "$GITHUB_REF_NAME" = "v$package_version"
+          git merge-base --is-ancestor "$GITHUB_SHA" refs/remotes/origin/main
+
       - name: Build distributions
-        run: uv build
+        run: SOURCE_DATE_EPOCH=946684800 uv build
 
       - name: Check package metadata
         run: uvx --from twine==6.2.0 twine check dist/*

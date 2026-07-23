@@ -4,7 +4,7 @@ from urllib.parse import unquote
 
 import pytest
 
-from x_twitter_scraper._qs import Querystring, stringify
+from x_twitter_scraper._qs import Querystring, parse, stringify
 
 
 def test_empty() -> None:
@@ -76,3 +76,11 @@ def test_array_brackets(method: str) -> None:
 def test_unknown_array_format() -> None:
     with pytest.raises(NotImplementedError, match="Unknown array_format value: foo, choose from comma, repeat"):
         stringify({"a": ["foo", "bar"]}, array_format=cast(Any, "foo"))
+
+
+def test_array_indices() -> None:
+    assert unquote(stringify({"items": ["foo", "bar"]}, array_format="indices")) == "items[0]=foo&items[1]=bar"
+
+
+def test_parse() -> None:
+    assert parse("item=foo&item=bar") == {"item": ["foo", "bar"]}
