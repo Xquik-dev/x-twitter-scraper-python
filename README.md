@@ -18,6 +18,20 @@ Use it to get tweets from profiles, search tweets by keyword or operator query, 
 
 It is generated with [Stainless](https://www.stainless.com/).
 
+## Common X Data Tasks
+
+Use the linked Python API map for typed method names.
+
+| Customer Question | REST Route | Workflow Note |
+| --- | --- | --- |
+| How do I search tweets? | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
+| How do I read a profile timeline? | `GET /x/users/{id}/tweets` | Paginate bounded results. |
+| How do I scrape followers? | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
+| How do I scrape following accounts? | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
+| How do I read my home timeline? | `GET /x/timeline` | Approve this private read. |
+| How do I monitor an account? | `POST /monitors` | Deliver events through HMAC webhooks. |
+| How do I post or reply? | `POST /x/tweets` | Confirm the account and payload. |
+
 ## Tweet Search, Profile Tweets & User Lookup
 
 Build Python services that search tweets, get tweets from profiles, fetch user profiles, check follower relationships, export followers, download media, and inspect timeline data through one typed REST client.
@@ -472,3 +486,5 @@ Python 3.10 or higher.
 ## Contributing
 
 See [the contributing documentation](./CONTRIBUTING.md).
+
+Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.
