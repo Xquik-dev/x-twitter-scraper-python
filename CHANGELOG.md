@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.2 (2026-07-23)
+
+Full Changelog: [v0.5.1...v0.5.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.5.1...v0.5.2)
+
+### Documentation
+
+* map common X data tasks ([#16](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/16)) ([9c5827e](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9c5827e8a0ec1fbdffe66938bfaddff357fe7f01))
+
 ## 0.5.1 (2026-07-22)
 
 Full Changelog: [v0.5.0...v0.5.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.5.0...v0.5.1)
