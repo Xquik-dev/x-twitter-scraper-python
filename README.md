@@ -18,6 +18,12 @@ Use it to get tweets from profiles, search tweets by keyword or operator query, 
 
 It is generated with [Stainless](https://www.stainless.com/).
 
+## Choose the Python SDK
+
+Choose this client for scripts, notebooks, workers, and Python services.
+Use synchronous or asynchronous clients through the same resource structure.
+Use Pydantic response models for validation and serialization.
+
 ## Common X Data Tasks
 
 Use the linked Python API map for typed method names.
@@ -34,11 +40,14 @@ Use the linked Python API map for typed method names.
 
 ## Tweet Search, Profile Tweets & User Lookup
 
-Build Python services that search tweets, get tweets from profiles, fetch user profiles, check follower relationships, export followers, download media, and inspect timeline data through one typed REST client.
+Use `XTwitterScraper` in scripts, notebooks, and synchronous workers.
+Use `AsyncXTwitterScraper` in concurrent services.
+Both clients return typed Pydantic response models.
 
 ## Real-Time Monitoring & Webhooks
 
-Create monitors for X accounts, receive HMAC-signed webhook events, and query event history from the same SDK surface.
+Verify HMAC signatures before handling monitor events in Python.
+Query event history with the same synchronous or asynchronous client.
 
 ## AI Agent Workflows With MCP
 
@@ -57,7 +66,8 @@ ChatGPT custom apps require OAuth.
 
 ## Giveaway Draws & Extractions
 
-Run giveaway draws, export winners, and launch extraction jobs for replies, reposts, quotes, followers, lists, communities, threads, articles, and tweet search.
+Launch draws and extractions from Python data pipelines.
+Export completed results for downstream analysis.
 
 ## Xquik SDK vs Building From Scratch
 
@@ -74,6 +84,7 @@ Run giveaway draws, export winners, and launch extraction jobs for replies, repo
 - Source: [Xquik-dev/x-twitter-scraper-python](https://github.com/Xquik-dev/x-twitter-scraper-python)
 - License: Apache-2.0
 - Citation metadata: [CITATION.cff](CITATION.cff)
+- Security policy: [SECURITY.md](SECURITY.md)
 
 ## FAQ
 
