@@ -1,5 +1,23 @@
 # Changelog
 
+## 0.6.0 (2026-07-24)
+
+Full Changelog: [v0.5.2...v0.6.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.5.2...v0.6.0)
+
+### Features
+
+* add OpenSSF Gold quality gates ([ea3f5ef](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/ea3f5efbb4ca806f9910aa5eaf37298d258b9636))
+
+
+### Chores
+
+* add per-file license evidence ([9c46658](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9c466581fd61a8314fadfb5330bad5fe53ad4b90))
+
+
+### Documentation
+
+* clarify repository discovery ([32c6e61](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/32c6e61978018053b8077111c37c23bc711ceac1))
+
 ## 0.5.2 (2026-07-23)
 
 Full Changelog: [v0.5.1...v0.5.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.5.1...v0.5.2)
