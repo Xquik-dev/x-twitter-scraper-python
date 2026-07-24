@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 """
 Copied from https://github.com/pydantic/pydantic/blob/v1.10.22/tests/test_datetime_parse.py
 with modifications so it works without pydantic v1 imports.
