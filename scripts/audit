@@ -8,10 +8,22 @@ set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-echo "==> Synchronizing the locked audit environment"
-uv sync --locked --all-extras --group pydantic-v2
+audit_requirements="$(mktemp "${TMPDIR:-/tmp}/xquik-python-audit.XXXXXX")"
+trap 'rm -f -- "$audit_requirements"' EXIT
 
-site_packages="$(uv run python -c 'import site; print(site.getsitepackages()[0])')"
+echo "==> Exporting locked third-party dependencies"
+uv export \
+  --quiet \
+  --locked \
+  --all-extras \
+  --group pydantic-v2 \
+  --no-emit-project \
+  --format requirements-txt \
+  --output-file "$audit_requirements"
 
-echo "==> Auditing installed locked dependencies"
-uvx --from pip-audit==2.10.1 pip-audit --strict --path "$site_packages"
+echo "==> Auditing locked third-party dependencies"
+uvx --from pip-audit==2.10.1 pip-audit \
+  --strict \
+  --disable-pip \
+  --require-hashes \
+  --requirement "$audit_requirements"
