@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
 # fork of https://github.com/asottile/blacken-docs adapted for ruff
 from __future__ import annotations
 
