@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.6.1 (2026-07-28)
+
+Full Changelog: [v0.6.0...v0.6.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.6.0...v0.6.1)
+
+### Chores
+
+* **deps:** bump google/clusterfuzzlite/actions/build_fuzzers ([#26](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/26)) ([579f53a](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/579f53a63f327d7f38167ebfc1e1771e7ed77f2f))
+* **deps:** bump google/clusterfuzzlite/actions/run_fuzzers ([#25](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/25)) ([846c5ff](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/846c5ffd557a950265176758310b1a57d1e77871))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.14.0 to 1.14.1 ([#27](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/27)) ([f8d425d](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/f8d425d49a4813c7e1a427a302fc1f22a479300d))
+
 ## 0.6.0 (2026-07-24)
 
 Full Changelog: [v0.5.2...v0.6.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.5.2...v0.6.0)
