@@ -96,6 +96,14 @@ from .write_actions import (
     WriteActionsResourceWithStreamingResponse,
     AsyncWriteActionsResourceWithStreamingResponse,
 )
+from .account_connection_attempts import (
+    AccountConnectionAttemptsResource,
+    AsyncAccountConnectionAttemptsResource,
+    AccountConnectionAttemptsResourceWithRawResponse,
+    AsyncAccountConnectionAttemptsResourceWithRawResponse,
+    AccountConnectionAttemptsResourceWithStreamingResponse,
+    AsyncAccountConnectionAttemptsResourceWithStreamingResponse,
+)
 from .account_connection_challenges import (
     AccountConnectionChallengesResource,
     AsyncAccountConnectionChallengesResource,
@@ -166,6 +174,12 @@ __all__ = [
     "AsyncAccountConnectionChallengesResourceWithRawResponse",
     "AccountConnectionChallengesResourceWithStreamingResponse",
     "AsyncAccountConnectionChallengesResourceWithStreamingResponse",
+    "AccountConnectionAttemptsResource",
+    "AsyncAccountConnectionAttemptsResource",
+    "AccountConnectionAttemptsResourceWithRawResponse",
+    "AsyncAccountConnectionAttemptsResourceWithRawResponse",
+    "AccountConnectionAttemptsResourceWithStreamingResponse",
+    "AsyncAccountConnectionAttemptsResourceWithStreamingResponse",
     "BookmarksResource",
     "AsyncBookmarksResource",
     "BookmarksResourceWithRawResponse",

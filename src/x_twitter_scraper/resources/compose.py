@@ -63,10 +63,10 @@ class ComposeResource(SyncAPIResource):
     ) -> ComposeCreateResponse:
         """Run one step of Xquik's three-step writing workflow.
 
-        Compose returns questions
-        and editorial rules. Refine returns goal-specific guidance. Score applies
-        deterministic text checks. It does not predict reach or expose X ranking
-        weights.
+        Compose returns questions,
+        editorial rules, and source-specific Radar recommendations. Refine returns
+        goal-specific guidance. Score applies deterministic text checks. It does not
+        predict reach or expose X ranking weights.
 
         Args:
           topic: Subject for the post.
@@ -105,10 +105,10 @@ class ComposeResource(SyncAPIResource):
     ) -> ComposeCreateResponse:
         """Run one step of Xquik's three-step writing workflow.
 
-        Compose returns questions
-        and editorial rules. Refine returns goal-specific guidance. Score applies
-        deterministic text checks. It does not predict reach or expose X ranking
-        weights.
+        Compose returns questions,
+        editorial rules, and source-specific Radar recommendations. Refine returns
+        goal-specific guidance. Score applies deterministic text checks. It does not
+        predict reach or expose X ranking weights.
 
         Args:
           goal: Editorial goal for the guidance.
@@ -150,10 +150,10 @@ class ComposeResource(SyncAPIResource):
     ) -> ComposeCreateResponse:
         """Run one step of Xquik's three-step writing workflow.
 
-        Compose returns questions
-        and editorial rules. Refine returns goal-specific guidance. Score applies
-        deterministic text checks. It does not predict reach or expose X ranking
-        weights.
+        Compose returns questions,
+        editorial rules, and source-specific Radar recommendations. Refine returns
+        goal-specific guidance. Score applies deterministic text checks. It does not
+        predict reach or expose X ranking weights.
 
         Args:
           draft: Full post text for deterministic editorial checks.
@@ -263,10 +263,10 @@ class AsyncComposeResource(AsyncAPIResource):
     ) -> ComposeCreateResponse:
         """Run one step of Xquik's three-step writing workflow.
 
-        Compose returns questions
-        and editorial rules. Refine returns goal-specific guidance. Score applies
-        deterministic text checks. It does not predict reach or expose X ranking
-        weights.
+        Compose returns questions,
+        editorial rules, and source-specific Radar recommendations. Refine returns
+        goal-specific guidance. Score applies deterministic text checks. It does not
+        predict reach or expose X ranking weights.
 
         Args:
           topic: Subject for the post.
@@ -305,10 +305,10 @@ class AsyncComposeResource(AsyncAPIResource):
     ) -> ComposeCreateResponse:
         """Run one step of Xquik's three-step writing workflow.
 
-        Compose returns questions
-        and editorial rules. Refine returns goal-specific guidance. Score applies
-        deterministic text checks. It does not predict reach or expose X ranking
-        weights.
+        Compose returns questions,
+        editorial rules, and source-specific Radar recommendations. Refine returns
+        goal-specific guidance. Score applies deterministic text checks. It does not
+        predict reach or expose X ranking weights.
 
         Args:
           goal: Editorial goal for the guidance.
@@ -350,10 +350,10 @@ class AsyncComposeResource(AsyncAPIResource):
     ) -> ComposeCreateResponse:
         """Run one step of Xquik's three-step writing workflow.
 
-        Compose returns questions
-        and editorial rules. Refine returns goal-specific guidance. Score applies
-        deterministic text checks. It does not predict reach or expose X ranking
-        weights.
+        Compose returns questions,
+        editorial rules, and source-specific Radar recommendations. Refine returns
+        goal-specific guidance. Score applies deterministic text checks. It does not
+        predict reach or expose X ranking weights.
 
         Args:
           draft: Full post text for deterministic editorial checks.

@@ -25,8 +25,9 @@ class XAccount(BaseModel):
 
     `healthy` = session active. `needsReauth` = user must submit fresh credentials.
     `locked` = X locked the account; unlock on x.com first. `suspended` = X banned
-    the account. `recovering` = past cooldown, will auto-retry on next use.
-    `temporaryIssue` = temporary connection problem; retry shortly.
+    the account. `recovering` = cooldown ended; the account can reconnect on its
+    next use. `temporaryIssue` = temporary connection problem; wait before the next
+    use.
     """
 
     status: str

@@ -12,6 +12,7 @@ __all__ = [
     "ComposePrepareResult",
     "ComposePrepareResultContentRule",
     "ComposePrepareResultEngagementMultiplier",
+    "ComposePrepareResultRadarRecommendation",
     "ComposePrepareResultScorerWeight",
     "ComposePrepareResultSavedStyle",
     "ComposeRefineResult",
@@ -30,6 +31,19 @@ class ComposePrepareResultEngagementMultiplier(BaseModel):
     """Human-readable published signal name."""
 
     multiplier: Literal["Production weight not published by X"]
+
+
+class ComposePrepareResultRadarRecommendation(BaseModel):
+    endpoint: str
+    """Radar endpoint for this source."""
+
+    guidance: str
+    """Source-specific drafting guidance."""
+
+    source: Literal["reddit", "github", "trustmrr", "hacker_news", "google_trends", "wikipedia", "polymarket"]
+
+    use_for: str = FieldInfo(alias="useFor")
+    """Current-topic research this source supports."""
 
 
 class ComposePrepareResultScorerWeight(BaseModel):
@@ -65,6 +79,9 @@ class ComposePrepareResult(BaseModel):
     """X post intent seeded with the topic."""
 
     next_step: str = FieldInfo(alias="nextStep")
+
+    radar_recommendations: List[ComposePrepareResultRadarRecommendation] = FieldInfo(alias="radarRecommendations")
+    """Sources and guidance for researching a fresh post angle."""
 
     scorer_weights: List[ComposePrepareResultScorerWeight] = FieldInfo(alias="scorerWeights")
     """Published signal names with unpublished weights as null."""

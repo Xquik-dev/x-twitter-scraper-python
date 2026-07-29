@@ -15,4 +15,4 @@ class AccountReauthParams(TypedDict, total=False):
     """Email for the X account (updates stored email)"""
 
     totp_secret: str
-    """TOTP secret for 2FA re-authentication"""
+    """Replacement Authenticator App TOTP secret. Omit it to reuse the saved secret."""
