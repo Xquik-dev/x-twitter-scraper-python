@@ -27,7 +27,6 @@ from .media_upload_response import MediaUploadResponse as MediaUploadResponse
 from .profile_update_params import ProfileUpdateParams as ProfileUpdateParams
 from .tweet_create_response import TweetCreateResponse as TweetCreateResponse
 from .tweet_delete_response import TweetDeleteResponse as TweetDeleteResponse
-from .account_create_response import AccountCreateResponse as AccountCreateResponse
 from .account_delete_response import AccountDeleteResponse as AccountDeleteResponse
 from .account_reauth_response import AccountReauthResponse as AccountReauthResponse
 from .community_create_params import CommunityCreateParams as CommunityCreateParams
@@ -79,6 +78,9 @@ from .user_retrieve_verified_followers_params import (
 )
 from .account_connection_challenge_submit_params import (
     AccountConnectionChallengeSubmitParams as AccountConnectionChallengeSubmitParams,
+)
+from .account_connection_attempt_retrieve_response import (
+    AccountConnectionAttemptRetrieveResponse as AccountConnectionAttemptRetrieveResponse,
 )
 from .account_connection_challenge_submit_response import (
     AccountConnectionChallengeSubmitResponse as AccountConnectionChallengeSubmitResponse,

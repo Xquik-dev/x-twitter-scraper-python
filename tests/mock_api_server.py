@@ -69,6 +69,9 @@ class MockAPIRequestHandler(BaseHTTPRequestHandler):
         if route.response_type is ResponseKind.BINARY:
             self._write_response(HTTPStatus.OK, b"fixture", "application/octet-stream")
             return
+        if route.response_type is ResponseKind.JSON_OBJECT:
+            self._write_response(HTTPStatus.OK, b"{}", "application/json")
+            return
         self._write_response(
             HTTPStatus.OK,
             self.model_payloads[route.response_type],

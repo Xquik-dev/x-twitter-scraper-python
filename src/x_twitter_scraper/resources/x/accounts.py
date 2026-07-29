@@ -22,7 +22,6 @@ from ..._response import (
 from ..._base_client import make_request_options
 from ...types.x.x_account_detail import XAccountDetail
 from ...types.x.account_list_response import AccountListResponse
-from ...types.x.account_create_response import AccountCreateResponse
 from ...types.x.account_delete_response import AccountDeleteResponse
 from ...types.x.account_reauth_response import AccountReauthResponse
 from ...types.x.account_bulk_retry_response import AccountBulkRetryResponse
@@ -57,15 +56,15 @@ class AccountsResource(SyncAPIResource):
         *,
         email: str,
         password: str,
+        totp_secret: str,
         username: str,
-        totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AccountCreateResponse:
+    ) -> object:
         """
         Connect X account
 
@@ -74,9 +73,9 @@ class AccountsResource(SyncAPIResource):
 
           password: Account password
 
-          username: X username
+          totp_secret: Authenticator App TOTP secret required for durable login
 
-          totp_secret: TOTP secret for 2FA
+          username: X username
 
           extra_headers: Send extra headers
 
@@ -92,15 +91,15 @@ class AccountsResource(SyncAPIResource):
                 {
                     "email": email,
                     "password": password,
-                    "username": username,
                     "totp_secret": totp_secret,
+                    "username": username,
                 },
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=AccountCreateResponse,
+            cast_to=object,
         )
 
     def retrieve(
@@ -232,7 +231,7 @@ class AccountsResource(SyncAPIResource):
 
           email: Email for the X account (updates stored email)
 
-          totp_secret: TOTP secret for 2FA re-authentication
+          totp_secret: Replacement Authenticator App TOTP secret. Omit it to reuse the saved secret.
 
           extra_headers: Send extra headers
 
@@ -288,15 +287,15 @@ class AsyncAccountsResource(AsyncAPIResource):
         *,
         email: str,
         password: str,
+        totp_secret: str,
         username: str,
-        totp_secret: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> AccountCreateResponse:
+    ) -> object:
         """
         Connect X account
 
@@ -305,9 +304,9 @@ class AsyncAccountsResource(AsyncAPIResource):
 
           password: Account password
 
-          username: X username
+          totp_secret: Authenticator App TOTP secret required for durable login
 
-          totp_secret: TOTP secret for 2FA
+          username: X username
 
           extra_headers: Send extra headers
 
@@ -323,15 +322,15 @@ class AsyncAccountsResource(AsyncAPIResource):
                 {
                     "email": email,
                     "password": password,
-                    "username": username,
                     "totp_secret": totp_secret,
+                    "username": username,
                 },
                 account_create_params.AccountCreateParams,
             ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=AccountCreateResponse,
+            cast_to=object,
         )
 
     async def retrieve(
@@ -463,7 +462,7 @@ class AsyncAccountsResource(AsyncAPIResource):
 
           email: Email for the X account (updates stored email)
 
-          totp_secret: TOTP secret for 2FA re-authentication
+          totp_secret: Replacement Authenticator App TOTP secret. Omit it to reuse the saved secret.
 
           extra_headers: Send extra headers
 

@@ -460,7 +460,6 @@ Types:
 from x_twitter_scraper.types.x import (
     XAccount,
     XAccountDetail,
-    AccountCreateResponse,
     AccountListResponse,
     AccountDeleteResponse,
     AccountBulkRetryResponse,
@@ -470,7 +469,7 @@ from x_twitter_scraper.types.x import (
 
 Methods:
 
-- <code title="post /x/accounts">client.x.accounts.<a href="./src/x_twitter_scraper/resources/x/accounts.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/x/account_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/account_create_response.py">AccountCreateResponse</a></code>
+- <code title="post /x/accounts">client.x.accounts.<a href="./src/x_twitter_scraper/resources/x/accounts.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/x/account_create_params.py">params</a>) -> object</code>
 - <code title="get /x/accounts/{id}">client.x.accounts.<a href="./src/x_twitter_scraper/resources/x/accounts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/x_account_detail.py">XAccountDetail</a></code>
 - <code title="get /x/accounts">client.x.accounts.<a href="./src/x_twitter_scraper/resources/x/accounts.py">list</a>() -> <a href="./src/x_twitter_scraper/types/x/account_list_response.py">AccountListResponse</a></code>
 - <code title="delete /x/accounts/{id}">client.x.accounts.<a href="./src/x_twitter_scraper/resources/x/accounts.py">delete</a>(id) -> <a href="./src/x_twitter_scraper/types/x/account_delete_response.py">AccountDeleteResponse</a></code>
@@ -488,6 +487,18 @@ from x_twitter_scraper.types.x import AccountConnectionChallengeSubmitResponse
 Methods:
 
 - <code title="post /x/account-connection-challenges/{id}/submit">client.x.account_connection_challenges.<a href="./src/x_twitter_scraper/resources/x/account_connection_challenges.py">submit</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/account_connection_challenge_submit_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/account_connection_challenge_submit_response.py">AccountConnectionChallengeSubmitResponse</a></code>
+
+## AccountConnectionAttempts
+
+Types:
+
+```python
+from x_twitter_scraper.types.x import AccountConnectionAttemptRetrieveResponse
+```
+
+Methods:
+
+- <code title="get /x/account-connection-attempts/{id}">client.x.account_connection_attempts.<a href="./src/x_twitter_scraper/resources/x/account_connection_attempts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/account_connection_attempt_retrieve_response.py">AccountConnectionAttemptRetrieveResponse</a></code>
 
 ## Bookmarks
 

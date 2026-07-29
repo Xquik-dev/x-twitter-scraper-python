@@ -18,8 +18,8 @@ class AccountCreateParams(TypedDict, total=False):
     password: Required[str]
     """Account password"""
 
+    totp_secret: Required[str]
+    """Authenticator App TOTP secret required for durable login"""
+
     username: Required[str]
     """X username"""
-
-    totp_secret: str
-    """TOTP secret for 2FA"""
