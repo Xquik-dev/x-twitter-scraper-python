@@ -19,6 +19,7 @@ from x_twitter_scraper._models import BaseModel
 class ResponseKind(Enum):
     EMPTY = "empty"
     BINARY = "binary"
+    JSON_OBJECT = "json_object"
 
 
 ResponseType = type[BaseModel] | ResponseKind
@@ -74,6 +75,8 @@ def _response_type(module_name: str, name: str) -> ResponseType:
         return ResponseKind.EMPTY
     if name in {"BinaryAPIResponse", "AsyncBinaryAPIResponse"}:
         return ResponseKind.BINARY
+    if name == "object":
+        return ResponseKind.JSON_OBJECT
 
     module = importlib.import_module(module_name)
     response_type = getattr(module, name, None)
