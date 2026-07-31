@@ -82,9 +82,12 @@ def _response_type(module_name: str, name: str) -> ResponseType:
     response_type = getattr(module, name, None)
     if isinstance(response_type, type) and issubclass(response_type, BaseModel):
         return response_type
-    for variant in get_args(response_type):
+    pending = list(get_args(response_type))
+    while pending:
+        variant = pending.pop(0)
         if isinstance(variant, type) and issubclass(variant, BaseModel):
             return variant
+        pending.extend(get_args(variant))
     raise TypeError(f"{module_name}.{name} is not a response model")
 
 

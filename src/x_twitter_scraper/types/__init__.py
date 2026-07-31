@@ -119,12 +119,14 @@ from .radar_retrieve_trending_topics_response import (
 # Pydantic can resolve the necessary references.
 # See: https://github.com/pydantic/pydantic/issues/11250 for more context.
 if _compat.PYDANTIC_V1:
+    x.tweet_get_replies_response.TweetGetRepliesResponse.update_forward_refs()  # type: ignore
     x.tweet_detail.TweetDetail.update_forward_refs()  # type: ignore
     x.tweet_retrieve_response.TweetRetrieveResponse.update_forward_refs()  # type: ignore
     shared.embedded_tweet.EmbeddedTweet.update_forward_refs()  # type: ignore
     shared.paginated_tweets.PaginatedTweets.update_forward_refs()  # type: ignore
     shared.search_tweet.SearchTweet.update_forward_refs()  # type: ignore
 else:
+    x.tweet_get_replies_response.TweetGetRepliesResponse.model_rebuild(_parent_namespace_depth=0)
     x.tweet_detail.TweetDetail.model_rebuild(_parent_namespace_depth=0)
     x.tweet_retrieve_response.TweetRetrieveResponse.model_rebuild(_parent_namespace_depth=0)
     shared.embedded_tweet.EmbeddedTweet.model_rebuild(_parent_namespace_depth=0)
