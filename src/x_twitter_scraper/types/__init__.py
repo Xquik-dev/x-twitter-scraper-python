@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+from . import x, shared
+from .. import _compat
 from .draft import Draft as Draft
 from .event import Event as Event
 from .shared import (
@@ -111,3 +113,20 @@ from .radar_retrieve_trending_topics_params import (
 from .radar_retrieve_trending_topics_response import (
     RadarRetrieveTrendingTopicsResponse as RadarRetrieveTrendingTopicsResponse,
 )
+
+# Rebuild cyclical models only after all modules are imported.
+# This ensures that, when building the deferred (due to cyclical references) model schema,
+# Pydantic can resolve the necessary references.
+# See: https://github.com/pydantic/pydantic/issues/11250 for more context.
+if _compat.PYDANTIC_V1:
+    x.tweet_detail.TweetDetail.update_forward_refs()  # type: ignore
+    x.tweet_retrieve_response.TweetRetrieveResponse.update_forward_refs()  # type: ignore
+    shared.embedded_tweet.EmbeddedTweet.update_forward_refs()  # type: ignore
+    shared.paginated_tweets.PaginatedTweets.update_forward_refs()  # type: ignore
+    shared.search_tweet.SearchTweet.update_forward_refs()  # type: ignore
+else:
+    x.tweet_detail.TweetDetail.model_rebuild(_parent_namespace_depth=0)
+    x.tweet_retrieve_response.TweetRetrieveResponse.model_rebuild(_parent_namespace_depth=0)
+    shared.embedded_tweet.EmbeddedTweet.model_rebuild(_parent_namespace_depth=0)
+    shared.paginated_tweets.PaginatedTweets.model_rebuild(_parent_namespace_depth=0)
+    shared.search_tweet.SearchTweet.model_rebuild(_parent_namespace_depth=0)

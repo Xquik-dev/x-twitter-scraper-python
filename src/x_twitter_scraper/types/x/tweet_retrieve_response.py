@@ -4,17 +4,18 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
+from __future__ import annotations
+
 from typing import Optional
 
 from ..._models import BaseModel
 from .tweet_author import TweetAuthor
-from .tweet_detail import TweetDetail
 
 __all__ = ["TweetRetrieveResponse"]
 
 
 class TweetRetrieveResponse(BaseModel):
-    tweet: TweetDetail
+    tweet: "TweetDetail"
     """Full tweet with text, engagement metrics, media, and metadata.
 
     A zero metric can mean X did not report the count.
@@ -26,3 +27,6 @@ class TweetRetrieveResponse(BaseModel):
     The lookup route always includes follower count and verification state. Other
     profile fields appear when available.
     """
+
+
+from .tweet_detail import TweetDetail

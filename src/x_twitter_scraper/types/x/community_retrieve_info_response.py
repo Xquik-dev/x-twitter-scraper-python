@@ -57,9 +57,6 @@ class Community(BaseModel):
     invites_policy: Optional[str] = None
     """Invitation policy"""
 
-    is_member: Optional[bool] = None
-    """Whether the authenticated viewer is a member"""
-
     is_nsfw: Optional[bool] = None
     """Whether the community is marked sensitive"""
 
@@ -77,9 +74,6 @@ class Community(BaseModel):
 
     primary_topic: Optional[CommunityPrimaryTopic] = None
     """Primary topic"""
-
-    role: Optional[str] = None
-    """Authenticated viewer's community role"""
 
     rules: Optional[List[CommunityRule]] = None
     """Community rules"""
