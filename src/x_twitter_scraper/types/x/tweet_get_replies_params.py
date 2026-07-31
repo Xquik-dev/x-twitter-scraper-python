@@ -45,6 +45,13 @@ class TweetGetRepliesParams(TypedDict, total=False):
     language: str
     """Language code filter, e.g. en or tr."""
 
+    limit: int
+    """With mode=complete, maximum combined direct and nested reply rows (1-25000).
+
+    Without complete mode, this is the deprecated pageSize alias and uses the normal
+    1-100 page range.
+    """
+
     media_type: Annotated[
         Literal["images", "videos", "gifs", "media", "links", "none"], PropertyInfo(alias="mediaType")
     ]
@@ -65,13 +72,18 @@ class TweetGetRepliesParams(TypedDict, total=False):
     min_retweets: Annotated[int, PropertyInfo(alias="minRetweets")]
     """Minimum retweets threshold."""
 
-    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum items requested from this page (1-100, default 20).
+    mode: Literal["complete"]
+    """Set complete for maximum-coverage collection.
 
-    The response can contain fewer items because the source returned fewer, filters
-    removed items, or remaining credits cover fewer results. Keep requesting
-    next_cursor while has_next_page is true, even when a page is empty. The
-    deprecated limit and count aliases remain accepted.
+    Complete mode accepts only limit. Remove cursor, pageSize, count, time ranges,
+    and tweet filters.
+    """
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Maximum page items (1-100, default 20).
+
+    Source, filters, or credits can reduce results. Continue while has_next_page is
+    true. Deprecated limit and count aliases remain accepted.
     """
 
     quotes: Literal["include", "exclude", "only"]

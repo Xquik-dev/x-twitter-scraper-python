@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any, cast
+
 import httpx
 
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
@@ -18,6 +20,7 @@ from ..._response import (
 from ..._base_client import make_request_options
 from ...types.x.x_account_detail import XAccountDetail
 from ...types.x.account_list_response import AccountListResponse
+from ...types.x.account_create_response import AccountCreateResponse
 from ...types.x.account_delete_response import AccountDeleteResponse
 from ...types.x.account_reauth_response import AccountReauthResponse
 from ...types.x.account_bulk_retry_response import AccountBulkRetryResponse
@@ -60,7 +63,7 @@ class AccountsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> object:
+    ) -> AccountCreateResponse:
         """
         Connect X account
 
@@ -81,21 +84,26 @@ class AccountsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._post(
-            "/x/accounts",
-            body=maybe_transform(
-                {
-                    "email": email,
-                    "password": password,
-                    "totp_secret": totp_secret,
-                    "username": username,
-                },
-                account_create_params.AccountCreateParams,
+        return cast(
+            AccountCreateResponse,
+            self._post(
+                "/x/accounts",
+                body=maybe_transform(
+                    {
+                        "email": email,
+                        "password": password,
+                        "totp_secret": totp_secret,
+                        "username": username,
+                    },
+                    account_create_params.AccountCreateParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(
+                    Any, AccountCreateResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=object,
         )
 
     def retrieve(
@@ -291,7 +299,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> object:
+    ) -> AccountCreateResponse:
         """
         Connect X account
 
@@ -312,21 +320,26 @@ class AsyncAccountsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return await self._post(
-            "/x/accounts",
-            body=await async_maybe_transform(
-                {
-                    "email": email,
-                    "password": password,
-                    "totp_secret": totp_secret,
-                    "username": username,
-                },
-                account_create_params.AccountCreateParams,
+        return cast(
+            AccountCreateResponse,
+            await self._post(
+                "/x/accounts",
+                body=await async_maybe_transform(
+                    {
+                        "email": email,
+                        "password": password,
+                        "totp_secret": totp_secret,
+                        "username": username,
+                    },
+                    account_create_params.AccountCreateParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(
+                    Any, AccountCreateResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=object,
         )
 
     async def retrieve(

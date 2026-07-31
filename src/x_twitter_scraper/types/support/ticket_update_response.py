@@ -1,6 +1,6 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import Optional
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -10,6 +10,6 @@ __all__ = ["TicketUpdateResponse"]
 
 
 class TicketUpdateResponse(BaseModel):
-    public_id: Optional[str] = FieldInfo(alias="publicId", default=None)
+    public_id: str = FieldInfo(alias="publicId")
 
-    status: Optional[str] = None
+    status: Literal["open", "resolved", "closed"]

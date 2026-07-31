@@ -1,7 +1,8 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List, Optional
+from typing import List
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -11,18 +12,18 @@ __all__ = ["TicketListResponse", "Ticket"]
 
 
 class Ticket(BaseModel):
-    created_at: Optional[datetime] = FieldInfo(alias="createdAt", default=None)
+    created_at: datetime = FieldInfo(alias="createdAt")
 
-    message_count: Optional[int] = FieldInfo(alias="messageCount", default=None)
+    message_count: int = FieldInfo(alias="messageCount")
 
-    public_id: Optional[str] = FieldInfo(alias="publicId", default=None)
+    public_id: str = FieldInfo(alias="publicId")
 
-    status: Optional[str] = None
+    status: Literal["open", "in_progress", "resolved", "closed"]
 
-    subject: Optional[str] = None
+    subject: str
 
-    updated_at: Optional[datetime] = FieldInfo(alias="updatedAt", default=None)
+    updated_at: datetime = FieldInfo(alias="updatedAt")
 
 
 class TicketListResponse(BaseModel):
-    tickets: Optional[List[Ticket]] = None
+    tickets: List[Ticket]

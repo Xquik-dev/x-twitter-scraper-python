@@ -1,6 +1,6 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List, Optional
+from typing import List
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -35,24 +35,24 @@ class MessageAttachment(BaseModel):
 
 
 class Message(BaseModel):
-    attachments: Optional[List[MessageAttachment]] = None
+    attachments: List[MessageAttachment]
 
-    body: Optional[str] = None
+    body: str
 
-    created_at: Optional[datetime] = FieldInfo(alias="createdAt", default=None)
+    created_at: datetime = FieldInfo(alias="createdAt")
 
-    sender: Optional[str] = None
+    sender: Literal["user", "support", "system"]
 
 
 class TicketRetrieveResponse(BaseModel):
-    created_at: Optional[datetime] = FieldInfo(alias="createdAt", default=None)
+    created_at: datetime = FieldInfo(alias="createdAt")
 
-    messages: Optional[List[Message]] = None
+    messages: List[Message]
 
-    public_id: Optional[str] = FieldInfo(alias="publicId", default=None)
+    public_id: str = FieldInfo(alias="publicId")
 
-    status: Optional[str] = None
+    status: Literal["open", "in_progress", "resolved", "closed"]
 
-    subject: Optional[str] = None
+    subject: str
 
-    updated_at: Optional[datetime] = FieldInfo(alias="updatedAt", default=None)
+    updated_at: datetime = FieldInfo(alias="updatedAt")

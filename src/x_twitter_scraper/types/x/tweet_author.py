@@ -11,4 +11,6 @@ class TweetAuthor(UserProfile):
     The lookup route always includes follower count and verification state. Other profile fields appear when available.
     """
 
-    pass
+    followers: int  # type: ignore
+
+    verified: bool  # type: ignore

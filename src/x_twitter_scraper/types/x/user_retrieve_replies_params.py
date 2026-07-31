@@ -69,12 +69,10 @@ class UserRetrieveRepliesParams(TypedDict, total=False):
     """Minimum retweets threshold."""
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum items requested from this page (1-100, default 20).
+    """Maximum page items (1-100, default 20).
 
-    The response can contain fewer items because the source returned fewer, filters
-    removed items, or remaining credits cover fewer results. Keep requesting
-    next_cursor while has_next_page is true, even when a page is empty. The
-    deprecated limit and count aliases remain accepted.
+    Source, filters, or credits can reduce results. Continue while has_next_page is
+    true. Deprecated limit and count aliases remain accepted.
     """
 
     quotes: Literal["include", "exclude", "only"]

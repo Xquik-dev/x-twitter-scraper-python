@@ -12,6 +12,7 @@ from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
     XAccountDetail,
     AccountListResponse,
+    AccountCreateResponse,
     AccountDeleteResponse,
     AccountReauthResponse,
     AccountBulkRetryResponse,
@@ -32,7 +33,7 @@ class TestAccounts:
             totp_secret="<TOTP_SECRET>",
             username="your_x_username",
         )
-        assert_matches_type(object, account, path=["response"])
+        assert_matches_type(AccountCreateResponse, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -47,7 +48,7 @@ class TestAccounts:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         account = response.parse()
-        assert_matches_type(object, account, path=["response"])
+        assert_matches_type(AccountCreateResponse, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -62,7 +63,7 @@ class TestAccounts:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             account = response.parse()
-            assert_matches_type(object, account, path=["response"])
+            assert_matches_type(AccountCreateResponse, account, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -278,7 +279,7 @@ class TestAsyncAccounts:
             totp_secret="<TOTP_SECRET>",
             username="your_x_username",
         )
-        assert_matches_type(object, account, path=["response"])
+        assert_matches_type(AccountCreateResponse, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -293,7 +294,7 @@ class TestAsyncAccounts:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         account = await response.parse()
-        assert_matches_type(object, account, path=["response"])
+        assert_matches_type(AccountCreateResponse, account, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -308,7 +309,7 @@ class TestAsyncAccounts:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             account = await response.parse()
-            assert_matches_type(object, account, path=["response"])
+            assert_matches_type(AccountCreateResponse, account, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

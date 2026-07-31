@@ -19,7 +19,7 @@ class AccountReauthResponse(BaseModel):
 
     health: Literal["healthy", "locked", "needsReauth", "recovering", "suspended", "temporaryIssue"]
 
-    status: str
+    status: Literal["active"]
 
     x_user_id: str = FieldInfo(alias="xUserId")
 

@@ -15,9 +15,6 @@ class Advertising(BaseModel):
 
 
 class AIGenerated(BaseModel):
-    can_edit: Optional[bool] = FieldInfo(alias="canEdit", default=None)
-    """Whether the disclosure can be edited on X."""
-
     detection_source: Optional[str] = FieldInfo(alias="detectionSource", default=None)
     """Source of the AI-generated media disclosure."""
 
