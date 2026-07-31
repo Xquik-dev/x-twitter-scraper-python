@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.8.0 (2026-07-31)
+
+Full Changelog: [v0.7.0...v0.8.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.7.0...v0.8.0)
+
+### Features
+
+* **api:** add complete reply extraction, rich response contracts, and typed account outcomes ([#32](https://github.com/Xquik-dev/x-twitter-scraper-python/pull/32)) ([23ab238](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/23ab238d37c98eaa10ed10867d7a5e4d855f9294))
+
 ## 0.7.0 (2026-07-29)
 
 Full Changelog: [v0.6.1...v0.7.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.6.1...v0.7.0)
