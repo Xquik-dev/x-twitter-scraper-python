@@ -6,6 +6,8 @@
 
 from typing import List, Optional
 
+from pydantic import Field as FieldInfo
+
 from .._models import BaseModel
 
 __all__ = ["XGetTrendsResponse", "Trend"]
@@ -16,9 +18,18 @@ class Trend(BaseModel):
 
     description: Optional[str] = None
 
+    promoted_content: Optional[str] = FieldInfo(alias="promotedContent", default=None)
+    """Promotion identifier from X. Null for organic trends."""
+
     query: Optional[str] = None
 
     rank: Optional[int] = None
+
+    tweet_volume: Optional[int] = FieldInfo(alias="tweetVolume", default=None)
+    """Approximate public post volume when X supplies it."""
+
+    url: Optional[str] = None
+    """X search URL for the trend."""
 
 
 class XGetTrendsResponse(BaseModel):

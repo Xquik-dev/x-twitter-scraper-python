@@ -79,8 +79,6 @@ class Author(BaseModel):
 
     username: str
 
-    can_dm: Optional[bool] = FieldInfo(alias="canDm", default=None)
-
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     description: Optional[str] = None

@@ -2,10 +2,11 @@
 
 from typing import Union, Optional
 from datetime import datetime
-from typing_extensions import Literal, TypeAlias
+from typing_extensions import Literal, Annotated, TypeAlias
 
 from pydantic import Field as FieldInfo
 
+from ..._utils import PropertyInfo
 from ..._models import BaseModel
 
 __all__ = [
@@ -74,9 +75,12 @@ class XAccountConnectionChallenge(BaseModel):
     username: str
 
 
-AccountConnectionAttemptRetrieveResponse: TypeAlias = Union[
-    XAccountConnectionAttemptPending,
-    XAccountConnectionAttemptSuccess,
-    XAccountConnectionAttemptFailed,
-    XAccountConnectionChallenge,
+AccountConnectionAttemptRetrieveResponse: TypeAlias = Annotated[
+    Union[
+        XAccountConnectionAttemptPending,
+        XAccountConnectionAttemptSuccess,
+        XAccountConnectionAttemptFailed,
+        XAccountConnectionChallenge,
+    ],
+    PropertyInfo(discriminator="status"),
 ]

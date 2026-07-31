@@ -55,6 +55,7 @@ from ....types.shared.paginated_tweets import PaginatedTweets
 from ....types.x.tweet_create_response import TweetCreateResponse
 from ....types.x.tweet_delete_response import TweetDeleteResponse
 from ....types.x.tweet_retrieve_response import TweetRetrieveResponse
+from ....types.x.tweet_get_replies_response import TweetGetRepliesResponse
 
 __all__ = ["TweetsResource", "AsyncTweetsResource"]
 
@@ -390,10 +391,8 @@ class TweetsResource(SyncAPIResource):
 
           min_retweets: Minimum retweets threshold.
 
-          page_size: Maximum items requested from this page (1-100, default 20). The response can
-              contain fewer items because the source returned fewer, filters removed items, or
-              remaining credits cover fewer results. Keep requesting next_cursor while
-              has_next_page is true, even when a page is empty. The deprecated limit and count
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
 
           quotes: Quote mode.
@@ -490,12 +489,14 @@ class TweetsResource(SyncAPIResource):
         hashtags: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
+        limit: int | Omit = omit,
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_faves: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
+        mode: Literal["complete"] | Omit = omit,
         page_size: int | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
@@ -515,14 +516,13 @@ class TweetsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
-        """Returns visible replies.
+    ) -> TweetGetRepliesResponse:
+        """Returns direct replies.
 
-        For an unfiltered first page, Xquik compares a terminal
-        page with the post's reported reply count. If the page is visibly incomplete,
-        the endpoint returns 424 `replies_incomplete` instead of presenting partial
-        coverage as complete. Use tweet search with a `conversation_id:{id}` query as
-        the broader fallback.
+        Complete mode merges available timeline views, supported
+        rankings, every forward cursor module, labeled hidden-content branches,
+        exact-parent time partitions scaled to the reported reply count, and search. It
+        separates nested replies and returns 424 below 80% coverage.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -546,6 +546,10 @@ class TweetsResource(SyncAPIResource):
 
           language: Language code filter, e.g. en or tr.
 
+          limit: With mode=complete, maximum combined direct and nested reply rows (1-25000).
+              Without complete mode, this is the deprecated pageSize alias and uses the normal
+              1-100 page range.
+
           media_type: Filter by media type.
 
           mentioning: Filter tweets mentioning a username.
@@ -558,10 +562,11 @@ class TweetsResource(SyncAPIResource):
 
           min_retweets: Minimum retweets threshold.
 
-          page_size: Maximum items requested from this page (1-100, default 20). The response can
-              contain fewer items because the source returned fewer, filters removed items, or
-              remaining credits cover fewer results. Keep requesting next_cursor while
-              has_next_page is true, even when a page is empty. The deprecated limit and count
+          mode: Set complete for maximum-coverage collection. Complete mode accepts only limit.
+              Remove cursor, pageSize, count, time ranges, and tweet filters.
+
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
 
           quotes: Quote mode.
@@ -617,12 +622,14 @@ class TweetsResource(SyncAPIResource):
                         "hashtags": hashtags,
                         "in_reply_to_tweet_id": in_reply_to_tweet_id,
                         "language": language,
+                        "limit": limit,
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_faves": min_faves,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
+                        "mode": mode,
                         "page_size": page_size,
                         "quotes": quotes,
                         "quotes_of_tweet_id": quotes_of_tweet_id,
@@ -640,7 +647,7 @@ class TweetsResource(SyncAPIResource):
                     tweet_get_replies_params.TweetGetRepliesParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetRepliesResponse,
         )
 
     def get_retweeters(
@@ -714,10 +721,8 @@ class TweetsResource(SyncAPIResource):
         Args:
           cursor: Pagination cursor for thread tweets
 
-          page_size: Maximum items requested from this page (1-100, default 20). The response can
-              contain fewer items because the source returned fewer, filters removed items, or
-              remaining credits cover fewer results. Keep requesting next_cursor while
-              has_next_page is true, even when a page is empty. The deprecated limit and count
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
 
           extra_headers: Send extra headers
@@ -1270,10 +1275,8 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_retweets: Minimum retweets threshold.
 
-          page_size: Maximum items requested from this page (1-100, default 20). The response can
-              contain fewer items because the source returned fewer, filters removed items, or
-              remaining credits cover fewer results. Keep requesting next_cursor while
-              has_next_page is true, even when a page is empty. The deprecated limit and count
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
 
           quotes: Quote mode.
@@ -1370,12 +1373,14 @@ class AsyncTweetsResource(AsyncAPIResource):
         hashtags: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
+        limit: int | Omit = omit,
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_faves: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
+        mode: Literal["complete"] | Omit = omit,
         page_size: int | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
@@ -1395,14 +1400,13 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
-        """Returns visible replies.
+    ) -> TweetGetRepliesResponse:
+        """Returns direct replies.
 
-        For an unfiltered first page, Xquik compares a terminal
-        page with the post's reported reply count. If the page is visibly incomplete,
-        the endpoint returns 424 `replies_incomplete` instead of presenting partial
-        coverage as complete. Use tweet search with a `conversation_id:{id}` query as
-        the broader fallback.
+        Complete mode merges available timeline views, supported
+        rankings, every forward cursor module, labeled hidden-content branches,
+        exact-parent time partitions scaled to the reported reply count, and search. It
+        separates nested replies and returns 424 below 80% coverage.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -1426,6 +1430,10 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           language: Language code filter, e.g. en or tr.
 
+          limit: With mode=complete, maximum combined direct and nested reply rows (1-25000).
+              Without complete mode, this is the deprecated pageSize alias and uses the normal
+              1-100 page range.
+
           media_type: Filter by media type.
 
           mentioning: Filter tweets mentioning a username.
@@ -1438,10 +1446,11 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_retweets: Minimum retweets threshold.
 
-          page_size: Maximum items requested from this page (1-100, default 20). The response can
-              contain fewer items because the source returned fewer, filters removed items, or
-              remaining credits cover fewer results. Keep requesting next_cursor while
-              has_next_page is true, even when a page is empty. The deprecated limit and count
+          mode: Set complete for maximum-coverage collection. Complete mode accepts only limit.
+              Remove cursor, pageSize, count, time ranges, and tweet filters.
+
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
 
           quotes: Quote mode.
@@ -1497,12 +1506,14 @@ class AsyncTweetsResource(AsyncAPIResource):
                         "hashtags": hashtags,
                         "in_reply_to_tweet_id": in_reply_to_tweet_id,
                         "language": language,
+                        "limit": limit,
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_faves": min_faves,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
+                        "mode": mode,
                         "page_size": page_size,
                         "quotes": quotes,
                         "quotes_of_tweet_id": quotes_of_tweet_id,
@@ -1520,7 +1531,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     tweet_get_replies_params.TweetGetRepliesParams,
                 ),
             ),
-            cast_to=PaginatedTweets,
+            cast_to=TweetGetRepliesResponse,
         )
 
     async def get_retweeters(
@@ -1594,10 +1605,8 @@ class AsyncTweetsResource(AsyncAPIResource):
         Args:
           cursor: Pagination cursor for thread tweets
 
-          page_size: Maximum items requested from this page (1-100, default 20). The response can
-              contain fewer items because the source returned fewer, filters removed items, or
-              remaining credits cover fewer results. Keep requesting next_cursor while
-              has_next_page is true, even when a page is empty. The deprecated limit and count
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
 
           extra_headers: Send extra headers
