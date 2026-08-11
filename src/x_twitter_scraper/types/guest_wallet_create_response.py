@@ -36,7 +36,7 @@ class GuestWalletCreateResponse(BaseModel):
     authorization: Authorization
 
     checkout_url: str
-    """Raw Stripe-hosted checkout URL for user interaction."""
+    """Hosted checkout URL for user interaction."""
 
     credential_notice: Literal[
         "Store api_key and the Idempotency-Key securely before sharing checkout_url. No email recovery is available."
@@ -48,9 +48,8 @@ class GuestWalletCreateResponse(BaseModel):
     expires_at: datetime
     """Time when the pending checkout expires."""
 
-    instructions: Literal[
-        "Give checkout_url to the user. They must complete payment on Stripe. Never submit payment for them. After payment, poll status_url every poll_after_seconds until latest_purchase.status is no longer pending."
-    ]
+    instructions: str
+    """Hosted checkout and status polling instructions."""
 
     poll_after_seconds: Literal[2]
     """Wait at least this long before polling status_url."""
