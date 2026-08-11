@@ -160,10 +160,10 @@ class CreditsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditTopupBalanceResponse:
-        """Create a Stripe Checkout session only after the user confirms.
+        """Create a hosted checkout only after the user confirms.
 
         The request never
-        completes payment or adds credits by itself.
+        completes payment or adds credits.
 
         Args:
           dollars: Amount to top up in US dollars. Minimum 10.
@@ -327,10 +327,10 @@ class AsyncCreditsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditTopupBalanceResponse:
-        """Create a Stripe Checkout session only after the user confirms.
+        """Create a hosted checkout only after the user confirms.
 
         The request never
-        completes payment or adds credits by itself.
+        completes payment or adds credits.
 
         Args:
           dollars: Amount to top up in US dollars. Minimum 10.

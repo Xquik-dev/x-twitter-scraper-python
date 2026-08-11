@@ -17,7 +17,7 @@ class Authorization(BaseModel):
 
 
 class GuestWalletTopupResponse(BaseModel):
-    """Pending Stripe checkout and guest wallet purchase details."""
+    """Pending hosted checkout and guest wallet purchase details."""
 
     account_required: Literal[False]
 
@@ -25,7 +25,7 @@ class GuestWalletTopupResponse(BaseModel):
     """Confirmed USD amount for a guest wallet purchase."""
 
     checkout_url: str
-    """Raw Stripe-hosted checkout URL for user interaction."""
+    """Hosted checkout URL for user interaction."""
 
     credits: str
     """Credits granted after verified payment."""
@@ -33,9 +33,8 @@ class GuestWalletTopupResponse(BaseModel):
     expires_at: datetime
     """Time when the pending checkout expires."""
 
-    instructions: Literal[
-        "Give checkout_url to the user. They must complete payment on Stripe. Never submit payment for them. After payment, poll status_url every poll_after_seconds until latest_purchase.status is no longer pending."
-    ]
+    instructions: str
+    """Hosted checkout and status polling instructions."""
 
     poll_after_seconds: Literal[2]
     """Wait at least this long before polling status_url."""
