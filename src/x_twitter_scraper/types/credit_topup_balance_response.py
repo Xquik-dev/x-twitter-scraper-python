@@ -11,10 +11,10 @@ __all__ = ["CreditTopupBalanceResponse"]
 
 class CreditTopupBalanceResponse(BaseModel):
     redirect_url: str
-    """Stable first-party Xquik redirect URL for the active Stripe Checkout session."""
+    """Stable Xquik redirect URL for the active checkout."""
 
     url: str
-    """Same stable first-party Xquik redirect URL as redirect_url.
+    """Same stable Xquik redirect URL as redirect_url.
 
-    The response never exposes a raw Stripe Checkout URL.
+    The response never exposes the hosted checkout URL.
     """
