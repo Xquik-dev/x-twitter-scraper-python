@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.10.1 (2026-08-11)
+
+Full Changelog: [v0.10.0...v0.10.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.10.0...v0.10.1)
+
+### Features
+
+* **api:** api update ([1fead25](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/1fead25d1da63f3f26dd08e75aba089ac487ace4))
+
 ## 0.10.0 (2026-08-11)
 
 Full Changelog: [v0.9.0...v0.10.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.9.0...v0.10.0)
