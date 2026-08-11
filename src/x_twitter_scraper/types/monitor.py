@@ -4,8 +4,9 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -33,3 +34,9 @@ class Monitor(BaseModel):
     username: str
 
     x_user_id: str = FieldInfo(alias="xUserId")
+
+    paused_at: Optional[datetime] = FieldInfo(alias="pausedAt", default=None)
+    """When Xquik automatically paused this monitor."""
+
+    paused_reason: Optional[Literal["x_user_not_found"]] = FieldInfo(alias="pausedReason", default=None)
+    """Why Xquik automatically paused this monitor."""

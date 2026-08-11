@@ -15,7 +15,7 @@ __all__ = ["ExtractionListParams"]
 
 class ExtractionListParams(TypedDict, total=False):
     cursor: str
-    """Cursor for keyset pagination from prior response next_cursor"""
+    """Previous nextCursor."""
 
     limit: int
     """Maximum number of items to return (1-100, default 50).

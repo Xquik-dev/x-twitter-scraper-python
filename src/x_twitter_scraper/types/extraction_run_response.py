@@ -4,7 +4,7 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing_extensions import Literal
+from typing import Optional
 
 from pydantic import Field as FieldInfo
 
@@ -14,33 +14,14 @@ __all__ = ["ExtractionRunResponse"]
 
 
 class ExtractionRunResponse(BaseModel):
-    id: str
+    allowed: bool
 
-    status: Literal["running"]
+    credits_available: str = FieldInfo(alias="creditsAvailable")
 
-    tool_type: Literal[
-        "article_extractor",
-        "community_extractor",
-        "community_moderator_explorer",
-        "community_post_extractor",
-        "community_search",
-        "favoriters",
-        "follower_explorer",
-        "following_explorer",
-        "list_follower_explorer",
-        "list_member_extractor",
-        "list_post_extractor",
-        "mention_extractor",
-        "people_search",
-        "post_extractor",
-        "quote_extractor",
-        "reply_extractor",
-        "repost_extractor",
-        "space_explorer",
-        "thread_extractor",
-        "tweet_search_extractor",
-        "user_likes",
-        "user_media",
-        "verified_follower_explorer",
-    ] = FieldInfo(alias="toolType")
-    """Identifier for the extraction tool used to run a job."""
+    credits_required: str = FieldInfo(alias="creditsRequired")
+
+    estimated_results: int = FieldInfo(alias="estimatedResults")
+
+    source: str
+
+    resolved_x_user_id: Optional[str] = FieldInfo(alias="resolvedXUserId", default=None)

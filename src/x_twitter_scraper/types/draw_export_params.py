@@ -13,7 +13,11 @@ __all__ = ["DrawExportParams"]
 
 class DrawExportParams(TypedDict, total=False):
     format: Required[Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]]
-    """Export output format"""
+    """Export output format.
+
+    PDF entry exports include up to 10,000 rows. Other entry formats include up to
+    100,000 rows.
+    """
 
     type: Literal["winners", "entries"]
     """Export winners or all entries"""
