@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.8.1 (2026-08-11)
+
+Full Changelog: [v0.8.0...v0.8.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.8.0...v0.8.1)
+
+### Chores
+
+* **deps:** bump github/codeql-action/upload-sarif from 4.37.1 to 4.37.6 ([#35](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/35)) ([d5909c0](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/d5909c0c19439d56c82de4257c3935304a0fb534))
+* **deps:** bump ossf/scorecard-action from 2.4.3 to 2.4.4 ([#37](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/37)) ([e985625](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/e985625b02fe0aa011cbd718de6f6f0665926804))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2 ([#42](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/42)) ([0f33a5e](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/0f33a5e9488c363e47942f4e35aeebd72c979f46))
+
 ## 0.8.0 (2026-07-31)
 
 Full Changelog: [v0.7.0...v0.8.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.7.0...v0.8.0)
