@@ -18,6 +18,12 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     Separate with spaces, commas, or lines.
     """
 
+    blue_verified_only: Annotated[bool, PropertyInfo(alias="blueVerifiedOnly")]
+    """Only return tweets from Blue-verified authors."""
+
+    card_name: Annotated[str, PropertyInfo(alias="cardName")]
+    """Match the Tweet card name."""
+
     cashtags: str
     """Cashtags separated by spaces, commas, or lines."""
 
@@ -30,11 +36,17 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
     """Exact phrase to match."""
 
+    exclude_source: Annotated[str, PropertyInfo(alias="excludeSource")]
+    """Exclude a source application."""
+
     exclude_words: Annotated[str, PropertyInfo(alias="excludeWords")]
     """Words or quoted phrases to exclude. Separate with spaces, commas, or lines."""
 
     from_user: Annotated[str, PropertyInfo(alias="fromUser")]
     """Filter by author username."""
+
+    geocode: str
+    """Match latitude, longitude, and radius."""
 
     hashtags: str
     """Hashtags separated by spaces, commas, or lines."""
@@ -45,6 +57,21 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     language: str
     """Language code filter, e.g. en or tr."""
 
+    max_faves: Annotated[int, PropertyInfo(alias="maxFaves")]
+    """Maximum likes threshold. maxLikes is also accepted."""
+
+    max_id: Annotated[str, PropertyInfo(alias="maxId")]
+    """Return Tweets older than this Tweet ID."""
+
+    max_quotes: Annotated[int, PropertyInfo(alias="maxQuotes")]
+    """Maximum quotes threshold."""
+
+    max_replies: Annotated[int, PropertyInfo(alias="maxReplies")]
+    """Maximum replies threshold."""
+
+    max_retweets: Annotated[int, PropertyInfo(alias="maxRetweets")]
+    """Maximum retweets threshold."""
+
     media_type: Annotated[
         Literal["images", "videos", "gifs", "media", "links", "none"], PropertyInfo(alias="mediaType")
     ]
@@ -52,6 +79,9 @@ class UserRetrieveMediaParams(TypedDict, total=False):
 
     mentioning: str
     """Filter tweets mentioning a username."""
+
+    min_bookmarks: Annotated[int, PropertyInfo(alias="minBookmarks")]
+    """Minimum bookmark count threshold."""
 
     min_faves: Annotated[int, PropertyInfo(alias="minFaves")]
     """Minimum likes threshold."""
@@ -64,6 +94,18 @@ class UserRetrieveMediaParams(TypedDict, total=False):
 
     min_retweets: Annotated[int, PropertyInfo(alias="minRetweets")]
     """Minimum retweets threshold."""
+
+    min_views: Annotated[int, PropertyInfo(alias="minViews")]
+    """Minimum view count threshold."""
+
+    native_retweets: Annotated[bool, PropertyInfo(alias="nativeRetweets")]
+    """Only return native reposts."""
+
+    near: str
+    """Match a place name."""
+
+    news: bool
+    """Only return news results."""
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
     """Maximum page items (1-100, default 20).
@@ -87,8 +129,17 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     retweets_of_tweet_id: Annotated[str, PropertyInfo(alias="retweetsOfTweetId")]
     """Only retweets of this tweet ID."""
 
+    safe: bool
+    """Enable the safe-search filter."""
+
     since_date: Annotated[Union[str, date], PropertyInfo(alias="sinceDate", format="iso8601")]
     """Start date in YYYY-MM-DD format."""
+
+    since_id: Annotated[str, PropertyInfo(alias="sinceId")]
+    """Return Tweets newer than this Tweet ID."""
+
+    source: str
+    """Match the source application."""
 
     to_user: Annotated[str, PropertyInfo(alias="toUser")]
     """Filter replies sent to a username."""
@@ -101,3 +152,9 @@ class UserRetrieveMediaParams(TypedDict, total=False):
 
     verified_only: Annotated[bool, PropertyInfo(alias="verifiedOnly")]
     """Only return tweets from verified authors."""
+
+    within: str
+    """Set the radius for the near filter."""
+
+    within_time: Annotated[str, PropertyInfo(alias="withinTime")]
+    """Match Tweets inside a recent time window."""

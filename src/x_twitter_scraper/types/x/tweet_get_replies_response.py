@@ -136,9 +136,9 @@ class TweetGetRepliesResponseDiagnostic(BaseModel):
 
 
 class TweetGetRepliesResponse(PaginatedTweets):
-    """Reply rows.
+    """Direct reply rows.
 
-    Complete mode also returns nested replies and coverage diagnostics. Keep nested replies separate from direct coverage.
+    No-mode requests use resumable automatic coverage. Complete mode also returns nested replies and coverage diagnostics. Keep nested replies separate from direct coverage.
     """
 
     diagnostic: Optional[TweetGetRepliesResponseDiagnostic] = None

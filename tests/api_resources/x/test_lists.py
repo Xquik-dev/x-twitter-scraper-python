@@ -30,8 +30,22 @@ class TestLists:
     def test_method_retrieve_followers_with_all_params(self, client: XTwitterScraper) -> None:
         list_ = client.x.lists.retrieve_followers(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -82,8 +96,22 @@ class TestLists:
     def test_method_retrieve_members_with_all_params(self, client: XTwitterScraper) -> None:
         list_ = client.x.lists.retrieve_members(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -195,8 +223,22 @@ class TestAsyncLists:
     async def test_method_retrieve_followers_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         list_ = await async_client.x.lists.retrieve_followers(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 
@@ -247,8 +289,22 @@ class TestAsyncLists:
     async def test_method_retrieve_members_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         list_ = await async_client.x.lists.retrieve_members(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, list_, path=["response"])
 

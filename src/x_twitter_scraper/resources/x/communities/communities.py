@@ -213,8 +213,22 @@ class CommunitiesResource(SyncAPIResource):
         self,
         id: str,
         *,
+        bio_contains: str | Omit = omit,
         cursor: str | Omit = omit,
+        has_location: bool | Omit = omit,
+        has_website: bool | Omit = omit,
+        location_contains: str | Omit = omit,
+        max_followers: int | Omit = omit,
+        max_following: int | Omit = omit,
+        max_statuses: int | Omit = omit,
+        min_account_age_days: int | Omit = omit,
+        min_followers: int | Omit = omit,
+        min_following: int | Omit = omit,
+        min_statuses: int | Omit = omit,
         page_size: int | Omit = omit,
+        username_contains: str | Omit = omit,
+        verified_only: bool | Omit = omit,
+        verified_type: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -226,11 +240,39 @@ class CommunitiesResource(SyncAPIResource):
         List members of a community
 
         Args:
+          bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
+
           cursor: Pagination cursor
+
+          has_location: Only return profiles with a location.
+
+          has_website: Only return profiles with a website.
+
+          location_contains: Match a location substring, ignoring case.
+
+          max_followers: Maximum follower count. Missing counts pass this maximum.
+
+          max_following: Maximum following count.
+
+          max_statuses: Maximum post count. maxPosts is also accepted.
+
+          min_account_age_days: Minimum account age in whole days.
+
+          min_followers: Minimum follower count. Filtering happens before billing.
+
+          min_following: Minimum following count.
+
+          min_statuses: Minimum post count. minPosts is also accepted.
 
           page_size: Items per page (20-200, default 20). This is an upper bound for paid
               authenticated calls: remaining credits can reduce the returned page size, and
               zero affordable results returns 402 insufficient_credits.
+
+          username_contains: Match a username substring, ignoring case.
+
+          verified_only: Only return verified profiles.
+
+          verified_type: Match the verification type exactly, ignoring case.
 
           extra_headers: Send extra headers
 
@@ -251,8 +293,22 @@ class CommunitiesResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "bio_contains": bio_contains,
                         "cursor": cursor,
+                        "has_location": has_location,
+                        "has_website": has_website,
+                        "location_contains": location_contains,
+                        "max_followers": max_followers,
+                        "max_following": max_following,
+                        "max_statuses": max_statuses,
+                        "min_account_age_days": min_account_age_days,
+                        "min_followers": min_followers,
+                        "min_following": min_following,
+                        "min_statuses": min_statuses,
                         "page_size": page_size,
+                        "username_contains": username_contains,
+                        "verified_only": verified_only,
+                        "verified_type": verified_type,
                     },
                     community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
@@ -264,7 +320,21 @@ class CommunitiesResource(SyncAPIResource):
         self,
         id: str,
         *,
+        bio_contains: str | Omit = omit,
         cursor: str | Omit = omit,
+        has_location: bool | Omit = omit,
+        has_website: bool | Omit = omit,
+        location_contains: str | Omit = omit,
+        max_followers: int | Omit = omit,
+        max_following: int | Omit = omit,
+        max_statuses: int | Omit = omit,
+        min_account_age_days: int | Omit = omit,
+        min_followers: int | Omit = omit,
+        min_following: int | Omit = omit,
+        min_statuses: int | Omit = omit,
+        username_contains: str | Omit = omit,
+        verified_only: bool | Omit = omit,
+        verified_type: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -276,7 +346,35 @@ class CommunitiesResource(SyncAPIResource):
         List moderators of a community
 
         Args:
+          bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
+
           cursor: Pagination cursor for community moderators
+
+          has_location: Only return profiles with a location.
+
+          has_website: Only return profiles with a website.
+
+          location_contains: Match a location substring, ignoring case.
+
+          max_followers: Maximum follower count. Missing counts pass this maximum.
+
+          max_following: Maximum following count.
+
+          max_statuses: Maximum post count. maxPosts is also accepted.
+
+          min_account_age_days: Minimum account age in whole days.
+
+          min_followers: Minimum follower count. Filtering happens before billing.
+
+          min_following: Minimum following count.
+
+          min_statuses: Minimum post count. minPosts is also accepted.
+
+          username_contains: Match a username substring, ignoring case.
+
+          verified_only: Only return verified profiles.
+
+          verified_type: Match the verification type exactly, ignoring case.
 
           extra_headers: Send extra headers
 
@@ -296,7 +394,24 @@ class CommunitiesResource(SyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=maybe_transform(
-                    {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
+                    {
+                        "bio_contains": bio_contains,
+                        "cursor": cursor,
+                        "has_location": has_location,
+                        "has_website": has_website,
+                        "location_contains": location_contains,
+                        "max_followers": max_followers,
+                        "max_following": max_following,
+                        "max_statuses": max_statuses,
+                        "min_account_age_days": min_account_age_days,
+                        "min_followers": min_followers,
+                        "min_following": min_following,
+                        "min_statuses": min_statuses,
+                        "username_contains": username_contains,
+                        "verified_only": verified_only,
+                        "verified_type": verified_type,
+                    },
+                    community_retrieve_moderators_params.CommunityRetrieveModeratorsParams,
                 ),
             ),
             cast_to=PaginatedUsers,
@@ -528,8 +643,22 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        bio_contains: str | Omit = omit,
         cursor: str | Omit = omit,
+        has_location: bool | Omit = omit,
+        has_website: bool | Omit = omit,
+        location_contains: str | Omit = omit,
+        max_followers: int | Omit = omit,
+        max_following: int | Omit = omit,
+        max_statuses: int | Omit = omit,
+        min_account_age_days: int | Omit = omit,
+        min_followers: int | Omit = omit,
+        min_following: int | Omit = omit,
+        min_statuses: int | Omit = omit,
         page_size: int | Omit = omit,
+        username_contains: str | Omit = omit,
+        verified_only: bool | Omit = omit,
+        verified_type: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -541,11 +670,39 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         List members of a community
 
         Args:
+          bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
+
           cursor: Pagination cursor
+
+          has_location: Only return profiles with a location.
+
+          has_website: Only return profiles with a website.
+
+          location_contains: Match a location substring, ignoring case.
+
+          max_followers: Maximum follower count. Missing counts pass this maximum.
+
+          max_following: Maximum following count.
+
+          max_statuses: Maximum post count. maxPosts is also accepted.
+
+          min_account_age_days: Minimum account age in whole days.
+
+          min_followers: Minimum follower count. Filtering happens before billing.
+
+          min_following: Minimum following count.
+
+          min_statuses: Minimum post count. minPosts is also accepted.
 
           page_size: Items per page (20-200, default 20). This is an upper bound for paid
               authenticated calls: remaining credits can reduce the returned page size, and
               zero affordable results returns 402 insufficient_credits.
+
+          username_contains: Match a username substring, ignoring case.
+
+          verified_only: Only return verified profiles.
+
+          verified_type: Match the verification type exactly, ignoring case.
 
           extra_headers: Send extra headers
 
@@ -566,8 +723,22 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "bio_contains": bio_contains,
                         "cursor": cursor,
+                        "has_location": has_location,
+                        "has_website": has_website,
+                        "location_contains": location_contains,
+                        "max_followers": max_followers,
+                        "max_following": max_following,
+                        "max_statuses": max_statuses,
+                        "min_account_age_days": min_account_age_days,
+                        "min_followers": min_followers,
+                        "min_following": min_following,
+                        "min_statuses": min_statuses,
                         "page_size": page_size,
+                        "username_contains": username_contains,
+                        "verified_only": verified_only,
+                        "verified_type": verified_type,
                     },
                     community_retrieve_members_params.CommunityRetrieveMembersParams,
                 ),
@@ -579,7 +750,21 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        bio_contains: str | Omit = omit,
         cursor: str | Omit = omit,
+        has_location: bool | Omit = omit,
+        has_website: bool | Omit = omit,
+        location_contains: str | Omit = omit,
+        max_followers: int | Omit = omit,
+        max_following: int | Omit = omit,
+        max_statuses: int | Omit = omit,
+        min_account_age_days: int | Omit = omit,
+        min_followers: int | Omit = omit,
+        min_following: int | Omit = omit,
+        min_statuses: int | Omit = omit,
+        username_contains: str | Omit = omit,
+        verified_only: bool | Omit = omit,
+        verified_type: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -591,7 +776,35 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         List moderators of a community
 
         Args:
+          bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
+
           cursor: Pagination cursor for community moderators
+
+          has_location: Only return profiles with a location.
+
+          has_website: Only return profiles with a website.
+
+          location_contains: Match a location substring, ignoring case.
+
+          max_followers: Maximum follower count. Missing counts pass this maximum.
+
+          max_following: Maximum following count.
+
+          max_statuses: Maximum post count. maxPosts is also accepted.
+
+          min_account_age_days: Minimum account age in whole days.
+
+          min_followers: Minimum follower count. Filtering happens before billing.
+
+          min_following: Minimum following count.
+
+          min_statuses: Minimum post count. minPosts is also accepted.
+
+          username_contains: Match a username substring, ignoring case.
+
+          verified_only: Only return verified profiles.
+
+          verified_type: Match the verification type exactly, ignoring case.
 
           extra_headers: Send extra headers
 
@@ -611,7 +824,24 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                 extra_body=extra_body,
                 timeout=timeout,
                 query=await async_maybe_transform(
-                    {"cursor": cursor}, community_retrieve_moderators_params.CommunityRetrieveModeratorsParams
+                    {
+                        "bio_contains": bio_contains,
+                        "cursor": cursor,
+                        "has_location": has_location,
+                        "has_website": has_website,
+                        "location_contains": location_contains,
+                        "max_followers": max_followers,
+                        "max_following": max_following,
+                        "max_statuses": max_statuses,
+                        "min_account_age_days": min_account_age_days,
+                        "min_followers": min_followers,
+                        "min_following": min_following,
+                        "min_statuses": min_statuses,
+                        "username_contains": username_contains,
+                        "verified_only": verified_only,
+                        "verified_type": verified_type,
+                    },
+                    community_retrieve_moderators_params.CommunityRetrieveModeratorsParams,
                 ),
             ),
             cast_to=PaginatedUsers,

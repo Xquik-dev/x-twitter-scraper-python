@@ -104,7 +104,7 @@ class DrawsResource(SyncAPIResource):
         List draws
 
         Args:
-          cursor: Cursor for keyset pagination from prior response next_cursor
+          cursor: Previous nextCursor.
 
           limit: Maximum number of items to return (1-100, default 50). For paid per-result
               endpoints, the returned count may be lower when remaining credits cannot cover
@@ -150,11 +150,13 @@ class DrawsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BinaryAPIResponse:
-        """
-        Export draw data
+        """Export draw data
 
         Args:
-          format: Export output format
+          format: Export output format.
+
+        PDF entry exports include up to 10,000 rows. Other entry
+              formats include up to 100,000 rows.
 
           type: Export winners or all entries
 
@@ -322,7 +324,7 @@ class AsyncDrawsResource(AsyncAPIResource):
         List draws
 
         Args:
-          cursor: Cursor for keyset pagination from prior response next_cursor
+          cursor: Previous nextCursor.
 
           limit: Maximum number of items to return (1-100, default 50). For paid per-result
               endpoints, the returned count may be lower when remaining credits cannot cover
@@ -368,11 +370,13 @@ class AsyncDrawsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AsyncBinaryAPIResponse:
-        """
-        Export draw data
+        """Export draw data
 
         Args:
-          format: Export output format
+          format: Export output format.
+
+        PDF entry exports include up to 10,000 rows. Other entry
+              formats include up to 100,000 rows.
 
           type: Export winners or all entries
 

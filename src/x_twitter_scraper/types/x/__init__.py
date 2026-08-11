@@ -23,6 +23,7 @@ from .media_upload_response import MediaUploadResponse as MediaUploadResponse
 from .profile_update_params import ProfileUpdateParams as ProfileUpdateParams
 from .tweet_create_response import TweetCreateResponse as TweetCreateResponse
 from .tweet_delete_response import TweetDeleteResponse as TweetDeleteResponse
+from .tweet_search_response import TweetSearchResponse as TweetSearchResponse
 from .account_create_response import AccountCreateResponse as AccountCreateResponse
 from .account_delete_response import AccountDeleteResponse as AccountDeleteResponse
 from .account_reauth_response import AccountReauthResponse as AccountReauthResponse
@@ -65,6 +66,8 @@ from .user_retrieve_following_params import UserRetrieveFollowingParams as UserR
 from .write_action_retrieve_response import WriteActionRetrieveResponse as WriteActionRetrieveResponse
 from .community_retrieve_info_response import CommunityRetrieveInfoResponse as CommunityRetrieveInfoResponse
 from .community_retrieve_search_params import CommunityRetrieveSearchParams as CommunityRetrieveSearchParams
+from .user_retrieve_followers_response import UserRetrieveFollowersResponse as UserRetrieveFollowersResponse
+from .user_retrieve_following_response import UserRetrieveFollowingResponse as UserRetrieveFollowingResponse
 from .community_retrieve_members_params import CommunityRetrieveMembersParams as CommunityRetrieveMembersParams
 from .bookmark_retrieve_folders_response import BookmarkRetrieveFoldersResponse as BookmarkRetrieveFoldersResponse
 from .community_retrieve_moderators_params import CommunityRetrieveModeratorsParams as CommunityRetrieveModeratorsParams
@@ -73,6 +76,9 @@ from .user_retrieve_followers_you_know_params import (
 )
 from .user_retrieve_verified_followers_params import (
     UserRetrieveVerifiedFollowersParams as UserRetrieveVerifiedFollowersParams,
+)
+from .user_retrieve_verified_followers_response import (
+    UserRetrieveVerifiedFollowersResponse as UserRetrieveVerifiedFollowersResponse,
 )
 from .account_connection_challenge_submit_params import (
     AccountConnectionChallengeSubmitParams as AccountConnectionChallengeSubmitParams,

@@ -182,8 +182,22 @@ class TestCommunities:
     def test_method_retrieve_members_with_all_params(self, client: XTwitterScraper) -> None:
         community = client.x.communities.retrieve_members(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 
@@ -234,7 +248,21 @@ class TestCommunities:
     def test_method_retrieve_moderators_with_all_params(self, client: XTwitterScraper) -> None:
         community = client.x.communities.retrieve_moderators(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 
@@ -487,8 +515,22 @@ class TestAsyncCommunities:
     async def test_method_retrieve_members_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         community = await async_client.x.communities.retrieve_members(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 
@@ -539,7 +581,21 @@ class TestAsyncCommunities:
     async def test_method_retrieve_moderators_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         community = await async_client.x.communities.retrieve_moderators(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, community, path=["response"])
 

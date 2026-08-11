@@ -71,6 +71,7 @@ class TestEvents:
         event = client.events.list(
             cursor="cursor",
             event_type="tweet.new",
+            keyword_monitor_id="keywordMonitorId",
             limit=1,
             monitor_id="monitorId",
         )
@@ -158,6 +159,7 @@ class TestAsyncEvents:
         event = await async_client.events.list(
             cursor="cursor",
             event_type="tweet.new",
+            keyword_monitor_id="keywordMonitorId",
             limit=1,
             monitor_id="monitorId",
         )

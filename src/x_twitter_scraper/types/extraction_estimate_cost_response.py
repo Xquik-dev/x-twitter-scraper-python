@@ -22,6 +22,7 @@ class ExtractionEstimateCostResponse(BaseModel):
     source: Literal[
         "followers",
         "following",
+        "collection",
         "paginationCap",
         "posts",
         "quoteCount",

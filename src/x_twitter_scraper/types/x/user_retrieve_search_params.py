@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
-from typing_extensions import Required, TypedDict
+from typing_extensions import Required, Annotated, TypedDict
+
+from ..._utils import PropertyInfo
 
 __all__ = ["UserRetrieveSearchParams"]
 
@@ -11,5 +13,47 @@ class UserRetrieveSearchParams(TypedDict, total=False):
     q: Required[str]
     """User search query"""
 
+    bio_contains: Annotated[str, PropertyInfo(alias="bioContains")]
+    """Match any comma-separated or line-separated bio term, ignoring case."""
+
     cursor: str
     """Pagination cursor for user search"""
+
+    has_location: Annotated[bool, PropertyInfo(alias="hasLocation")]
+    """Only return profiles with a location."""
+
+    has_website: Annotated[bool, PropertyInfo(alias="hasWebsite")]
+    """Only return profiles with a website."""
+
+    location_contains: Annotated[str, PropertyInfo(alias="locationContains")]
+    """Match a location substring, ignoring case."""
+
+    max_followers: Annotated[int, PropertyInfo(alias="maxFollowers")]
+    """Maximum follower count. Missing counts pass this maximum."""
+
+    max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
+    """Maximum following count."""
+
+    max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
+    """Maximum post count. maxPosts is also accepted."""
+
+    min_account_age_days: Annotated[int, PropertyInfo(alias="minAccountAgeDays")]
+    """Minimum account age in whole days."""
+
+    min_followers: Annotated[int, PropertyInfo(alias="minFollowers")]
+    """Minimum follower count. Filtering happens before billing."""
+
+    min_following: Annotated[int, PropertyInfo(alias="minFollowing")]
+    """Minimum following count."""
+
+    min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
+    """Minimum post count. minPosts is also accepted."""
+
+    username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]
+    """Match a username substring, ignoring case."""
+
+    verified_only: Annotated[bool, PropertyInfo(alias="verifiedOnly")]
+    """Only return verified profiles."""
+
+    verified_type: Annotated[str, PropertyInfo(alias="verifiedType")]
+    """Match the verification type exactly, ignoring case."""
