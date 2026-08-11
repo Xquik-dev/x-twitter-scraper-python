@@ -64,7 +64,7 @@ class GuestWalletsResource(SyncAPIResource):
 
         The
         request creates no charge. It returns a paid-read API key without an Xquik
-        account. Replays return the same key.
+        account. Idempotent replays return the same key.
 
         Args:
           amount_minor: USD cents accepted for this checkout.
@@ -214,7 +214,7 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
 
         The
         request creates no charge. It returns a paid-read API key without an Xquik
-        account. Replays return the same key.
+        account. Idempotent replays return the same key.
 
         Args:
           amount_minor: USD cents accepted for this checkout.
