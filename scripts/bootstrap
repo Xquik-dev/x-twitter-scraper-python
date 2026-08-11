@@ -12,13 +12,9 @@ if [ -f "Brewfile" ] && [ "$(uname -s)" = "Darwin" ] && [ "${SKIP_BREW:-}" != "1
   brew bundle check >/dev/null 2>&1 || {
     echo -n "==> Install Homebrew dependencies? (y/N): "
     read -r response
-    case "$response" in
-      [yY][eE][sS]|[yY])
-        brew bundle
-        ;;
-      *)
-        ;;
-    esac
+    if [[ "$response" =~ ^[Yy]([Ee][Ss])?$ ]]; then
+      brew bundle
+    fi
     echo
   }
 fi

@@ -9,6 +9,7 @@ from typing_extensions import Literal, TypeAlias
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
+from ..shared.search_tweet import SearchTweet
 from ..shared.paginated_tweets import PaginatedTweets
 
 __all__ = [
@@ -89,6 +90,8 @@ class TweetSearchCoverageResponse(PaginatedTweets):
     No-mode search, user Tweet, user reply, and direct reply reads use automatic coverage. Shape, filters, aliases, and billing stay compatible. Unprefixed cursors remain legacy. Follow next_cursor while has_next_page is true. An empty filtered page can still have has_next_page true.
     """
 
+    tweets: List[SearchTweet]
+
     diagnostic: TweetSearchCoverageResponseDiagnostic
     """Coverage evidence across parallel search strategies."""
 
@@ -97,6 +100,4 @@ class TweetSearchCoverageResponse(PaginatedTweets):
     next_cursor: Optional[Literal[""]] = None  # type: ignore
 
 
-TweetSearchResponse: TypeAlias = Union["PaginatedTweets", TweetSearchCoverageResponse]
-
-from ..shared.paginated_tweets import PaginatedTweets
+TweetSearchResponse: TypeAlias = Union[PaginatedTweets, TweetSearchCoverageResponse]
