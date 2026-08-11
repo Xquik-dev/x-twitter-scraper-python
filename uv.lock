@@ -16,7 +16,7 @@ conflicts = [[
 ]]
 
 [options]
-exclude-newer = "2026-08-04T14:49:36.499926Z"
+exclude-newer = "2026-08-04T21:08:05.009269Z"
 exclude-newer-span = "P7D"
 
 [[package]]
@@ -1571,7 +1571,7 @@ wheels = [
 
 [[package]]
 name = "x-twitter-scraper"
-version = "0.8.1"
+version = "0.9.0"
 source = { editable = "." }
 dependencies = [
     { name = "anyio" },
