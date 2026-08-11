@@ -17,6 +17,9 @@ from x_twitter_scraper._utils import parse_date
 from x_twitter_scraper.types.x import (
     UserRetrieveBatchResponse,
     UserRemoveFollowerResponse,
+    UserRetrieveFollowersResponse,
+    UserRetrieveFollowingResponse,
+    UserRetrieveVerifiedFollowersResponse,
 )
 from x_twitter_scraper.types.shared import UserProfile, PaginatedUsers, PaginatedTweets
 
@@ -158,7 +161,7 @@ class TestUsers:
         user = client.x.users.retrieve_followers(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -166,11 +169,26 @@ class TestUsers:
         user = client.x.users.retrieve_followers(
             id="id",
             after="after",
+            bio_contains="bioContains",
             cursor="cursor",
-            limit=0,
+            has_location=True,
+            has_website=True,
+            limit=1,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            mode="standard",
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -182,7 +200,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -194,7 +212,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -219,8 +237,22 @@ class TestUsers:
     def test_method_retrieve_followers_you_know_with_all_params(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_followers_you_know(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, user, path=["response"])
 
@@ -264,7 +296,7 @@ class TestUsers:
         user = client.x.users.retrieve_following(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -272,11 +304,26 @@ class TestUsers:
         user = client.x.users.retrieve_following(
             id="id",
             after="after",
+            bio_contains="bioContains",
             cursor="cursor",
-            limit=0,
+            has_location=True,
+            has_website=True,
+            limit=1,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            mode="standard",
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -288,7 +335,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -300,7 +347,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -326,32 +373,51 @@ class TestUsers:
         user = client.x.users.retrieve_likes(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -403,32 +469,51 @@ class TestUsers:
         user = client.x.users.retrieve_media(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -480,34 +565,53 @@ class TestUsers:
         user = client.x.users.retrieve_mentions(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -559,33 +663,52 @@ class TestUsers:
         user = client.x.users.retrieve_replies(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -636,7 +759,21 @@ class TestUsers:
     def test_method_retrieve_search_with_all_params(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_search(
             q="q",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, user, path=["response"])
 
@@ -680,34 +817,53 @@ class TestUsers:
         user = client.x.users.retrieve_tweets(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             include_replies=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -751,17 +907,34 @@ class TestUsers:
         user = client.x.users.retrieve_verified_followers(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_method_retrieve_verified_followers_with_all_params(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_verified_followers(
             id="id",
+            after="after",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            limit=1,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            mode="standard",
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -773,7 +946,7 @@ class TestUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -785,7 +958,7 @@ class TestUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -935,7 +1108,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_followers(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -943,11 +1116,26 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_followers(
             id="id",
             after="after",
+            bio_contains="bioContains",
             cursor="cursor",
-            limit=0,
+            has_location=True,
+            has_website=True,
+            limit=1,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            mode="standard",
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -959,7 +1147,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -971,7 +1159,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveFollowersResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -996,8 +1184,22 @@ class TestAsyncUsers:
     async def test_method_retrieve_followers_you_know_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_followers_you_know(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, user, path=["response"])
 
@@ -1041,7 +1243,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_following(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1049,11 +1251,26 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_following(
             id="id",
             after="after",
+            bio_contains="bioContains",
             cursor="cursor",
-            limit=0,
+            has_location=True,
+            has_website=True,
+            limit=1,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            mode="standard",
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1065,7 +1282,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1077,7 +1294,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveFollowingResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -1103,32 +1320,51 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_likes(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1180,32 +1416,51 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_media(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1257,34 +1512,53 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_mentions(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1336,33 +1610,52 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_replies(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1413,7 +1706,21 @@ class TestAsyncUsers:
     async def test_method_retrieve_search_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_search(
             q="q",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, user, path=["response"])
 
@@ -1457,34 +1764,53 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_tweets(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             include_replies=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1528,17 +1854,34 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_verified_followers(
             id="id",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_method_retrieve_verified_followers_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_verified_followers(
             id="id",
+            after="after",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            limit=1,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            mode="standard",
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1550,7 +1893,7 @@ class TestAsyncUsers:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         user = await response.parse()
-        assert_matches_type(PaginatedUsers, user, path=["response"])
+        assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1562,7 +1905,7 @@ class TestAsyncUsers:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             user = await response.parse()
-            assert_matches_type(PaginatedUsers, user, path=["response"])
+            assert_matches_type(UserRetrieveVerifiedFollowersResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

@@ -16,11 +16,24 @@ from .tickets import (
 )
 from ..._compat import cached_property
 from ..._resource import SyncAPIResource, AsyncAPIResource
+from .attachments import (
+    AttachmentsResource,
+    AsyncAttachmentsResource,
+    AttachmentsResourceWithRawResponse,
+    AsyncAttachmentsResourceWithRawResponse,
+    AttachmentsResourceWithStreamingResponse,
+    AsyncAttachmentsResourceWithStreamingResponse,
+)
 
 __all__ = ["SupportResource", "AsyncSupportResource"]
 
 
 class SupportResource(SyncAPIResource):
+    @cached_property
+    def attachments(self) -> AttachmentsResource:
+        """Support ticket management"""
+        return AttachmentsResource(self._client)
+
     @cached_property
     def tickets(self) -> TicketsResource:
         """Support ticket management"""
@@ -47,6 +60,11 @@ class SupportResource(SyncAPIResource):
 
 
 class AsyncSupportResource(AsyncAPIResource):
+    @cached_property
+    def attachments(self) -> AsyncAttachmentsResource:
+        """Support ticket management"""
+        return AsyncAttachmentsResource(self._client)
+
     @cached_property
     def tickets(self) -> AsyncTicketsResource:
         """Support ticket management"""
@@ -77,6 +95,11 @@ class SupportResourceWithRawResponse:
         self._support = support
 
     @cached_property
+    def attachments(self) -> AttachmentsResourceWithRawResponse:
+        """Support ticket management"""
+        return AttachmentsResourceWithRawResponse(self._support.attachments)
+
+    @cached_property
     def tickets(self) -> TicketsResourceWithRawResponse:
         """Support ticket management"""
         return TicketsResourceWithRawResponse(self._support.tickets)
@@ -85,6 +108,11 @@ class SupportResourceWithRawResponse:
 class AsyncSupportResourceWithRawResponse:
     def __init__(self, support: AsyncSupportResource) -> None:
         self._support = support
+
+    @cached_property
+    def attachments(self) -> AsyncAttachmentsResourceWithRawResponse:
+        """Support ticket management"""
+        return AsyncAttachmentsResourceWithRawResponse(self._support.attachments)
 
     @cached_property
     def tickets(self) -> AsyncTicketsResourceWithRawResponse:
@@ -97,6 +125,11 @@ class SupportResourceWithStreamingResponse:
         self._support = support
 
     @cached_property
+    def attachments(self) -> AttachmentsResourceWithStreamingResponse:
+        """Support ticket management"""
+        return AttachmentsResourceWithStreamingResponse(self._support.attachments)
+
+    @cached_property
     def tickets(self) -> TicketsResourceWithStreamingResponse:
         """Support ticket management"""
         return TicketsResourceWithStreamingResponse(self._support.tickets)
@@ -105,6 +138,11 @@ class SupportResourceWithStreamingResponse:
 class AsyncSupportResourceWithStreamingResponse:
     def __init__(self, support: AsyncSupportResource) -> None:
         self._support = support
+
+    @cached_property
+    def attachments(self) -> AsyncAttachmentsResourceWithStreamingResponse:
+        """Support ticket management"""
+        return AsyncAttachmentsResourceWithStreamingResponse(self._support.attachments)
 
     @cached_property
     def tickets(self) -> AsyncTicketsResourceWithStreamingResponse:

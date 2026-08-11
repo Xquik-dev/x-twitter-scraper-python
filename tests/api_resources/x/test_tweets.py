@@ -17,6 +17,7 @@ from x_twitter_scraper._utils import parse_date
 from x_twitter_scraper.types.x import (
     TweetCreateResponse,
     TweetDeleteResponse,
+    TweetSearchResponse,
     TweetRetrieveResponse,
     TweetGetRepliesResponse,
 )
@@ -218,8 +219,22 @@ class TestTweets:
     def test_method_get_favoriters_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.get_favoriters(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -271,35 +286,54 @@ class TestTweets:
         tweet = client.x.tweets.get_quotes(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             include_replies=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -351,36 +385,61 @@ class TestTweets:
         tweet = client.x.tweets.get_replies(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_original_author=True,
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
+            has_media_only=True,
+            include_original_post=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
             limit=1,
+            max_depth=1,
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
-            mode="complete",
+            min_views=0,
+            mode="standard",
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
+            scope="all",
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            sort="relevance",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
 
@@ -431,8 +490,22 @@ class TestTweets:
     def test_method_get_retweeters_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.tweets.get_retweeters(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -528,7 +601,7 @@ class TestTweets:
         tweet = client.x.tweets.search(
             q="q",
         )
-        assert_matches_type(PaginatedTweets, tweet, path=["response"])
+        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -537,24 +610,39 @@ class TestTweets:
             q="q",
             advanced_query="advancedQuery",
             any_words="anyWords",
+            blue_verified_only=True,
             bounding_box="boundingBox",
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
-            limit=200,
+            limit=1,
             list_id="listId",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            mode="standard",
+            native_retweets=True,
+            near="near",
+            news=True,
             place="place",
             place_country="placeCountry",
             point_radius="pointRadius",
@@ -564,15 +652,20 @@ class TestTweets:
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
-        assert_matches_type(PaginatedTweets, tweet, path=["response"])
+        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -584,7 +677,7 @@ class TestTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = response.parse()
-        assert_matches_type(PaginatedTweets, tweet, path=["response"])
+        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -596,7 +689,7 @@ class TestTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = response.parse()
-            assert_matches_type(PaginatedTweets, tweet, path=["response"])
+            assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -796,8 +889,22 @@ class TestAsyncTweets:
     async def test_method_get_favoriters_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.get_favoriters(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -849,35 +956,54 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_quotes(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             include_replies=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -929,36 +1055,61 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.get_replies(
             id="id",
             any_words="anyWords",
+            blue_verified_only=True,
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_original_author=True,
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
+            has_media_only=True,
+            include_original_post=True,
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
             limit=1,
+            max_depth=1,
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
-            mode="complete",
+            min_views=0,
+            mode="standard",
+            native_retweets=True,
+            near="near",
+            news=True,
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
+            scope="all",
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            sort="relevance",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
         assert_matches_type(TweetGetRepliesResponse, tweet, path=["response"])
 
@@ -1009,8 +1160,22 @@ class TestAsyncTweets:
     async def test_method_get_retweeters_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.tweets.get_retweeters(
             id="id",
+            bio_contains="bioContains",
             cursor="cursor",
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
             page_size=20,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(PaginatedUsers, tweet, path=["response"])
 
@@ -1106,7 +1271,7 @@ class TestAsyncTweets:
         tweet = await async_client.x.tweets.search(
             q="q",
         )
-        assert_matches_type(PaginatedTweets, tweet, path=["response"])
+        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1115,24 +1280,39 @@ class TestAsyncTweets:
             q="q",
             advanced_query="advancedQuery",
             any_words="anyWords",
+            blue_verified_only=True,
             bounding_box="boundingBox",
+            card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
             cursor="cursor",
             exact_phrase="exactPhrase",
+            exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
+            geocode="geocode",
             hashtags="hashtags",
             in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
-            limit=200,
+            limit=1,
             list_id="listId",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
             mentioning="mentioning",
+            min_bookmarks=0,
             min_faves=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
+            min_views=0,
+            mode="standard",
+            native_retweets=True,
+            near="near",
+            news=True,
             place="place",
             place_country="placeCountry",
             point_radius="pointRadius",
@@ -1142,15 +1322,20 @@ class TestAsyncTweets:
             replies="include",
             retweets="include",
             retweets_of_tweet_id="retweetsOfTweetId",
+            safe=True,
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
             since_time="sinceTime",
+            source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
             until_time="untilTime",
             url="url",
             verified_only=True,
+            within="within",
+            within_time="withinTime",
         )
-        assert_matches_type(PaginatedTweets, tweet, path=["response"])
+        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1162,7 +1347,7 @@ class TestAsyncTweets:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         tweet = await response.parse()
-        assert_matches_type(PaginatedTweets, tweet, path=["response"])
+        assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1174,6 +1359,6 @@ class TestAsyncTweets:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             tweet = await response.parse()
-            assert_matches_type(PaginatedTweets, tweet, path=["response"])
+            assert_matches_type(TweetSearchResponse, tweet, path=["response"])
 
         assert cast(Any, response.is_closed) is True

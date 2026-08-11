@@ -16,10 +16,13 @@ __all__ = ["EventListParams"]
 
 class EventListParams(TypedDict, total=False):
     cursor: str
-    """Cursor for keyset pagination from prior response next_cursor"""
+    """Previous nextCursor."""
 
     event_type: Annotated[EventType, PropertyInfo(alias="eventType")]
     """Filter events by type"""
+
+    keyword_monitor_id: Annotated[str, PropertyInfo(alias="keywordMonitorId")]
+    """Keyword monitor ID."""
 
     limit: int
     """Maximum number of items to return (1-100, default 50).
@@ -30,4 +33,4 @@ class EventListParams(TypedDict, total=False):
     """
 
     monitor_id: Annotated[str, PropertyInfo(alias="monitorId")]
-    """Filter events by monitor ID"""
+    """Account monitor ID."""

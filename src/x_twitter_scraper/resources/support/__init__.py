@@ -20,8 +20,22 @@ from .tickets import (
     TicketsResourceWithStreamingResponse,
     AsyncTicketsResourceWithStreamingResponse,
 )
+from .attachments import (
+    AttachmentsResource,
+    AsyncAttachmentsResource,
+    AttachmentsResourceWithRawResponse,
+    AsyncAttachmentsResourceWithRawResponse,
+    AttachmentsResourceWithStreamingResponse,
+    AsyncAttachmentsResourceWithStreamingResponse,
+)
 
 __all__ = [
+    "AttachmentsResource",
+    "AsyncAttachmentsResource",
+    "AttachmentsResourceWithRawResponse",
+    "AsyncAttachmentsResourceWithRawResponse",
+    "AttachmentsResourceWithStreamingResponse",
+    "AsyncAttachmentsResourceWithStreamingResponse",
     "TicketsResource",
     "AsyncTicketsResource",
     "TicketsResourceWithRawResponse",

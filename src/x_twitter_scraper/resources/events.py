@@ -87,6 +87,7 @@ class EventsResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         event_type: EventType | Omit = omit,
+        keyword_monitor_id: str | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -100,16 +101,18 @@ class EventsResource(SyncAPIResource):
         List events
 
         Args:
-          cursor: Cursor for keyset pagination from prior response next_cursor
+          cursor: Previous nextCursor.
 
           event_type: Filter events by type
+
+          keyword_monitor_id: Keyword monitor ID.
 
           limit: Maximum number of items to return (1-100, default 50). For paid per-result
               endpoints, the returned count may be lower when remaining credits cannot cover
               the requested page. If zero paid results are affordable, the endpoint returns
               402 insufficient_credits.
 
-          monitor_id: Filter events by monitor ID
+          monitor_id: Account monitor ID.
 
           extra_headers: Send extra headers
 
@@ -130,6 +133,7 @@ class EventsResource(SyncAPIResource):
                     {
                         "cursor": cursor,
                         "event_type": event_type,
+                        "keyword_monitor_id": keyword_monitor_id,
                         "limit": limit,
                         "monitor_id": monitor_id,
                     },
@@ -200,6 +204,7 @@ class AsyncEventsResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         event_type: EventType | Omit = omit,
+        keyword_monitor_id: str | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
@@ -213,16 +218,18 @@ class AsyncEventsResource(AsyncAPIResource):
         List events
 
         Args:
-          cursor: Cursor for keyset pagination from prior response next_cursor
+          cursor: Previous nextCursor.
 
           event_type: Filter events by type
+
+          keyword_monitor_id: Keyword monitor ID.
 
           limit: Maximum number of items to return (1-100, default 50). For paid per-result
               endpoints, the returned count may be lower when remaining credits cannot cover
               the requested page. If zero paid results are affordable, the endpoint returns
               402 insufficient_credits.
 
-          monitor_id: Filter events by monitor ID
+          monitor_id: Account monitor ID.
 
           extra_headers: Send extra headers
 
@@ -243,6 +250,7 @@ class AsyncEventsResource(AsyncAPIResource):
                     {
                         "cursor": cursor,
                         "event_type": event_type,
+                        "keyword_monitor_id": keyword_monitor_id,
                         "limit": limit,
                         "monitor_id": monitor_id,
                     },
