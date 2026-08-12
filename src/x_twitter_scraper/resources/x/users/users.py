@@ -659,7 +659,7 @@ class UsersResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -887,7 +887,7 @@ class UsersResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1117,7 +1117,7 @@ class UsersResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1358,7 +1358,7 @@ class UsersResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1697,7 +1697,7 @@ class UsersResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2552,7 +2552,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2780,7 +2780,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -3010,7 +3010,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -3251,7 +3251,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -3590,7 +3590,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 

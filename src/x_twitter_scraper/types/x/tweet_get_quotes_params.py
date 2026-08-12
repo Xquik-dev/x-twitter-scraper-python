@@ -91,7 +91,7 @@ class TweetGetQuotesParams(TypedDict, total=False):
     """Minimum bookmark count threshold."""
 
     min_faves: Annotated[int, PropertyInfo(alias="minFaves")]
-    """Minimum likes threshold."""
+    """Minimum likes threshold. minLikes is also accepted."""
 
     min_quotes: Annotated[int, PropertyInfo(alias="minQuotes")]
     """Minimum quote count threshold."""
