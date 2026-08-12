@@ -474,7 +474,7 @@ class TweetsResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -735,7 +735,7 @@ class TweetsResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -990,8 +990,40 @@ class TweetsResource(SyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        blue_verified_only: bool | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        max_faves: int | Omit = omit,
+        max_quotes: int | Omit = omit,
+        max_replies: int | Omit = omit,
+        max_retweets: int | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -1003,11 +1035,76 @@ class TweetsResource(SyncAPIResource):
         Get full conversation thread for a tweet
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          blue_verified_only: Only return tweets from Blue-verified authors.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for thread tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          max_faves: Maximum likes threshold. maxLikes is also accepted.
+
+          max_quotes: Maximum quotes threshold.
+
+          max_replies: Maximum replies threshold.
+
+          max_retweets: Maximum retweets threshold.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Minimum likes threshold. minLikes is also accepted.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
               results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -1028,8 +1125,40 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "any_words": any_words,
+                        "blue_verified_only": blue_verified_only,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "max_faves": max_faves,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_bookmarks": min_bookmarks,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
                     },
                     tweet_get_thread_params.TweetGetThreadParams,
                 ),
@@ -1106,10 +1235,12 @@ class TweetsResource(SyncAPIResource):
     ) -> TweetSearchResponse:
         """No-mode search maximizes coverage.
 
-        Args:
-          q: Query, Tweet ID, or status URL.
+        New cursorless `Latest` sessions return rows
+        newest-first across cursor pages. Existing cursors preserve their established
+        ordering.
 
-        Valid inline bounds apply per page.
+        Args:
+          q: Query, Tweet ID, or status URL. Valid inline bounds apply per page.
 
           advanced_query: Raw advanced search query appended as-is.
 
@@ -1167,7 +1298,7 @@ class TweetsResource(SyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1732,7 +1863,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1993,7 +2124,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2248,8 +2379,40 @@ class AsyncTweetsResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        blue_verified_only: bool | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
+        language: str | Omit = omit,
+        max_faves: int | Omit = omit,
+        max_quotes: int | Omit = omit,
+        max_replies: int | Omit = omit,
+        max_retweets: int | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
+        min_quotes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        to_user: str | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -2261,11 +2424,76 @@ class AsyncTweetsResource(AsyncAPIResource):
         Get full conversation thread for a tweet
 
         Args:
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          blue_verified_only: Only return tweets from Blue-verified authors.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
           cursor: Pagination cursor for thread tweets
+
+          exact_phrase: Exact phrase to match.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
+
+          language: Language code filter, e.g. en or tr.
+
+          max_faves: Maximum likes threshold. maxLikes is also accepted.
+
+          max_quotes: Maximum quotes threshold.
+
+          max_replies: Maximum replies threshold.
+
+          max_retweets: Maximum retweets threshold.
+
+          media_type: Filter by media type.
+
+          mentioning: Filter tweets mentioning a username.
+
+          min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Minimum likes threshold. minLikes is also accepted.
+
+          min_quotes: Minimum quote count threshold.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
               results. Continue while has_next_page is true. Deprecated limit and count
               aliases remain accepted.
+
+          quotes: Quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode.
+
+          retweets: Retweet mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          url: URL substring or domain filter.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -2286,8 +2514,40 @@ class AsyncTweetsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "any_words": any_words,
+                        "blue_verified_only": blue_verified_only,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "max_faves": max_faves,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_bookmarks": min_bookmarks,
+                        "min_faves": min_faves,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "since_date": since_date,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "url": url,
+                        "verified_only": verified_only,
                     },
                     tweet_get_thread_params.TweetGetThreadParams,
                 ),
@@ -2364,10 +2624,12 @@ class AsyncTweetsResource(AsyncAPIResource):
     ) -> TweetSearchResponse:
         """No-mode search maximizes coverage.
 
-        Args:
-          q: Query, Tweet ID, or status URL.
+        New cursorless `Latest` sessions return rows
+        newest-first across cursor pages. Existing cursors preserve their established
+        ordering.
 
-        Valid inline bounds apply per page.
+        Args:
+          q: Query, Tweet ID, or status URL. Valid inline bounds apply per page.
 
           advanced_query: Raw advanced search query appended as-is.
 
@@ -2425,7 +2687,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold.
+          min_faves: Minimum likes threshold. minLikes is also accepted.
 
           min_quotes: Minimum quote count threshold.
 
