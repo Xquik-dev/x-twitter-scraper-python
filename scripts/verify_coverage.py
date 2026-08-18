@@ -10,10 +10,12 @@ import sys
 import json
 from typing import cast
 from pathlib import Path
-from collections.abc import Mapping, Sequence
+from collections.abc import Mapping
 
-STATEMENT_MINIMUM = 90
-BRANCH_MINIMUM = 80
+THRESHOLDS = (
+    ("Statement", "covered_lines", "num_statements", 90),
+    ("Branch", "covered_branches", "num_branches", 80),
+)
 
 
 def _integer(mapping: Mapping[str, object], key: str) -> int:
@@ -23,55 +25,30 @@ def _integer(mapping: Mapping[str, object], key: str) -> int:
     return value
 
 
-def coverage_percent(covered: int, total: int) -> float:
-    if total <= 0:
-        raise ValueError("Coverage report must contain measurable items")
-    return covered * 100 / total
-
-
-def coverage_passes(covered: int, total: int, minimum: int) -> bool:
-    return covered * 100 >= total * minimum
-
-
 def verify_coverage(report_path: Path) -> bool:
     payload = cast(object, json.loads(report_path.read_text(encoding="utf-8")))
-    if not isinstance(payload, dict):
+    if not isinstance(payload, Mapping):
         raise ValueError("Coverage report root must be an object")
-    report = cast(dict[str, object], payload)
+    report = cast(Mapping[str, object], payload)
     totals_value = report.get("totals")
-    if not isinstance(totals_value, dict):
+    if not isinstance(totals_value, Mapping):
         raise ValueError("Coverage report must contain totals")
-    totals = cast(dict[str, object], totals_value)
-
-    metrics = (
-        (
-            "Statement",
-            _integer(totals, "covered_lines"),
-            _integer(totals, "num_statements"),
-            STATEMENT_MINIMUM,
-        ),
-        (
-            "Branch",
-            _integer(totals, "covered_branches"),
-            _integer(totals, "num_branches"),
-            BRANCH_MINIMUM,
-        ),
-    )
+    totals = cast(Mapping[str, object], totals_value)
 
     passed = True
-    for label, covered, total, minimum in metrics:
-        percent = coverage_percent(covered, total)
+    for label, covered_key, total_key, minimum in THRESHOLDS:
+        covered = _integer(totals, covered_key)
+        total = _integer(totals, total_key)
+        if total <= 0:
+            raise ValueError("Coverage report must contain measurable items")
+        percent = covered * 100 / total
         print(f"{label} coverage: {covered}/{total} ({percent:.2f}%); minimum {minimum:.2f}%")
-        passed = coverage_passes(covered, total, minimum) and passed
+        passed = covered * 100 >= total * minimum and passed
     return passed
 
 
-def main(argv: Sequence[str]) -> int:
-    if len(argv) != 2:
-        print("usage: verify_coverage.py COVERAGE_JSON", file=sys.stderr)
-        return 2
-    return 0 if verify_coverage(Path(argv[1])) else 1
-
-
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv))
+    if len(sys.argv) != 2:
+        print("usage: verify_coverage.py COVERAGE_JSON", file=sys.stderr)
+        raise SystemExit(2)
+    raise SystemExit(0 if verify_coverage(Path(sys.argv[1])) else 1)

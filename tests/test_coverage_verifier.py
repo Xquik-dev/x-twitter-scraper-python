@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-from scripts.verify_coverage import coverage_passes, verify_coverage, coverage_percent
+from scripts.verify_coverage import verify_coverage
 
 
 def write_report(path: Path, *, lines: tuple[int, int], branches: tuple[int, int]) -> None:
@@ -28,23 +28,11 @@ def write_report(path: Path, *, lines: tuple[int, int], branches: tuple[int, int
     )
 
 
-def test_coverage_thresholds_are_inclusive() -> None:
-    assert coverage_percent(9, 10) == 90
-    assert coverage_passes(9, 10, 90)
-    assert coverage_passes(8, 10, 80)
-    assert not coverage_passes(7, 10, 80)
-
-
-def test_verify_coverage_accepts_gold_thresholds(tmp_path: Path) -> None:
+@pytest.mark.parametrize(("branches", "expected"), [((80, 100), True), ((79, 100), False)])
+def test_verify_coverage_enforces_thresholds(tmp_path: Path, branches: tuple[int, int], expected: bool) -> None:
     report_path = tmp_path / "coverage.json"
-    write_report(report_path, lines=(90, 100), branches=(80, 100))
-    assert verify_coverage(report_path)
-
-
-def test_verify_coverage_rejects_low_branch_coverage(tmp_path: Path) -> None:
-    report_path = tmp_path / "coverage.json"
-    write_report(report_path, lines=(95, 100), branches=(79, 100))
-    assert not verify_coverage(report_path)
+    write_report(report_path, lines=(90, 100), branches=branches)
+    assert verify_coverage(report_path) is expected
 
 
 def test_verify_coverage_rejects_invalid_reports(tmp_path: Path) -> None:
