@@ -6,14 +6,12 @@
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
 Use the Xquik Python SDK for Twitter search, timelines, profiles & followers.
-
 Manage media, webhooks & X automation with sync or async clients.
-
 It provides a Twitter API alternative through documented Xquik REST routes.
 
 [Python SDK Guide](https://docs.xquik.com/sdks/python) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
-It is generated with [Stainless](https://www.stainless.com/).
+[Stainless](https://www.stainless.com/) generates this SDK.
 
 ## Choose the Python SDK
 
@@ -53,20 +51,16 @@ Run giveaway draws and export extraction results from Python pipelines.
 - Citation metadata: [CITATION.cff](CITATION.cff)
 - Security policy: [SECURITY.md](SECURITY.md)
 
-## Documentation
-
-Read the [REST API guide](https://docs.xquik.com/api-reference/overview) for contracts and [API map](api.md) for Python methods.
-
 ## Installation
 
 ```sh
-# install from PyPI
+# Install from PyPI.
 pip install x_twitter_scraper
 ```
 
 ## Usage
 
-The full API of this library can be found in [api.md](api.md).
+See [api.md](api.md) for the complete API.
 
 ```python
 import os
@@ -82,14 +76,12 @@ response = client.x.tweets.search(
 )
 ```
 
-While you can provide an `api_key` keyword argument,
-we recommend using [python-dotenv](https://pypi.org/project/python-dotenv/)
-to add `X_TWITTER_SCRAPER_API_KEY="My API Key"` to your `.env` file
-so that your API Key is not stored in source control.
+Pass `api_key` directly or load `X_TWITTER_SCRAPER_API_KEY` with
+[python-dotenv](https://pypi.org/project/python-dotenv/). Keep credentials out of source control.
 
-## Async usage
+## Async Usage
 
-Simply import `AsyncXTwitterScraper` instead of `XTwitterScraper` and use `await` with each API call:
+Import `AsyncXTwitterScraper` and await each API call:
 
 ```python
 import os
@@ -111,20 +103,18 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-Functionality between the synchronous and asynchronous clients is otherwise identical.
+Both clients expose the same resources and methods.
 
 ### With aiohttp
 
-By default, the async client uses `httpx` for HTTP requests. However, for improved concurrency performance you may also use `aiohttp` as the HTTP backend.
-
-You can enable this by installing `aiohttp`:
+The async client uses `httpx`. Install `aiohttp` for an alternative backend:
 
 ```sh
-# install from PyPI
+# Install from PyPI.
 pip install x_twitter_scraper[aiohttp]
 ```
 
-Then you can enable it by instantiating the client with `http_client=DefaultAioHttpClient()`:
+Select it with `http_client=DefaultAioHttpClient()`:
 
 ```python
 import os
@@ -149,18 +139,20 @@ async def main() -> None:
 asyncio.run(main())
 ```
 
-## Using types
+## Using Types
 
-Nested request parameters are [TypedDicts](https://docs.python.org/3/library/typing.html#typing.TypedDict). Responses are [Pydantic models](https://docs.pydantic.dev) which also provide helper methods for things like:
+Nested request parameters use [TypedDicts](https://docs.python.org/3/library/typing.html#typing.TypedDict).
+Responses use [Pydantic models](https://docs.pydantic.dev) with these helpers:
 
-- Serializing back into JSON, `model.to_json()`
-- Converting to a dictionary, `model.to_dict()`
+- Serialize to JSON with `model.to_json()`.
+- Convert to a dictionary with `model.to_dict()`.
 
-Typed requests and responses provide autocomplete and documentation within your editor. If you would like to see type errors in VS Code to help catch bugs earlier, set `python.analysis.typeCheckingMode` to `basic`.
+Typed requests and responses provide editor completion and documentation.
+Set `python.analysis.typeCheckingMode` to `basic` in VS Code to catch type errors.
 
-## File uploads
+## File Uploads
 
-Request parameters that correspond to file uploads can be passed as `bytes`, or a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance or a tuple of `(filename, contents, media type)`.
+Pass uploads as `bytes`, a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike), or `(filename, contents, media_type)`.
 
 ```python
 from pathlib import Path
@@ -174,16 +166,13 @@ client.x.media.upload(
 )
 ```
 
-The async client uses the exact same interface. If you pass a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike) instance, the file contents will be read asynchronously automatically.
+The async client uses the same interface and reads `PathLike` content asynchronously.
 
-## Handling errors
+## Handling Errors
 
-When the library is unable to connect to the API (for example, due to network connection problems or a timeout), a subclass of `x_twitter_scraper.APIConnectionError` is raised.
-
-When the API returns a non-success status code (that is, 4xx or 5xx
-response), a subclass of `x_twitter_scraper.APIStatusError` is raised, containing `status_code` and `response` properties.
-
-All errors inherit from `x_twitter_scraper.APIError`.
+Connection failures raise an `x_twitter_scraper.APIConnectionError` subclass.
+Non-2xx responses raise an `APIStatusError` subclass with `status_code` and `response`.
+Every SDK error inherits from `x_twitter_scraper.APIError`.
 
 ```python
 import x_twitter_scraper
@@ -197,17 +186,17 @@ try:
         limit=10,
     )
 except x_twitter_scraper.APIConnectionError as e:
-    print("The server could not be reached")
-    print(e.__cause__)  # an underlying Exception, likely raised within httpx.
+    print("Could not reach the server. Check the connection.")
+    print(e.__cause__)  # Underlying httpx exception.
 except x_twitter_scraper.RateLimitError as e:
-    print("A 429 status code was received; we should back off a bit.")
+    print("Rate limited. Retry later.")
 except x_twitter_scraper.APIStatusError as e:
-    print("Another non-200-range status code was received")
+    print("The server returned another non-2xx status.")
     print(e.status_code)
     print(e.response)
 ```
 
-Error codes are as follows:
+The SDK uses these error classes:
 
 | Status Code | Error Type                 |
 | ----------- | -------------------------- |
@@ -222,22 +211,21 @@ Error codes are as follows:
 
 ### Retries
 
-Certain errors are automatically retried 2 times by default, with a short exponential backoff.
-Connection errors (for example, due to a network connectivity problem), 408 Request Timeout, 409 Conflict,
-429 Rate Limit, and >=500 Internal errors are all retried by default.
+The SDK retries connection errors and HTTP 408, 409, 429, and 5xx responses.
+It uses exponential backoff and attempts 2 retries by default.
 
-You can use the `max_retries` option to configure or disable retry settings:
+Set `max_retries` to change or disable retries:
 
 ```python
 from x_twitter_scraper import XTwitterScraper
 
-# Configure the default for all requests:
+# Set the client default:
 client = XTwitterScraper(
     # default is 2
     max_retries=0,
 )
 
-# Or, configure per-request:
+# Override one request:
 client.with_options(max_retries=5).x.tweets.search(
     q="from:elonmusk",
     limit=10,
@@ -246,19 +234,19 @@ client.with_options(max_retries=5).x.tweets.search(
 
 ### Timeouts
 
-By default requests time out after 1 minute. You can configure this with a `timeout` option,
-which accepts a float or an [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) object:
+Requests time out after 1 minute.
+Set a float or [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) through `timeout`:
 
 ```python
 from x_twitter_scraper import XTwitterScraper
 
-# Configure the default for all requests:
+# Set the client default:
 client = XTwitterScraper(
     # 20 seconds (default is 1 minute)
     timeout=20.0,
 )
 
-# More granular control:
+# Set granular limits:
 client = XTwitterScraper(
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
@@ -270,39 +258,39 @@ client.with_options(timeout=5.0).x.tweets.search(
 )
 ```
 
-On timeout, an `APITimeoutError` is thrown.
+Timeouts raise `APITimeoutError`.
 
-Note that requests that time out are [retried twice by default](#retries).
+Timed-out requests follow the [default retry policy](#retries).
 
 ## Advanced
 
 ### Logging
 
-We use the standard library [`logging`](https://docs.python.org/3/library/logging.html) module.
-
-You can enable logging by setting the environment variable `X_TWITTER_SCRAPER_LOG` to `info`.
+The SDK uses Python's [`logging`](https://docs.python.org/3/library/logging.html) module.
+Set `X_TWITTER_SCRAPER_LOG` to `info` to enable logs.
 
 ```shell
 $ export X_TWITTER_SCRAPER_LOG=info
 ```
 
-Or to `debug` for more verbose logging.
+Use `debug` for request and response details.
 
-### How to tell whether `None` means `null` or missing
+### Distinguishing `None`, `null` & Missing Fields
 
-In an API response, a field may be explicitly `null`, or missing entirely; in either case, its value is `None` in this library. You can differentiate the two cases with `.model_fields_set`:
+Both missing and explicit `null` response fields map to `None`.
+Check `.model_fields_set` to distinguish them:
 
 ```py
 if response.my_field is None:
   if 'my_field' not in response.model_fields_set:
-    print('Got json like {}, without a "my_field" key present at all.')
+    print('The response omitted "my_field".')
   else:
-    print('Got json like {"my_field": null}.')
+    print('The response set "my_field" to null.')
 ```
 
-### Accessing raw response data (e.g. headers)
+### Accessing Raw Response Data
 
-The "raw" Response object can be accessed by prefixing `.with_raw_response.` to any HTTP method call, e.g.,
+Prefix a method with `.with_raw_response.` to access the raw response:
 
 ```py
 from x_twitter_scraper import XTwitterScraper
@@ -314,19 +302,19 @@ response = client.x.tweets.with_raw_response.search(
 )
 print(response.headers.get('X-My-Header'))
 
-tweet = response.parse()  # get the object that `x.tweets.search()` would have returned
+tweet = response.parse()  # Parse the regular x.tweets.search() result.
 print(tweet.has_next_page)
 ```
 
-These methods return an [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) object.
-
-The async client returns an [`AsyncAPIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py) with the same structure, the only difference being `await`able methods for reading the response content.
+Sync methods return [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py).
+Async methods return `AsyncAPIResponse` with awaitable content readers.
 
 #### `.with_streaming_response`
 
-The above interface eagerly reads the full response body when you make the request, which may not always be what you want.
-
-To stream the response body, use `.with_streaming_response` instead, which requires a context manager and only reads the response body once you call `.read()`, `.text()`, `.json()`, `.iter_bytes()`, `.iter_text()`, `.iter_lines()` or `.parse()`. In the async client, these are async methods.
+The raw-response interface reads the complete body immediately.
+Use `.with_streaming_response` and a context manager to read it on demand.
+Call `.read()`, `.text()`, `.json()`, an iterator, or `.parse()`.
+The async client provides async versions of these methods.
 
 ```python
 with client.x.tweets.with_streaming_response.search(
@@ -339,18 +327,17 @@ with client.x.tweets.with_streaming_response.search(
         print(line)
 ```
 
-The context manager is required so that the response will reliably be closed.
+The context manager always closes the response.
 
-### Making custom/undocumented requests
+### Making Custom or Undocumented Requests
 
-This library is typed for convenient access to the documented API.
+The SDK types every documented endpoint, parameter, and response property.
+Use its lower-level methods for undocumented API features.
 
-If you need to access undocumented endpoints, params, or response properties, the library can still be used.
+#### Undocumented Endpoints
 
-#### Undocumented endpoints
-
-To make requests to undocumented endpoints, you can make requests using `client.get`, `client.post`, and other
-http verbs. Options on the client will be respected (such as retries) when making this request.
+Use `client.get`, `client.post`, or another HTTP method for undocumented endpoints.
+Client options, including retries, apply to these requests.
 
 ```py
 import httpx
@@ -364,20 +351,18 @@ response = client.post(
 print(response.headers.get("x-foo"))
 ```
 
-#### Undocumented request params
+#### Undocumented Request Parameters
 
-If you want to explicitly send an extra param, you can do so with the `extra_query`, `extra_body`, and `extra_headers` request
-options.
+Pass extra values through `extra_query`, `extra_body`, or `extra_headers`.
 
-#### Undocumented response properties
+#### Undocumented Response Properties
 
-To access undocumented response properties, you can access the extra fields like `response.unknown_prop`. You
-can also get all the extra fields on the Pydantic model as a dict with
-[`response.model_extra`](https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel.model_extra).
+Read an extra field through `response.unknown_prop`.
+Use [`response.model_extra`](https://docs.pydantic.dev/latest/api/base_model/#pydantic.BaseModel.model_extra) to get every extra field as a dictionary.
 
-### Configuring the HTTP client
+### Configuring the HTTP Client
 
-You can directly override the [httpx client](https://www.python-httpx.org/api/#client) to customize it for your use case, including:
+Replace the [httpx client](https://www.python-httpx.org/api/#client) to configure:
 
 - Support for [proxies](https://www.python-httpx.org/advanced/proxies/)
 - Custom [transports](https://www.python-httpx.org/advanced/transports/)
@@ -397,43 +382,41 @@ client = XTwitterScraper(
 )
 ```
 
-You can also customize the client on a per-request basis by using `with_options()`:
+Use `with_options()` to replace it for one request:
 
 ```python
 client.with_options(http_client=DefaultHttpxClient(...))
 ```
 
-### Managing HTTP resources
+### Managing HTTP Resources
 
-By default the library closes underlying HTTP connections whenever the client is [garbage collected](https://docs.python.org/3/reference/datamodel.html#object.__del__). You can manually close the client using the `.close()` method if desired, or with a context manager that closes when exiting.
+Garbage collection closes the client's HTTP connections.
+Call `.close()` or use a context manager to close them earlier.
 
 ```py
 from x_twitter_scraper import XTwitterScraper
 
 with XTwitterScraper() as client:
-  # make requests here
+  # Make requests here.
   ...
 
-# HTTP client is now closed
+# The HTTP client is closed.
 ```
 
 ## Versioning
 
-This package generally follows [SemVer](https://semver.org/spec/v2.0.0.html) conventions, though certain backwards-incompatible changes may be released as minor versions:
+This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions:
 
-1. Changes that only affect static types, without breaking runtime behavior.
-2. Changes to library internals which are technically public but not intended or documented for external use. _(Please open a GitHub issue to let us know if you are relying on such internals.)_
-3. Changes that we do not expect to impact the vast majority of users in practice.
+1. Static type changes that preserve runtime behavior.
+2. Changes to undocumented internals that remain technically public.
+3. Changes unlikely to affect normal use.
 
-We take backwards-compatibility seriously and work hard to ensure you can rely on a smooth upgrade experience.
+Open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-python/issues) with questions, bugs, or suggestions.
 
-We are keen for your feedback; please open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-python/issues) with questions, bugs, or suggestions.
+### Determining the Installed Version
 
-### Determining the installed version
-
-If you've upgraded to the latest version but aren't seeing any new features you were expecting then your python environment is likely still using an older version.
-
-You can determine the version that is being used at runtime with:
+If new features are missing, Python may still load an older package.
+Check the runtime version:
 
 ```py
 import x_twitter_scraper
