@@ -22,5 +22,5 @@ uv run pyright
 echo "==> Running mypy"
 uv run mypy .
 
-echo "==> Making sure it imports"
+echo "==> Checking package import"
 uv run python -c 'import x_twitter_scraper'
