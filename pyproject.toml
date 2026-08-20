@@ -57,7 +57,7 @@ conflicts = [
 ]
 
 [dependency-groups]
-# version pins are in uv.lock
+# Version pins are in uv.lock.
 dev = [
     "coverage==7.15.4",
     "pyright==1.1.411",
@@ -93,7 +93,7 @@ include = [
 packages = ["src/x_twitter_scraper"]
 
 [tool.hatch.build.targets.sdist]
-# Basically everything except hidden files/directories (such as .github, .devcontainers, .python-version, etc)
+# Package non-hidden source, tests, docs, and metadata.
 include = [
   "/*.toml",
   "/*.json",
@@ -114,7 +114,7 @@ content-type = "text/markdown"
 path = "README.md"
 
 [[tool.hatch.metadata.hooks.fancy-pypi-readme.substitutions]]
-# replace relative links with absolute links
+# Convert relative links to absolute links.
 pattern = '\[(.+?)\]\(((?!https?://)\S+?)\)'
 replacement = '[\1](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/\g<2>)'
 
@@ -129,9 +129,7 @@ filterwarnings = [
 ]
 
 [tool.pyright]
-# this enables practically every flag given by pyright.
-# there are a couple of flags that are still disabled by
-# default in strict mode as they are experimental and niche.
+# Enable Pyright's stable strict checks.
 typeCheckingMode = "strict"
 pythonVersion = "3.10"
 
@@ -152,12 +150,7 @@ reportPrivateUsage = false
 pretty = true
 show_error_codes = true
 
-# Exclude _files.py because mypy isn't smart enough to apply
-# the correct type narrowing and as this is an internal module
-# it's fine to just use Pyright.
-#
-# We also exclude our `tests` as mypy doesn't always infer
-# types correctly and Pyright will still catch any type errors.
+# Pyright checks `_files.py` and tests where mypy cannot infer types accurately.
 exclude = ['src/x_twitter_scraper/_files.py', '_dev/.*.py', 'tests/.*']
 
 strict_equality = true
@@ -169,8 +162,7 @@ warn_return_any = true
 warn_unreachable = true
 warn_unused_configs = true
 
-# Turn these options off as it could cause conflicts
-# with the Pyright options.
+# Avoid conflicts with Pyright.
 warn_unused_ignores = false
 warn_redundant_casts = false
 
