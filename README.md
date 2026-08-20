@@ -13,11 +13,6 @@ It provides a Twitter API alternative through documented Xquik REST routes.
 
 [Stainless](https://www.stainless.com/) generates this SDK.
 
-## Choose the Python SDK
-
-Choose this client for scripts, notebooks, workers, and Python services.
-Use sync or async resources with typed Pydantic response models.
-
 ## Common Twitter & X Tasks
 
 Map each task to its REST route.
@@ -125,9 +120,7 @@ from x_twitter_scraper import AsyncXTwitterScraper
 
 async def main() -> None:
     async with AsyncXTwitterScraper(
-        api_key=os.environ.get(
-            "X_TWITTER_SCRAPER_API_KEY"
-        ),  # This is the default and can be omitted
+        api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # This is the default and can be omitted
         http_client=DefaultAioHttpClient(),
     ) as client:
         response = await client.x.tweets.search(
@@ -282,10 +275,10 @@ Check `.model_fields_set` to distinguish them:
 
 ```py
 if response.my_field is None:
-  if 'my_field' not in response.model_fields_set:
-    print('The response omitted "my_field".')
-  else:
-    print('The response set "my_field" to null.')
+    if "my_field" not in response.model_fields_set:
+        print('The response omitted "my_field".')
+    else:
+        print('The response set "my_field" to null.')
 ```
 
 ### Accessing Raw Response Data
@@ -300,7 +293,7 @@ response = client.x.tweets.with_raw_response.search(
     q="from:elonmusk",
     limit=10,
 )
-print(response.headers.get('X-My-Header'))
+print(response.headers.get("X-My-Header"))
 
 tweet = response.parse()  # Parse the regular x.tweets.search() result.
 print(tweet.has_next_page)
@@ -397,8 +390,8 @@ Call `.close()` or use a context manager to close them earlier.
 from x_twitter_scraper import XTwitterScraper
 
 with XTwitterScraper() as client:
-  # Make requests here.
-  ...
+    # Make requests here.
+    ...
 
 # The HTTP client is closed.
 ```
@@ -420,6 +413,7 @@ Check the runtime version:
 
 ```py
 import x_twitter_scraper
+
 print(x_twitter_scraper.__version__)
 ```
 
