@@ -1,82 +1,49 @@
-# X (Twitter) Scraper Python SDK: Tweet Search, Profile Tweets, Followers & Posting
-
-> **Xquik is an independent third-party service.** Not affiliated with X Corp.
-> "Twitter" and "X" are trademarks of X Corp.
+# Xquik Python SDK: Twitter Search, Followers & X Automation
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg?url=https%3A%2F%2Fgithub.com%2FXquik-dev%2Fx-twitter-scraper-python)](https://deepwiki.com/Xquik-dev/x-twitter-scraper-python)
-[![Skills.sh x-twitter-scraper Skill](https://skills.sh/b/xquik-dev/x-twitter-scraper)](https://skills.sh/xquik-dev/x-twitter-scraper)
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
-Xquik Python SDK for the X (Twitter) Scraper API, a Twitter API SDK and X API alternative for typed tweet search, advanced Twitter search queries, profile tweets, user lookup, follower export, media download, media upload, monitoring, webhooks, and posting automation.
+Use the Xquik Python SDK for Twitter search, timelines, profiles & followers.
 
-Use it to get tweets from profiles, search tweets by keyword or operator query, send tweets, post replies, like, repost, follow, DM, run giveaway draws, and connect AI agents to X data without maintaining scraping infrastructure.
+Manage media, webhooks & X automation with sync or async clients.
 
-[SDK API](api.md) | [REST API Docs](https://docs.xquik.com/api-reference/overview) | [OpenAPI Spec](https://xquik.com/openapi.json) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [OAuth-First MCP Guide](https://docs.xquik.com/mcp/overview) | [TypeScript SDK](https://github.com/Xquik-dev/x-twitter-scraper-typescript)
+It provides a Twitter API alternative through documented Xquik REST routes.
+
+[Python SDK Guide](https://docs.xquik.com/sdks/python) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
 It is generated with [Stainless](https://www.stainless.com/).
 
 ## Choose the Python SDK
 
 Choose this client for scripts, notebooks, workers, and Python services.
-Use synchronous or asynchronous clients through the same resource structure.
-Use Pydantic response models for validation and serialization.
+Use sync or async resources with typed Pydantic response models.
 
-## Common X Data Tasks
+## Common Twitter & X Tasks
 
-Use the linked Python API map for typed method names.
+Map each task to its REST route.
 
-| Customer Question | REST Route | Workflow Note |
+| Task | REST Route | Usage |
 | --- | --- | --- |
-| How do I search tweets? | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
-| How do I read a profile timeline? | `GET /x/users/{id}/tweets` | Paginate bounded results. |
-| How do I scrape followers? | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
-| How do I scrape following accounts? | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
-| How do I read my home timeline? | `GET /x/timeline` | Approve this private read. |
-| How do I monitor an account? | `POST /monitors` | Deliver events through HMAC webhooks. |
-| How do I post or reply? | `POST /x/tweets` | Confirm the account and payload. |
-
-## Tweet Search, Profile Tweets & User Lookup
-
-Use `XTwitterScraper` in scripts, notebooks, and synchronous workers.
-Use `AsyncXTwitterScraper` in concurrent services.
-Both clients return typed Pydantic response models.
-
-## Real-Time Monitoring & Webhooks
-
-Verify HMAC signatures before handling monitor events in Python.
-Query event history with the same synchronous or asynchronous client.
+| Search tweets without the X API | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
+| Read an X profile timeline | `GET /x/users/{id}/tweets` | Paginate bounded results. |
+| Scrape Twitter followers | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
+| Scrape following accounts | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
+| Read a home timeline | `GET /x/timeline` | Approve this private read. |
+| Export large X datasets | `POST /extractions` | Poll status, then download results. |
+| Download or upload media | `/x/media/*` | Use typed file helpers. |
+| Monitor an account | `POST /monitors` | Deliver events through HMAC webhooks. |
+| Post or reply | `POST /x/tweets` | Confirm the account and payload. |
 
 ## AI Agent Workflows With MCP
 
-Keep application code on the typed REST SDK. For MCP clients, add
-`https://xquik.com/mcp`, then follow the [current client compatibility
-path](https://docs.xquik.com/mcp/overview#client-compatibility). OAuth-capable
-clients complete OAuth 2.1 in the browser. API-key fallback is client-specific.
-ChatGPT custom apps require OAuth.
-
-> **Codex OAuth compatibility:** Affected Codex releases discard the RFC 9207
-> `iss` callback value even though Xquik returns it. If Codex reports
-> `Authorization server response missing required issuer: expected https://xquik.com`,
-> use `XQUIK_API_KEY` through the Codex `bearer_token_env_var` setting. Follow the
-> [Codex OAuth troubleshooting guide](https://docs.xquik.com/guides/troubleshooting#codex-oauth-issuer-validation-error)
-> and track [openai/codex#31573](https://github.com/openai/codex/issues/31573).
+Use the typed REST SDK in application code. Add `https://xquik.com/mcp` to MCP clients.
+Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authentication support.
 
 ## Giveaway Draws & Extractions
 
-Launch draws and extractions from Python data pipelines.
-Export completed results for downstream analysis.
-
-## Xquik SDK vs Building From Scratch
-
-| Need | Xquik Python SDK | Building From Scratch |
-| --- | --- | --- |
-| Typed REST calls | Pydantic models and typed request params | Hand-maintained schemas |
-| Sync and async apps | Synchronous and asynchronous clients | Separate clients and retries |
-| Real-time events | Monitors plus HMAC webhooks | Separate queue and signing work |
-| AI agent access | REST SDK plus MCP server | Custom bridge layer |
+Run giveaway draws and export extraction results from Python pipelines.
 
 ## Package & Registry Trust
 
@@ -86,23 +53,9 @@ Export completed results for downstream analysis.
 - Citation metadata: [CITATION.cff](CITATION.cff)
 - Security policy: [SECURITY.md](SECURITY.md)
 
-## FAQ
-
-### Does this SDK support async Python?
-
-Yes. Import `AsyncXTwitterScraper` and await the same API methods.
-
-### Where are the REST endpoints documented?
-
-Start with the [REST API overview](https://docs.xquik.com/api-reference/overview), then use [api.md](api.md) for generated method names.
-
-### Can this work with AI agents?
-
-Yes. Use the SDK in your app code and follow the [MCP guide](https://docs.xquik.com/mcp/overview) for agent clients.
-
 ## Documentation
 
-The REST API documentation can be found on [docs.xquik.com](https://docs.xquik.com/api-reference/overview). The full API of this library can be found in [api.md](api.md).
+Read the [REST API guide](https://docs.xquik.com/api-reference/overview) for contracts and [API map](api.md) for Python methods.
 
 ## Installation
 

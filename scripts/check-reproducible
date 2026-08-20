@@ -19,7 +19,7 @@ SOURCE_DATE_EPOCH=946684800 uv build --out-dir "$reproducibility_workspace/secon
 
 first_archives=("$reproducibility_workspace"/first/*)
 if [[ "${#first_archives[@]}" -ne 2 ]]; then
-  echo "Expected one wheel and one source archive." >&2
+  echo "Distribution count is wrong. Build one wheel and one source archive." >&2
   exit 1
 fi
 
@@ -27,7 +27,7 @@ for first_archive in "${first_archives[@]}"; do
   archive_name="${first_archive##*/}"
   second_archive="$reproducibility_workspace/second/$archive_name"
   if [[ ! -f "$second_archive" ]]; then
-    echo "Second build omitted $archive_name." >&2
+    echo "Second build omitted $archive_name. Check the build inputs." >&2
     exit 1
   fi
   cmp "$first_archive" "$second_archive"
@@ -39,12 +39,12 @@ for first_archive in "${first_archives[@]}"; do
     archive_listing="$(tar -tzf "$first_archive")"
     expected_license="/LICENSE"
   else
-    echo "Unexpected distribution type: $archive_name." >&2
+    echo "Distribution type is unsupported: $archive_name. Build a wheel or source archive." >&2
     exit 1
   fi
 
   if [[ "$archive_listing" != *"$expected_license"* ]]; then
-    echo "$archive_name omits its Apache-2.0 license." >&2
+    echo "$archive_name omits its Apache-2.0 license. Include LICENSE in the package." >&2
     exit 1
   fi
 done

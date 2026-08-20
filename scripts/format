@@ -11,7 +11,7 @@ cd "$(dirname "$0")/.."
 echo "==> Running ruff"
 uv run ruff format
 uv run ruff check --fix .
-# run formatting again to fix any inconsistencies when imports are stripped
+# Format again after Ruff removes imports.
 uv run ruff format
 
 echo "==> Formatting docs"

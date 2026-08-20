@@ -32,13 +32,13 @@ No OpenSSF-defined ineligibility applies.
 | CI | Pull requests and pushes run pinned, least-privilege workflows |
 | Two-factor authentication | The Xquik-dev organization requires 2FA |
 
-The current matrix covers 10,305 of 10,941 statements, or 94.19%.
+The current matrix covers 12,010 of 12,654 statements, or 94.91%.
 
-It covers 1,139 of 1,408 branches, or 80.89%.
+It covers 1,149 of 1,418 branches, or 81.03%.
 
-The matrix runs 2,989 Pydantic 2 tests.
+The matrix runs 3,029 Pydantic 2 tests.
 
-It runs 2,976 Pydantic 1 tests.
+It runs 3,016 Pydantic 1 tests.
 
 ## Outstanding Gold Blockers
 
@@ -54,7 +54,7 @@ Do not claim Gold while any mandatory criterion remains unmet.
 | Independent review | History does not prove 50% qualifying review coverage | Require and record independent reviews |
 | Human security review | No completed review exists within 5 years | Commission and publish a scoped review |
 
-This remediation pull request needs a different human reviewer.
+Gold eligibility still requires review by a different human.
 
 ## Maintenance
 

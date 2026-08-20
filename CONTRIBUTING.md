@@ -1,7 +1,5 @@
 # Contributing
 
-Thank you for improving the Xquik Python SDK.
-
 Read [GOVERNANCE.md](GOVERNANCE.md) before proposing major changes.
 
 Follow the shared [Xquik contribution policy][contribution-policy].

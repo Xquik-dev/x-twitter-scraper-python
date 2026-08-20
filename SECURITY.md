@@ -56,7 +56,7 @@ CI also verifies dependencies, licenses, coverage, and reproducible archives.
 
 Maintainers triage reports privately.
 
-Confirmed fixes use private coordination when an embargo is needed.
+Confirmed fixes use private coordination during an embargo.
 
 Maintainers add regression tests and run every required gate.
 
