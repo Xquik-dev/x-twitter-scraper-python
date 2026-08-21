@@ -1,5 +1,55 @@
 # Changelog
 
+## 0.12.0 (2026-08-21)
+
+Full Changelog: [v0.11.2...v0.12.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.11.2...v0.12.0)
+
+### Features
+
+* add OpenSSF Gold quality gates ([ea3f5ef](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/ea3f5efbb4ca806f9910aa5eaf37298d258b9636))
+* **api:** api update ([85901a4](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/85901a4bce153fb7c28bc515f1e3af8e0f5c85a8))
+* **api:** api update ([0e49cd0](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/0e49cd05d0b6ccf892057496b47561eb7ded1c22))
+* **api:** api update ([9d3b4f0](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9d3b4f0f4fc8837c74a20075c2ecccba524ad3d9))
+* **api:** api update ([3e4e51b](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/3e4e51bfa74558e9d38d3b1aba5ff55785f638d3))
+* **api:** api update ([f345fe8](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/f345fe83851e7bc2432ffb56c1e566e545a79161))
+* **api:** api update ([9030f48](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9030f48f5e1d4871688fe853ab5816e2c8bf568c))
+
+
+### Bug Fixes
+
+* audit locked Python dependencies ([#22](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/22)) ([b3427e6](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/b3427e6ea683a2cc983ad6ef4fc3c69ed3922063))
+* load search coverage responses ([683edd6](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/683edd667edbb2f55aedee62efbb3a0c5c516e7a))
+* refresh release lockfile ([e0b12a2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/e0b12a28a70c88bfa89bdf2d5fb3503438e01aee))
+* synchronize Python release lockfile ([c643e63](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/c643e63b25ac81a802d97fb830dc7df931a460aa))
+
+
+### Chores
+
+* add Context7 refresh workflow ([618c494](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/618c49499e12fa9cd4898434fa4341f7fe5bc87c))
+* add FUNDING.yml pointing to xquik.com ([6f6484f](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/6f6484f9e5ed75be38de60e3405cfc4350a5b019))
+* add per-file license evidence ([9c46658](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9c466581fd61a8314fadfb5330bad5fe53ad4b90))
+* **deps:** bump github/codeql-action/upload-sarif from 4.37.1 to 4.37.6 ([#35](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/35)) ([d5909c0](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/d5909c0c19439d56c82de4257c3935304a0fb534))
+* **deps:** bump google/clusterfuzzlite/actions/build_fuzzers ([#26](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/26)) ([579f53a](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/579f53a63f327d7f38167ebfc1e1771e7ed77f2f))
+* **deps:** bump google/clusterfuzzlite/actions/run_fuzzers ([#25](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/25)) ([846c5ff](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/846c5ffd557a950265176758310b1a57d1e77871))
+* **deps:** bump ossf/scorecard-action from 2.4.3 to 2.4.4 ([#37](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/37)) ([e985625](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/e985625b02fe0aa011cbd718de6f6f0665926804))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.14.0 to 1.14.1 ([#27](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/27)) ([f8d425d](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/f8d425d49a4813c7e1a427a302fc1f22a479300d))
+* **deps:** bump pypa/gh-action-pypi-publish from 1.14.1 to 1.14.2 ([#42](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/42)) ([0f33a5e](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/0f33a5e9488c363e47942f4e35aeebd72c979f46))
+* prepare 0.8.0 ([#31](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/31)) ([5bee02f](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/5bee02f8c26ce28e811a5ad20c8d2d191ae38711))
+* prepare v0.4.3 ([93f496e](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/93f496ee39ea7e2d3722558722ed68a7346a875b))
+* refresh all Python dependencies ([#47](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/47)) ([ab7ac3a](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/ab7ac3a14ba35f379f35241d5558a111ca2de52b))
+* sync lockfile version for 0.10.1 ([47451b9](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/47451b92bf86ac797881d3d54909d6d0a79bf2ad))
+
+
+### Documentation
+
+* add Contributor Covenant 2.1 Code of Conduct ([#2192](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/2192)) ([06635a2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/06635a2a9951934ecca52515211dbcec2714e46f))
+* add DeepWiki badge ([34ca646](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/34ca646c7304e141eb1da48c6034a504c2cdf7b1))
+* clarify repository discovery ([32c6e61](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/32c6e61978018053b8077111c37c23bc711ceac1))
+* map common X data tasks ([#16](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/16)) ([9c5827e](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9c5827e8a0ec1fbdffe66938bfaddff357fe7f01))
+* **readme:** add search-first SDK landing page ([509d7a2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/509d7a26d56ae59e90d7d1cb973c640d5950b47a))
+* refine public Python SDK text ([#49](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/49)) ([811c7c2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/811c7c28c26b25967283942c7a2b35ea112dee5a))
+* tighten Python SDK copy ([1a038e9](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/1a038e95a634896e65b264e0aab40c7d7024235a))
+
 ## 0.11.2 (2026-08-21)
 
 Full Changelog: [v0.11.1...v0.11.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.11.1...v0.11.2)
