@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.2 (2026-08-21)
+
+Full Changelog: [v0.11.1...v0.11.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.11.1...v0.11.2)
+
+### Documentation
+
+* remove repeated Python SDK copy and clarify examples
+
 ## 0.11.1 (2026-08-20)
 
 Full Changelog: [v0.11.0...v0.11.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.11.0...v0.11.1)
@@ -151,7 +159,7 @@ Full Changelog: [v0.4.0...v0.4.1](https://github.com/Xquik-dev/x-twitter-scraper
 
 ### Documentation
 
-* add Contributor Covenant 2.1 Code of Conduct ([#2192](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/2192)) ([06635a2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/06635a2a9951934ecca52515211dbcec2714e46f))
+* add Contributor Covenant 2.1 Code of Conduct ([06635a2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/06635a2a9951934ecca52515211dbcec2714e46f))
 
 ## 0.4.0 (2026-04-22)
 
@@ -248,15 +256,11 @@ Full Changelog: [v0.1.1...v0.1.2](https://github.com/Xquik-dev/x-twitter-scraper
 
 ## 0.1.1 (2026-03-30)
 
-Full Changelog: [v0.1.0...v0.1.1](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.1.0...v0.1.1)
-
 ### Chores
 
 * update SDK settings ([3ff9848](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/3ff98489454de0a9bcd2378c214e5407a7c04f53))
 
 ## 0.1.0 (2026-03-30)
-
-Full Changelog: [v0.0.1...v0.1.0](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.0.1...v0.1.0)
 
 ### Features
 

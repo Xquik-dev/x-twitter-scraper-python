@@ -6,16 +6,13 @@
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
 Use the Xquik Python SDK for Twitter search, timelines, profiles & followers.
-Manage media, webhooks & X automation with sync or async clients.
-It provides a Twitter API alternative through documented Xquik REST routes.
+Manage media, webhooks & X automation through documented Xquik REST routes.
 
 [Python SDK Guide](https://docs.xquik.com/sdks/python) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
 [Stainless](https://www.stainless.com/) generates this SDK.
 
 ## Common Twitter & X Tasks
-
-Map each task to its REST route.
 
 | Task | REST Route | Usage |
 | --- | --- | --- |
@@ -25,6 +22,7 @@ Map each task to its REST route.
 | Scrape following accounts | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
 | Read a home timeline | `GET /x/timeline` | Approve this private read. |
 | Export large X datasets | `POST /extractions` | Poll status, then download results. |
+| Run giveaway draws | `POST /draws` | Pick winners from post replies. |
 | Download or upload media | `/x/media/*` | Use typed file helpers. |
 | Monitor an account | `POST /monitors` | Deliver events through HMAC webhooks. |
 | Post or reply | `POST /x/tweets` | Confirm the account and payload. |
@@ -33,10 +31,6 @@ Map each task to its REST route.
 
 Use the typed REST SDK in application code. Add `https://xquik.com/mcp` to MCP clients.
 Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authentication support.
-
-## Giveaway Draws & Extractions
-
-Run giveaway draws and export extraction results from Python pipelines.
 
 ## Package & Registry Trust
 
@@ -49,7 +43,6 @@ Run giveaway draws and export extraction results from Python pipelines.
 ## Installation
 
 ```sh
-# Install from PyPI.
 pip install x_twitter_scraper
 ```
 
@@ -62,7 +55,7 @@ import os
 from x_twitter_scraper import XTwitterScraper
 
 client = XTwitterScraper(
-    api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # This is the default and can be omitted
+    api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # Optional; the client reads this variable.
 )
 
 response = client.x.tweets.search(
@@ -84,7 +77,7 @@ import asyncio
 from x_twitter_scraper import AsyncXTwitterScraper
 
 client = AsyncXTwitterScraper(
-    api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # This is the default and can be omitted
+    api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # Optional; the client reads this variable.
 )
 
 
@@ -105,7 +98,6 @@ Both clients expose the same resources and methods.
 The async client uses `httpx`. Install `aiohttp` for an alternative backend:
 
 ```sh
-# Install from PyPI.
 pip install x_twitter_scraper[aiohttp]
 ```
 
@@ -120,7 +112,7 @@ from x_twitter_scraper import AsyncXTwitterScraper
 
 async def main() -> None:
     async with AsyncXTwitterScraper(
-        api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # This is the default and can be omitted
+        api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # Optional; the client reads this variable.
         http_client=DefaultAioHttpClient(),
     ) as client:
         response = await client.x.tweets.search(
@@ -140,7 +132,6 @@ Responses use [Pydantic models](https://docs.pydantic.dev) with these helpers:
 - Serialize to JSON with `model.to_json()`.
 - Convert to a dictionary with `model.to_dict()`.
 
-Typed requests and responses provide editor completion and documentation.
 Set `python.analysis.typeCheckingMode` to `basic` in VS Code to catch type errors.
 
 ## File Uploads
@@ -184,7 +175,7 @@ except x_twitter_scraper.APIConnectionError as e:
 except x_twitter_scraper.RateLimitError as e:
     print("Rate limited. Retry later.")
 except x_twitter_scraper.APIStatusError as e:
-    print("The server returned another non-2xx status.")
+    print("Server returned a non-2xx status.")
     print(e.status_code)
     print(e.response)
 ```
@@ -214,7 +205,6 @@ from x_twitter_scraper import XTwitterScraper
 
 # Set the client default:
 client = XTwitterScraper(
-    # default is 2
     max_retries=0,
 )
 
@@ -235,7 +225,7 @@ from x_twitter_scraper import XTwitterScraper
 
 # Set the client default:
 client = XTwitterScraper(
-    # 20 seconds (default is 1 minute)
+    # 20 seconds; default: 1 minute.
     timeout=20.0,
 )
 
