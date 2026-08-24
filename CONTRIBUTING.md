@@ -63,27 +63,10 @@ uv build
 
 Install the wheel inside a clean environment for integration testing.
 
-## Submit Changes
+## Submit changes
 
-Keep pull requests focused.
-
-Explain user-visible behavior and public contract effects.
-
-Link relevant issues and public API contracts.
-
-Use clear Conventional Commit subjects when practical.
-
-Sign every commit with the Developer Certificate of Origin.
-
-```sh
-git commit --signoff
-```
-
-Another human must review maintainer-authored, nontrivial changes.
-
-Reviewers follow the shared [review policy][review-policy].
-
-Address every review comment before merging.
+Use clear Conventional Commit subjects and sign commits with `git commit --signoff`.
+Follow the shared [review policy][review-policy].
 
 ## Report Security Issues
 
