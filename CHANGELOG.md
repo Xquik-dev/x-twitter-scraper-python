@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.11.3 (2026-08-24)
+
+Full Changelog: [v0.11.2...v0.11.3](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.11.2...v0.11.3)
+
+### Documentation
+
+* enforce source LOC reduction ([#59](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/59)) ([557f3b9](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/557f3b9662abd7c5ce82f75e9fb8e0676df70a18))
+
 ## 0.11.2 (2026-08-21)
 
 Full Changelog: [v0.11.1...v0.11.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.11.1...v0.11.2)
