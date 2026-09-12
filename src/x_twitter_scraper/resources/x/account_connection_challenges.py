@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+from typing import Any, cast
+
 import httpx
 
 from ..._types import Body, Query, Headers, NotGiven, not_given
@@ -60,7 +62,7 @@ class AccountConnectionChallengesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountConnectionChallengeSubmitResponse:
         """
-        Submit X account email verification code
+        Submits the email code requested during X account connection.
 
         Args:
           email_code: Code sent to the account email.
@@ -75,16 +77,21 @@ class AccountConnectionChallengesResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._post(
-            path_template("/x/account-connection-challenges/{id}/submit", id=id),
-            body=maybe_transform(
-                {"email_code": email_code},
-                account_connection_challenge_submit_params.AccountConnectionChallengeSubmitParams,
+        return cast(
+            AccountConnectionChallengeSubmitResponse,
+            self._post(
+                path_template("/x/account-connection-challenges/{id}/submit", id=id),
+                body=maybe_transform(
+                    {"email_code": email_code},
+                    account_connection_challenge_submit_params.AccountConnectionChallengeSubmitParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(
+                    Any, AccountConnectionChallengeSubmitResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=AccountConnectionChallengeSubmitResponse,
         )
 
 
@@ -123,7 +130,7 @@ class AsyncAccountConnectionChallengesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountConnectionChallengeSubmitResponse:
         """
-        Submit X account email verification code
+        Submits the email code requested during X account connection.
 
         Args:
           email_code: Code sent to the account email.
@@ -138,16 +145,21 @@ class AsyncAccountConnectionChallengesResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._post(
-            path_template("/x/account-connection-challenges/{id}/submit", id=id),
-            body=await async_maybe_transform(
-                {"email_code": email_code},
-                account_connection_challenge_submit_params.AccountConnectionChallengeSubmitParams,
+        return cast(
+            AccountConnectionChallengeSubmitResponse,
+            await self._post(
+                path_template("/x/account-connection-challenges/{id}/submit", id=id),
+                body=await async_maybe_transform(
+                    {"email_code": email_code},
+                    account_connection_challenge_submit_params.AccountConnectionChallengeSubmitParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(
+                    Any, AccountConnectionChallengeSubmitResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=AccountConnectionChallengeSubmitResponse,
         )
 
 

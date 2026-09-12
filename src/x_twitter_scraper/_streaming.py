@@ -56,7 +56,7 @@ class Stream(Generic[_T]):
         yield from self._decoder.iter_bytes(self.response.iter_bytes())
 
     def __stream__(self) -> Iterator[_T]:
-        cast_to = cast(Any, self._cast_to)
+        cast_to = self._cast_to
         response = self.response
         process_data = self._client._process_response_data
         iterator = self._iter_events()
@@ -122,7 +122,7 @@ class AsyncStream(Generic[_T]):
             yield sse
 
     async def __stream__(self) -> AsyncIterator[_T]:
-        cast_to = cast(Any, self._cast_to)
+        cast_to = self._cast_to
         response = self.response
         process_data = self._client._process_response_data
         iterator = self._iter_events()

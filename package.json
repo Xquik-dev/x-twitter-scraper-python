@@ -1,0 +1,26 @@
+{
+  "name": "xquik-python-development",
+  "private": true,
+  "scripts": {
+    "check:all": "bash scripts/check-all",
+    "build": "bash scripts/check-reproducible",
+    "check:codeql": "bash scripts/codeql-security",
+    "release:prepare": "bash scripts/release prepare",
+    "release:publish": "bash scripts/release publish",
+    "release:verify": "bash scripts/release verify",
+    "check:licenses": "bash scripts/licenses.sh lint",
+    "install:licenses": "bash scripts/licenses.sh install",
+    "check:fuzz": "bash scripts/fuzz"
+  },
+  "config": {
+    "cargoAudit": "0.22.2",
+    "comply": {
+      "version": "0.1.1",
+      "sha256": "83dc4f918dc49fc4a66b2f5ec15c2b53e1ba0d44fb3ac1f922bf2b156f7d70db",
+      "sourceDateEpoch": 1785866486,
+      "patchURL": "https://raw.githubusercontent.com/Xquik-dev/xquik-docs/64d29260f8dc053a4bd78c8a91982a0a8085aba4/patches/comply-licensing.patch",
+      "patchSha256": "6e71602a7b292e06be7b97ba75ad54935ba5c24c5ce543928032d0a3cfccb1c7"
+    },
+    "rustVersion": "1.98.1"
+  }
+}

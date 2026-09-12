@@ -37,7 +37,7 @@ class TestCompose:
             step="compose",
             topic="PostgreSQL query planning",
             goal="engagement",
-            style_username="x",
+            style_username="example_user",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -196,7 +196,7 @@ class TestAsyncCompose:
             step="compose",
             topic="PostgreSQL query planning",
             goal="engagement",
-            style_username="x",
+            style_username="example_user",
         )
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 

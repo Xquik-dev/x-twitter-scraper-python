@@ -60,7 +60,7 @@ class FollowersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> FollowerCheckResponse:
         """
-        Check if one user follows another
+        Returns whether one public account follows another.
 
         Args:
           source: Source username, @username, or X or Twitter profile URL
@@ -129,7 +129,7 @@ class AsyncFollowersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> FollowerCheckResponse:
         """
-        Check if one user follows another
+        Returns whether one public account follows another.
 
         Args:
           source: Source username, @username, or X or Twitter profile URL

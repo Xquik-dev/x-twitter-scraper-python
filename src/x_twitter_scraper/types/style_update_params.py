@@ -14,7 +14,7 @@ __all__ = ["StyleUpdateParams", "Tweet"]
 
 class StyleUpdateParams(TypedDict, total=False):
     label: Required[str]
-    """Display label for the style"""
+    """Display label. Must match the path ID, ignoring case."""
 
     tweets: Required[Iterable[Tweet]]
     """Array of tweet objects"""

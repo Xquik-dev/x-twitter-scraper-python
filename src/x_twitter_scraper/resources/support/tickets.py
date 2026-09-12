@@ -69,9 +69,13 @@ class TicketsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketCreateResponse:
         """
-        Create a support ticket
+        Creates a support ticket with an initial message.
 
         Args:
+          content: Non-empty support message text.
+
+          subject: Non-empty support ticket subject.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -80,7 +84,10 @@ class TicketsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "content": content,
@@ -93,7 +100,7 @@ class TicketsResource(SyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             "/support/tickets",
             body=maybe_transform(body, ticket_create_params.TicketCreateParams),
@@ -116,7 +123,7 @@ class TicketsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketRetrieveResponse:
         """
-        Get ticket with all messages
+        Returns one support ticket with its message history.
 
         Args:
           extra_headers: Send extra headers
@@ -150,7 +157,7 @@ class TicketsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketUpdateResponse:
         """
-        Update ticket status
+        Changes the open or closed state of a support ticket.
 
         Args:
           extra_headers: Send extra headers
@@ -182,7 +189,7 @@ class TicketsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketListResponse:
-        """List user's support tickets"""
+        """Returns support tickets owned by the authenticated user."""
         return self._get(
             "/support/tickets",
             options=make_request_options(
@@ -205,9 +212,11 @@ class TicketsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketReplyResponse:
         """
-        Reply to a support ticket
+        Adds a message to an existing support ticket.
 
         Args:
+          content: Non-empty support message text.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -218,14 +227,17 @@ class TicketsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
         files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             path_template("/support/tickets/{id}/messages", id=id),
             body=maybe_transform(body, ticket_reply_params.TicketReplyParams),
@@ -273,9 +285,13 @@ class AsyncTicketsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketCreateResponse:
         """
-        Create a support ticket
+        Creates a support ticket with an initial message.
 
         Args:
+          content: Non-empty support message text.
+
+          subject: Non-empty support ticket subject.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -284,7 +300,10 @@ class AsyncTicketsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "content": content,
@@ -297,7 +316,7 @@ class AsyncTicketsResource(AsyncAPIResource):
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             "/support/tickets",
             body=await async_maybe_transform(body, ticket_create_params.TicketCreateParams),
@@ -320,7 +339,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketRetrieveResponse:
         """
-        Get ticket with all messages
+        Returns one support ticket with its message history.
 
         Args:
           extra_headers: Send extra headers
@@ -354,7 +373,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketUpdateResponse:
         """
-        Update ticket status
+        Changes the open or closed state of a support ticket.
 
         Args:
           extra_headers: Send extra headers
@@ -386,7 +405,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketListResponse:
-        """List user's support tickets"""
+        """Returns support tickets owned by the authenticated user."""
         return await self._get(
             "/support/tickets",
             options=make_request_options(
@@ -409,9 +428,11 @@ class AsyncTicketsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketReplyResponse:
         """
-        Reply to a support ticket
+        Adds a message to an existing support ticket.
 
         Args:
+          content: Non-empty support message text.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -422,14 +443,17 @@ class AsyncTicketsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {**strip_not_given({"Idempotency-Key": idempotency_key}), **(extra_headers or {})}
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
         files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
         if files:
             # It should be noted that the actual Content-Type header that will be
             # sent to the server will contain a `boundary` parameter, e.g.
             # multipart/form-data; boundary=---abc--
-            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or {})}
+            extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             path_template("/support/tickets/{id}/messages", id=id),
             body=await async_maybe_transform(body, ticket_reply_params.TicketReplyParams),

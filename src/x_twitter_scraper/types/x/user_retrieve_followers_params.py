@@ -34,10 +34,7 @@ class UserRetrieveFollowersParams(TypedDict, total=False):
     """Only return profiles with a website."""
 
     limit: int
-    """Legacy page-size alias outside explicit coverage mode.
-
-    Coverage accepts 1-10000. Prefer pageSize.
-    """
+    """Legacy follower limit. Coverage accepts 1-10000. Prefer pageSize."""
 
     location_contains: Annotated[str, PropertyInfo(alias="locationContains")]
     """Match a location substring, ignoring case."""
@@ -46,7 +43,7 @@ class UserRetrieveFollowersParams(TypedDict, total=False):
     """Maximum follower count. Missing counts pass this maximum."""
 
     max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
-    """Maximum following count."""
+    """Profiles may follow at most this many accounts."""
 
     max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
     """Maximum post count. maxPosts is also accepted."""
@@ -58,7 +55,7 @@ class UserRetrieveFollowersParams(TypedDict, total=False):
     """Minimum follower count. Filtering happens before billing."""
 
     min_following: Annotated[int, PropertyInfo(alias="minFollowing")]
-    """Minimum following count."""
+    """Profiles must follow at least this many accounts."""
 
     min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
     """Minimum post count. minPosts is also accepted."""
@@ -73,7 +70,8 @@ class UserRetrieveFollowersParams(TypedDict, total=False):
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
     """Maximum user profiles: automatic 300; standard 200.
 
-    Sources return fewer profiles. Continue with has_next_page.
+    Sources return fewer profiles. Follow next_cursor while the response reports
+    more pages.
     """
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]

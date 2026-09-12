@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+from typing import Union
+from datetime import date
 from typing_extensions import Literal
 
 import httpx
@@ -55,8 +57,17 @@ class TweetsResource(SyncAPIResource):
         community_id: str,
         q: str,
         cursor: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        min_likes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -64,21 +75,40 @@ class TweetsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Requires a Community ID and keyword query.
+        """One resumable page.
+
+        Requires a Community ID and query.
 
         Args:
-          community_id: Numeric ID of the community to search
+          community_id: Numeric ID of the community whose posts to search
 
-          q: Keyword query within the selected community
+          q: Search query
 
-          cursor: Pagination cursor for community results
+          cursor: Pagination cursor for community search
+
+          language: Filter by language. Alias `lang` is accepted.
+
+          media_type: Filter media. Aliases: has_video, has_media.
+
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          query_type: Sort order for community results (Latest or Top)
+          query_type: Sort order (Latest or Top)
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -100,8 +130,17 @@ class TweetsResource(SyncAPIResource):
                         "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "language": language,
+                        "media_type": media_type,
+                        "min_likes": min_likes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
                         "query_type": query_type,
+                        "since_date": since_date,
+                        "until_date": until_date,
+                        "verified_only": verified_only,
                     },
                     tweet_list_params.TweetListParams,
                 ),
@@ -114,7 +153,16 @@ class TweetsResource(SyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        min_likes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -123,14 +171,32 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets posted in a community
+        Returns public tweets posted within one community.
 
         Args:
-          cursor: Pagination cursor for community tweets
+          cursor: Pagination cursor for collection results.
+
+          language: Filter by language. Alias `lang` is accepted.
+
+          media_type: Filter media. Aliases: has_video, has_media.
+
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -152,7 +218,16 @@ class TweetsResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "cursor": cursor,
+                        "language": language,
+                        "media_type": media_type,
+                        "min_likes": min_likes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
+                        "since_date": since_date,
+                        "until_date": until_date,
+                        "verified_only": verified_only,
                     },
                     tweet_list_by_community_params.TweetListByCommunityParams,
                 ),
@@ -189,8 +264,17 @@ class AsyncTweetsResource(AsyncAPIResource):
         community_id: str,
         q: str,
         cursor: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        min_likes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -198,21 +282,40 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Requires a Community ID and keyword query.
+        """One resumable page.
+
+        Requires a Community ID and query.
 
         Args:
-          community_id: Numeric ID of the community to search
+          community_id: Numeric ID of the community whose posts to search
 
-          q: Keyword query within the selected community
+          q: Search query
 
-          cursor: Pagination cursor for community results
+          cursor: Pagination cursor for community search
+
+          language: Filter by language. Alias `lang` is accepted.
+
+          media_type: Filter media. Aliases: has_video, has_media.
+
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          query_type: Sort order for community results (Latest or Top)
+          query_type: Sort order (Latest or Top)
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -234,8 +337,17 @@ class AsyncTweetsResource(AsyncAPIResource):
                         "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "language": language,
+                        "media_type": media_type,
+                        "min_likes": min_likes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
                         "query_type": query_type,
+                        "since_date": since_date,
+                        "until_date": until_date,
+                        "verified_only": verified_only,
                     },
                     tweet_list_params.TweetListParams,
                 ),
@@ -248,7 +360,16 @@ class AsyncTweetsResource(AsyncAPIResource):
         id: str,
         *,
         cursor: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        min_likes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -257,14 +378,32 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets posted in a community
+        Returns public tweets posted within one community.
 
         Args:
-          cursor: Pagination cursor for community tweets
+          cursor: Pagination cursor for collection results.
+
+          language: Filter by language. Alias `lang` is accepted.
+
+          media_type: Filter media. Aliases: has_video, has_media.
+
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -286,7 +425,16 @@ class AsyncTweetsResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "cursor": cursor,
+                        "language": language,
+                        "media_type": media_type,
+                        "min_likes": min_likes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
+                        "since_date": since_date,
+                        "until_date": until_date,
+                        "verified_only": verified_only,
                     },
                     tweet_list_by_community_params.TweetListByCommunityParams,
                 ),

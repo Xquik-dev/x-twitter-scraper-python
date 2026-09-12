@@ -5,15 +5,17 @@
 from __future__ import annotations
 
 import io
+import os
 import base64
 import pathlib
 from typing import Any, Mapping, TypeVar, cast
 from datetime import date, datetime
+from dataclasses import dataclass
 from typing_extensions import Literal, get_args, override, get_type_hints as _get_type_hints
 
-import anyio
 import pydantic
 
+from ._sync import to_thread
 from ._utils import (
     is_list,
     is_given,
@@ -45,6 +47,7 @@ _T = TypeVar("_T")
 PropertyFormat = Literal["iso8601", "base64", "custom"]
 
 
+@dataclass(kw_only=True, eq=False)
 class PropertyInfo:
     """Metadata class to be used in Annotated types to provide information about a given type.
 
@@ -56,23 +59,10 @@ class PropertyInfo:
     This means that {'account_holder_name': 'Robert'} will be transformed to {'accountHolderName': 'Robert'} before being sent to the API.
     """
 
-    alias: str | None
-    format: PropertyFormat | None
-    format_template: str | None
-    discriminator: str | None
-
-    def __init__(
-        self,
-        *,
-        alias: str | None = None,
-        format: PropertyFormat | None = None,
-        format_template: str | None = None,
-        discriminator: str | None = None,
-    ) -> None:
-        self.alias = alias
-        self.format = format
-        self.format_template = format_template
-        self.discriminator = discriminator
+    alias: str | None = None
+    format: PropertyFormat | None = None
+    format_template: str | None = None
+    discriminator: str | None = None
 
     @override
     def __repr__(self) -> str:
@@ -117,19 +107,13 @@ def transform(
 
 
 @lru_cache(maxsize=8096)
-def _get_annotated_type(type_: type) -> type | None:
-    """If the given type is an `Annotated` type then it is returned, if not `None` is returned.
-
-    This also unwraps the type when applicable, e.g. `Required[Annotated[T, ...]]`
-    """
+def _get_property_info(type_: type) -> tuple[PropertyInfo, ...]:
+    """Read Annotated metadata, unwrapping Required[Annotated[T, ...]] when present."""
     if is_required_type(type_):
-        # Unwrap `Required[Annotated[T, ...]]` to `Annotated[T, ...]`
-        type_ = get_args(type_)[0]
-
-    if is_annotated_type(type_):
-        return type_
-
-    return None
+        type_ = cast(type, get_args(type_)[0])
+    if not is_annotated_type(type_):
+        return ()
+    return tuple(info for info in get_args(type_)[1:] if isinstance(info, PropertyInfo))
 
 
 def _maybe_transform_key(key: str, type_: type) -> str:
@@ -137,22 +121,11 @@ def _maybe_transform_key(key: str, type_: type) -> str:
 
     Note: this function only looks at `Annotated` types that contain `PropertyInfo` metadata.
     """
-    annotated_type = _get_annotated_type(type_)
-    if annotated_type is None:
-        # no `Annotated` definition for this type, no transformation needed
-        return key
-
-    # ignore the first argument as it is the actual type
-    annotations = get_args(annotated_type)[1:]
-    for annotation in annotations:
-        if isinstance(annotation, PropertyInfo) and annotation.alias is not None:
-            return annotation.alias
+    for info in _get_property_info(type_):
+        if info.alias is not None:
+            return info.alias
 
     return key
-
-
-def _no_transform_needed(annotation: type) -> bool:
-    return annotation == float or annotation == int
 
 
 def _transform_recursive(
@@ -201,7 +174,7 @@ def _transform_recursive(
             return cast(object, data)
 
         inner_type = extract_type_arg(stripped_type, 0)
-        if _no_transform_needed(inner_type):
+        if inner_type == float or inner_type == int:
             # for some types there is no need to transform anything, so we can get a small
             # perf boost from skipping that work.
             #
@@ -224,17 +197,17 @@ def _transform_recursive(
     if isinstance(data, pydantic.BaseModel):
         return model_dump(data, exclude_unset=True, mode="json")
 
-    annotated_type = _get_annotated_type(annotation)
-    if annotated_type is None:
-        return data
-
-    # ignore the first argument as it is the actual type
-    annotations = get_args(annotated_type)[1:]
-    for annotation in annotations:
-        if isinstance(annotation, PropertyInfo) and annotation.format is not None:
-            return _format_data(data, annotation.format, annotation.format_template)
+    for info in _get_property_info(annotation):
+        if info.format is not None:
+            return _format_data(data, info.format, info.format_template)
 
     return data
+
+
+def _decode_path(value: object) -> str:
+    if not isinstance(value, (str, bytes)):
+        raise TypeError("File paths must resolve to strings or bytes")
+    return os.fsdecode(value)
 
 
 def _format_data(data: object, format_: PropertyFormat, format_template: str | None) -> object:
@@ -246,14 +219,14 @@ def _format_data(data: object, format_: PropertyFormat, format_template: str | N
             return data.strftime(format_template)
 
     if format_ == "base64" and is_base64_file_input(data):
-        binary: str | bytes | None = None
+        binary: object = None
 
-        if isinstance(data, pathlib.Path):
-            binary = data.read_bytes()
+        if isinstance(data, os.PathLike):
+            binary = pathlib.Path(_decode_path(data.__fspath__())).read_bytes()
         elif isinstance(data, io.IOBase):
             binary = data.read()
 
-            if isinstance(binary, str):  # type: ignore[unreachable]
+            if isinstance(binary, str):
                 binary = binary.encode()
 
         if not isinstance(binary, bytes):
@@ -351,7 +324,7 @@ async def _async_transform_recursive(
 
     if origin == dict and is_mapping(data):
         items_type = get_args(stripped_type)[1]
-        return {key: _transform_recursive(value, annotation=items_type) for key, value in data.items()}
+        return {key: await _async_transform_recursive(value, annotation=items_type) for key, value in data.items()}
 
     if (
         # List[T]
@@ -367,7 +340,7 @@ async def _async_transform_recursive(
             return cast(object, data)
 
         inner_type = extract_type_arg(stripped_type, 0)
-        if _no_transform_needed(inner_type):
+        if inner_type == float or inner_type == int:
             # for some types there is no need to transform anything, so we can get a small
             # perf boost from skipping that work.
             #
@@ -390,44 +363,17 @@ async def _async_transform_recursive(
     if isinstance(data, pydantic.BaseModel):
         return model_dump(data, exclude_unset=True, mode="json")
 
-    annotated_type = _get_annotated_type(annotation)
-    if annotated_type is None:
-        return data
-
-    # ignore the first argument as it is the actual type
-    annotations = get_args(annotated_type)[1:]
-    for annotation in annotations:
-        if isinstance(annotation, PropertyInfo) and annotation.format is not None:
-            return await _async_format_data(data, annotation.format, annotation.format_template)
+    for info in _get_property_info(annotation):
+        if info.format is not None:
+            return await _async_format_data(data, info.format, info.format_template)
 
     return data
 
 
 async def _async_format_data(data: object, format_: PropertyFormat, format_template: str | None) -> object:
-    if isinstance(data, (date, datetime)):
-        if format_ == "iso8601":
-            return data.isoformat()
-
-        if format_ == "custom" and format_template is not None:
-            return data.strftime(format_template)
-
     if format_ == "base64" and is_base64_file_input(data):
-        binary: str | bytes | None = None
-
-        if isinstance(data, pathlib.Path):
-            binary = await anyio.Path(data).read_bytes()
-        elif isinstance(data, io.IOBase):
-            binary = data.read()
-
-            if isinstance(binary, str):  # type: ignore[unreachable]
-                binary = binary.encode()
-
-        if not isinstance(binary, bytes):
-            raise RuntimeError(f"Could not read bytes from {data}; Received {type(binary)}")
-
-        return base64.b64encode(binary).decode("ascii")
-
-    return data
+        return await to_thread(_format_data, data, format_, format_template)
+    return _format_data(data, format_, format_template)
 
 
 async def _async_transform_typeddict(

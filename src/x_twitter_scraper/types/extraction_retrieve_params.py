@@ -15,7 +15,7 @@ __all__ = ["ExtractionRetrieveParams"]
 
 class ExtractionRetrieveParams(TypedDict, total=False):
     cursor: str
-    """Previous nextCursor."""
+    """Previous nextCursor. Offset pagination is not supported."""
 
     field_style: Annotated[Literal["source", "camelCase", "snake_case"], PropertyInfo(alias="fieldStyle")]
     """Preserve source keys or convert result field names."""
@@ -24,10 +24,16 @@ class ExtractionRetrieveParams(TypedDict, total=False):
     """Use outputMode=raw instead."""
 
     limit: int
-    """Maximum number of results to return (1-1000, default 100)"""
+    """Maximum results per page (1-1000, default 100)."""
 
     output_mode: Annotated[Literal["compact", "full", "raw"], PropertyInfo(alias="outputMode")]
-    """Select compact, full, or raw-compatible result fields."""
+    """
+    Use compact for core fields and tweet counts, full for nested enrichment, or raw
+    for a source copy.
+    """
 
     output_preset: Annotated[Literal["nested", "flat"], PropertyInfo(alias="outputPreset")]
     """Keep enrichment nested or merge it into each result."""
+
+    wait: int
+    """Wait up to this many seconds when the job is active."""

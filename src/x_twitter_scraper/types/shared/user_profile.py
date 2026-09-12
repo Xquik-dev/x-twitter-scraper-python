@@ -5,12 +5,33 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from typing import Dict, List, Optional
+from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
-__all__ = ["UserProfile", "AffiliatesHighlightedLabel", "HighlightsInfo", "IdentityVerification"]
+__all__ = [
+    "UserProfile",
+    "AccountBasedIn",
+    "AffiliatesHighlightedLabel",
+    "HighlightsInfo",
+    "IdentityVerification",
+    "TipJar",
+]
+
+
+class AccountBasedIn(BaseModel):
+    """
+    X's best-effort public label inferred from aggregated account-access IP addresses. It does not state nationality, residence, identity, registration, post location, or exact location.
+    """
+
+    level: Literal["country", "region"]
+
+    observed_at: datetime = FieldInfo(alias="observedAt")
+
+    value: str
 
 
 class AffiliatesHighlightedLabel(BaseModel):
@@ -19,6 +40,9 @@ class AffiliatesHighlightedLabel(BaseModel):
     badge_url: Optional[str] = FieldInfo(alias="badgeUrl", default=None)
 
     description: Optional[str] = None
+
+    long_description: Optional[Dict[str, object]] = FieldInfo(alias="longDescription", default=None)
+    """Public text, ranges, references, and mention data."""
 
     url: Optional[str] = None
 
@@ -47,14 +71,43 @@ class IdentityVerification(BaseModel):
     verified_since_msec: Optional[str] = FieldInfo(alias="verifiedSinceMsec", default=None)
 
 
+class TipJar(BaseModel):
+    """Public payment and creator-support handles shown on X."""
+
+    bandcamp_handle: Optional[str] = FieldInfo(alias="bandcampHandle", default=None)
+
+    bitcoin_handle: Optional[str] = FieldInfo(alias="bitcoinHandle", default=None)
+
+    cash_app_handle: Optional[str] = FieldInfo(alias="cashAppHandle", default=None)
+
+    ethereum_handle: Optional[str] = FieldInfo(alias="ethereumHandle", default=None)
+
+    gofundme_handle: Optional[str] = FieldInfo(alias="gofundmeHandle", default=None)
+
+    is_enabled: Optional[bool] = FieldInfo(alias="isEnabled", default=None)
+
+    patreon_handle: Optional[str] = FieldInfo(alias="patreonHandle", default=None)
+
+    pay_pal_handle: Optional[str] = FieldInfo(alias="payPalHandle", default=None)
+
+    venmo_handle: Optional[str] = FieldInfo(alias="venmoHandle", default=None)
+
+
 class UserProfile(BaseModel):
-    """X user profile with bio, follower counts, and verification status."""
+    """Public X profile."""
 
     id: str
 
     name: str
 
     username: str
+
+    account_based_in: Optional[AccountBasedIn] = FieldInfo(alias="accountBasedIn", default=None)
+    """
+    X's best-effort public label inferred from aggregated account-access IP
+    addresses. It does not state nationality, residence, identity, registration,
+    post location, or exact location.
+    """
 
     affiliates_highlighted_label: Optional[AffiliatesHighlightedLabel] = FieldInfo(
         alias="affiliatesHighlightedLabel", default=None
@@ -81,6 +134,9 @@ class UserProfile(BaseModel):
     followers: Optional[int] = None
 
     following: Optional[int] = None
+
+    grok_translated_bio: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedBio", default=None)
+    """Public profile bio translation returned by X"""
 
     has_custom_timelines: Optional[bool] = FieldInfo(alias="hasCustomTimelines", default=None)
 
@@ -109,6 +165,7 @@ class UserProfile(BaseModel):
     """Whether X marks the profile as verified"""
 
     location: Optional[str] = None
+    """Account owner's public profile location text"""
 
     media_count: Optional[int] = FieldInfo(alias="mediaCount", default=None)
 
@@ -117,6 +174,9 @@ class UserProfile(BaseModel):
     pinned_tweet_ids: Optional[List[str]] = FieldInfo(alias="pinnedTweetIds", default=None)
 
     possibly_sensitive: Optional[bool] = FieldInfo(alias="possiblySensitive", default=None)
+
+    professional: Optional[Dict[str, object]] = None
+    """Professional metadata with category display settings"""
 
     profile_bio: Optional[Dict[str, object]] = None
     """Structured profile bio with entity annotations"""
@@ -139,9 +199,22 @@ class UserProfile(BaseModel):
     protected: Optional[bool] = None
     """Whether the profile protects its posts"""
 
+    retweeted_at: Optional[datetime] = FieldInfo(alias="retweetedAt", default=None)
+    """UTC repost time with includeRetweetTimestamp.
+
+    Null if the newest profile page has no match or lookup failed; otherwise
+    omitted.
+    """
+
     statuses_count: Optional[int] = FieldInfo(alias="statusesCount", default=None)
 
     super_follow_eligible: Optional[bool] = FieldInfo(alias="superFollowEligible", default=None)
+
+    super_follows_user_profile_active: Optional[bool] = FieldInfo(alias="superFollowsUserProfileActive", default=None)
+    """Whether X marks the subscription profile as active."""
+
+    tip_jar: Optional[TipJar] = FieldInfo(alias="tipJar", default=None)
+    """Public payment and creator-support handles shown on X."""
 
     unavailable: Optional[bool] = None
 
@@ -154,3 +227,6 @@ class UserProfile(BaseModel):
     verified_type: Optional[str] = FieldInfo(alias="verifiedType", default=None)
 
     withheld_in_countries: Optional[List[str]] = FieldInfo(alias="withheldInCountries", default=None)
+
+    withheld_scope: Optional[str] = FieldInfo(alias="withheldScope", default=None)
+    """Whether X withholds a post or user"""

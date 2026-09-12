@@ -73,8 +73,8 @@ class AttachmentsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
-        extra_headers = {**strip_not_given({"Range": range}), **(extra_headers or {})}
+        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {**strip_not_given({"Range": range}), **(extra_headers or dict[str, str | Omit]())}
         return self._get(
             path_template("/support/attachments/{id}", id=id),
             options=make_request_options(
@@ -134,8 +134,8 @@ class AsyncAttachmentsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
-        extra_headers = {**strip_not_given({"Range": range}), **(extra_headers or {})}
+        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {**strip_not_given({"Range": range}), **(extra_headers or dict[str, str | Omit]())}
         return await self._get(
             path_template("/support/attachments/{id}", id=id),
             options=make_request_options(

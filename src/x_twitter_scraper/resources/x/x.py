@@ -261,7 +261,7 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get home timeline
+        Returns the home timeline for the connected X account.
 
         Args:
           cursor: Pagination cursor for timeline
@@ -307,7 +307,7 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetNotificationsResponse:
         """
-        Get notifications
+        Returns notifications for the connected X account.
 
         Args:
           cursor: Pagination cursor for notifications
@@ -353,7 +353,7 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending hashtags and topics from X by region
+        Returns current X trends for the requested region.
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
@@ -514,7 +514,7 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get home timeline
+        Returns the home timeline for the connected X account.
 
         Args:
           cursor: Pagination cursor for timeline
@@ -560,7 +560,7 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetNotificationsResponse:
         """
-        Get notifications
+        Returns notifications for the connected X account.
 
         Args:
           cursor: Pagination cursor for notifications
@@ -606,7 +606,7 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
         """
-        Get trending hashtags and topics from X by region
+        Returns current X trends for the requested region.
 
         Args:
           count: Number of trending topics to return (1-50, default 30)

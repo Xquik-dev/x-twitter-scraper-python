@@ -35,10 +35,14 @@ class TweetGetQuotesParams(TypedDict, total=False):
     """Conversation ID filter."""
 
     cursor: str
-    """Pagination cursor for quote tweets"""
+    """Cursor from the previous response.
+
+    Xquik cursors resume automatic coverage. Existing unprefixed cursors keep legacy
+    standard behavior.
+    """
 
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
-    """Exact phrase to match."""
+    """Match this literal phrase, including any hyphens."""
 
     exclude_source: Annotated[str, PropertyInfo(alias="excludeSource")]
     """Exclude a source application."""
@@ -56,13 +60,13 @@ class TweetGetQuotesParams(TypedDict, total=False):
     """Hashtags separated by spaces, commas, or lines."""
 
     include_replies: Annotated[bool, PropertyInfo(alias="includeReplies")]
-    """Include reply quotes (default false)"""
+    """Include reply tweets unless replies specifies another mode."""
 
     in_reply_to_tweet_id: Annotated[str, PropertyInfo(alias="inReplyToTweetId")]
     """Only replies to this tweet ID."""
 
     language: str
-    """Language code filter, e.g. en or tr."""
+    """Filter by language. Alias `lang` is accepted."""
 
     max_faves: Annotated[int, PropertyInfo(alias="maxFaves")]
     """Maximum likes threshold. maxLikes is also accepted."""
@@ -82,7 +86,7 @@ class TweetGetQuotesParams(TypedDict, total=False):
     media_type: Annotated[
         Literal["images", "videos", "gifs", "media", "links", "none"], PropertyInfo(alias="mediaType")
     ]
-    """Filter by media type."""
+    """Filter media. Aliases: has_video, has_media."""
 
     mentioning: str
     """Filter tweets mentioning a username."""
@@ -90,8 +94,8 @@ class TweetGetQuotesParams(TypedDict, total=False):
     min_bookmarks: Annotated[int, PropertyInfo(alias="minBookmarks")]
     """Minimum bookmark count threshold."""
 
-    min_faves: Annotated[int, PropertyInfo(alias="minFaves")]
-    """Minimum likes threshold. minLikes is also accepted."""
+    min_likes: Annotated[int, PropertyInfo(alias="minLikes")]
+    """Minimum likes. Aliases: minFaves, min_likes, min_faves."""
 
     min_quotes: Annotated[int, PropertyInfo(alias="minQuotes")]
     """Minimum quote count threshold."""
@@ -105,6 +109,9 @@ class TweetGetQuotesParams(TypedDict, total=False):
     min_views: Annotated[int, PropertyInfo(alias="minViews")]
     """Minimum view count threshold."""
 
+    mode: Literal["standard"]
+    """Optional legacy pagination override."""
+
     native_retweets: Annotated[bool, PropertyInfo(alias="nativeRetweets")]
     """Only return native reposts."""
 
@@ -115,23 +122,23 @@ class TweetGetQuotesParams(TypedDict, total=False):
     """Only return news results."""
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum page items (1-100, default 20).
+    """Automatic pages accept 1-300 Tweets.
 
-    Source, filters, or credits can reduce results. Continue while has_next_page is
-    true. Deprecated limit and count aliases remain accepted.
+    Standard pages keep 1-100. Default 20. Follow next_cursor while the response
+    reports more pages. Deprecated aliases remain accepted.
     """
 
     quotes: Literal["include", "exclude", "only"]
-    """Quote mode."""
+    """Only when the caller requests a quote mode."""
 
     quotes_of_tweet_id: Annotated[str, PropertyInfo(alias="quotesOfTweetId")]
     """Only quotes of this tweet ID."""
 
     replies: Literal["include", "exclude", "only"]
-    """Reply mode."""
+    """Only when the caller requests a reply mode."""
 
     retweets: Literal["include", "exclude", "only"]
-    """Retweet mode."""
+    """Only when the caller requests a repost mode."""
 
     retweets_of_tweet_id: Annotated[str, PropertyInfo(alias="retweetsOfTweetId")]
     """Only retweets of this tweet ID."""
@@ -146,7 +153,7 @@ class TweetGetQuotesParams(TypedDict, total=False):
     """Return Tweets newer than this Tweet ID."""
 
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
-    """Unix timestamp - return quotes posted after this time"""
+    """Inclusive ISO bound for Tweet creation time."""
 
     source: str
     """Match the source application."""
@@ -158,7 +165,7 @@ class TweetGetQuotesParams(TypedDict, total=False):
     """End date in YYYY-MM-DD format."""
 
     until_time: Annotated[str, PropertyInfo(alias="untilTime")]
-    """Unix timestamp - return quotes posted before this time"""
+    """Exclusive ISO bound for Tweet creation time."""
 
     url: str
     """URL substring or domain filter."""

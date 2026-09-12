@@ -21,7 +21,7 @@ from ._types import (
     HttpxFileContent,
     HttpxRequestFiles,
 )
-from ._utils import is_list, is_mapping, is_tuple_t, is_mapping_t, is_sequence_t
+from ._utils import is_list, is_mapping, is_tuple_t, is_mapping_t
 
 _T = TypeVar("_T")
 
@@ -31,9 +31,7 @@ def is_base64_file_input(obj: object) -> TypeGuard[Base64FileInput]:
 
 
 def is_file_content(obj: object) -> TypeGuard[FileContent]:
-    return (
-        isinstance(obj, bytes) or isinstance(obj, tuple) or isinstance(obj, io.IOBase) or isinstance(obj, os.PathLike)
-    )
+    return isinstance(obj, (bytes, tuple, io.IOBase, os.PathLike))
 
 
 def assert_is_file_content(obj: object, *, key: str | None = None) -> None:
@@ -57,22 +55,29 @@ def to_httpx_files(files: RequestFiles | None) -> HttpxRequestFiles | None:
         return None
 
     if is_mapping_t(files):
-        files = {key: _transform_file(file) for key, file in files.items()}
-    elif is_sequence_t(files) and not isinstance(files, (str, bytes, bytearray)):
-        files = [(key, _transform_file(file)) for key, file in files]
-    else:
-        raise TypeError(f"Unexpected file type input {type(files)}, expected mapping or sequence")
+        return {key: _transform_file(file) for key, file in files.items()}
+    if _is_file_sequence(files):
+        return [(key, _transform_file(file)) for key, file in files]
+    raise TypeError(f"Unexpected file type input {type(files)}, expected mapping or sequence")
 
-    return files
+
+def _is_file_sequence(files: RequestFiles) -> TypeGuard[Sequence[tuple[str, FileTypes]]]:
+    return isinstance(files, Sequence) and not isinstance(files, (str, bytes, bytearray))
+
+
+def _string_path(value: object) -> str:
+    if not isinstance(value, str):
+        raise TypeError("File paths must resolve to strings")
+    return value
 
 
 def _transform_file(file: FileTypes) -> HttpxFileTypes:
     if is_tuple_t(file):
-        return (file[0], read_file_content(file[1]), *file[2:])
+        return cast(HttpxFileTypes, (file[0], read_file_content(file[1]), *file[2:]))
 
     if is_file_content(file):
         if isinstance(file, os.PathLike):
-            path = pathlib.Path(file)
+            path = pathlib.Path(_string_path(file.__fspath__()))
             return (path.name, path.read_bytes())
 
         return file
@@ -82,7 +87,7 @@ def _transform_file(file: FileTypes) -> HttpxFileTypes:
 
 def read_file_content(file: FileContent) -> HttpxFileContent:
     if isinstance(file, os.PathLike):
-        return pathlib.Path(file).read_bytes()
+        return pathlib.Path(_string_path(file.__fspath__())).read_bytes()
     return file
 
 
@@ -99,22 +104,19 @@ async def async_to_httpx_files(files: RequestFiles | None) -> HttpxRequestFiles 
         return None
 
     if is_mapping_t(files):
-        files = {key: await _async_transform_file(file) for key, file in files.items()}
-    elif is_sequence_t(files) and not isinstance(files, (str, bytes, bytearray)):
-        files = [(key, await _async_transform_file(file)) for key, file in files]
-    else:
-        raise TypeError(f"Unexpected file type input {type(files)}, expected mapping or sequence")
-
-    return files
+        return {key: await _async_transform_file(file) for key, file in files.items()}
+    if _is_file_sequence(files):
+        return [(key, await _async_transform_file(file)) for key, file in files]
+    raise TypeError(f"Unexpected file type input {type(files)}, expected mapping or sequence")
 
 
 async def _async_transform_file(file: FileTypes) -> HttpxFileTypes:
     if is_tuple_t(file):
-        return (file[0], await async_read_file_content(file[1]), *file[2:])
+        return cast(HttpxFileTypes, (file[0], await async_read_file_content(file[1]), *file[2:]))
 
     if is_file_content(file):
         if isinstance(file, os.PathLike):
-            path = anyio.Path(file)
+            path = anyio.Path(_string_path(file.__fspath__()))
             return (path.name, await path.read_bytes())
 
         return file
@@ -124,7 +126,7 @@ async def _async_transform_file(file: FileTypes) -> HttpxFileTypes:
 
 async def async_read_file_content(file: FileContent) -> HttpxFileContent:
     if isinstance(file, os.PathLike):
-        return await anyio.Path(file).read_bytes()
+        return await anyio.Path(_string_path(file.__fspath__())).read_bytes()
 
     return file
 
@@ -152,6 +154,7 @@ def deepcopy_with_paths(item: _T, paths: Sequence[Sequence[str]]) -> _T:
 def _deepcopy_with_paths(item: _T, paths: Sequence[Sequence[str]], index: int) -> _T:
     if not paths:
         return item
+    original = item
     if is_mapping(item):
         key_to_paths: dict[str, list[Sequence[str]]] = {}
         for path in paths:
@@ -160,7 +163,7 @@ def _deepcopy_with_paths(item: _T, paths: Sequence[Sequence[str]], index: int) -
 
         # if no path continues through this mapping, it won't be mutated and copying it is redundant
         if not key_to_paths:
-            return item
+            return original
 
         result = dict(item)
         for key, subpaths in key_to_paths.items():

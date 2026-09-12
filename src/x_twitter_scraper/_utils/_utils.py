@@ -21,16 +21,16 @@ from typing import (
 )
 from pathlib import Path
 from datetime import date, datetime
-from typing_extensions import TypeGuard, get_args
+from typing_extensions import ParamSpec, TypeGuard, get_args
 
 import sniffio
 
 from .._types import Omit, NotGiven, FileTypes, ArrayFormat, HeadersLike
 
 _T = TypeVar("_T")
+_P = ParamSpec("_P")
 _TupleT = TypeVar("_TupleT", bound=Tuple[object, ...])
 _MappingT = TypeVar("_MappingT", bound=Mapping[str, object])
-_SequenceT = TypeVar("_SequenceT", bound=Sequence[object])
 CallableT = TypeVar("CallableT", bound=Callable[..., Any])
 
 
@@ -138,20 +138,18 @@ def _extract_items(
         if key != "<array>":
             return []
 
-        return flatten(
-            [
-                _extract_items(
-                    item,
-                    path,
-                    index=index,
-                    flattened_key=(
-                        (flattened_key if flattened_key is not None else "") + _array_suffix(array_format, array_index)
-                    ),
-                    array_format=array_format,
-                )
-                for array_index, item in enumerate(obj)
-            ]
-        )
+        return [
+            file
+            for array_index, item in enumerate(obj)
+            for file in _extract_items(
+                item,
+                path,
+                index=index,
+                flattened_key=(flattened_key if flattened_key is not None else "")
+                + _array_suffix(array_format, array_index),
+                array_format=array_format,
+            )
+        ]
 
     # Something unexpected was passed, just ignore it.
     return []
@@ -183,10 +181,6 @@ def is_sequence(obj: object) -> TypeGuard[Sequence[object]]:
     return isinstance(obj, Sequence)
 
 
-def is_sequence_t(obj: _SequenceT | object) -> TypeGuard[_SequenceT]:
-    return isinstance(obj, Sequence)
-
-
 def is_mapping(obj: object) -> TypeGuard[Mapping[str, object]]:
     return isinstance(obj, Mapping)
 
@@ -209,16 +203,8 @@ def is_iterable(obj: object) -> TypeGuard[Iterable[object]]:
 
 # copied from https://github.com/Rapptz/RoboDanny
 def human_join(seq: Sequence[str], *, delim: str = ", ", final: str = "or") -> str:
-    size = len(seq)
-    if size == 0:
-        return ""
-
-    if size == 1:
-        return seq[0]
-
-    if size == 2:
-        return f"{seq[0]} {final} {seq[1]}"
-
+    if len(seq) < 2:
+        return seq[0] if seq else ""
     return delim.join(seq[:-1]) + f" {final} {seq[-1]}"
 
 
@@ -227,7 +213,7 @@ def quote(string: str) -> str:
     return f"'{string}'"
 
 
-def required_args(*variants: Sequence[str]) -> Callable[[CallableT], CallableT]:
+def required_args(*variants: Sequence[str]) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
     """Decorator to enforce a given set of arguments or variants of arguments are passed to the decorated function.
 
     Useful for enforcing runtime validation of overloaded functions.
@@ -249,7 +235,7 @@ def required_args(*variants: Sequence[str]) -> Callable[[CallableT], CallableT]:
     ```
     """
 
-    def inner(func: CallableT) -> CallableT:
+    def inner(func: Callable[_P, _T]) -> Callable[_P, _T]:
         params = inspect.signature(func).parameters
         positional = [
             name
@@ -262,24 +248,14 @@ def required_args(*variants: Sequence[str]) -> Callable[[CallableT], CallableT]:
         ]
 
         @functools.wraps(func)
-        def wrapper(*args: object, **kwargs: object) -> object:
-            given_params: set[str] = set()
-            for i, _ in enumerate(args):
-                try:
-                    given_params.add(positional[i])
-                except IndexError:
-                    raise TypeError(
-                        f"{func.__name__}() takes {len(positional)} argument(s) but {len(args)} were given"
-                    ) from None
+        def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
+            if len(args) > len(positional):
+                raise TypeError(
+                    f"{getattr(func, '__name__', type(func).__name__)}() takes {len(positional)} argument(s) but {len(args)} were given"
+                ) from None
+            given_params = set(positional[: len(args)]) | kwargs.keys()
 
-            for key in kwargs.keys():
-                given_params.add(key)
-
-            for variant in variants:
-                matches = all((param in given_params for param in variant))
-                if matches:
-                    break
-            else:  # no break
+            if not any(all(param in given_params for param in variant) for variant in variants):
                 if len(variants) > 1:
                     variations = human_join(
                         ["(" + human_join([quote(arg) for arg in variant], final="and") + ")" for variant in variants]
@@ -297,7 +273,7 @@ def required_args(*variants: Sequence[str]) -> Callable[[CallableT], CallableT]:
                 raise TypeError(msg)
             return func(*args, **kwargs)
 
-        return wrapper  # type: ignore
+        return wrapper
 
     return inner
 
@@ -360,23 +336,13 @@ def maybe_coerce_boolean(val: str | None) -> bool | None:
 
 
 def removeprefix(string: str, prefix: str) -> str:
-    """Remove a prefix from a string.
-
-    Backport of `str.removeprefix` for Python < 3.9
-    """
-    if string.startswith(prefix):
-        return string[len(prefix) :]
-    return string
+    """Remove a prefix from a string."""
+    return string.removeprefix(prefix)
 
 
 def removesuffix(string: str, suffix: str) -> str:
-    """Remove a suffix from a string.
-
-    Backport of `str.removesuffix` for Python < 3.9
-    """
-    if string.endswith(suffix):
-        return string[: -len(suffix)]
-    return string
+    """Remove a suffix from a string."""
+    return string.removesuffix(suffix)
 
 
 def file_from_path(path: str) -> FileTypes:

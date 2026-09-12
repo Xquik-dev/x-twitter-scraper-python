@@ -22,7 +22,6 @@ from ._utils import (
     removeprefix as removeprefix,
     removesuffix as removesuffix,
     extract_files as extract_files,
-    is_sequence_t as is_sequence_t,
     required_args as required_args,
     coerce_boolean as coerce_boolean,
     coerce_integer as coerce_integer,

@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import json
-from typing import Any, List, Union, cast
+from typing import Any, Dict, List, Union, Callable, cast
 from typing_extensions import Annotated
 
 import httpx
@@ -20,7 +20,7 @@ from x_twitter_scraper._response import (
     extract_response_type,
 )
 from x_twitter_scraper._streaming import Stream
-from x_twitter_scraper._base_client import FinalRequestOptions
+from x_twitter_scraper._base_client import FinalRequestOptions, make_request_options
 
 
 class ConcreteBaseAPIResponse(APIResponse[bytes]): ...
@@ -57,70 +57,65 @@ def test_extract_response_type_binary_response() -> None:
     assert extract_response_type(AsyncBinaryAPIResponse) == bytes
 
 
+ResponseFactory = Callable[[httpx.Response, bool], Union[APIResponse[str], AsyncAPIResponse[str]]]
+
+
+@pytest.fixture(params=[False, True], ids=["sync", "async"])
+def response_factory(
+    request: pytest.FixtureRequest, client: XTwitterScraper, async_client: AsyncXTwitterScraper
+) -> ResponseFactory:
+    def create(raw: httpx.Response, stream: bool) -> Union[APIResponse[str], AsyncAPIResponse[str]]:
+        response_type = AsyncAPIResponse[str] if request.param else APIResponse[str]
+        return response_type(
+            raw=raw,
+            client=async_client if request.param else client,
+            stream=stream,
+            stream_cls=None,
+            cast_to=str,
+            options=FinalRequestOptions.construct(method="get", url="/foo"),
+        )
+
+    return create
+
+
 class PydanticModel(pydantic.BaseModel): ...
 
 
-def test_response_parse_mismatched_basemodel(client: XTwitterScraper) -> None:
-    response = APIResponse(
-        raw=httpx.Response(200, content=b"foo"),
-        client=client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
+async def test_response_caches_null_post_parser_result(response_factory: ResponseFactory) -> None:
+    calls: list[object] = []
 
+    def post_parser(value: object) -> None:
+        calls.append(value)
+
+    response = response_factory(httpx.Response(200, content=b"foo"), False)
+    response._options = FinalRequestOptions.construct(
+        method="get", url="/foo", **make_request_options(post_parser=post_parser)
+    )
+    for _ in range(2):
+        result: object = await response.parse() if isinstance(response, AsyncAPIResponse) else response.parse()
+        assert result is None
+    assert calls == ["foo"]
+
+
+async def test_response_parse_mismatched_basemodel(response_factory: ResponseFactory) -> None:
+    response = response_factory(httpx.Response(200, content=b"foo"), False)
     with pytest.raises(
         TypeError,
         match="Pydantic models must subclass our base model type, e.g. `from x_twitter_scraper import BaseModel`",
     ):
-        response.parse(to=PydanticModel)
+        if isinstance(response, AsyncAPIResponse):
+            await response.parse(to=PydanticModel)
+        else:
+            response.parse(to=PydanticModel)
 
 
-@pytest.mark.asyncio
-async def test_async_response_parse_mismatched_basemodel(async_client: AsyncXTwitterScraper) -> None:
-    response = AsyncAPIResponse(
-        raw=httpx.Response(200, content=b"foo"),
-        client=async_client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
+async def test_response_parse_custom_stream(response_factory: ResponseFactory) -> None:
+    response = response_factory(httpx.Response(200, content=b"foo"), True)
+    stream = (
+        await response.parse(to=Stream[int])
+        if isinstance(response, AsyncAPIResponse)
+        else response.parse(to=Stream[int])
     )
-
-    with pytest.raises(
-        TypeError,
-        match="Pydantic models must subclass our base model type, e.g. `from x_twitter_scraper import BaseModel`",
-    ):
-        await response.parse(to=PydanticModel)
-
-
-def test_response_parse_custom_stream(client: XTwitterScraper) -> None:
-    response = APIResponse(
-        raw=httpx.Response(200, content=b"foo"),
-        client=client,
-        stream=True,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    stream = response.parse(to=Stream[int])
-    assert stream._cast_to == int
-
-
-@pytest.mark.asyncio
-async def test_async_response_parse_custom_stream(async_client: AsyncXTwitterScraper) -> None:
-    response = AsyncAPIResponse(
-        raw=httpx.Response(200, content=b"foo"),
-        client=async_client,
-        stream=True,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    stream = await response.parse(to=Stream[int])
     assert stream._cast_to == int
 
 
@@ -129,118 +124,24 @@ class CustomModel(BaseModel):
     bar: int
 
 
-def test_response_parse_custom_model(client: XTwitterScraper) -> None:
-    response = APIResponse(
-        raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
-        client=client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    obj = response.parse(to=CustomModel)
-    assert obj.foo == "hello!"
-    assert obj.bar == 2
-
-
-@pytest.mark.asyncio
-async def test_async_response_parse_custom_model(async_client: AsyncXTwitterScraper) -> None:
-    response = AsyncAPIResponse(
-        raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
-        client=async_client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    obj = await response.parse(to=CustomModel)
-    assert obj.foo == "hello!"
-    assert obj.bar == 2
-
-
-def test_response_parse_annotated_type(client: XTwitterScraper) -> None:
-    response = APIResponse(
-        raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
-        client=client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    obj = response.parse(
-        to=cast("type[CustomModel]", Annotated[CustomModel, "random metadata"]),
-    )
-    assert obj.foo == "hello!"
-    assert obj.bar == 2
-
-
-async def test_async_response_parse_annotated_type(async_client: AsyncXTwitterScraper) -> None:
-    response = AsyncAPIResponse(
-        raw=httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})),
-        client=async_client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    obj = await response.parse(
-        to=cast("type[CustomModel]", Annotated[CustomModel, "random metadata"]),
-    )
+@pytest.mark.parametrize(
+    "model_type", [CustomModel, Annotated[CustomModel, "random metadata"]], ids=["model", "annotated"]
+)
+async def test_response_parse_custom_model(response_factory: ResponseFactory, model_type: object) -> None:
+    response = response_factory(httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})), False)
+    model = cast("type[CustomModel]", model_type)
+    obj = await response.parse(to=model) if isinstance(response, AsyncAPIResponse) else response.parse(to=model)
     assert obj.foo == "hello!"
     assert obj.bar == 2
 
 
 @pytest.mark.parametrize(
     "content, expected",
-    [
-        ("false", False),
-        ("true", True),
-        ("False", False),
-        ("True", True),
-        ("TrUe", True),
-        ("FalSe", False),
-    ],
+    [("false", False), ("true", True), ("False", False), ("True", True), ("TrUe", True), ("FalSe", False)],
 )
-def test_response_parse_bool(client: XTwitterScraper, content: str, expected: bool) -> None:
-    response = APIResponse(
-        raw=httpx.Response(200, content=content),
-        client=client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    result = response.parse(to=bool)
-    assert result is expected
-
-
-@pytest.mark.parametrize(
-    "content, expected",
-    [
-        ("false", False),
-        ("true", True),
-        ("False", False),
-        ("True", True),
-        ("TrUe", True),
-        ("FalSe", False),
-    ],
-)
-async def test_async_response_parse_bool(client: AsyncXTwitterScraper, content: str, expected: bool) -> None:
-    response = AsyncAPIResponse(
-        raw=httpx.Response(200, content=content),
-        client=client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
-    )
-
-    result = await response.parse(to=bool)
+async def test_response_parse_bool(response_factory: ResponseFactory, content: str, expected: bool) -> None:
+    response = response_factory(httpx.Response(200, content=content), False)
+    result = await response.parse(to=bool) if isinstance(response, AsyncAPIResponse) else response.parse(to=bool)
     assert result is expected
 
 
@@ -248,34 +149,27 @@ class OtherModel(BaseModel):
     a: str
 
 
-@pytest.mark.parametrize("client", [False], indirect=True)  # loose validation
-def test_response_parse_expect_model_union_non_json_content(client: XTwitterScraper) -> None:
-    response = APIResponse(
-        raw=httpx.Response(200, content=b"foo", headers={"Content-Type": "application/text"}),
-        client=client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
+@pytest.mark.parametrize("client, async_client", [(False, False)], indirect=True)
+async def test_response_parse_expect_model_union_non_json_content(response_factory: ResponseFactory) -> None:
+    response = response_factory(
+        httpx.Response(200, content=b"foo", headers={"Content-Type": "application/text"}), False
     )
-
-    obj = response.parse(to=cast(Any, Union[CustomModel, OtherModel]))
+    model = cast(Any, Union[CustomModel, OtherModel])
+    obj = await response.parse(to=model) if isinstance(response, AsyncAPIResponse) else response.parse(to=model)
     assert isinstance(obj, str)
     assert obj == "foo"
 
 
-@pytest.mark.asyncio
-@pytest.mark.parametrize("async_client", [False], indirect=True)  # loose validation
-async def test_async_response_parse_expect_model_union_non_json_content(async_client: AsyncXTwitterScraper) -> None:
-    response = AsyncAPIResponse(
-        raw=httpx.Response(200, content=b"foo", headers={"Content-Type": "application/text"}),
-        client=async_client,
-        stream=False,
-        stream_cls=None,
-        cast_to=str,
-        options=FinalRequestOptions.construct(method="get", url="/foo"),
+@pytest.mark.parametrize("client, async_client", [(False, False), (True, True)], indirect=True)
+@pytest.mark.parametrize("mapping_type", [dict, Dict, dict[str, object]])
+async def test_response_parse_dictionary(
+    response_factory: ResponseFactory, mapping_type: type[dict[str, object]]
+) -> None:
+    data = {"nested": {"count": 2}, "items": [True, None], "empty": {}}
+    response = response_factory(httpx.Response(200, json=data), False)
+    result = (
+        await response.parse(to=mapping_type)
+        if isinstance(response, AsyncAPIResponse)
+        else response.parse(to=mapping_type)
     )
-
-    obj = await response.parse(to=cast(Any, Union[CustomModel, OtherModel]))
-    assert isinstance(obj, str)
-    assert obj == "foo"
+    assert result == data

@@ -7,29 +7,38 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+export UV_PYTHON="3.14.7"
+parent_coverage="${1:?Pass the parent coverage JSON path or --baseline.}"
+source_tool="${XQUIK_COVERAGE_SOURCE_TOOL:-scripts/coverage_sources.py}"
+if [[ "$parent_coverage" != --baseline ]]; then
+  uv run --locked --all-extras python "$source_tool" verify-parent "$parent_coverage" "${2:-HEAD}"
+fi
 
 coverage_workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-coverage.XXXXXX")"
-trap 'rm -rf -- "$coverage_workspace"' EXIT
+echo "Coverage evidence: $coverage_workspace"
+uv run --locked --all-extras python "$source_tool" snapshot "$coverage_workspace/sources.json"
 
-python_min=">=3.10.0"
-python_max=">=3.14.0"
+python_min="3.10.21"
+python_max="3.14.7"
 
 run_coverage() {
   local python_spec="$1"
   local pydantic_group="$2"
   local run_name="$3"
   local run_log="$coverage_workspace/$run_name.log"
+  local started=$SECONDS
 
   echo "==> Covering $run_name"
   if COVERAGE_FILE="$coverage_workspace/.coverage" \
     UV_PYTHON="$python_spec" \
-    uv run --isolated --all-extras --group="$pydantic_group" \
+    uv run --locked --isolated --all-extras --group="$pydantic_group" \
       coverage run \
       --parallel-mode \
       --branch \
-      --source=src/x_twitter_scraper \
-      -m pytest -n 0 -q >"$run_log" 2>&1; then
+      --source=src/x_twitter_scraper,scripts,tests,.clusterfuzzlite \
+      -m pytest -p scripts.verify_coverage -n 0 -q -rs >"$run_log" 2>&1; then
     tail -2 "$run_log"
+    echo "$run_name complete: $((SECONDS - started))s"
     return
   fi
 
@@ -37,13 +46,31 @@ run_coverage() {
   return 1
 }
 
-run_coverage "$python_min" pydantic-v2 python-min-pydantic-v2
-run_coverage "$python_min" pydantic-v1 python-min-pydantic-v1
-run_coverage "$python_max" pydantic-v2 python-max-pydantic-v2
+run_coverage "$python_min" pydantic-v2 python-min-pydantic-v2 &
+coverage_pids=("$!")
+run_coverage "$python_min" pydantic-v1 python-min-pydantic-v1 &
+coverage_pids+=("$!")
+run_coverage "$python_max" pydantic-v2 python-max-pydantic-v2 &
+coverage_pids+=("$!")
+coverage_failed=0
+for coverage_pid in "${coverage_pids[@]}"; do
+  wait "$coverage_pid" || coverage_failed=1
+done
+if ((coverage_failed)); then
+  exit 1
+fi
 
 export COVERAGE_FILE="$coverage_workspace/.coverage"
-export UV_PYTHON="$python_max"
 
-uv run --isolated --all-extras coverage combine "$coverage_workspace"
-uv run --isolated --all-extras coverage json -o "$coverage_workspace/report.json"
-uv run --isolated --all-extras python scripts/verify_coverage.py "$coverage_workspace/report.json"
+phase_started=$SECONDS
+uv run --locked --all-extras coverage combine --keep "$coverage_workspace"
+echo "Coverage combination: $((SECONDS - phase_started))s"
+phase_started=$SECONDS
+uv run --locked --all-extras coverage json -o "$coverage_workspace/report.json"
+echo "Coverage JSON: $((SECONDS - phase_started))s"
+uv run --locked --all-extras python "$source_tool" attach "$coverage_workspace/report.json" "$coverage_workspace/sources.json"
+if [[ "$parent_coverage" == --baseline ]]; then
+  uv run --locked --all-extras python "$source_tool" verify-parent "$coverage_workspace/report.json" HEAD
+  exit
+fi
+uv run --locked --all-extras python scripts/verify_coverage.py "$coverage_workspace/report.json" "$parent_coverage"

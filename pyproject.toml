@@ -1,6 +1,6 @@
 [project]
 name = "x_twitter_scraper"
-version = "0.11.2"
+version = "0.12.0"
 description = "Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp."
 dynamic = ["readme"]
 license = "Apache-2.0"
@@ -48,7 +48,6 @@ aiohttp = ["aiohttp>=3.14.1", "httpx_aiohttp>=0.1.9"]
 [tool.uv]
 managed = true
 required-version = ">=0.9"
-exclude-newer = "7 days"
 conflicts = [
     [
       { group = "pydantic-v1" },
@@ -57,15 +56,17 @@ conflicts = [
 ]
 
 [dependency-groups]
+fuzz = ["atheris==3.1.0; python_version >= '3.12' and sys_platform == 'linux' and platform_machine == 'x86_64'"]
 # Version pins are in uv.lock.
 dev = [
-    "coverage==7.15.4",
-    "pyright==1.1.411",
-    "mypy==2.3.0",
+    "coverage==7.16.0",
+    "twine==7.0.0",
+    "pyright==1.1.414",
+    "mypy==2.3.1",
     "respx",
     "pytest",
     "pytest-asyncio",
-    "ruff==0.16.2",
+    "ruff==0.16.7",
     "time-machine",
     "dirty-equals>=0.6.0",
     "importlib-metadata>=6.7.0",
@@ -81,7 +82,7 @@ pydantic-v2 = [
 ]
 
 [build-system]
-requires = ["hatchling==1.31.0", "hatch-fancy-pypi-readme"]
+requires = ["hatchling==1.32.0", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build]
@@ -117,6 +118,13 @@ path = "README.md"
 # Convert relative links to absolute links.
 pattern = '\[(.+?)\]\(((?!https?://)\S+?)\)'
 replacement = '[\1](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/\g<2>)'
+
+[tool.coverage.report]
+include_namespace_packages = true
+exclude_lines = [
+    '#\s*(pragma|PRAGMA)[:\s]?\s*(no|NO)\s*(cover|COVER)',
+    'if (typing\.)?TYPE_CHECKING:',
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

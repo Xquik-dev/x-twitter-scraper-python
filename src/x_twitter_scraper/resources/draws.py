@@ -71,7 +71,7 @@ class DrawsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRetrieveResponse:
         """
-        Get draw details
+        Returns draw rules, status, candidates, and selected winners.
 
         Args:
           extra_headers: Send extra headers
@@ -105,15 +105,13 @@ class DrawsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawListResponse:
         """
-        List draws
+        Returns giveaway draws owned by the authenticated account.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           extra_headers: Send extra headers
 
@@ -154,12 +152,11 @@ class DrawsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BinaryAPIResponse:
-        """Export draw data
+        """
+        Downloads draw evidence in the requested format.
 
         Args:
-          format: Export output format.
-
-        PDF entry exports include up to 10,000 rows. Other entry
+          format: Export output format. PDF entry exports include up to 10,000 rows. Other entry
               formats include up to 100,000 rows.
 
           type: Export winners or all entries
@@ -174,7 +171,7 @@ class DrawsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
+        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or dict[str, str | Omit]())}
         return self._get(
             path_template("/draws/{id}/export", id=id),
             options=make_request_options(
@@ -215,12 +212,9 @@ class DrawsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRunResponse:
-        """Runs a giveaway draw from a source tweet.
-
-        The draw first checks the minimum
-        credits needed to inspect the source tweet and at least one candidate. Remaining
-        credits cap how many replies and retweeters can be inspected before filters and
-        winner selection run.
+        """
+        Checks credits, then draws winners from inspected replies and reposters.
+        Remaining credits cap inspected candidates.
 
         Args:
           extra_headers: Send extra headers
@@ -291,7 +285,7 @@ class AsyncDrawsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRetrieveResponse:
         """
-        Get draw details
+        Returns draw rules, status, candidates, and selected winners.
 
         Args:
           extra_headers: Send extra headers
@@ -325,15 +319,13 @@ class AsyncDrawsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawListResponse:
         """
-        List draws
+        Returns giveaway draws owned by the authenticated account.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           extra_headers: Send extra headers
 
@@ -374,12 +366,11 @@ class AsyncDrawsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AsyncBinaryAPIResponse:
-        """Export draw data
+        """
+        Downloads draw evidence in the requested format.
 
         Args:
-          format: Export output format.
-
-        PDF entry exports include up to 10,000 rows. Other entry
+          format: Export output format. PDF entry exports include up to 10,000 rows. Other entry
               formats include up to 100,000 rows.
 
           type: Export winners or all entries
@@ -394,7 +385,7 @@ class AsyncDrawsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
+        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or dict[str, str | Omit]())}
         return await self._get(
             path_template("/draws/{id}/export", id=id),
             options=make_request_options(
@@ -435,12 +426,9 @@ class AsyncDrawsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRunResponse:
-        """Runs a giveaway draw from a source tweet.
-
-        The draw first checks the minimum
-        credits needed to inspect the source tweet and at least one candidate. Remaining
-        credits cap how many replies and retweeters can be inspected before filters and
-        winner selection run.
+        """
+        Checks credits, then draws winners from inspected replies and reposters.
+        Remaining credits cap inspected candidates.
 
         Args:
           extra_headers: Send extra headers

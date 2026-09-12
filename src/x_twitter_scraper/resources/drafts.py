@@ -64,7 +64,7 @@ class DraftsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
         """
-        Save a tweet draft
+        Saves editable post text as an account draft.
 
         Args:
           extra_headers: Send extra headers
@@ -103,7 +103,7 @@ class DraftsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
         """
-        Get draft by ID
+        Returns one saved draft owned by the authenticated account.
 
         Args:
           extra_headers: Send extra headers
@@ -137,15 +137,13 @@ class DraftsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftListResponse:
         """
-        List saved drafts
+        Returns saved drafts owned by the authenticated account.
 
         Args:
           after_cursor: Cursor for pagination
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           extra_headers: Send extra headers
 
@@ -185,7 +183,7 @@ class DraftsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Delete a draft
+        Permanently removes one saved draft.
 
         Args:
           extra_headers: Send extra headers
@@ -198,7 +196,7 @@ class DraftsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", **(extra_headers or dict[str, str | Omit]())}
         return self._delete(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(
@@ -244,7 +242,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
         """
-        Save a tweet draft
+        Saves editable post text as an account draft.
 
         Args:
           extra_headers: Send extra headers
@@ -283,7 +281,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
         """
-        Get draft by ID
+        Returns one saved draft owned by the authenticated account.
 
         Args:
           extra_headers: Send extra headers
@@ -317,15 +315,13 @@ class AsyncDraftsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftListResponse:
         """
-        List saved drafts
+        Returns saved drafts owned by the authenticated account.
 
         Args:
           after_cursor: Cursor for pagination
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           extra_headers: Send extra headers
 
@@ -365,7 +361,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Delete a draft
+        Permanently removes one saved draft.
 
         Args:
           extra_headers: Send extra headers
@@ -378,7 +374,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", **(extra_headers or dict[str, str | Omit]())}
         return await self._delete(
             path_template("/drafts/{id}", id=id),
             options=make_request_options(

@@ -65,17 +65,15 @@ class ComposeResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """Run one step of Xquik's three-step writing workflow.
+        """Uses xai-org/x-algorithm facts to compose and refine text.
 
-        Compose returns questions,
-        editorial rules, and source-specific Radar recommendations. Refine returns
-        goal-specific guidance. Score applies deterministic text checks. It does not
-        predict reach or expose X ranking weights.
+        Score checks text. It
+        never predicts reach or engagement.
 
         Args:
           topic: Subject for the post.
 
-          goal: Editorial goal used to order the rules and questions.
+          goal: User goal used for one follow-up question.
 
           style_username: Username from a style analysis saved to this account.
 
@@ -107,19 +105,17 @@ class ComposeResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """Run one step of Xquik's three-step writing workflow.
+        """Uses xai-org/x-algorithm facts to compose and refine text.
 
-        Compose returns questions,
-        editorial rules, and source-specific Radar recommendations. Refine returns
-        goal-specific guidance. Score applies deterministic text checks. It does not
-        predict reach or expose X ranking weights.
+        Score checks text. It
+        never predicts reach or engagement.
 
         Args:
-          goal: Editorial goal for the guidance.
+          goal: User goal interpreted against published ranking signals.
 
           tone: Requested writing tone.
 
-          topic: Subject for the post.
+          topic: Subject to refine into a post.
 
           additional_context: Audience, constraints, sources, or other writing context.
 
@@ -152,17 +148,15 @@ class ComposeResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """Run one step of Xquik's three-step writing workflow.
+        """Uses xai-org/x-algorithm facts to compose and refine text.
 
-        Compose returns questions,
-        editorial rules, and source-specific Radar recommendations. Refine returns
-        goal-specific guidance. Score applies deterministic text checks. It does not
-        predict reach or expose X ranking weights.
+        Score checks text. It
+        never predicts reach or engagement.
 
         Args:
-          draft: Full post text for deterministic editorial checks.
+          draft: Full post text. The endpoint never assigns a ranking score.
 
-          has_link: True when a separate link card is attached.
+          has_link: Accepted for backward compatibility. No guidance uses it.
 
           has_media: Accepted for backward compatibility. Text checks ignore this field.
 
@@ -265,17 +259,15 @@ class AsyncComposeResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """Run one step of Xquik's three-step writing workflow.
+        """Uses xai-org/x-algorithm facts to compose and refine text.
 
-        Compose returns questions,
-        editorial rules, and source-specific Radar recommendations. Refine returns
-        goal-specific guidance. Score applies deterministic text checks. It does not
-        predict reach or expose X ranking weights.
+        Score checks text. It
+        never predicts reach or engagement.
 
         Args:
           topic: Subject for the post.
 
-          goal: Editorial goal used to order the rules and questions.
+          goal: User goal used for one follow-up question.
 
           style_username: Username from a style analysis saved to this account.
 
@@ -307,19 +299,17 @@ class AsyncComposeResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """Run one step of Xquik's three-step writing workflow.
+        """Uses xai-org/x-algorithm facts to compose and refine text.
 
-        Compose returns questions,
-        editorial rules, and source-specific Radar recommendations. Refine returns
-        goal-specific guidance. Score applies deterministic text checks. It does not
-        predict reach or expose X ranking weights.
+        Score checks text. It
+        never predicts reach or engagement.
 
         Args:
-          goal: Editorial goal for the guidance.
+          goal: User goal interpreted against published ranking signals.
 
           tone: Requested writing tone.
 
-          topic: Subject for the post.
+          topic: Subject to refine into a post.
 
           additional_context: Audience, constraints, sources, or other writing context.
 
@@ -352,17 +342,15 @@ class AsyncComposeResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ComposeCreateResponse:
-        """Run one step of Xquik's three-step writing workflow.
+        """Uses xai-org/x-algorithm facts to compose and refine text.
 
-        Compose returns questions,
-        editorial rules, and source-specific Radar recommendations. Refine returns
-        goal-specific guidance. Score applies deterministic text checks. It does not
-        predict reach or expose X ranking weights.
+        Score checks text. It
+        never predicts reach or engagement.
 
         Args:
-          draft: Full post text for deterministic editorial checks.
+          draft: Full post text. The endpoint never assigns a ranking score.
 
-          has_link: True when a separate link card is attached.
+          has_link: Accepted for backward compatibility. No guidance uses it.
 
           has_media: Accepted for backward compatibility. Text checks ignore this field.
 

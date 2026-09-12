@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
+cd "$(dirname "$0")/.."
+project="$PWD"
+export UV_PYTHON=3.14.7
+export COVERAGE_RCFILE="$project/pyproject.toml"
+revision=$(git rev-parse --verify "${1:-HEAD^}^{commit}")
+evidence=$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-parent.XXXXXX")
+git worktree add --detach "$evidence/source" "$revision"
+cd "$evidence/source"
+export COVERAGE_FILE="$evidence/.coverage"
+export PYTHONPATH="$PWD/src:$PWD"
+uv run --project "$project" --locked python "$project/scripts/coverage_sources.py" snapshot "$evidence/sources.json"
+pids=()
+for combination in 3.10.21:pydantic-v1 3.10.21:pydantic-v2 3.14.7:pydantic-v2; do
+  UV_PYTHON="${combination%%:*}" uv run --project "$project" --locked --isolated --all-extras --group "${combination#*:}" \
+    coverage run --parallel-mode --branch --source=src/x_twitter_scraper,scripts,tests,.clusterfuzzlite \
+    -m pytest -n 0 -q -rs >"$evidence/$combination.log" 2>&1 &
+  pids+=("$!")
+done
+failed=0
+for pid in "${pids[@]}"; do wait "$pid" || failed=1; done
+cat "$evidence"/*.log
+((failed == 0)) || exit 1
+uv run --project "$project" --locked coverage combine --keep "$evidence"
+uv run --project "$project" --locked coverage json -o "$evidence/report.json"
+uv run --project "$project" --locked python "$project/scripts/coverage_sources.py" attach "$evidence/report.json" "$evidence/sources.json"
+uv run --project "$project" --locked python "$project/scripts/coverage_sources.py" verify-parent "$evidence/report.json" "$revision"
+printf 'Historical skips remain baseline gaps, not release passes.\nParent coverage: %s/report.json\n' "$evidence"
+if [[ -n "${GITHUB_OUTPUT:-}" ]]; then printf 'report=%s/report.json\nrevision=%s\n' "$evidence" "$revision" >>"$GITHUB_OUTPUT"; fi

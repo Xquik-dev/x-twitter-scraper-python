@@ -27,17 +27,23 @@ __all__ = [
 
 
 class ComposePrepareResultContentRule(BaseModel):
+    """One source-backed ranking fact returned during preparation."""
+
     rule: str
 
 
 class ComposePrepareResultEngagementMultiplier(BaseModel):
+    """One ranking signal and its source-value limit."""
+
     action: str
     """Human-readable published signal name."""
 
-    multiplier: Literal["Production weight not published by X"]
+    multiplier: Literal["Source default; production value can vary"]
 
 
 class ComposePrepareResultRadarRecommendation(BaseModel):
+    """Deprecated compatibility schema. The response array is empty."""
+
     endpoint: str
     """Radar endpoint for this source."""
 
@@ -51,28 +57,34 @@ class ComposePrepareResultRadarRecommendation(BaseModel):
 
 
 class ComposePrepareResultScorerWeight(BaseModel):
+    """One source ranking signal without a production claim."""
+
     context: str
-    """Signal direction and publication limit."""
+    """Signal direction and production limit."""
 
     signal: str
     """Signal name from X's public ranking repository."""
 
     weight: None = None
-    """X does not publish the production weight."""
+    """Null prevents source defaults becoming production claims."""
 
 
 class ComposePrepareResultSavedStyle(BaseModel):
+    """A saved username style and analyzed post count."""
+
     tweet_count: int = FieldInfo(alias="tweetCount")
 
     username: str
 
 
 class ComposePrepareResult(BaseModel):
+    """Rules, questions, and research guidance for drafting a post."""
+
     content_rules: List[ComposePrepareResultContentRule] = FieldInfo(alias="contentRules")
-    """Xquik editorial heuristics, ordered for the goal."""
+    """Facts derived only from xai-org/x-algorithm."""
 
     engagement_multipliers: List[ComposePrepareResultEngagementMultiplier] = FieldInfo(alias="engagementMultipliers")
-    """Published engagement signal names. Production multipliers are not published."""
+    """Source ranking signals. Repository defaults may vary in production."""
 
     engagement_velocity: str = FieldInfo(alias="engagementVelocity")
     """Publication limit for timing and decay claims."""
@@ -85,10 +97,10 @@ class ComposePrepareResult(BaseModel):
     next_step: str = FieldInfo(alias="nextStep")
 
     radar_recommendations: List[ComposePrepareResultRadarRecommendation] = FieldInfo(alias="radarRecommendations")
-    """Sources and guidance for researching a fresh post angle."""
+    """Deprecated compatibility field. Always empty."""
 
     scorer_weights: List[ComposePrepareResultScorerWeight] = FieldInfo(alias="scorerWeights")
-    """Published signal names with unpublished weights as null."""
+    """Source signals with production values withheld as null."""
 
     source: str
     """Signal source and evidence limits."""
@@ -107,24 +119,30 @@ class ComposePrepareResult(BaseModel):
 
 
 class ComposeRefineResultExamplePattern(BaseModel):
+    """Deprecated example-pattern schema. The response array is empty."""
+
     description: str
 
     pattern: str
 
 
 class ComposeRefineResult(BaseModel):
+    """Source-backed guidance for refining a post."""
+
     composition_guidance: List[str] = FieldInfo(alias="compositionGuidance")
-    """Goal, tone, media, and editorial guidance."""
+    """Request context and xai-org/x-algorithm guidance."""
 
     example_patterns: List[ComposeRefineResultExamplePattern] = FieldInfo(alias="examplePatterns")
 
     intent_url: str = FieldInfo(alias="intentUrl")
-    """X post intent seeded with the topic."""
+    """X post intent generated for the refined topic."""
 
     next_step: str = FieldInfo(alias="nextStep")
 
 
 class ComposeScoreResultChecklist(BaseModel):
+    """One deterministic draft check."""
+
     factor: str
 
     passed: bool
@@ -134,8 +152,10 @@ class ComposeScoreResultChecklist(BaseModel):
 
 
 class ComposeScoreResult(BaseModel):
+    """Posting validation without a fabricated ranking score."""
+
     checklist: List[ComposeScoreResultChecklist]
-    """Deterministic editorial checks. Not a reach prediction."""
+    """Deterministic input validation. Not a reach prediction."""
 
     next_step: str = FieldInfo(alias="nextStep")
 
@@ -145,7 +165,7 @@ class ComposeScoreResult(BaseModel):
 
     top_suggestion: str = FieldInfo(alias="topSuggestion")
 
-    total_checks: Literal[9] = FieldInfo(alias="totalChecks")
+    total_checks: Literal[1] = FieldInfo(alias="totalChecks")
 
     intent_url: Optional[str] = FieldInfo(alias="intentUrl", default=None)
     """Present only when every check passes."""

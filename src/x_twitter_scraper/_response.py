@@ -15,6 +15,7 @@ from typing import (
     Any,
     Union,
     Generic,
+    Mapping,
     TypeVar,
     Callable,
     Iterator,
@@ -52,7 +53,7 @@ log: logging.Logger = logging.getLogger(__name__)
 class BaseAPIResponse(Generic[R]):
     _cast_to: type[R]
     _client: BaseClient[Any, Any]
-    _parsed_by_type: dict[type[Any], Any]
+    _parsed_by_type: dict[type, object]
     _is_sse_stream: bool
     _stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None
     _options: FinalRequestOptions
@@ -143,40 +144,25 @@ class BaseAPIResponse(Generic[R]):
         origin = get_origin(cast_to) or cast_to
 
         if self._is_sse_stream:
+            stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None
             if to:
                 if not is_stream_class_type(to):
                     raise TypeError(f"Expected custom parse type to be a subclass of {Stream} or {AsyncStream}")
-
-                return cast(
-                    _T,
-                    to(
-                        cast_to=extract_stream_chunk_type(
-                            to,
-                            failure_message="Expected custom stream type to be passed with a type argument, e.g. Stream[ChunkType]",
-                        ),
-                        response=self.http_response,
-                        client=cast(Any, self._client),
-                        options=self._options,
-                    ),
+                stream_cls = to
+                cast_to = extract_stream_chunk_type(
+                    to,
+                    failure_message="Expected custom stream type to be passed with a type argument, e.g. Stream[ChunkType]",
                 )
-
-            if self._stream_cls:
-                return cast(
-                    R,
-                    self._stream_cls(
-                        cast_to=extract_stream_chunk_type(self._stream_cls),
-                        response=self.http_response,
-                        client=cast(Any, self._client),
-                        options=self._options,
-                    ),
-                )
-
-            stream_cls = cast("type[Stream[Any]] | type[AsyncStream[Any]] | None", self._client._default_stream_cls)
-            if stream_cls is None:
-                raise MissingStreamClassError()
+            elif self._stream_cls:
+                stream_cls = self._stream_cls
+                cast_to = extract_stream_chunk_type(stream_cls)
+            else:
+                stream_cls = self._client._default_stream_cls
+                if stream_cls is None:
+                    raise MissingStreamClassError()
 
             return cast(
-                R,
+                Union[R, _T],
                 stream_cls(
                     cast_to=cast_to,
                     response=self.http_response,
@@ -242,38 +228,30 @@ class BaseAPIResponse(Generic[R]):
         # split is required to handle cases where additional information is included
         # in the response, e.g. application/json; charset=utf-8
         content_type, *_ = response.headers.get("content-type", "*").split(";")
-        if not content_type.endswith("json"):
-            if is_basemodel(cast_to):
-                try:
-                    data = response.json()
-                except Exception as exc:
-                    log.debug("Could not read JSON from response data due to %s - %s", type(exc), exc)
-                else:
-                    return self._client._process_response_data(
-                        data=data,
-                        cast_to=cast_to,  # type: ignore
-                        response=response,
-                    )
-
-            if self._client._strict_response_validation:
-                raise APIResponseValidationError(
+        is_json = content_type.endswith("json")
+        if is_json or is_basemodel(cast_to):
+            try:
+                data = response.json()
+            except Exception as exc:
+                if is_json:
+                    raise
+                log.debug("Could not read JSON from response data due to %s - %s", type(exc), exc)
+            else:
+                return self._client._process_response_data(
+                    data=data,
+                    cast_to=cast("type[R | _T]", cast_to),
                     response=response,
-                    message=f"Expected Content-Type response header to be `application/json` but received `{content_type}` instead.",
-                    body=response.text,
                 )
 
-            # If the API responds with content that isn't JSON then we just return
-            # the (decoded) text without performing any parsing so that you can still
-            # handle the response however you need to.
-            return response.text  # type: ignore
+        if self._client._strict_response_validation:
+            raise APIResponseValidationError(
+                response=response,
+                message=f"Expected Content-Type response header to be `application/json` but received `{content_type}` instead.",
+                body=response.text,
+            )
 
-        data = response.json()
-
-        return self._client._process_response_data(
-            data=data,
-            cast_to=cast_to,  # type: ignore
-            response=response,
-        )
+        # Preserve decoded text when a non-JSON response cannot be parsed.
+        return cast(R, response.text)
 
 
 class APIResponse(BaseAPIResponse[R]):
@@ -314,9 +292,8 @@ class APIResponse(BaseAPIResponse[R]):
           - `httpx.Response`
         """
         cache_key = to if to is not None else self._cast_to
-        cached = self._parsed_by_type.get(cache_key)
-        if cached is not None:
-            return cached  # type: ignore[no-any-return]
+        if cache_key in self._parsed_by_type:
+            return cast("R | _T", self._parsed_by_type[cache_key])
 
         if not self._is_sse_stream:
             self.read()
@@ -326,7 +303,7 @@ class APIResponse(BaseAPIResponse[R]):
             parsed = self._options.post_parser(parsed)
 
         self._parsed_by_type[cache_key] = parsed
-        return parsed
+        return cast("R | _T", parsed)
 
     def read(self) -> bytes:
         """Read and return the binary response content."""
@@ -414,9 +391,8 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
           - `httpx.Response`
         """
         cache_key = to if to is not None else self._cast_to
-        cached = self._parsed_by_type.get(cache_key)
-        if cached is not None:
-            return cached  # type: ignore[no-any-return]
+        if cache_key in self._parsed_by_type:
+            return cast("R | _T", self._parsed_by_type[cache_key])
 
         if not self._is_sse_stream:
             await self.read()
@@ -426,7 +402,7 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
             parsed = self._options.post_parser(parsed)
 
         self._parsed_by_type[cache_key] = parsed
-        return parsed
+        return cast("R | _T", parsed)
 
     async def read(self) -> bytes:
         """Read and return the binary response content."""
@@ -651,6 +627,11 @@ class AsyncResponseContextManager(Generic[_AsyncAPIResponseT]):
             await self.__response.close()
 
 
+def _add_response_headers(kwargs: dict[str, Any], headers: Mapping[str, object]) -> None:
+    original = cast(Mapping[str, object], kwargs.get("extra_headers") or {})
+    kwargs["extra_headers"] = {**original, **headers}
+
+
 def to_streamed_response_wrapper(func: Callable[P, R]) -> Callable[P, ResponseContextManager[APIResponse[R]]]:
     """Higher order function that takes one of our bound API methods and wraps it
     to support streaming and returning the raw `APIResponse` object directly.
@@ -658,10 +639,7 @@ def to_streamed_response_wrapper(func: Callable[P, R]) -> Callable[P, ResponseCo
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> ResponseContextManager[APIResponse[R]]:
-        extra_headers: dict[str, str] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "stream"
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream"})
 
         make_request = functools.partial(func, *args, **kwargs)
 
@@ -679,10 +657,7 @@ def async_to_streamed_response_wrapper(
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> AsyncResponseContextManager[AsyncAPIResponse[R]]:
-        extra_headers: dict[str, str] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "stream"
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream"})
 
         make_request = func(*args, **kwargs)
 
@@ -703,11 +678,7 @@ def to_custom_streamed_response_wrapper(
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> ResponseContextManager[_APIResponseT]:
-        extra_headers: dict[str, Any] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "stream"
-        extra_headers[OVERRIDE_CAST_TO_HEADER] = response_cls
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream", OVERRIDE_CAST_TO_HEADER: response_cls})
 
         make_request = functools.partial(func, *args, **kwargs)
 
@@ -728,11 +699,7 @@ def async_to_custom_streamed_response_wrapper(
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> AsyncResponseContextManager[_AsyncAPIResponseT]:
-        extra_headers: dict[str, Any] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "stream"
-        extra_headers[OVERRIDE_CAST_TO_HEADER] = response_cls
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream", OVERRIDE_CAST_TO_HEADER: response_cls})
 
         make_request = func(*args, **kwargs)
 
@@ -748,10 +715,7 @@ def to_raw_response_wrapper(func: Callable[P, R]) -> Callable[P, APIResponse[R]]
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> APIResponse[R]:
-        extra_headers: dict[str, str] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "raw"
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw"})
 
         return cast(APIResponse[R], func(*args, **kwargs))
 
@@ -765,10 +729,7 @@ def async_to_raw_response_wrapper(func: Callable[P, Awaitable[R]]) -> Callable[P
 
     @functools.wraps(func)
     async def wrapped(*args: P.args, **kwargs: P.kwargs) -> AsyncAPIResponse[R]:
-        extra_headers: dict[str, str] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "raw"
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw"})
 
         return cast(AsyncAPIResponse[R], await func(*args, **kwargs))
 
@@ -787,11 +748,7 @@ def to_custom_raw_response_wrapper(
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> _APIResponseT:
-        extra_headers: dict[str, Any] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "raw"
-        extra_headers[OVERRIDE_CAST_TO_HEADER] = response_cls
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw", OVERRIDE_CAST_TO_HEADER: response_cls})
 
         return cast(_APIResponseT, func(*args, **kwargs))
 
@@ -810,11 +767,7 @@ def async_to_custom_raw_response_wrapper(
 
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> Awaitable[_AsyncAPIResponseT]:
-        extra_headers: dict[str, Any] = {**(cast(Any, kwargs.get("extra_headers")) or {})}
-        extra_headers[RAW_RESPONSE_HEADER] = "raw"
-        extra_headers[OVERRIDE_CAST_TO_HEADER] = response_cls
-
-        kwargs["extra_headers"] = extra_headers
+        _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw", OVERRIDE_CAST_TO_HEADER: response_cls})
 
         return cast(Awaitable[_AsyncAPIResponseT], func(*args, **kwargs))
 

@@ -1,7 +1,5 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from __future__ import annotations
-
 from typing import List, Union, Optional
 from datetime import datetime
 from typing_extensions import Literal, TypeAlias
@@ -30,6 +28,8 @@ class TweetSearchCoverageResponseDiagnosticStrategyWindow(BaseModel):
 
 
 class TweetSearchCoverageResponseDiagnosticStrategy(BaseModel):
+    """Result counts and stop reason for one Tweet search strategy."""
+
     duplicate_count: int = FieldInfo(alias="duplicateCount")
 
     pages_fetched: int = FieldInfo(alias="pagesFetched")
@@ -39,6 +39,7 @@ class TweetSearchCoverageResponseDiagnosticStrategy(BaseModel):
     stop_reason: Literal[
         "cursor_failure", "deadline", "exhausted", "failed", "page_limit", "result_limit", "stalled"
     ] = FieldInfo(alias="stopReason")
+    """Reason a coverage strategy stopped."""
 
     strategy: int
 
@@ -52,7 +53,7 @@ class TweetSearchCoverageResponseDiagnostic(BaseModel):
     """Coverage evidence across parallel search strategies."""
 
     complete: bool
-    """True when every strategy exhausted its source."""
+    """True after all active strategies exhaust their sources."""
 
     cursor_failure_count: int = FieldInfo(alias="cursorFailureCount")
 
@@ -70,7 +71,7 @@ class TweetSearchCoverageResponseDiagnostic(BaseModel):
     """Whether bounded time windows ran in parallel."""
 
     response_truncated: bool = FieldInfo(alias="responseTruncated")
-    """Whether credits or the requested limit reduced output."""
+    """True when credits or the requested limit reduce output."""
 
     result_limit_reached: bool = FieldInfo(alias="resultLimitReached")
 
@@ -86,9 +87,7 @@ class TweetSearchCoverageResponseDiagnostic(BaseModel):
 
 
 class TweetSearchCoverageResponse(PaginatedTweets):
-    """
-    No-mode search, user Tweet, user reply, and direct reply reads use automatic coverage. Shape, filters, aliases, and billing stay compatible. Unprefixed cursors remain legacy. Follow next_cursor while has_next_page is true. An empty filtered page can still have has_next_page true.
-    """
+    """Terminal Tweet search coverage response with diagnostics."""
 
     tweets: List[SearchTweet]
 

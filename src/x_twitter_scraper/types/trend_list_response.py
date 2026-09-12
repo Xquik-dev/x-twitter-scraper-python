@@ -19,17 +19,17 @@ class Trend(BaseModel):
     description: Optional[str] = None
 
     promoted_content: Optional[str] = FieldInfo(alias="promotedContent", default=None)
-    """Promotion identifier from X. Null for organic trends."""
+    """Promotion ID for this trend, or null when organic."""
 
     query: Optional[str] = None
 
     rank: Optional[int] = None
 
     tweet_volume: Optional[int] = FieldInfo(alias="tweetVolume", default=None)
-    """Approximate public post volume when X supplies it."""
+    """Estimated post volume for this trend."""
 
     url: Optional[str] = None
-    """X search URL for the trend."""
+    """Search URL associated with this trend."""
 
 
 class TrendListResponse(BaseModel):

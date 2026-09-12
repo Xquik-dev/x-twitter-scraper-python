@@ -58,7 +58,7 @@ class WriteActionsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WriteActionRetrieveResponse:
         """
-        Get write action status
+        Returns the current state of an asynchronous write action.
 
         Args:
           extra_headers: Send extra headers
@@ -114,7 +114,7 @@ class AsyncWriteActionsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WriteActionRetrieveResponse:
         """
-        Get write action status
+        Returns the current state of an asynchronous write action.
 
         Args:
           extra_headers: Send extra headers

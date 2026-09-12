@@ -61,7 +61,10 @@ class AccountResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountRetrieveResponse:
-        """Get account info"""
+        """
+        Returns plan, credit, monitoring, and account settings for the authenticated
+        user.
+        """
         return self._get(
             "/account",
             options=make_request_options(
@@ -82,7 +85,7 @@ class AccountResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountSetXUsernameResponse:
         """
-        Set linked X username
+        Links an X username to the authenticated Xquik account.
 
         Args:
           username: X username without @
@@ -116,7 +119,7 @@ class AccountResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountUpdateLocaleResponse:
         """
-        Update account locale
+        Changes the locale used for account responses and notifications.
 
         Args:
           extra_headers: Send extra headers
@@ -169,7 +172,10 @@ class AsyncAccountResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountRetrieveResponse:
-        """Get account info"""
+        """
+        Returns plan, credit, monitoring, and account settings for the authenticated
+        user.
+        """
         return await self._get(
             "/account",
             options=make_request_options(
@@ -190,7 +196,7 @@ class AsyncAccountResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountSetXUsernameResponse:
         """
-        Set linked X username
+        Links an X username to the authenticated Xquik account.
 
         Args:
           username: X username without @
@@ -226,7 +232,7 @@ class AsyncAccountResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountUpdateLocaleResponse:
         """
-        Update account locale
+        Changes the locale used for account responses and notifications.
 
         Args:
           extra_headers: Send extra headers

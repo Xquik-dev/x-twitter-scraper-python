@@ -17,12 +17,13 @@ uv export \
   --locked \
   --all-extras \
   --group pydantic-v2 \
+  --group fuzz \
   --no-emit-project \
   --format requirements-txt \
   --output-file "$audit_requirements"
 
 echo "==> Auditing locked third-party dependencies"
-uvx --from pip-audit==2.10.1 pip-audit \
+uv tool run --from pip-audit==2.10.1 pip-audit \
   --strict \
   --disable-pip \
   --require-hashes \

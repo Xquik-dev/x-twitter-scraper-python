@@ -15,5 +15,6 @@ __all__ = ["TicketReplyParams"]
 
 class TicketReplyParams(TypedDict, total=False):
     content: Required[Annotated[str, PropertyInfo(alias="body")]]
+    """Non-empty support message text."""
 
     idempotency_key: Annotated[str, PropertyInfo(alias="Idempotency-Key")]

@@ -65,7 +65,7 @@ class CreditsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Redirect to an active top-up payment page
+        Redirects to the active hosted top-up checkout.
 
         Args:
           session_id: Billing session ID returned by the top-up billing flow.
@@ -78,7 +78,7 @@ class CreditsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", "x-api-key": omit, **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", "x-api-key": omit, **(extra_headers or dict[str, str | Omit]())}
         return self._get(
             "/credits/topup/redirect",
             options=make_request_options(
@@ -104,7 +104,7 @@ class CreditsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditRetrieveBalanceResponse:
-        """Get credits balance"""
+        """Returns the account credit balance and usage context."""
         return self._get(
             "/credits",
             options=make_request_options(
@@ -125,7 +125,7 @@ class CreditsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditRetrieveTopupStatusResponse:
         """
-        Get top-up billing status
+        Returns verification status for a credit top-up.
 
         Args:
           session_id: Top-up session ID to inspect.
@@ -232,7 +232,7 @@ class AsyncCreditsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Redirect to an active top-up payment page
+        Redirects to the active hosted top-up checkout.
 
         Args:
           session_id: Billing session ID returned by the top-up billing flow.
@@ -245,7 +245,7 @@ class AsyncCreditsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Accept": "*/*", "x-api-key": omit, **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", "x-api-key": omit, **(extra_headers or dict[str, str | Omit]())}
         return await self._get(
             "/credits/topup/redirect",
             options=make_request_options(
@@ -271,7 +271,7 @@ class AsyncCreditsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditRetrieveBalanceResponse:
-        """Get credits balance"""
+        """Returns the account credit balance and usage context."""
         return await self._get(
             "/credits",
             options=make_request_options(
@@ -292,7 +292,7 @@ class AsyncCreditsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CreditRetrieveTopupStatusResponse:
         """
-        Get top-up billing status
+        Returns verification status for a credit top-up.
 
         Args:
           session_id: Top-up session ID to inspect.

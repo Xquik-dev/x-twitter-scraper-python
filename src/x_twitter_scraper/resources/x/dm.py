@@ -61,7 +61,7 @@ class DmResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DmRetrieveHistoryResponse:
         """
-        Get DM conversation history
+        Returns message history with one user for the connected X account.
 
         Args:
           account: X handle (without the `@` prefix) of the connected X account used to read the
@@ -116,7 +116,7 @@ class DmResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DmSendResponse:
         """
-        Send direct message
+        Sends a direct message through a connected X account.
 
         Args:
           account: X account (@username or ID) sending the DM
@@ -133,7 +133,7 @@ class DmResource(SyncAPIResource):
         """
         if not user_id:
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             path_template("/x/dm/{user_id}", user_id=user_id),
             body=maybe_transform(
@@ -186,7 +186,7 @@ class AsyncDmResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DmRetrieveHistoryResponse:
         """
-        Get DM conversation history
+        Returns message history with one user for the connected X account.
 
         Args:
           account: X handle (without the `@` prefix) of the connected X account used to read the
@@ -241,7 +241,7 @@ class AsyncDmResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DmSendResponse:
         """
-        Send direct message
+        Sends a direct message through a connected X account.
 
         Args:
           account: X account (@username or ID) sending the DM
@@ -258,7 +258,7 @@ class AsyncDmResource(AsyncAPIResource):
         """
         if not user_id:
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             path_template("/x/dm/{user_id}", user_id=user_id),
             body=await async_maybe_transform(

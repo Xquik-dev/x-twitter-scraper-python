@@ -5,9 +5,10 @@
 from __future__ import annotations
 
 import json
+import math
 from typing import Mapping, cast
 
-from x_twitter_scraper._compat import PYDANTIC_V1
+from x_twitter_scraper._compat import PYDANTIC_V1, parse_obj
 from x_twitter_scraper._models import BaseModel
 
 JSONSchema = Mapping[str, object]
@@ -51,7 +52,7 @@ def _number_example(schema: JSONSchema, *, integer: bool) -> int | float:
     exclusive = schema.get("exclusiveMinimum")
     if isinstance(exclusive, (int, float)):
         minimum = max(minimum, exclusive + 1)
-    return int(minimum) if integer else float(minimum)
+    return math.ceil(minimum) if integer else float(minimum)
 
 
 def _example_from_schema(
@@ -80,15 +81,9 @@ def _example_from_schema(
     for union_key in ("anyOf", "oneOf"):
         variants = schema.get(union_key)
         if isinstance(variants, list):
-            candidates: list[JSONSchema] = []
             for variant in cast(list[object], variants):
-                if not isinstance(variant, Mapping):
-                    continue
-                candidate = cast(JSONSchema, variant)
-                if candidate.get("type") != "null":
-                    candidates.append(candidate)
-            if candidates:
-                return _example_from_schema(candidates[0], root, active_references)
+                if isinstance(variant, Mapping) and cast(JSONSchema, variant).get("type") != "null":
+                    return _example_from_schema(cast(JSONSchema, variant), root, active_references)
             return None
 
     combined = schema.get("allOf")
@@ -112,10 +107,8 @@ def _example_from_schema(
         return None
     if schema_type == "boolean":
         return True
-    if schema_type == "integer":
-        return _number_example(schema, integer=True)
-    if schema_type == "number":
-        return _number_example(schema, integer=False)
+    if schema_type in ("integer", "number"):
+        return _number_example(schema, integer=schema_type == "integer")
     if schema_type == "string":
         return _string_example(schema)
     if schema_type == "array":
@@ -141,15 +134,24 @@ def _example_from_schema(
     return {}
 
 
-def model_payload(model: type[BaseModel]) -> bytes:
-    if PYDANTIC_V1:
-        schema = cast(JSONSchema, model.schema(by_alias=True))  # pyright: ignore[reportDeprecated]
-    else:
-        schema = cast(JSONSchema, model.model_json_schema(by_alias=True))
-
-    value = _example_from_schema(schema, schema)
-    if PYDANTIC_V1:
-        model.parse_obj(value)  # pyright: ignore[reportDeprecated]
-    else:
-        model.model_validate(value)
+def _model_payload(model: type[BaseModel], schema: JSONSchema, root: JSONSchema) -> bytes:
+    value = _example_from_schema(schema, root)
+    parse_obj(model, value)
     return json.dumps(value, separators=(",", ":")).encode()
+
+
+def model_payloads(models: set[type[BaseModel]]) -> dict[type[BaseModel], bytes]:
+    if PYDANTIC_V1:
+        result: dict[type[BaseModel], bytes] = {}
+        for model in models:
+            schema = cast(JSONSchema, model.schema(by_alias=True))  # pyright: ignore[reportDeprecated]
+            result[model] = _model_payload(model, schema, schema)
+        return result
+
+    from pydantic.json_schema import models_json_schema
+
+    schemas, definitions = models_json_schema([(model, "validation") for model in models], by_alias=True)
+    return {
+        model: _model_payload(model, cast(JSONSchema, schemas[(model, "validation")]), cast(JSONSchema, definitions))
+        for model in models
+    }

@@ -11,38 +11,30 @@ from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
 from urllib.parse import urlsplit
 from typing_extensions import override
 
-from tests.mock_api_routes import ROUTES, Route, ResponseKind
-from tests.mock_api_schema import model_payload
-from x_twitter_scraper._models import BaseModel
+from tests.mock_api_routes import ROUTES, Route, ResponseKind, ResponseType
+from tests.mock_api_schema import model_payloads
 
-MODEL_PAYLOADS = {
-    response_type: model_payload(response_type)
-    for response_type in {route.response_type for route in ROUTES}
-    if isinstance(response_type, type)
+RESPONSES: dict[ResponseType, tuple[HTTPStatus, bytes, str]] = {
+    response_type: (HTTPStatus.OK, payload, "application/json")
+    for response_type, payload in model_payloads(
+        {route.response_type for route in ROUTES if isinstance(route.response_type, type)}
+    ).items()
 }
+RESPONSES.update(
+    {
+        ResponseKind.EMPTY: (HTTPStatus.NO_CONTENT, b"", "application/json"),
+        ResponseKind.BINARY: (HTTPStatus.OK, b'{"foo":"bar"}', "application/octet-stream"),
+        ResponseKind.JSON_OBJECT: (HTTPStatus.OK, b"{}", "application/json"),
+    }
+)
 
 
 class MockAPIRequestHandler(BaseHTTPRequestHandler):
     protocol_version = "HTTP/1.1"
     routes: ClassVar[tuple[Route, ...]] = ROUTES
-    model_payloads: ClassVar[Mapping[type[BaseModel], bytes]] = MODEL_PAYLOADS
+    route_responses: ClassVar[Mapping[ResponseType, tuple[HTTPStatus, bytes, str]]] = RESPONSES
 
     def do_GET(self) -> None:
-        self._handle()
-
-    def do_POST(self) -> None:
-        self._handle()
-
-    def do_PUT(self) -> None:
-        self._handle()
-
-    def do_PATCH(self) -> None:
-        self._handle()
-
-    def do_DELETE(self) -> None:
-        self._handle()
-
-    def _handle(self) -> None:
         content_length = self.headers.get("Content-Length")
         if content_length is not None:
             self.rfile.read(int(content_length))
@@ -63,20 +55,12 @@ class MockAPIRequestHandler(BaseHTTPRequestHandler):
                 "application/json",
             )
             return
-        if route.response_type is ResponseKind.EMPTY:
-            self._write_response(HTTPStatus.NO_CONTENT, b"", "application/json")
-            return
-        if route.response_type is ResponseKind.BINARY:
-            self._write_response(HTTPStatus.OK, b"fixture", "application/octet-stream")
-            return
-        if route.response_type is ResponseKind.JSON_OBJECT:
-            self._write_response(HTTPStatus.OK, b"{}", "application/json")
-            return
-        self._write_response(
-            HTTPStatus.OK,
-            self.model_payloads[route.response_type],
-            "application/json",
-        )
+        self._write_response(*self.route_responses[route.response_type])
+
+    do_POST = do_GET
+    do_PUT = do_GET
+    do_PATCH = do_GET
+    do_DELETE = do_GET
 
     def _write_response(self, status: HTTPStatus, body: bytes, content_type: str) -> None:
         self.send_response(status)

@@ -6,10 +6,17 @@
 
 from typing_extensions import Literal
 
+from pydantic import Field as FieldInfo
+
 from ..._models import BaseModel
 
 __all__ = ["KeywordDeactivateResponse"]
 
 
 class KeywordDeactivateResponse(BaseModel):
+    deletion_status: Literal["deleting"] = FieldInfo(alias="deletionStatus")
+
+    status_url: str = FieldInfo(alias="statusUrl")
+    """Poll this monitor URL until it returns 404."""
+
     success: Literal[True]

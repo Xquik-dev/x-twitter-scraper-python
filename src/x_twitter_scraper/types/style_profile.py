@@ -5,16 +5,16 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
 from typing import List, Optional
-from datetime import datetime
 
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
+from .style_profile_summary import StyleProfileSummary
 
-__all__ = ["StyleProfile", "Tweet"]
+__all__ = ["StyleProfile", "StyleProfileTweet"]
 
 
-class Tweet(BaseModel):
+class StyleProfileTweet(BaseModel):
     id: str
 
     text: str
@@ -24,15 +24,7 @@ class Tweet(BaseModel):
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
 
-class StyleProfile(BaseModel):
+class StyleProfile(StyleProfileSummary):
     """Full style profile with sampled tweets used for tone analysis."""
 
-    fetched_at: datetime = FieldInfo(alias="fetchedAt")
-
-    is_own_account: bool = FieldInfo(alias="isOwnAccount")
-
-    tweet_count: int = FieldInfo(alias="tweetCount")
-
-    tweets: List[Tweet]
-
-    x_username: str = FieldInfo(alias="xUsername")
+    tweets: List[StyleProfileTweet]

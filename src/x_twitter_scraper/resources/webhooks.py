@@ -69,7 +69,7 @@ class WebhooksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookCreateResponse:
         """
-        Create webhook
+        Registers an endpoint for signed event deliveries.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -114,7 +114,7 @@ class WebhooksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Webhook:
         """
-        Update webhook
+        Updates an endpoint, event selection, or delivery settings.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -155,7 +155,7 @@ class WebhooksResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListResponse:
-        """List webhooks"""
+        """Returns configured webhook endpoints and delivery states."""
         return self._get(
             "/webhooks",
             options=make_request_options(
@@ -176,7 +176,7 @@ class WebhooksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookDeactivateResponse:
         """
-        Deactivate webhook
+        Stops future deliveries to the selected webhook.
 
         Args:
           extra_headers: Send extra headers
@@ -209,7 +209,7 @@ class WebhooksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListDeliveriesResponse:
         """
-        List webhook deliveries
+        Returns recent delivery attempts and response outcomes.
 
         Args:
           extra_headers: Send extra headers
@@ -242,7 +242,7 @@ class WebhooksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookResumeResponse:
         """
-        Test and resume webhook endpoint
+        Tests the endpoint before resuming a manually paused webhook.
 
         Args:
           extra_headers: Send extra headers
@@ -275,7 +275,7 @@ class WebhooksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookTestResponse:
         """
-        Test webhook endpoint
+        Sends a signed test event to the configured endpoint.
 
         Args:
           extra_headers: Send extra headers
@@ -332,7 +332,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookCreateResponse:
         """
-        Create webhook
+        Registers an endpoint for signed event deliveries.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -377,7 +377,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Webhook:
         """
-        Update webhook
+        Updates an endpoint, event selection, or delivery settings.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -418,7 +418,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListResponse:
-        """List webhooks"""
+        """Returns configured webhook endpoints and delivery states."""
         return await self._get(
             "/webhooks",
             options=make_request_options(
@@ -439,7 +439,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookDeactivateResponse:
         """
-        Deactivate webhook
+        Stops future deliveries to the selected webhook.
 
         Args:
           extra_headers: Send extra headers
@@ -472,7 +472,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListDeliveriesResponse:
         """
-        List webhook deliveries
+        Returns recent delivery attempts and response outcomes.
 
         Args:
           extra_headers: Send extra headers
@@ -505,7 +505,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookResumeResponse:
         """
-        Test and resume webhook endpoint
+        Tests the endpoint before resuming a manually paused webhook.
 
         Args:
           extra_headers: Send extra headers
@@ -538,7 +538,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookTestResponse:
         """
-        Test webhook endpoint
+        Sends a signed test event to the configured endpoint.
 
         Args:
           extra_headers: Send extra headers

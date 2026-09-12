@@ -15,215 +15,85 @@ from x_twitter_scraper._streaming import Stream, SSEDecoder, AsyncStream, Server
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_basic(sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper) -> None:
-    def body() -> Iterator[bytes]:
-        yield b"event: completion\n"
-        yield b'data: {"foo":true}\n'
-        yield b"\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event == "completion"
-    assert sse.json() == {"foo": True}
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_data_missing_event(sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper) -> None:
-    def body() -> Iterator[bytes]:
-        yield b'data: {"foo":true}\n'
-        yield b"\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event is None
-    assert sse.json() == {"foo": True}
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_event_missing_data(sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper) -> None:
-    def body() -> Iterator[bytes]:
-        yield b"event: ping\n"
-        yield b"\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event == "ping"
-    assert sse.data == ""
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_events(sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper) -> None:
-    def body() -> Iterator[bytes]:
-        yield b"event: ping\n"
-        yield b"\n"
-        yield b"event: completion\n"
-        yield b"\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event == "ping"
-    assert sse.data == ""
-
-    sse = await iter_next(iterator)
-    assert sse.event == "completion"
-    assert sse.data == ""
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_events_with_data(
-    sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper
-) -> None:
-    def body() -> Iterator[bytes]:
-        yield b"event: ping\n"
-        yield b'data: {"foo":true}\n'
-        yield b"\n"
-        yield b"event: completion\n"
-        yield b'data: {"bar":false}\n'
-        yield b"\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event == "ping"
-    assert sse.json() == {"foo": True}
-
-    sse = await iter_next(iterator)
-    assert sse.event == "completion"
-    assert sse.json() == {"bar": False}
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_data_lines_with_empty_line(
-    sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper
-) -> None:
-    def body() -> Iterator[bytes]:
-        yield b"event: ping\n"
-        yield b"data: {\n"
-        yield b'data: "foo":\n'
-        yield b"data: \n"
-        yield b"data:\n"
-        yield b"data: true}\n"
-        yield b"\n\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event == "ping"
-    assert sse.json() == {"foo": True}
-    assert sse.data == '{\n"foo":\n\n\ntrue}'
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_data_json_escaped_double_new_line(
-    sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper
-) -> None:
-    def body() -> Iterator[bytes]:
-        yield b"event: ping\n"
-        yield b'data: {"foo": "my long\\n\\ncontent"}'
-        yield b"\n\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event == "ping"
-    assert sse.json() == {"foo": "my long\n\ncontent"}
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.asyncio
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multiple_data_lines(sync: bool, client: XTwitterScraper, async_client: AsyncXTwitterScraper) -> None:
-    def body() -> Iterator[bytes]:
-        yield b"event: ping\n"
-        yield b"data: {\n"
-        yield b'data: "foo":\n'
-        yield b"data: true}\n"
-        yield b"\n\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event == "ping"
-    assert sse.json() == {"foo": True}
-
-    await assert_empty_iter(iterator)
-
-
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_special_new_line_character(
+@pytest.mark.parametrize(
+    ("chunks", "expected"),
+    [
+        pytest.param(
+            [b"event: completion\n", b'data: {"foo":true}\n', b"\n"], [("completion", {"foo": True}, None)], id="basic"
+        ),
+        pytest.param([b'data: {"foo":true}\n', b"\n"], [(None, {"foo": True}, None)], id="data_missing_event"),
+        pytest.param([b"event: ping\n", b"\n"], [("ping", None, "")], id="event_missing_data"),
+        pytest.param(
+            [b"event: ping\n", b"\n", b"event: completion\n", b"\n"],
+            [("ping", None, ""), ("completion", None, "")],
+            id="multiple_events",
+        ),
+        pytest.param(
+            [b"event: ping\n", b'data: {"foo":true}\n', b"\n", b"event: completion\n", b'data: {"bar":false}\n', b"\n"],
+            [("ping", {"foo": True}, None), ("completion", {"bar": False}, None)],
+            id="multiple_events_with_data",
+        ),
+        pytest.param(
+            [b"event: ping\n", b"data: {\n", b'data: "foo":\n', b"data: \n", b"data:\n", b"data: true}\n", b"\n\n"],
+            [("ping", {"foo": True}, '{\n"foo":\n\n\ntrue}')],
+            id="multiple_data_lines_with_empty_line",
+        ),
+        pytest.param(
+            [b"event: ping\n", b'data: {"foo": "my long\\n\\ncontent"}', b"\n\n"],
+            [("ping", {"foo": "my long\n\ncontent"}, None)],
+            id="data_json_escaped_double_new_line",
+        ),
+        pytest.param(
+            [b"event: ping\n", b"data: {\n", b'data: "foo":\n', b"data: true}\n", b"\n\n"],
+            [("ping", {"foo": True}, None)],
+            id="multiple_data_lines",
+        ),
+        pytest.param(
+            [
+                b'data: {"content":" culpa"}\n',
+                b"\n",
+                b'data: {"content":" \xe2\x80\xa8"}\n',
+                b"\n",
+                b'data: {"content":"foo"}\n',
+                b"\n",
+            ],
+            [
+                (None, {"content": " culpa"}, None),
+                (None, {"content": " \u2028"}, None),
+                (None, {"content": "foo"}, None),
+            ],
+            id="special_new_line_character",
+        ),
+        pytest.param(
+            [
+                b'data: {"content":"',
+                b"\xd0",
+                b"\xb8\xd0\xb7\xd0",
+                b"\xb2\xd0\xb5\xd1\x81\xd1\x82\xd0\xbd\xd0\xb8",
+                b'"}\n',
+                b"\n",
+            ],
+            [(None, {"content": "известни"}, None)],
+            id="multi_byte_character_multiple_chunks",
+        ),
+    ],
+)
+async def test_stream_events(
     sync: bool,
+    chunks: list[bytes],
+    expected: list[tuple[str | None, object, str | None]],
     client: XTwitterScraper,
     async_client: AsyncXTwitterScraper,
 ) -> None:
-    def body() -> Iterator[bytes]:
-        yield b'data: {"content":" culpa"}\n'
-        yield b"\n"
-        yield b'data: {"content":" \xe2\x80\xa8"}\n'
-        yield b"\n"
-        yield b'data: {"content":"foo"}\n'
-        yield b"\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event is None
-    assert sse.json() == {"content": " culpa"}
-
-    sse = await iter_next(iterator)
-    assert sse.event is None
-    assert sse.json() == {"content": "  "}
-
-    sse = await iter_next(iterator)
-    assert sse.event is None
-    assert sse.json() == {"content": "foo"}
-
+    iterator = make_event_iterator(content=iter(chunks), sync=sync, client=client, async_client=async_client)
+    for event, json_data, raw_data in expected:
+        sse = await iter_next(iterator)
+        assert sse.event == event
+        if json_data is not None:
+            assert sse.json() == json_data
+        if raw_data is not None:
+            assert sse.data == raw_data
     await assert_empty_iter(iterator)
-
-
-@pytest.mark.parametrize("sync", [True, False], ids=["sync", "async"])
-async def test_multi_byte_character_multiple_chunks(
-    sync: bool,
-    client: XTwitterScraper,
-    async_client: AsyncXTwitterScraper,
-) -> None:
-    def body() -> Iterator[bytes]:
-        yield b'data: {"content":"'
-        # bytes taken from the string 'известни' and arbitrarily split
-        # so that some multi-byte characters span multiple chunks
-        yield b"\xd0"
-        yield b"\xb8\xd0\xb7\xd0"
-        yield b"\xb2\xd0\xb5\xd1\x81\xd1\x82\xd0\xbd\xd0\xb8"
-        yield b'"}\n'
-        yield b"\n"
-
-    iterator = make_event_iterator(content=body(), sync=sync, client=client, async_client=async_client)
-
-    sse = await iter_next(iterator)
-    assert sse.event is None
-    assert sse.json() == {"content": "известни"}
 
 
 def test_decoder_handles_comments_ids_retries_and_unknown_fields() -> None:
@@ -254,10 +124,9 @@ async def to_aiter(iter: Iterator[bytes]) -> AsyncIterator[bytes]:
 
 
 async def iter_next(iter: Iterator[ServerSentEvent] | AsyncIterator[ServerSentEvent]) -> ServerSentEvent:
-    if isinstance(iter, AsyncIterator):
-        return await iter.__anext__()
-
-    return next(iter)
+    event = await iter.__anext__() if isinstance(iter, AsyncIterator) else next(iter)
+    assert isinstance(event, ServerSentEvent)
+    return event
 
 
 async def assert_empty_iter(iter: Iterator[ServerSentEvent] | AsyncIterator[ServerSentEvent]) -> None:

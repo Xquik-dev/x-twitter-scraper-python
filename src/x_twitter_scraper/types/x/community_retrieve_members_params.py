@@ -18,7 +18,7 @@ class CommunityRetrieveMembersParams(TypedDict, total=False):
     """Match any comma-separated or line-separated bio term, ignoring case."""
 
     cursor: str
-    """Pagination cursor"""
+    """Pagination cursor for collection results."""
 
     has_location: Annotated[bool, PropertyInfo(alias="hasLocation")]
     """Only return profiles with a location."""
@@ -33,7 +33,7 @@ class CommunityRetrieveMembersParams(TypedDict, total=False):
     """Maximum follower count. Missing counts pass this maximum."""
 
     max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
-    """Maximum following count."""
+    """Profiles may follow at most this many accounts."""
 
     max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
     """Maximum post count. maxPosts is also accepted."""
@@ -45,18 +45,13 @@ class CommunityRetrieveMembersParams(TypedDict, total=False):
     """Minimum follower count. Filtering happens before billing."""
 
     min_following: Annotated[int, PropertyInfo(alias="minFollowing")]
-    """Minimum following count."""
+    """Profiles must follow at least this many accounts."""
 
     min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
     """Minimum post count. minPosts is also accepted."""
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Items per page (20-200, default 20).
-
-    This is an upper bound for paid authenticated calls: remaining credits can
-    reduce the returned page size, and zero affordable results returns 402
-    insufficient_credits.
-    """
+    """Maximum user profiles per page (1-200, default 20)."""
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]
     """Match a username substring, ignoring case."""

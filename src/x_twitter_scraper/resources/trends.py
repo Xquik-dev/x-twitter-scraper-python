@@ -60,7 +60,7 @@ class TrendsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
         """
-        Get trending hashtags and topics by region (alias)
+        Returns current regional trends through the compatibility route.
 
         Args:
           count: Number of trending topics returned (1-50, default 30)
@@ -129,7 +129,7 @@ class AsyncTrendsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
         """
-        Get trending hashtags and topics by region (alias)
+        Returns current regional trends through the compatibility route.
 
         Args:
           count: Number of trending topics returned (1-50, default 30)

@@ -4,7 +4,7 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
 
 from ..._models import BaseModel
 from .user_profile import UserProfile
@@ -13,9 +13,9 @@ __all__ = ["PaginatedUsers"]
 
 
 class PaginatedUsers(BaseModel):
-    """Paginated user profiles.
+    """Profile coverage preserves shape, billing, aliases, and filters.
 
-    No-mode follower, following, and verified follower requests merge independent views automatically. Response fields, page size, aliases, filters, and per-returned-profile billing stay unchanged. Existing unprefixed cursors retain legacy behavior. Follow next_cursor while has_next_page is true.
+    Follow next_cursor while the response reports more pages. Unprefixed cursors remain legacy.
     """
 
     has_next_page: bool
@@ -23,3 +23,5 @@ class PaginatedUsers(BaseModel):
     next_cursor: str
 
     users: List[UserProfile]
+
+    filtered_count: Optional[int] = None

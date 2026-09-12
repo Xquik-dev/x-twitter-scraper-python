@@ -13,6 +13,7 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
+from x_twitter_scraper._utils import parse_date
 from x_twitter_scraper.types.shared import PaginatedTweets
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
@@ -37,8 +38,17 @@ class TestTweets:
             community_id="321669910225",
             q="q",
             cursor="cursor",
+            language="language",
+            media_type="images",
+            min_likes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
             page_size=1,
             query_type="Latest",
+            since_date=parse_date("2019-12-27"),
+            until_date=parse_date("2019-12-27"),
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -84,7 +94,16 @@ class TestTweets:
         tweet = client.x.communities.tweets.list_by_community(
             id="id",
             cursor="cursor",
+            language="language",
+            media_type="images",
+            min_likes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
             page_size=1,
+            since_date=parse_date("2019-12-27"),
+            until_date=parse_date("2019-12-27"),
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -144,8 +163,17 @@ class TestAsyncTweets:
             community_id="321669910225",
             q="q",
             cursor="cursor",
+            language="language",
+            media_type="images",
+            min_likes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
             page_size=1,
             query_type="Latest",
+            since_date=parse_date("2019-12-27"),
+            until_date=parse_date("2019-12-27"),
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -191,7 +219,16 @@ class TestAsyncTweets:
         tweet = await async_client.x.communities.tweets.list_by_community(
             id="id",
             cursor="cursor",
+            language="language",
+            media_type="images",
+            min_likes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
             page_size=1,
+            since_date=parse_date("2019-12-27"),
+            until_date=parse_date("2019-12-27"),
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 

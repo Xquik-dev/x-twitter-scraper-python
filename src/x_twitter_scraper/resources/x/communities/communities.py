@@ -6,6 +6,8 @@
 
 from __future__ import annotations
 
+from typing import Union
+from datetime import date
 from typing_extensions import Literal
 
 import httpx
@@ -98,7 +100,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityCreateResponse:
         """
-        Create community
+        Creates an X Community through a connected account.
 
         Args:
           account: X account (@username or ID) creating the community
@@ -115,7 +117,7 @@ class CommunitiesResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             "/x/communities",
             body=maybe_transform(
@@ -147,7 +149,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityDeleteResponse:
         """
-        Delete community
+        Deletes an owned X Community through a connected account.
 
         Args:
           account: X account (@username or ID) deleting the community
@@ -164,7 +166,7 @@ class CommunitiesResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._delete(
             path_template("/x/communities/{id}", id=id),
             body=maybe_transform(
@@ -192,7 +194,7 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community name, description and member count
+        Returns public identity and membership counts for one community.
 
         Args:
           extra_headers: Send extra headers
@@ -241,12 +243,12 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        List members of a community
+        Returns public member profiles for one community.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for collection results.
 
           has_location: Only return profiles with a location.
 
@@ -256,7 +258,7 @@ class CommunitiesResource(SyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -264,13 +266,11 @@ class CommunitiesResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Items per page (20-200, default 20). This is an upper bound for paid
-              authenticated calls: remaining credits can reduce the returned page size, and
-              zero affordable results returns 402 insufficient_credits.
+          page_size: Maximum user profiles per page (1-200, default 20).
 
           username_contains: Match a username substring, ignoring case.
 
@@ -347,12 +347,12 @@ class CommunitiesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        List moderators of a community
+        Returns public moderator profiles for one community.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
-          cursor: Pagination cursor for community moderators
+          cursor: Pagination cursor for collection results.
 
           has_location: Only return profiles with a location.
 
@@ -362,7 +362,7 @@ class CommunitiesResource(SyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -370,7 +370,7 @@ class CommunitiesResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -427,8 +427,17 @@ class CommunitiesResource(SyncAPIResource):
         community_id: str,
         q: str,
         cursor: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        min_likes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -436,9 +445,8 @@ class CommunitiesResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """Returns tweets, not community records.
-
-        Requires a Community ID.
+        """
+        Returns one tweet page, not community records.
 
         Args:
           community_id: Numeric ID of the community whose posts to search
@@ -447,11 +455,29 @@ class CommunitiesResource(SyncAPIResource):
 
           cursor: Pagination cursor for community search
 
+          language: Filter by language. Alias `lang` is accepted.
+
+          media_type: Filter media. Aliases: has_video, has_media.
+
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
+
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
           query_type: Sort order (Latest or Top)
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -473,8 +499,17 @@ class CommunitiesResource(SyncAPIResource):
                         "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "language": language,
+                        "media_type": media_type,
+                        "min_likes": min_likes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
                         "query_type": query_type,
+                        "since_date": since_date,
+                        "until_date": until_date,
+                        "verified_only": verified_only,
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),
@@ -528,7 +563,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityCreateResponse:
         """
-        Create community
+        Creates an X Community through a connected account.
 
         Args:
           account: X account (@username or ID) creating the community
@@ -545,7 +580,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             "/x/communities",
             body=await async_maybe_transform(
@@ -577,7 +612,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityDeleteResponse:
         """
-        Delete community
+        Deletes an owned X Community through a connected account.
 
         Args:
           account: X account (@username or ID) deleting the community
@@ -594,7 +629,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._delete(
             path_template("/x/communities/{id}", id=id),
             body=await async_maybe_transform(
@@ -622,7 +657,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityRetrieveInfoResponse:
         """
-        Get community name, description and member count
+        Returns public identity and membership counts for one community.
 
         Args:
           extra_headers: Send extra headers
@@ -671,12 +706,12 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        List members of a community
+        Returns public member profiles for one community.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
-          cursor: Pagination cursor
+          cursor: Pagination cursor for collection results.
 
           has_location: Only return profiles with a location.
 
@@ -686,7 +721,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -694,13 +729,11 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Items per page (20-200, default 20). This is an upper bound for paid
-              authenticated calls: remaining credits can reduce the returned page size, and
-              zero affordable results returns 402 insufficient_credits.
+          page_size: Maximum user profiles per page (1-200, default 20).
 
           username_contains: Match a username substring, ignoring case.
 
@@ -777,12 +810,12 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        List moderators of a community
+        Returns public moderator profiles for one community.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
-          cursor: Pagination cursor for community moderators
+          cursor: Pagination cursor for collection results.
 
           has_location: Only return profiles with a location.
 
@@ -792,7 +825,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -800,7 +833,7 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -857,8 +890,17 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         community_id: str,
         q: str,
         cursor: str | Omit = omit,
+        language: str | Omit = omit,
+        media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        min_likes: int | Omit = omit,
+        min_replies: int | Omit = omit,
+        min_retweets: int | Omit = omit,
+        min_views: int | Omit = omit,
         page_size: int | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
+        since_date: Union[str, date] | Omit = omit,
+        until_date: Union[str, date] | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -866,9 +908,8 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """Returns tweets, not community records.
-
-        Requires a Community ID.
+        """
+        Returns one tweet page, not community records.
 
         Args:
           community_id: Numeric ID of the community whose posts to search
@@ -877,11 +918,29 @@ class AsyncCommunitiesResource(AsyncAPIResource):
 
           cursor: Pagination cursor for community search
 
+          language: Filter by language. Alias `lang` is accepted.
+
+          media_type: Filter media. Aliases: has_video, has_media.
+
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_replies: Minimum replies threshold.
+
+          min_retweets: Minimum retweets threshold.
+
+          min_views: Minimum view count threshold.
+
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
           query_type: Sort order (Latest or Top)
+
+          since_date: Start date in YYYY-MM-DD format.
+
+          until_date: End date in YYYY-MM-DD format.
+
+          verified_only: Only return tweets from verified authors.
 
           extra_headers: Send extra headers
 
@@ -903,8 +962,17 @@ class AsyncCommunitiesResource(AsyncAPIResource):
                         "community_id": community_id,
                         "q": q,
                         "cursor": cursor,
+                        "language": language,
+                        "media_type": media_type,
+                        "min_likes": min_likes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
                         "page_size": page_size,
                         "query_type": query_type,
+                        "since_date": since_date,
+                        "until_date": until_date,
+                        "verified_only": verified_only,
                     },
                     community_retrieve_search_params.CommunityRetrieveSearchParams,
                 ),

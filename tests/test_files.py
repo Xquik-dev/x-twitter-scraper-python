@@ -3,8 +3,11 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import io
-from typing import Any, cast
+import os
+from copy import deepcopy
+from typing import cast
 from pathlib import Path
+from typing_extensions import override
 
 import anyio
 import pytest
@@ -18,95 +21,82 @@ from x_twitter_scraper._files import (
     assert_is_file_content,
     async_read_file_content,
 )
+from x_twitter_scraper._types import FileContent, RequestFiles
 from x_twitter_scraper._utils import extract_files
+
+
+class BytesPath(os.PathLike[bytes]):
+    @override
+    def __fspath__(self) -> bytes:
+        return b"invalid-byte-path"
+
 
 readme_path = Path(__file__).parent.parent.joinpath("README.md")
 
 
-def test_pathlib_includes_file_name() -> None:
-    result = to_httpx_files({"file": readme_path})
-    print(result)
-    assert result == IsDict({"file": IsTuple("README.md", IsBytes())})
-
-
-def test_tuple_input() -> None:
-    result = to_httpx_files([("file", readme_path)])
-    print(result)
-    assert result == IsList(IsTuple("file", IsTuple("README.md", IsBytes())))
-
-
+@pytest.mark.parametrize("use_async", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize(
+    "files, expected",
+    [
+        ({"file": readme_path}, IsDict({"file": IsTuple("README.md", IsBytes())})),
+        ({"file": anyio.Path(readme_path)}, IsDict({"file": IsTuple("README.md", IsBytes())})),
+        ([("file", readme_path)], IsList(IsTuple("file", IsTuple("README.md", IsBytes())))),
+        (None, None),
+        ({"f": (None, b"x")}, {"f": (None, b"x")}),
+        ({"f": ("x", b"x", "text/plain", {"x": "y"})}, {"f": ("x", b"x", "text/plain", {"x": "y"})}),
+        ({"file": b"contents"}, {"file": b"contents"}),
+        (
+            {"file": ("custom.md", readme_path, "text/markdown")},
+            IsDict({"file": IsTuple("custom.md", IsBytes(), "text/markdown")}),
+        ),
+    ],
+    ids=["path", "anyio-path", "sequence", "none", "unnamed-tuple", "headers-tuple", "bytes", "named-tuple"],
+)
 @pytest.mark.asyncio
-async def test_async_pathlib_includes_file_name() -> None:
-    result = await async_to_httpx_files({"file": readme_path})
+async def test_upload_files(files: RequestFiles | None, expected: object, use_async: bool) -> None:
+    result = await async_to_httpx_files(files) if use_async else to_httpx_files(files)
     print(result)
-    assert result == IsDict({"file": IsTuple("README.md", IsBytes())})
+    if expected is None:
+        assert result is None
+    else:
+        assert result == expected
 
 
+@pytest.mark.parametrize("use_async", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize(
+    "files, error",
+    [
+        ("invalid", "Unexpected file type input"),
+        ({"file": BytesPath()}, "File paths must resolve to strings"),
+        ({"file": "foo"}, "Expected file types input to be a FileContent type or to be a tuple"),
+    ],
+    ids=["container", "byte-path", "content"],
+)
 @pytest.mark.asyncio
-async def test_async_supports_anyio_path() -> None:
-    result = await async_to_httpx_files({"file": anyio.Path(readme_path)})
-    print(result)
-    assert result == IsDict({"file": IsTuple("README.md", IsBytes())})
+async def test_invalid_upload_files(files: object, error: str, use_async: bool) -> None:
+    with pytest.raises(TypeError, match=error):
+        if use_async:
+            await async_to_httpx_files(cast(RequestFiles, files))
+        else:
+            to_httpx_files(cast(RequestFiles, files))
 
 
+@pytest.mark.parametrize("use_async", [False, True], ids=["sync", "async"])
+@pytest.mark.parametrize("file, expected", [(b"contents", b"contents"), (readme_path, readme_path.read_bytes())])
 @pytest.mark.asyncio
-async def test_async_tuple_input() -> None:
-    result = await async_to_httpx_files([("file", readme_path)])
-    print(result)
-    assert result == IsList(IsTuple("file", IsTuple("README.md", IsBytes())))
+async def test_read_file_content(file: FileContent, expected: bytes, use_async: bool) -> None:
+    result = await async_read_file_content(file) if use_async else read_file_content(file)
+    assert result == expected
 
 
-def test_string_not_allowed() -> None:
-    with pytest.raises(TypeError, match="Expected file types input to be a FileContent type or to be a tuple"):
-        to_httpx_files(
-            {
-                "file": "foo",  # type: ignore
-            }
-        )
-
-
-def test_none_and_bytes_inputs() -> None:
-    assert to_httpx_files(None) is None
-    assert to_httpx_files({"file": b"contents"}) == {"file": b"contents"}
-    assert read_file_content(b"contents") == b"contents"
+def test_accepts_file_content() -> None:
     assert_is_file_content(io.BytesIO(b"contents"))
 
 
-def test_tuple_content_and_direct_path_reads() -> None:
-    result = to_httpx_files({"file": ("custom.md", readme_path, "text/markdown")})
-    assert result == IsDict({"file": IsTuple("custom.md", IsBytes(), "text/markdown")})
-    assert read_file_content(readme_path) == readme_path.read_bytes()
-
-
-def test_invalid_container_and_file_content() -> None:
-    with pytest.raises(TypeError, match="Unexpected file type input"):
-        to_httpx_files(cast(Any, "invalid"))
-
-    with pytest.raises(RuntimeError, match="Expected file input"):
-        assert_is_file_content("invalid")
-
-    with pytest.raises(RuntimeError, match="Expected entry at `upload`"):
-        assert_is_file_content("invalid", key="upload")
-
-
-@pytest.mark.asyncio
-async def test_async_none_bytes_and_direct_reads() -> None:
-    assert await async_to_httpx_files(None) is None
-    assert await async_to_httpx_files({"file": b"contents"}) == {"file": b"contents"}
-    assert await async_read_file_content(b"contents") == b"contents"
-    assert await async_read_file_content(readme_path) == readme_path.read_bytes()
-
-
-@pytest.mark.asyncio
-async def test_async_tuple_and_invalid_container() -> None:
-    result = await async_to_httpx_files({"file": ("custom.md", readme_path, "text/markdown")})
-    assert result == IsDict({"file": IsTuple("custom.md", IsBytes(), "text/markdown")})
-
-    with pytest.raises(TypeError, match="Unexpected file type input"):
-        await async_to_httpx_files(cast(Any, "invalid"))
-
-    with pytest.raises(TypeError, match="Expected file types input"):
-        await async_to_httpx_files({"file": cast(Any, "invalid")})
+@pytest.mark.parametrize("key, error", [(None, "Expected file input"), ("upload", "Expected entry at `upload`")])
+def test_invalid_file_content(key: str | None, error: str) -> None:
+    with pytest.raises(RuntimeError, match=error):
+        assert_is_file_content("invalid", key=key)
 
 
 def assert_different_identities(obj1: object, obj2: object) -> None:
@@ -115,17 +105,23 @@ def assert_different_identities(obj1: object, obj2: object) -> None:
 
 
 class TestDeepcopyWithPaths:
-    def test_copies_top_level_dict(self) -> None:
-        original = {"file": b"data", "other": "value"}
-        result = deepcopy_with_paths(original, [["file"]])
+    @pytest.mark.parametrize(
+        "original, paths",
+        [
+            ({"file": b"data", "other": "value"}, [["file"]]),
+            ({"file": b"contents"}, [["file"]]),
+            ({"a": b"file1", "b": b"file2", "c": "unchanged"}, [["a"], ["b"]]),
+            ({"foo": {"bar": 1}}, [["foo"]]),
+            ({"foo": [{"bar": 1}]}, [["foo", "bar"]]),
+            ({"foo": "bar"}, [["missing", "file"]]),
+        ],
+        ids=["top-level", "file-reference", "multiple-paths", "nested-dict", "list-without-array", "missing-key"],
+    )
+    def test_copies_mapping_preserving_values(self, original: dict[str, object], paths: list[list[str]]) -> None:
+        result = deepcopy_with_paths(original, paths)
         assert_different_identities(result, original)
-
-    def test_file_value_is_same_reference(self) -> None:
-        file_bytes = b"contents"
-        original = {"file": file_bytes}
-        result = deepcopy_with_paths(original, [["file"]])
-        assert_different_identities(result, original)
-        assert result["file"] is file_bytes
+        for key, value in original.items():
+            assert result[key] is value
 
     def test_list_popped_wholesale(self) -> None:
         files = [b"f1", b"f2"]
@@ -153,72 +149,29 @@ class TestDeepcopyWithPaths:
         result = deepcopy_with_paths(original, [])
         assert result is original
 
-    def test_multiple_paths(self) -> None:
-        f1 = b"file1"
-        f2 = b"file2"
-        original = {"a": f1, "b": f2, "c": "unchanged"}
-        result = deepcopy_with_paths(original, [["a"], ["b"]])
-        assert_different_identities(result, original)
-        assert result["a"] is f1
-        assert result["b"] is f2
-        assert result["c"] is original["c"]
-
-    def test_preserves_nested_containers_outside_paths(self) -> None:
-        nested = {"bar": 1}
-        original = {"foo": nested}
-        result = deepcopy_with_paths(original, [["foo"]])
-        assert_different_identities(result, original)
-        assert result["foo"] is nested
-
-    def test_preserves_lists_without_array_paths(self) -> None:
-        nested: list[dict[str, int]] = [{"bar": 1}]
-        original = {"foo": nested}
-        result = deepcopy_with_paths(original, [["foo", "bar"]])
-        assert_different_identities(result, original)
-        assert result["foo"] is nested
-
-    def test_ignores_missing_mapping_keys(self) -> None:
-        original = {"foo": "bar"}
-        result = deepcopy_with_paths(original, [["missing", "file"]])
-        assert_different_identities(result, original)
-
-    def test_extract_files_does_not_mutate_original_top_level(self) -> None:
-        file_bytes = b"contents"
-        original = {"file": file_bytes, "other": "value"}
-
-        copied = deepcopy_with_paths(original, [["file"]])
-        extracted = extract_files(copied, paths=[["file"]])
-
-        assert extracted == [("file", file_bytes)]
-        assert original == {"file": file_bytes, "other": "value"}
-        assert copied == {"other": "value"}
-
-    def test_extract_files_does_not_mutate_original_nested_array_path(self) -> None:
-        file1 = b"f1"
-        file2 = b"f2"
-        original = {
-            "items": [
-                {"file": file1, "extra": 1},
-                {"file": file2, "extra": 2},
-            ],
-            "title": "example",
-        }
-
-        copied = deepcopy_with_paths(original, [["items", "<array>", "file"]])
-        extracted = extract_files(copied, paths=[["items", "<array>", "file"]])
-
-        assert [entry for _, entry in extracted] == [file1, file2]
-        assert original == {
-            "items": [
-                {"file": file1, "extra": 1},
-                {"file": file2, "extra": 2},
-            ],
-            "title": "example",
-        }
-        assert copied == {
-            "items": [
-                {"extra": 1},
-                {"extra": 2},
-            ],
-            "title": "example",
-        }
+    @pytest.mark.parametrize(
+        "original, paths, expected_files, remaining",
+        [
+            (
+                {"file": b"contents", "other": "value"},
+                [["file"]],
+                [("file", b"contents")],
+                {"other": "value"},
+            ),
+            (
+                {"items": [{"file": b"f1", "extra": 1}, {"file": b"f2", "extra": 2}], "title": "example"},
+                [["items", "<array>", "file"]],
+                [("items[][file]", b"f1"), ("items[][file]", b"f2")],
+                {"items": [{"extra": 1}, {"extra": 2}], "title": "example"},
+            ),
+        ],
+        ids=["top-level", "nested-array"],
+    )
+    def test_extract_files_preserves_original(
+        self, original: dict[str, object], paths: list[list[str]], expected_files: object, remaining: object
+    ) -> None:
+        before = deepcopy(original)
+        copied = deepcopy_with_paths(original, paths)
+        assert extract_files(copied, paths=paths) == expected_files
+        assert original == before
+        assert copied == remaining

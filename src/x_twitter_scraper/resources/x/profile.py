@@ -69,7 +69,7 @@ class ProfileResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ProfileUpdateResponse:
         """
-        Update X profile
+        Updates editable fields on a connected X profile.
 
         Args:
           account: X account (@username or ID) to update profile
@@ -88,7 +88,7 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._patch(
             "/x/profile",
             body=maybe_transform(
@@ -121,7 +121,7 @@ class ProfileResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ProfileUpdateAvatarResponse:
         """
-        Update profile avatar
+        Replaces the avatar on a connected X profile.
 
         Args:
           account: X account (@username or ID) receiving avatar from URL
@@ -136,7 +136,7 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -174,7 +174,7 @@ class ProfileResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ProfileUpdateBannerResponse:
         """
-        Update profile banner
+        Replaces the banner on a connected X profile.
 
         Args:
           account: X account (@username or ID) receiving banner from URL
@@ -189,7 +189,7 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -253,7 +253,7 @@ class AsyncProfileResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ProfileUpdateResponse:
         """
-        Update X profile
+        Updates editable fields on a connected X profile.
 
         Args:
           account: X account (@username or ID) to update profile
@@ -272,7 +272,7 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._patch(
             "/x/profile",
             body=await async_maybe_transform(
@@ -305,7 +305,7 @@ class AsyncProfileResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ProfileUpdateAvatarResponse:
         """
-        Update profile avatar
+        Replaces the avatar on a connected X profile.
 
         Args:
           account: X account (@username or ID) receiving avatar from URL
@@ -320,7 +320,7 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -358,7 +358,7 @@ class AsyncProfileResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ProfileUpdateBannerResponse:
         """
-        Update profile banner
+        Replaces the banner on a connected X profile.
 
         Args:
           account: X account (@username or ID) receiving banner from URL
@@ -373,7 +373,7 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         body = deepcopy_with_paths(
             {
                 "account": account,
