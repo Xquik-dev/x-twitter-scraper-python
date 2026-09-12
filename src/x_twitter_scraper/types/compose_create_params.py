@@ -21,7 +21,7 @@ class ComposePrepareRequest(TypedDict, total=False):
     """Subject for the post."""
 
     goal: Literal["engagement", "followers", "authority", "conversation"]
-    """Editorial goal used to order the rules and questions."""
+    """User goal used for one follow-up question."""
 
     style_username: Annotated[str, PropertyInfo(alias="styleUsername")]
     """Username from a style analysis saved to this account."""
@@ -29,7 +29,7 @@ class ComposePrepareRequest(TypedDict, total=False):
 
 class ComposeRefineRequest(TypedDict, total=False):
     goal: Required[Literal["engagement", "followers", "authority", "conversation"]]
-    """Editorial goal for the guidance."""
+    """User goal interpreted against published ranking signals."""
 
     step: Required[Literal["refine"]]
 
@@ -37,7 +37,7 @@ class ComposeRefineRequest(TypedDict, total=False):
     """Requested writing tone."""
 
     topic: Required[str]
-    """Subject for the post."""
+    """Subject to refine into a post."""
 
     additional_context: Annotated[str, PropertyInfo(alias="additionalContext")]
     """Audience, constraints, sources, or other writing context."""
@@ -51,12 +51,12 @@ class ComposeRefineRequest(TypedDict, total=False):
 
 class ComposeScoreRequest(TypedDict, total=False):
     draft: Required[str]
-    """Full post text for deterministic editorial checks."""
+    """Full post text. The endpoint never assigns a ranking score."""
 
     step: Required[Literal["score"]]
 
     has_link: Annotated[bool, PropertyInfo(alias="hasLink")]
-    """True when a separate link card is attached."""
+    """Accepted for backward compatibility. No guidance uses it."""
 
     has_media: Annotated[bool, PropertyInfo(alias="hasMedia")]
     """Accepted for backward compatibility. Text checks ignore this field."""

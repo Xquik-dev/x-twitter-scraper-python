@@ -131,6 +131,18 @@ class TestUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_retrieve_batch_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_batch(
+            ids="ids",
+            max_followers=0,
+            min_account_age_days=0,
+            min_followers=0,
+            verified_only=True,
+        )
+        assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_retrieve_batch(self, client: XTwitterScraper) -> None:
         response = client.x.users.with_raw_response.retrieve_batch(
             ids="ids",
@@ -183,7 +195,7 @@ class TestUsers:
             min_following=0,
             min_statuses=0,
             mode="standard",
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -249,7 +261,7 @@ class TestUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -318,7 +330,7 @@ class TestUsers:
             min_following=0,
             min_statuses=0,
             mode="standard",
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -394,7 +406,7 @@ class TestUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -490,7 +502,7 @@ class TestUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -586,7 +598,7 @@ class TestUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -685,7 +697,7 @@ class TestUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -771,6 +783,7 @@ class TestUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -840,7 +853,7 @@ class TestUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -929,7 +942,7 @@ class TestUsers:
             min_following=0,
             min_statuses=0,
             mode="standard",
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -1078,6 +1091,18 @@ class TestAsyncUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    async def test_method_retrieve_batch_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_batch(
+            ids="ids",
+            max_followers=0,
+            min_account_age_days=0,
+            min_followers=0,
+            verified_only=True,
+        )
+        assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     async def test_raw_response_retrieve_batch(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.users.with_raw_response.retrieve_batch(
             ids="ids",
@@ -1130,7 +1155,7 @@ class TestAsyncUsers:
             min_following=0,
             min_statuses=0,
             mode="standard",
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -1196,7 +1221,7 @@ class TestAsyncUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -1265,7 +1290,7 @@ class TestAsyncUsers:
             min_following=0,
             min_statuses=0,
             mode="standard",
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -1341,7 +1366,7 @@ class TestAsyncUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -1437,7 +1462,7 @@ class TestAsyncUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -1533,7 +1558,7 @@ class TestAsyncUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -1632,7 +1657,7 @@ class TestAsyncUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -1718,6 +1743,7 @@ class TestAsyncUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -1787,7 +1813,7 @@ class TestAsyncUsers:
             media_type="images",
             mentioning="mentioning",
             min_bookmarks=0,
-            min_faves=0,
+            min_likes=0,
             min_quotes=0,
             min_replies=0,
             min_retweets=0,
@@ -1876,7 +1902,7 @@ class TestAsyncUsers:
             min_following=0,
             min_statuses=0,
             mode="standard",
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",

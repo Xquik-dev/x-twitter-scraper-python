@@ -13,6 +13,7 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
+from x_twitter_scraper._utils import parse_date
 from x_twitter_scraper.types.x import (
     CommunityCreateResponse,
     CommunityDeleteResponse,
@@ -198,7 +199,7 @@ class TestCommunities:
             min_followers=0,
             min_following=0,
             min_statuses=0,
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -320,8 +321,17 @@ class TestCommunities:
             community_id="321669910225",
             q="q",
             cursor="cursor",
+            language="language",
+            media_type="images",
+            min_likes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
             page_size=1,
             query_type="Latest",
+            since_date=parse_date("2019-12-27"),
+            until_date=parse_date("2019-12-27"),
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, community, path=["response"])
 
@@ -531,7 +541,7 @@ class TestAsyncCommunities:
             min_followers=0,
             min_following=0,
             min_statuses=0,
-            page_size=20,
+            page_size=1,
             username_contains="usernameContains",
             verified_only=True,
             verified_type="verifiedType",
@@ -653,8 +663,17 @@ class TestAsyncCommunities:
             community_id="321669910225",
             q="q",
             cursor="cursor",
+            language="language",
+            media_type="images",
+            min_likes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
             page_size=1,
             query_type="Latest",
+            since_date=parse_date("2019-12-27"),
+            until_date=parse_date("2019-12-27"),
+            verified_only=True,
         )
         assert_matches_type(PaginatedTweets, community, path=["response"])
 

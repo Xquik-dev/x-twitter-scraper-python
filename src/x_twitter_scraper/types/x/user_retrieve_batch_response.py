@@ -4,7 +4,7 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
 from typing_extensions import Literal
 
 from ..._models import BaseModel
@@ -14,9 +14,9 @@ __all__ = ["UserRetrieveBatchResponse"]
 
 
 class UserRetrieveBatchResponse(BaseModel):
-    """Batch user lookup results.
+    """Batch lookup preserves first-seen ID order and ignores duplicate IDs.
 
-    Duplicate requested IDs are ignored while preserving first-seen order. unavailable_ids identifies processed IDs with no returned profile. unprocessed_ids identifies IDs skipped when available credits limit processing.
+    unavailable_ids were processed without profiles. unprocessed_ids were credit-limited.
     """
 
     has_next_page: Literal[False]
@@ -44,3 +44,6 @@ class UserRetrieveBatchResponse(BaseModel):
     """
 
     users: List[UserProfile]
+
+    filtered_count: Optional[int] = None
+    """Profiles rejected by the requested filters."""

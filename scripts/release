@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
+cd "$(dirname "$0")/.."
+export UV_PYTHON=3.14.7
+trap 'status=$?; if ((status)); then printf "{\"status\":\"failed\",\"exitCode\":%d}\n" "$status"; fi' EXIT
+mode="${1:?Use prepare, publish, or verify.}"
+shift
+case "$mode" in prepare|publish|verify) ;; *) echo 'Use prepare, publish, or verify.' >&2; exit 2 ;; esac
+revision=$(git rev-parse HEAD)
+version=$(uv version --short)
+artifacts="$PWD/dist/releases/$revision"
+files=("$artifacts/x_twitter_scraper-$version-py3-none-any.whl" "$artifacts/x_twitter_scraper-$version.tar.gz")
+[[ -z "$(git status --porcelain)" ]] || { echo 'Commit verified changes before preparing a release.' >&2; exit 1; }
+if [[ "$mode" != verify ]]; then
+  parent_coverage="${1:?Pass verified parent coverage JSON.}"
+  parent_revision="${2:-HEAD^}"
+  bun run check:all "$parent_coverage" "$parent_revision" >&2
+  bun run build >&2
+  SOURCE_DATE_EPOCH=946684800 uv build --no-sources --out-dir "$artifacts" >&2
+  actual=("$artifacts"/*)
+  [[ "${#actual[@]}" == 2 && -f "${files[0]}" && -f "${files[1]}" ]] || { echo 'The release directory must contain exactly its wheel and source archive.' >&2; exit 1; }
+  uv run --locked --all-extras twine check "${files[@]}" >&2
+fi
+[[ "$(git rev-parse HEAD)" == "$revision" && -z "$(git status --porcelain)" ]] || { echo 'Sources changed during release preparation.' >&2; exit 1; }
+if [[ "$mode" == publish ]]; then
+  [[ "$(git rev-parse "v$version^{commit}")" == "$revision" ]] || { echo 'The version tag must identify this release commit.' >&2; exit 1; }
+  git fetch origin main "refs/tags/v$version:refs/tags/v$version" >&2
+  git merge-base --is-ancestor "$revision" origin/main || { echo 'Merge the release into main first.' >&2; exit 1; }
+  (
+    if [[ -n "${XQUIK_PYPI_KEYCHAIN_SERVICE:-}" ]]; then
+      UV_PUBLISH_TOKEN=$(security find-generic-password -s "$XQUIK_PYPI_KEYCHAIN_SERVICE" -w)
+      export UV_PUBLISH_TOKEN
+    fi
+    uv publish --publish-url https://upload.pypi.org/legacy/ --check-url https://pypi.org/simple/ "${files[@]}" >&2
+  )
+fi
+if [[ "$mode" != prepare ]]; then
+  uv run --locked --all-extras python scripts/verify_release.py "$version" "$artifacts"
+  uv run --no-project --isolated --refresh-package x-twitter-scraper --default-index https://pypi.org/simple/ --with "x-twitter-scraper==$version" python -c \
+    'import sys, importlib.metadata, x_twitter_scraper; assert importlib.metadata.version("x-twitter-scraper") == sys.argv[1]; assert x_twitter_scraper.__version__ == sys.argv[1]; assert callable(x_twitter_scraper.XTwitterScraper); assert callable(x_twitter_scraper.AsyncXTwitterScraper)' "$version" >&2
+fi
+uv run --locked --all-extras python -c 'import json,sys; print(json.dumps(dict(status="completed",action=sys.argv[1],version=sys.argv[2],commit=sys.argv[3],artifacts=sys.argv[4])))' "$mode" "$version" "$revision" "$artifacts"

@@ -61,7 +61,7 @@ class EventsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> EventDetail:
         """
-        Get event
+        Returns one monitor event owned by the account.
 
         Args:
           extra_headers: Send extra headers
@@ -98,19 +98,17 @@ class EventsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> EventListResponse:
         """
-        List events
+        Returns monitor events with cursor pagination and filters.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
           event_type: Filter events by type
 
           keyword_monitor_id: Keyword monitor ID.
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           monitor_id: Account monitor ID.
 
@@ -178,7 +176,7 @@ class AsyncEventsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> EventDetail:
         """
-        Get event
+        Returns one monitor event owned by the account.
 
         Args:
           extra_headers: Send extra headers
@@ -215,19 +213,17 @@ class AsyncEventsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> EventListResponse:
         """
-        List events
+        Returns monitor events with cursor pagination and filters.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
           event_type: Filter events by type
 
           keyword_monitor_id: Keyword monitor ID.
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           monitor_id: Account monitor ID.
 

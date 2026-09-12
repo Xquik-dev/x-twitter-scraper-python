@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import httpx
 
-from ...._types import Body, Query, Headers, NotGiven, not_given
+from ...._types import Body, Omit, Query, Headers, NotGiven, not_given
 from ...._utils import path_template, maybe_transform, async_maybe_transform
 from ...._compat import cached_property
 from ...._resource import SyncAPIResource, AsyncAPIResource
@@ -62,7 +62,7 @@ class RetweetResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> RetweetCreateResponse:
         """
-        Retweet
+        Reposts a tweet through a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -77,7 +77,7 @@ class RetweetResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             path_template("/x/tweets/{id}/retweet", id=id),
             body=maybe_transform({"account": account}, retweet_create_params.RetweetCreateParams),
@@ -101,7 +101,7 @@ class RetweetResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> RetweetDeleteResponse:
         """
-        Unretweet
+        Removes a repost through a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -116,7 +116,7 @@ class RetweetResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._delete(
             path_template("/x/tweets/{id}/retweet", id=id),
             body=maybe_transform({"account": account}, retweet_delete_params.RetweetDeleteParams),
@@ -163,7 +163,7 @@ class AsyncRetweetResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> RetweetCreateResponse:
         """
-        Retweet
+        Reposts a tweet through a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -178,7 +178,7 @@ class AsyncRetweetResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             path_template("/x/tweets/{id}/retweet", id=id),
             body=await async_maybe_transform({"account": account}, retweet_create_params.RetweetCreateParams),
@@ -202,7 +202,7 @@ class AsyncRetweetResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> RetweetDeleteResponse:
         """
-        Unretweet
+        Removes a repost through a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -217,7 +217,7 @@ class AsyncRetweetResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._delete(
             path_template("/x/tweets/{id}/retweet", id=id),
             body=await async_maybe_transform({"account": account}, retweet_delete_params.RetweetDeleteParams),

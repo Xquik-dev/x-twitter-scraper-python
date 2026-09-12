@@ -80,9 +80,9 @@ class Target(BaseModel):
 
 
 class ProfileUpdateAvatarResponse(BaseModel):
-    """Durable write lifecycle record.
+    """Durable write record.
 
-    Poll statusUrl until terminal is true. Reusing the original Idempotency-Key returns this same record. Submit a new write only when safeToRetry is true, using a new key.
+    Poll statusUrl until terminal is true. Reusing its Idempotency-Key returns this record. Create another action only when safeToRetry is true.
     """
 
     id: str

@@ -109,7 +109,8 @@ def test_ignores_omitted_and_non_container_values() -> None:
     assert extract_files(non_container, paths=[["item", "file"]]) == []
 
 
-def test_rejects_unknown_file_array_format() -> None:
+@pytest.mark.parametrize("array_format", ["unknown", "REPEAT", ""])
+def test_rejects_unknown_file_array_format(array_format: str) -> None:
     query = {"files": [b"a"]}
     with pytest.raises(NotImplementedError, match="Unknown array_format value"):
-        extract_files(query, paths=[["files"]], array_format=cast(ArrayFormat, "unknown"))
+        extract_files(query, paths=[["files"]], array_format=cast(ArrayFormat, array_format))

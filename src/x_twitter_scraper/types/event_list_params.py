@@ -16,7 +16,7 @@ __all__ = ["EventListParams"]
 
 class EventListParams(TypedDict, total=False):
     cursor: str
-    """Previous nextCursor."""
+    """Previous nextCursor. Offset pagination is not supported."""
 
     event_type: Annotated[EventType, PropertyInfo(alias="eventType")]
     """Filter events by type"""
@@ -25,11 +25,10 @@ class EventListParams(TypedDict, total=False):
     """Keyword monitor ID."""
 
     limit: int
-    """Maximum number of items to return (1-100, default 50).
+    """Maximum items per page: 1 to 100, default 50.
 
-    For paid per-result endpoints, the returned count may be lower when remaining
-    credits cannot cover the requested page. If zero paid results are affordable,
-    the endpoint returns 402 insufficient_credits.
+    Credits can reduce paid results. The endpoint returns 402 insufficient_credits
+    when none are affordable.
     """
 
     monitor_id: Annotated[str, PropertyInfo(alias="monitorId")]

@@ -68,6 +68,10 @@ def test_remove_prefix_and_suffix() -> None:
     assert removeprefix("value", "prefix-") == "value"
     assert removesuffix("value-suffix", "-suffix") == "value"
     assert removesuffix("value", "-suffix") == "value"
+    assert removeprefix("value", "") == "value"
+    assert removesuffix("value", "") == "value"
+    assert removeprefix("", "") == ""
+    assert removesuffix("", "") == ""
 
 
 def test_get_required_header_from_mapping() -> None:

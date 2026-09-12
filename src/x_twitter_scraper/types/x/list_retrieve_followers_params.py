@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing_extensions import Annotated, TypedDict
+from typing_extensions import Literal, Annotated, TypedDict
 
 from ..._utils import PropertyInfo
 
@@ -18,7 +18,11 @@ class ListRetrieveFollowersParams(TypedDict, total=False):
     """Match any comma-separated or line-separated bio term, ignoring case."""
 
     cursor: str
-    """Pagination cursor for list followers"""
+    """Cursor from the previous response.
+
+    Xquik cursors resume automatic coverage. Existing unprefixed cursors keep legacy
+    standard behavior.
+    """
 
     has_location: Annotated[bool, PropertyInfo(alias="hasLocation")]
     """Only return profiles with a location."""
@@ -33,7 +37,7 @@ class ListRetrieveFollowersParams(TypedDict, total=False):
     """Maximum follower count. Missing counts pass this maximum."""
 
     max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
-    """Maximum following count."""
+    """Profiles may follow at most this many accounts."""
 
     max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
     """Maximum post count. maxPosts is also accepted."""
@@ -45,16 +49,23 @@ class ListRetrieveFollowersParams(TypedDict, total=False):
     """Minimum follower count. Filtering happens before billing."""
 
     min_following: Annotated[int, PropertyInfo(alias="minFollowing")]
-    """Minimum following count."""
+    """Profiles must follow at least this many accounts."""
 
     min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
     """Minimum post count. minPosts is also accepted."""
 
-    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum user profiles requested from this page (20-200, default 200).
+    mode: Literal["standard", "coverage"]
+    """Omit mode for resumable maximum coverage.
 
-    Source, filters, or credits can return fewer profiles. Keep requesting
-    next_cursor while has_next_page is true. Deprecated aliases remain accepted.
+    Standard keeps legacy pagination. Coverage returns diagnostics once and rejects
+    cursors.
+    """
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Maximum user profiles: automatic 300; standard 200.
+
+    Sources return fewer profiles. Follow next_cursor while the response reports
+    more pages.
     """
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]

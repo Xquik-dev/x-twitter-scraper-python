@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import Union, Iterable
+from typing import Any, Union, Iterable, cast
 from datetime import date, datetime
 from typing_extensions import Literal
 
@@ -20,7 +20,7 @@ from ..types import (
     extraction_export_results_params,
 )
 from .._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
-from .._utils import path_template, maybe_transform, async_maybe_transform
+from .._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
 from .._response import (
@@ -40,6 +40,7 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.extraction_run_response import ExtractionRunResponse
 from ..types.extraction_list_response import ExtractionListResponse
+from ..types.extraction_cancel_response import ExtractionCancelResponse
 from ..types.extraction_retrieve_response import ExtractionRetrieveResponse
 from ..types.extraction_estimate_cost_response import ExtractionEstimateCostResponse
 
@@ -47,7 +48,7 @@ __all__ = ["ExtractionsResource", "AsyncExtractionsResource"]
 
 
 class ExtractionsResource(SyncAPIResource):
-    """Bulk data extraction (23 tool types)"""
+    """Saved or bulk data extraction (23 tool types)"""
 
     @cached_property
     def with_raw_response(self) -> ExtractionsResourceWithRawResponse:
@@ -78,6 +79,7 @@ class ExtractionsResource(SyncAPIResource):
         limit: int | Omit = omit,
         output_mode: Literal["compact", "full", "raw"] | Omit = omit,
         output_preset: Literal["nested", "flat"] | Omit = omit,
+        wait: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -85,21 +87,25 @@ class ExtractionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionRetrieveResponse:
-        """
-        Get extraction results
+        """Returns status and up to 1,000 results.
+
+        Follow nextCursor when hasMore is true.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
           field_style: Preserve source keys or convert result field names.
 
           include_raw: Use outputMode=raw instead.
 
-          limit: Maximum number of results to return (1-1000, default 100)
+          limit: Maximum results per page (1-1000, default 100).
 
-          output_mode: Select compact, full, or raw-compatible result fields.
+          output_mode: Use compact for core fields and tweet counts, full for nested enrichment, or raw
+              for a source copy.
 
           output_preset: Keep enrichment nested or merge it into each result.
+
+          wait: Wait up to this many seconds when the job is active.
 
           extra_headers: Send extra headers
 
@@ -126,6 +132,7 @@ class ExtractionsResource(SyncAPIResource):
                         "limit": limit,
                         "output_mode": output_mode,
                         "output_preset": output_preset,
+                        "wait": wait,
                     },
                     extraction_retrieve_params.ExtractionRetrieveParams,
                 ),
@@ -138,7 +145,7 @@ class ExtractionsResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         limit: int | Omit = omit,
-        status: Literal["running", "completed", "failed"] | Omit = omit,
+        status: Literal["pending", "running", "canceled", "completed", "failed"] | Omit = omit,
         tool_type: Literal[
             "article_extractor",
             "community_extractor",
@@ -173,15 +180,13 @@ class ExtractionsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionListResponse:
         """
-        List extraction jobs
+        Returns extraction jobs with status and result counts.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           status: Filter by job status
 
@@ -213,6 +218,39 @@ class ExtractionsResource(SyncAPIResource):
                 ),
             ),
             cast_to=ExtractionListResponse,
+        )
+
+    def cancel(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ExtractionCancelResponse:
+        """
+        Cancels an active extraction without charging or saving rows.
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._delete(
+            path_template("/extractions/{id}", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=ExtractionCancelResponse,
         )
 
     def estimate_cost(
@@ -301,7 +339,7 @@ class ExtractionsResource(SyncAPIResource):
         place: str | Omit = omit,
         place_country: str | Omit = omit,
         point_radius: str | Omit = omit,
-        query_type: Literal["Latest", "Top", "Both"] | Omit = omit,
+        query_type: Literal["Latest", "Top", "Both", "relevance"] | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
         relation_targets: Iterable[extraction_estimate_cost_params.RelationTarget] | Omit = omit,
@@ -346,15 +384,14 @@ class ExtractionsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionEstimateCostResponse:
         """
-        Estimate extraction cost
+        Estimates extraction cost without creating a job.
 
         Args:
           tool_type: Identifier for the extraction tool used to run a job.
 
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
-          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
-              or lines. (tweet_search_extractor)
+          any_words: Any matching term or phrase (tweet_search_extractor).
 
           bio_contains: Bio terms separated by commas or lines.
 
@@ -362,9 +399,9 @@ class ExtractionsResource(SyncAPIResource):
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
 
-          card_name: Match the Tweet card name.
+          card_name: Require Tweet cards whose name matches this value.
 
-          cashtags: Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          cashtags: Matching cashtags (tweet_search_extractor).
 
           collection_strategy: Reply collection strategy.
 
@@ -378,16 +415,15 @@ class ExtractionsResource(SyncAPIResource):
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Exclude a source application.
+          exclude_source: Drop Tweets from this source application.
 
-          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
-              (tweet_search_extractor)
+          exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Match latitude, longitude, and radius.
+          geocode: Restrict Tweets by latitude, longitude, and radius.
 
-          hashtags: Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          hashtags: Matching hashtags (tweet_search_extractor).
 
           has_location: Require a profile location.
 
@@ -403,7 +439,7 @@ class ExtractionsResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID (tweet_search_extractor)
 
-          language: Language code filter (tweet_search_extractor)
+          language: Tweet or Community search language.
 
           list_id: Search within a list ID (tweet_search_extractor)
 
@@ -415,7 +451,7 @@ class ExtractionsResource(SyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Return Tweets older than this Tweet ID.
+          max_id: Require Tweets older than this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -431,15 +467,15 @@ class ExtractionsResource(SyncAPIResource):
 
           max_retweets: Maximum Tweet repost count.
 
-          media_type: Media type filter (tweet_search_extractor)
+          media_type: Tweet or Community search media.
 
-          mentioning: Filter tweets mentioning a username (tweet_search_extractor)
+          mentioning: Mentions this username (tweet_search_extractor).
 
           min_account_age_days: Minimum profile age in days.
 
           min_bookmarks: Minimum Tweet bookmark count.
 
-          min_faves: Minimum likes threshold (tweet_search_extractor)
+          min_faves: Tweet or Community search minimum likes.
 
           min_followers: Minimum follower count for profile results.
 
@@ -449,17 +485,17 @@ class ExtractionsResource(SyncAPIResource):
 
           min_quotes: Minimum quote count threshold (tweet_search_extractor)
 
-          min_replies: Minimum replies threshold (tweet_search_extractor)
+          min_replies: Tweet or Community search minimum replies.
 
-          min_retweets: Minimum retweets threshold (tweet_search_extractor)
+          min_retweets: Tweet or Community search minimum reposts.
 
-          min_views: Minimum Tweet view count.
+          min_views: Tweet or Community search minimum views.
 
-          native_retweets: Only return native reposts.
+          native_retweets: Tweet or Community search native reposts.
 
-          near: Match a place name.
+          near: Restrict Tweet search to this place name.
 
-          news: Only return news results.
+          news: Require news-classified Tweet results.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -469,40 +505,40 @@ class ExtractionsResource(SyncAPIResource):
 
           point_radius: Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
 
-          query_type: Search ranking applied to every query.
+          query_type: Use Top for engagement. The relevance alias maps to Top.
 
-          quotes: Quote mode (tweet_search_extractor)
+          quotes: Choose whether tweet search includes, excludes, or isolates quotes.
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
           relation_targets: Profile relations processed within one job.
 
-          replies: Reply mode (tweet_search_extractor)
+          replies: Choose whether tweet search includes, excludes, or isolates replies.
 
-          results_limit: Maximum number of results to extract. When set, the extraction stops after
-              reaching this limit.
+          results_limit: Maximum unique results to emit. Billing follows emitted results, not this upper
+              bound.
 
-          retweets: Retweet mode (tweet_search_extractor)
+          retweets: Choose whether tweet search includes, excludes, or isolates reposts.
 
           retweets_of_tweet_id: Only retweets of this tweet ID (tweet_search_extractor)
 
-          safe: Enable the safe-search filter.
+          safe: Apply safe-search filtering to Tweet results.
 
           scope: Reply depth scope.
 
           search_queries: Search queries processed as one collection job.
 
-          search_query: Required for tweet_search_extractor & community_search.
+          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
 
-          since_date: Start date YYYY-MM-DD (tweet_search_extractor)
+          since_date: Tweet or Community search start date.
 
-          since_id: Return Tweets newer than this Tweet ID.
+          since_id: Require Tweets newer than this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Match the source application.
+          source: Require Tweets from this source application.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -515,17 +551,19 @@ class ExtractionsResource(SyncAPIResource):
 
           target_list_ids: List IDs processed as one collection job.
 
-          targets: Mixed targets auto-routed within one job.
+          targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
+              profile_media kinds to collect attached media.
 
           target_space_id: Required for space_explorer.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
-          target_usernames: Usernames processed as one collection job.
+          target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
+              username collects posts.
 
-          to_user: Filter replies sent to a username (tweet_search_extractor)
+          to_user: Replies to this username (tweet_search_extractor).
 
-          until_date: End date YYYY-MM-DD (tweet_search_extractor)
+          until_date: Tweet or Community search end date.
 
           until_time: Reply end time as ISO 8601 or Unix seconds.
 
@@ -533,13 +571,13 @@ class ExtractionsResource(SyncAPIResource):
 
           username_contains: Required username text.
 
-          verified_only: Only verified authors (tweet_search_extractor)
+          verified_only: Tweet or Community search verified authors.
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius for the near filter.
+          within: Set the radius around the requested place.
 
-          within_time: Match Tweets inside a recent time window.
+          within_time: Restrict Tweets to this recent time window.
 
           extra_headers: Send extra headers
 
@@ -689,7 +727,7 @@ class ExtractionsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BinaryAPIResponse:
         """
-        Export extraction results
+        Downloads completed extraction results in the requested format.
 
         Args:
           format: Export file format
@@ -740,7 +778,7 @@ class ExtractionsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
+        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or dict[str, str | Omit]())}
         return self._get(
             path_template("/extractions/{id}/export", id=id),
             options=make_request_options(
@@ -863,7 +901,7 @@ class ExtractionsResource(SyncAPIResource):
         place: str | Omit = omit,
         place_country: str | Omit = omit,
         point_radius: str | Omit = omit,
-        query_type: Literal["Latest", "Top", "Both"] | Omit = omit,
+        query_type: Literal["Latest", "Top", "Both", "relevance"] | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
         relation_targets: Iterable[extraction_run_params.RelationTarget] | Omit = omit,
@@ -900,6 +938,7 @@ class ExtractionsResource(SyncAPIResource):
         verified_type: str | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -907,8 +946,10 @@ class ExtractionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionRunResponse:
-        """
-        Run extraction
+        """Starts one single-target or multi-target extraction.
+
+        Follow waitUrl, then page
+        statusUrl after completion.
 
         Args:
           tool_type: Identifier for the extraction tool used to run a job.
@@ -917,8 +958,7 @@ class ExtractionsResource(SyncAPIResource):
 
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
-          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
-              or lines. (tweet_search_extractor)
+          any_words: Any matching term or phrase (tweet_search_extractor).
 
           bio_contains: Bio terms separated by commas or lines.
 
@@ -926,9 +966,9 @@ class ExtractionsResource(SyncAPIResource):
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
 
-          card_name: Match the Tweet card name.
+          card_name: Require Tweet cards whose name matches this value.
 
-          cashtags: Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          cashtags: Matching cashtags (tweet_search_extractor).
 
           collection_strategy: Reply collection strategy.
 
@@ -942,16 +982,15 @@ class ExtractionsResource(SyncAPIResource):
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Exclude a source application.
+          exclude_source: Drop Tweets from this source application.
 
-          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
-              (tweet_search_extractor)
+          exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Match latitude, longitude, and radius.
+          geocode: Restrict Tweets by latitude, longitude, and radius.
 
-          hashtags: Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          hashtags: Matching hashtags (tweet_search_extractor).
 
           has_location: Require a profile location.
 
@@ -967,7 +1006,7 @@ class ExtractionsResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID (tweet_search_extractor)
 
-          language: Language code filter (tweet_search_extractor)
+          language: Tweet or Community search language.
 
           list_id: Search within a list ID (tweet_search_extractor)
 
@@ -979,7 +1018,7 @@ class ExtractionsResource(SyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Return Tweets older than this Tweet ID.
+          max_id: Require Tweets older than this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -995,15 +1034,15 @@ class ExtractionsResource(SyncAPIResource):
 
           max_retweets: Maximum Tweet repost count.
 
-          media_type: Media type filter (tweet_search_extractor)
+          media_type: Tweet or Community search media.
 
-          mentioning: Filter tweets mentioning a username (tweet_search_extractor)
+          mentioning: Mentions this username (tweet_search_extractor).
 
           min_account_age_days: Minimum profile age in days.
 
           min_bookmarks: Minimum Tweet bookmark count.
 
-          min_faves: Minimum likes threshold (tweet_search_extractor)
+          min_faves: Tweet or Community search minimum likes.
 
           min_followers: Minimum follower count for profile results.
 
@@ -1013,17 +1052,17 @@ class ExtractionsResource(SyncAPIResource):
 
           min_quotes: Minimum quote count threshold (tweet_search_extractor)
 
-          min_replies: Minimum replies threshold (tweet_search_extractor)
+          min_replies: Tweet or Community search minimum replies.
 
-          min_retweets: Minimum retweets threshold (tweet_search_extractor)
+          min_retweets: Tweet or Community search minimum reposts.
 
-          min_views: Minimum Tweet view count.
+          min_views: Tweet or Community search minimum views.
 
-          native_retweets: Only return native reposts.
+          native_retweets: Tweet or Community search native reposts.
 
-          near: Match a place name.
+          near: Restrict Tweet search to this place name.
 
-          news: Only return news results.
+          news: Require news-classified Tweet results.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -1033,40 +1072,40 @@ class ExtractionsResource(SyncAPIResource):
 
           point_radius: Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
 
-          query_type: Search ranking applied to every query.
+          query_type: Use Top for engagement. The relevance alias maps to Top.
 
-          quotes: Quote mode (tweet_search_extractor)
+          quotes: Choose whether tweet search includes, excludes, or isolates quotes.
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
           relation_targets: Profile relations processed within one job.
 
-          replies: Reply mode (tweet_search_extractor)
+          replies: Choose whether tweet search includes, excludes, or isolates replies.
 
-          results_limit: Maximum number of results to extract. When set, the extraction stops after
-              reaching this limit.
+          results_limit: Maximum unique results to emit. Billing follows emitted results, not this upper
+              bound.
 
-          retweets: Retweet mode (tweet_search_extractor)
+          retweets: Choose whether tweet search includes, excludes, or isolates reposts.
 
           retweets_of_tweet_id: Only retweets of this tweet ID (tweet_search_extractor)
 
-          safe: Enable the safe-search filter.
+          safe: Apply safe-search filtering to Tweet results.
 
           scope: Reply depth scope.
 
           search_queries: Search queries processed as one collection job.
 
-          search_query: Required for tweet_search_extractor & community_search.
+          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
 
-          since_date: Start date YYYY-MM-DD (tweet_search_extractor)
+          since_date: Tweet or Community search start date.
 
-          since_id: Return Tweets newer than this Tweet ID.
+          since_id: Require Tweets newer than this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Match the source application.
+          source: Require Tweets from this source application.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -1079,17 +1118,19 @@ class ExtractionsResource(SyncAPIResource):
 
           target_list_ids: List IDs processed as one collection job.
 
-          targets: Mixed targets auto-routed within one job.
+          targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
+              profile_media kinds to collect attached media.
 
           target_space_id: Required for space_explorer.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
-          target_usernames: Usernames processed as one collection job.
+          target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
+              username collects posts.
 
-          to_user: Filter replies sent to a username (tweet_search_extractor)
+          to_user: Replies to this username (tweet_search_extractor).
 
-          until_date: End date YYYY-MM-DD (tweet_search_extractor)
+          until_date: Tweet or Community search end date.
 
           until_time: Reply end time as ISO 8601 or Unix seconds.
 
@@ -1097,13 +1138,13 @@ class ExtractionsResource(SyncAPIResource):
 
           username_contains: Required username text.
 
-          verified_only: Only verified authors (tweet_search_extractor)
+          verified_only: Tweet or Community search verified authors.
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius for the near filter.
+          within: Set the radius around the requested place.
 
-          within_time: Match Tweets inside a recent time window.
+          within_time: Restrict Tweets to this recent time window.
 
           extra_headers: Send extra headers
 
@@ -1113,122 +1154,131 @@ class ExtractionsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return self._post(
-            "/extractions",
-            body=maybe_transform(
-                {
-                    "tool_type": tool_type,
-                    "advanced_query": advanced_query,
-                    "any_words": any_words,
-                    "bio_contains": bio_contains,
-                    "blue_verified_only": blue_verified_only,
-                    "bounding_box": bounding_box,
-                    "card_name": card_name,
-                    "cashtags": cashtags,
-                    "collection_strategy": collection_strategy,
-                    "conversation_id": conversation_id,
-                    "dedupe_across_targets": dedupe_across_targets,
-                    "dedupe_mode": dedupe_mode,
-                    "exact_phrase": exact_phrase,
-                    "exclude_original_author": exclude_original_author,
-                    "exclude_source": exclude_source,
-                    "exclude_words": exclude_words,
-                    "from_user": from_user,
-                    "geocode": geocode,
-                    "hashtags": hashtags,
-                    "has_location": has_location,
-                    "has_media_only": has_media_only,
-                    "has_website": has_website,
-                    "include_original_post": include_original_post,
-                    "include_search_terms": include_search_terms,
-                    "include_target_metadata": include_target_metadata,
-                    "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                    "language": language,
-                    "list_id": list_id,
-                    "location_contains": location_contains,
-                    "max_depth": max_depth,
-                    "max_followers": max_followers,
-                    "max_following": max_following,
-                    "max_id": max_id,
-                    "max_items_per_target": max_items_per_target,
-                    "max_likes": max_likes,
-                    "max_pages_per_target": max_pages_per_target,
-                    "max_posts": max_posts,
-                    "max_quotes": max_quotes,
-                    "max_replies": max_replies,
-                    "max_retweets": max_retweets,
-                    "media_type": media_type,
-                    "mentioning": mentioning,
-                    "min_account_age_days": min_account_age_days,
-                    "min_bookmarks": min_bookmarks,
-                    "min_faves": min_faves,
-                    "min_followers": min_followers,
-                    "min_following": min_following,
-                    "min_posts": min_posts,
-                    "min_quotes": min_quotes,
-                    "min_replies": min_replies,
-                    "min_retweets": min_retweets,
-                    "min_views": min_views,
-                    "native_retweets": native_retweets,
-                    "near": near,
-                    "news": news,
-                    "overlap_mode": overlap_mode,
-                    "place": place,
-                    "place_country": place_country,
-                    "point_radius": point_radius,
-                    "query_type": query_type,
-                    "quotes": quotes,
-                    "quotes_of_tweet_id": quotes_of_tweet_id,
-                    "relation_targets": relation_targets,
-                    "replies": replies,
-                    "results_limit": results_limit,
-                    "retweets": retweets,
-                    "retweets_of_tweet_id": retweets_of_tweet_id,
-                    "safe": safe,
-                    "scope": scope,
-                    "search_queries": search_queries,
-                    "search_query": search_query,
-                    "since_date": since_date,
-                    "since_id": since_id,
-                    "since_time": since_time,
-                    "sort": sort,
-                    "source": source,
-                    "start_cursor": start_cursor,
-                    "target_community_id": target_community_id,
-                    "target_community_ids": target_community_ids,
-                    "target_list_id": target_list_id,
-                    "target_list_ids": target_list_ids,
-                    "targets": targets,
-                    "target_space_id": target_space_id,
-                    "target_tweet_id": target_tweet_id,
-                    "target_tweet_ids": target_tweet_ids,
-                    "target_username": target_username,
-                    "target_usernames": target_usernames,
-                    "to_user": to_user,
-                    "until_date": until_date,
-                    "until_time": until_time,
-                    "url": url,
-                    "username_contains": username_contains,
-                    "verified_only": verified_only,
-                    "verified_type": verified_type,
-                    "within": within,
-                    "within_time": within_time,
-                },
-                extraction_run_params.ExtractionRunParams,
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
+        return cast(
+            ExtractionRunResponse,
+            self._post(
+                "/extractions",
+                body=maybe_transform(
+                    {
+                        "tool_type": tool_type,
+                        "advanced_query": advanced_query,
+                        "any_words": any_words,
+                        "bio_contains": bio_contains,
+                        "blue_verified_only": blue_verified_only,
+                        "bounding_box": bounding_box,
+                        "card_name": card_name,
+                        "cashtags": cashtags,
+                        "collection_strategy": collection_strategy,
+                        "conversation_id": conversation_id,
+                        "dedupe_across_targets": dedupe_across_targets,
+                        "dedupe_mode": dedupe_mode,
+                        "exact_phrase": exact_phrase,
+                        "exclude_original_author": exclude_original_author,
+                        "exclude_source": exclude_source,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "geocode": geocode,
+                        "hashtags": hashtags,
+                        "has_location": has_location,
+                        "has_media_only": has_media_only,
+                        "has_website": has_website,
+                        "include_original_post": include_original_post,
+                        "include_search_terms": include_search_terms,
+                        "include_target_metadata": include_target_metadata,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "list_id": list_id,
+                        "location_contains": location_contains,
+                        "max_depth": max_depth,
+                        "max_followers": max_followers,
+                        "max_following": max_following,
+                        "max_id": max_id,
+                        "max_items_per_target": max_items_per_target,
+                        "max_likes": max_likes,
+                        "max_pages_per_target": max_pages_per_target,
+                        "max_posts": max_posts,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_account_age_days": min_account_age_days,
+                        "min_bookmarks": min_bookmarks,
+                        "min_faves": min_faves,
+                        "min_followers": min_followers,
+                        "min_following": min_following,
+                        "min_posts": min_posts,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
+                        "native_retweets": native_retweets,
+                        "near": near,
+                        "news": news,
+                        "overlap_mode": overlap_mode,
+                        "place": place,
+                        "place_country": place_country,
+                        "point_radius": point_radius,
+                        "query_type": query_type,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "relation_targets": relation_targets,
+                        "replies": replies,
+                        "results_limit": results_limit,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "safe": safe,
+                        "scope": scope,
+                        "search_queries": search_queries,
+                        "search_query": search_query,
+                        "since_date": since_date,
+                        "since_id": since_id,
+                        "since_time": since_time,
+                        "sort": sort,
+                        "source": source,
+                        "start_cursor": start_cursor,
+                        "target_community_id": target_community_id,
+                        "target_community_ids": target_community_ids,
+                        "target_list_id": target_list_id,
+                        "target_list_ids": target_list_ids,
+                        "targets": targets,
+                        "target_space_id": target_space_id,
+                        "target_tweet_id": target_tweet_id,
+                        "target_tweet_ids": target_tweet_ids,
+                        "target_username": target_username,
+                        "target_usernames": target_usernames,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "until_time": until_time,
+                        "url": url,
+                        "username_contains": username_contains,
+                        "verified_only": verified_only,
+                        "verified_type": verified_type,
+                        "within": within,
+                        "within_time": within_time,
+                    },
+                    extraction_run_params.ExtractionRunParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=maybe_transform({"dry_run": dry_run}, extraction_run_params.ExtractionRunParams),
+                ),
+                cast_to=cast(
+                    Any, ExtractionRunResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform({"dry_run": dry_run}, extraction_run_params.ExtractionRunParams),
-            ),
-            cast_to=ExtractionRunResponse,
         )
 
 
 class AsyncExtractionsResource(AsyncAPIResource):
-    """Bulk data extraction (23 tool types)"""
+    """Saved or bulk data extraction (23 tool types)"""
 
     @cached_property
     def with_raw_response(self) -> AsyncExtractionsResourceWithRawResponse:
@@ -1259,6 +1309,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         limit: int | Omit = omit,
         output_mode: Literal["compact", "full", "raw"] | Omit = omit,
         output_preset: Literal["nested", "flat"] | Omit = omit,
+        wait: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -1266,21 +1317,25 @@ class AsyncExtractionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionRetrieveResponse:
-        """
-        Get extraction results
+        """Returns status and up to 1,000 results.
+
+        Follow nextCursor when hasMore is true.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
           field_style: Preserve source keys or convert result field names.
 
           include_raw: Use outputMode=raw instead.
 
-          limit: Maximum number of results to return (1-1000, default 100)
+          limit: Maximum results per page (1-1000, default 100).
 
-          output_mode: Select compact, full, or raw-compatible result fields.
+          output_mode: Use compact for core fields and tweet counts, full for nested enrichment, or raw
+              for a source copy.
 
           output_preset: Keep enrichment nested or merge it into each result.
+
+          wait: Wait up to this many seconds when the job is active.
 
           extra_headers: Send extra headers
 
@@ -1307,6 +1362,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                         "limit": limit,
                         "output_mode": output_mode,
                         "output_preset": output_preset,
+                        "wait": wait,
                     },
                     extraction_retrieve_params.ExtractionRetrieveParams,
                 ),
@@ -1319,7 +1375,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         limit: int | Omit = omit,
-        status: Literal["running", "completed", "failed"] | Omit = omit,
+        status: Literal["pending", "running", "canceled", "completed", "failed"] | Omit = omit,
         tool_type: Literal[
             "article_extractor",
             "community_extractor",
@@ -1354,15 +1410,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionListResponse:
         """
-        List extraction jobs
+        Returns extraction jobs with status and result counts.
 
         Args:
-          cursor: Previous nextCursor.
+          cursor: Previous nextCursor. Offset pagination is not supported.
 
-          limit: Maximum number of items to return (1-100, default 50). For paid per-result
-              endpoints, the returned count may be lower when remaining credits cannot cover
-              the requested page. If zero paid results are affordable, the endpoint returns
-              402 insufficient_credits.
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
 
           status: Filter by job status
 
@@ -1394,6 +1448,39 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 ),
             ),
             cast_to=ExtractionListResponse,
+        )
+
+    async def cancel(
+        self,
+        id: str,
+        *,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ExtractionCancelResponse:
+        """
+        Cancels an active extraction without charging or saving rows.
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._delete(
+            path_template("/extractions/{id}", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=ExtractionCancelResponse,
         )
 
     async def estimate_cost(
@@ -1482,7 +1569,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         place: str | Omit = omit,
         place_country: str | Omit = omit,
         point_radius: str | Omit = omit,
-        query_type: Literal["Latest", "Top", "Both"] | Omit = omit,
+        query_type: Literal["Latest", "Top", "Both", "relevance"] | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
         relation_targets: Iterable[extraction_estimate_cost_params.RelationTarget] | Omit = omit,
@@ -1527,15 +1614,14 @@ class AsyncExtractionsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionEstimateCostResponse:
         """
-        Estimate extraction cost
+        Estimates extraction cost without creating a job.
 
         Args:
           tool_type: Identifier for the extraction tool used to run a job.
 
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
-          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
-              or lines. (tweet_search_extractor)
+          any_words: Any matching term or phrase (tweet_search_extractor).
 
           bio_contains: Bio terms separated by commas or lines.
 
@@ -1543,9 +1629,9 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
 
-          card_name: Match the Tweet card name.
+          card_name: Require Tweet cards whose name matches this value.
 
-          cashtags: Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          cashtags: Matching cashtags (tweet_search_extractor).
 
           collection_strategy: Reply collection strategy.
 
@@ -1559,16 +1645,15 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Exclude a source application.
+          exclude_source: Drop Tweets from this source application.
 
-          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
-              (tweet_search_extractor)
+          exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Match latitude, longitude, and radius.
+          geocode: Restrict Tweets by latitude, longitude, and radius.
 
-          hashtags: Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          hashtags: Matching hashtags (tweet_search_extractor).
 
           has_location: Require a profile location.
 
@@ -1584,7 +1669,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID (tweet_search_extractor)
 
-          language: Language code filter (tweet_search_extractor)
+          language: Tweet or Community search language.
 
           list_id: Search within a list ID (tweet_search_extractor)
 
@@ -1596,7 +1681,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Return Tweets older than this Tweet ID.
+          max_id: Require Tweets older than this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -1612,15 +1697,15 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           max_retweets: Maximum Tweet repost count.
 
-          media_type: Media type filter (tweet_search_extractor)
+          media_type: Tweet or Community search media.
 
-          mentioning: Filter tweets mentioning a username (tweet_search_extractor)
+          mentioning: Mentions this username (tweet_search_extractor).
 
           min_account_age_days: Minimum profile age in days.
 
           min_bookmarks: Minimum Tweet bookmark count.
 
-          min_faves: Minimum likes threshold (tweet_search_extractor)
+          min_faves: Tweet or Community search minimum likes.
 
           min_followers: Minimum follower count for profile results.
 
@@ -1630,17 +1715,17 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           min_quotes: Minimum quote count threshold (tweet_search_extractor)
 
-          min_replies: Minimum replies threshold (tweet_search_extractor)
+          min_replies: Tweet or Community search minimum replies.
 
-          min_retweets: Minimum retweets threshold (tweet_search_extractor)
+          min_retweets: Tweet or Community search minimum reposts.
 
-          min_views: Minimum Tweet view count.
+          min_views: Tweet or Community search minimum views.
 
-          native_retweets: Only return native reposts.
+          native_retweets: Tweet or Community search native reposts.
 
-          near: Match a place name.
+          near: Restrict Tweet search to this place name.
 
-          news: Only return news results.
+          news: Require news-classified Tweet results.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -1650,40 +1735,40 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           point_radius: Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
 
-          query_type: Search ranking applied to every query.
+          query_type: Use Top for engagement. The relevance alias maps to Top.
 
-          quotes: Quote mode (tweet_search_extractor)
+          quotes: Choose whether tweet search includes, excludes, or isolates quotes.
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
           relation_targets: Profile relations processed within one job.
 
-          replies: Reply mode (tweet_search_extractor)
+          replies: Choose whether tweet search includes, excludes, or isolates replies.
 
-          results_limit: Maximum number of results to extract. When set, the extraction stops after
-              reaching this limit.
+          results_limit: Maximum unique results to emit. Billing follows emitted results, not this upper
+              bound.
 
-          retweets: Retweet mode (tweet_search_extractor)
+          retweets: Choose whether tweet search includes, excludes, or isolates reposts.
 
           retweets_of_tweet_id: Only retweets of this tweet ID (tweet_search_extractor)
 
-          safe: Enable the safe-search filter.
+          safe: Apply safe-search filtering to Tweet results.
 
           scope: Reply depth scope.
 
           search_queries: Search queries processed as one collection job.
 
-          search_query: Required for tweet_search_extractor & community_search.
+          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
 
-          since_date: Start date YYYY-MM-DD (tweet_search_extractor)
+          since_date: Tweet or Community search start date.
 
-          since_id: Return Tweets newer than this Tweet ID.
+          since_id: Require Tweets newer than this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Match the source application.
+          source: Require Tweets from this source application.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -1696,17 +1781,19 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           target_list_ids: List IDs processed as one collection job.
 
-          targets: Mixed targets auto-routed within one job.
+          targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
+              profile_media kinds to collect attached media.
 
           target_space_id: Required for space_explorer.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
-          target_usernames: Usernames processed as one collection job.
+          target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
+              username collects posts.
 
-          to_user: Filter replies sent to a username (tweet_search_extractor)
+          to_user: Replies to this username (tweet_search_extractor).
 
-          until_date: End date YYYY-MM-DD (tweet_search_extractor)
+          until_date: Tweet or Community search end date.
 
           until_time: Reply end time as ISO 8601 or Unix seconds.
 
@@ -1714,13 +1801,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           username_contains: Required username text.
 
-          verified_only: Only verified authors (tweet_search_extractor)
+          verified_only: Tweet or Community search verified authors.
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius for the near filter.
+          within: Set the radius around the requested place.
 
-          within_time: Match Tweets inside a recent time window.
+          within_time: Restrict Tweets to this recent time window.
 
           extra_headers: Send extra headers
 
@@ -1870,7 +1957,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AsyncBinaryAPIResponse:
         """
-        Export extraction results
+        Downloads completed extraction results in the requested format.
 
         Args:
           format: Export file format
@@ -1921,7 +2008,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or {})}
+        extra_headers = {"Accept": "application/octet-stream", **(extra_headers or dict[str, str | Omit]())}
         return await self._get(
             path_template("/extractions/{id}/export", id=id),
             options=make_request_options(
@@ -2044,7 +2131,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         place: str | Omit = omit,
         place_country: str | Omit = omit,
         point_radius: str | Omit = omit,
-        query_type: Literal["Latest", "Top", "Both"] | Omit = omit,
+        query_type: Literal["Latest", "Top", "Both", "relevance"] | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
         relation_targets: Iterable[extraction_run_params.RelationTarget] | Omit = omit,
@@ -2081,6 +2168,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         verified_type: str | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -2088,8 +2176,10 @@ class AsyncExtractionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionRunResponse:
-        """
-        Run extraction
+        """Starts one single-target or multi-target extraction.
+
+        Follow waitUrl, then page
+        statusUrl after completion.
 
         Args:
           tool_type: Identifier for the extraction tool used to run a job.
@@ -2098,8 +2188,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           advanced_query: Raw advanced search query appended as-is (tweet_search_extractor)
 
-          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
-              or lines. (tweet_search_extractor)
+          any_words: Any matching term or phrase (tweet_search_extractor).
 
           bio_contains: Bio terms separated by commas or lines.
 
@@ -2107,9 +2196,9 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
 
-          card_name: Match the Tweet card name.
+          card_name: Require Tweet cards whose name matches this value.
 
-          cashtags: Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          cashtags: Matching cashtags (tweet_search_extractor).
 
           collection_strategy: Reply collection strategy.
 
@@ -2123,16 +2212,15 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Exclude a source application.
+          exclude_source: Drop Tweets from this source application.
 
-          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
-              (tweet_search_extractor)
+          exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Match latitude, longitude, and radius.
+          geocode: Restrict Tweets by latitude, longitude, and radius.
 
-          hashtags: Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)
+          hashtags: Matching hashtags (tweet_search_extractor).
 
           has_location: Require a profile location.
 
@@ -2148,7 +2236,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID (tweet_search_extractor)
 
-          language: Language code filter (tweet_search_extractor)
+          language: Tweet or Community search language.
 
           list_id: Search within a list ID (tweet_search_extractor)
 
@@ -2160,7 +2248,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Return Tweets older than this Tweet ID.
+          max_id: Require Tweets older than this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -2176,15 +2264,15 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           max_retweets: Maximum Tweet repost count.
 
-          media_type: Media type filter (tweet_search_extractor)
+          media_type: Tweet or Community search media.
 
-          mentioning: Filter tweets mentioning a username (tweet_search_extractor)
+          mentioning: Mentions this username (tweet_search_extractor).
 
           min_account_age_days: Minimum profile age in days.
 
           min_bookmarks: Minimum Tweet bookmark count.
 
-          min_faves: Minimum likes threshold (tweet_search_extractor)
+          min_faves: Tweet or Community search minimum likes.
 
           min_followers: Minimum follower count for profile results.
 
@@ -2194,17 +2282,17 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           min_quotes: Minimum quote count threshold (tweet_search_extractor)
 
-          min_replies: Minimum replies threshold (tweet_search_extractor)
+          min_replies: Tweet or Community search minimum replies.
 
-          min_retweets: Minimum retweets threshold (tweet_search_extractor)
+          min_retweets: Tweet or Community search minimum reposts.
 
-          min_views: Minimum Tweet view count.
+          min_views: Tweet or Community search minimum views.
 
-          native_retweets: Only return native reposts.
+          native_retweets: Tweet or Community search native reposts.
 
-          near: Match a place name.
+          near: Restrict Tweet search to this place name.
 
-          news: Only return news results.
+          news: Require news-classified Tweet results.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -2214,40 +2302,40 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           point_radius: Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)
 
-          query_type: Search ranking applied to every query.
+          query_type: Use Top for engagement. The relevance alias maps to Top.
 
-          quotes: Quote mode (tweet_search_extractor)
+          quotes: Choose whether tweet search includes, excludes, or isolates quotes.
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
           relation_targets: Profile relations processed within one job.
 
-          replies: Reply mode (tweet_search_extractor)
+          replies: Choose whether tweet search includes, excludes, or isolates replies.
 
-          results_limit: Maximum number of results to extract. When set, the extraction stops after
-              reaching this limit.
+          results_limit: Maximum unique results to emit. Billing follows emitted results, not this upper
+              bound.
 
-          retweets: Retweet mode (tweet_search_extractor)
+          retweets: Choose whether tweet search includes, excludes, or isolates reposts.
 
           retweets_of_tweet_id: Only retweets of this tweet ID (tweet_search_extractor)
 
-          safe: Enable the safe-search filter.
+          safe: Apply safe-search filtering to Tweet results.
 
           scope: Reply depth scope.
 
           search_queries: Search queries processed as one collection job.
 
-          search_query: Required for tweet_search_extractor & community_search.
+          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
 
-          since_date: Start date YYYY-MM-DD (tweet_search_extractor)
+          since_date: Tweet or Community search start date.
 
-          since_id: Return Tweets newer than this Tweet ID.
+          since_id: Require Tweets newer than this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Match the source application.
+          source: Require Tweets from this source application.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -2260,17 +2348,19 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           target_list_ids: List IDs processed as one collection job.
 
-          targets: Mixed targets auto-routed within one job.
+          targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
+              profile_media kinds to collect attached media.
 
           target_space_id: Required for space_explorer.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
-          target_usernames: Usernames processed as one collection job.
+          target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
+              username collects posts.
 
-          to_user: Filter replies sent to a username (tweet_search_extractor)
+          to_user: Replies to this username (tweet_search_extractor).
 
-          until_date: End date YYYY-MM-DD (tweet_search_extractor)
+          until_date: Tweet or Community search end date.
 
           until_time: Reply end time as ISO 8601 or Unix seconds.
 
@@ -2278,13 +2368,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           username_contains: Required username text.
 
-          verified_only: Only verified authors (tweet_search_extractor)
+          verified_only: Tweet or Community search verified authors.
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius for the near filter.
+          within: Set the radius around the requested place.
 
-          within_time: Match Tweets inside a recent time window.
+          within_time: Restrict Tweets to this recent time window.
 
           extra_headers: Send extra headers
 
@@ -2294,117 +2384,126 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        return await self._post(
-            "/extractions",
-            body=await async_maybe_transform(
-                {
-                    "tool_type": tool_type,
-                    "advanced_query": advanced_query,
-                    "any_words": any_words,
-                    "bio_contains": bio_contains,
-                    "blue_verified_only": blue_verified_only,
-                    "bounding_box": bounding_box,
-                    "card_name": card_name,
-                    "cashtags": cashtags,
-                    "collection_strategy": collection_strategy,
-                    "conversation_id": conversation_id,
-                    "dedupe_across_targets": dedupe_across_targets,
-                    "dedupe_mode": dedupe_mode,
-                    "exact_phrase": exact_phrase,
-                    "exclude_original_author": exclude_original_author,
-                    "exclude_source": exclude_source,
-                    "exclude_words": exclude_words,
-                    "from_user": from_user,
-                    "geocode": geocode,
-                    "hashtags": hashtags,
-                    "has_location": has_location,
-                    "has_media_only": has_media_only,
-                    "has_website": has_website,
-                    "include_original_post": include_original_post,
-                    "include_search_terms": include_search_terms,
-                    "include_target_metadata": include_target_metadata,
-                    "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                    "language": language,
-                    "list_id": list_id,
-                    "location_contains": location_contains,
-                    "max_depth": max_depth,
-                    "max_followers": max_followers,
-                    "max_following": max_following,
-                    "max_id": max_id,
-                    "max_items_per_target": max_items_per_target,
-                    "max_likes": max_likes,
-                    "max_pages_per_target": max_pages_per_target,
-                    "max_posts": max_posts,
-                    "max_quotes": max_quotes,
-                    "max_replies": max_replies,
-                    "max_retweets": max_retweets,
-                    "media_type": media_type,
-                    "mentioning": mentioning,
-                    "min_account_age_days": min_account_age_days,
-                    "min_bookmarks": min_bookmarks,
-                    "min_faves": min_faves,
-                    "min_followers": min_followers,
-                    "min_following": min_following,
-                    "min_posts": min_posts,
-                    "min_quotes": min_quotes,
-                    "min_replies": min_replies,
-                    "min_retweets": min_retweets,
-                    "min_views": min_views,
-                    "native_retweets": native_retweets,
-                    "near": near,
-                    "news": news,
-                    "overlap_mode": overlap_mode,
-                    "place": place,
-                    "place_country": place_country,
-                    "point_radius": point_radius,
-                    "query_type": query_type,
-                    "quotes": quotes,
-                    "quotes_of_tweet_id": quotes_of_tweet_id,
-                    "relation_targets": relation_targets,
-                    "replies": replies,
-                    "results_limit": results_limit,
-                    "retweets": retweets,
-                    "retweets_of_tweet_id": retweets_of_tweet_id,
-                    "safe": safe,
-                    "scope": scope,
-                    "search_queries": search_queries,
-                    "search_query": search_query,
-                    "since_date": since_date,
-                    "since_id": since_id,
-                    "since_time": since_time,
-                    "sort": sort,
-                    "source": source,
-                    "start_cursor": start_cursor,
-                    "target_community_id": target_community_id,
-                    "target_community_ids": target_community_ids,
-                    "target_list_id": target_list_id,
-                    "target_list_ids": target_list_ids,
-                    "targets": targets,
-                    "target_space_id": target_space_id,
-                    "target_tweet_id": target_tweet_id,
-                    "target_tweet_ids": target_tweet_ids,
-                    "target_username": target_username,
-                    "target_usernames": target_usernames,
-                    "to_user": to_user,
-                    "until_date": until_date,
-                    "until_time": until_time,
-                    "url": url,
-                    "username_contains": username_contains,
-                    "verified_only": verified_only,
-                    "verified_type": verified_type,
-                    "within": within,
-                    "within_time": within_time,
-                },
-                extraction_run_params.ExtractionRunParams,
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
+        return cast(
+            ExtractionRunResponse,
+            await self._post(
+                "/extractions",
+                body=await async_maybe_transform(
+                    {
+                        "tool_type": tool_type,
+                        "advanced_query": advanced_query,
+                        "any_words": any_words,
+                        "bio_contains": bio_contains,
+                        "blue_verified_only": blue_verified_only,
+                        "bounding_box": bounding_box,
+                        "card_name": card_name,
+                        "cashtags": cashtags,
+                        "collection_strategy": collection_strategy,
+                        "conversation_id": conversation_id,
+                        "dedupe_across_targets": dedupe_across_targets,
+                        "dedupe_mode": dedupe_mode,
+                        "exact_phrase": exact_phrase,
+                        "exclude_original_author": exclude_original_author,
+                        "exclude_source": exclude_source,
+                        "exclude_words": exclude_words,
+                        "from_user": from_user,
+                        "geocode": geocode,
+                        "hashtags": hashtags,
+                        "has_location": has_location,
+                        "has_media_only": has_media_only,
+                        "has_website": has_website,
+                        "include_original_post": include_original_post,
+                        "include_search_terms": include_search_terms,
+                        "include_target_metadata": include_target_metadata,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                        "language": language,
+                        "list_id": list_id,
+                        "location_contains": location_contains,
+                        "max_depth": max_depth,
+                        "max_followers": max_followers,
+                        "max_following": max_following,
+                        "max_id": max_id,
+                        "max_items_per_target": max_items_per_target,
+                        "max_likes": max_likes,
+                        "max_pages_per_target": max_pages_per_target,
+                        "max_posts": max_posts,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
+                        "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_account_age_days": min_account_age_days,
+                        "min_bookmarks": min_bookmarks,
+                        "min_faves": min_faves,
+                        "min_followers": min_followers,
+                        "min_following": min_following,
+                        "min_posts": min_posts,
+                        "min_quotes": min_quotes,
+                        "min_replies": min_replies,
+                        "min_retweets": min_retweets,
+                        "min_views": min_views,
+                        "native_retweets": native_retweets,
+                        "near": near,
+                        "news": news,
+                        "overlap_mode": overlap_mode,
+                        "place": place,
+                        "place_country": place_country,
+                        "point_radius": point_radius,
+                        "query_type": query_type,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "relation_targets": relation_targets,
+                        "replies": replies,
+                        "results_limit": results_limit,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
+                        "safe": safe,
+                        "scope": scope,
+                        "search_queries": search_queries,
+                        "search_query": search_query,
+                        "since_date": since_date,
+                        "since_id": since_id,
+                        "since_time": since_time,
+                        "sort": sort,
+                        "source": source,
+                        "start_cursor": start_cursor,
+                        "target_community_id": target_community_id,
+                        "target_community_ids": target_community_ids,
+                        "target_list_id": target_list_id,
+                        "target_list_ids": target_list_ids,
+                        "targets": targets,
+                        "target_space_id": target_space_id,
+                        "target_tweet_id": target_tweet_id,
+                        "target_tweet_ids": target_tweet_ids,
+                        "target_username": target_username,
+                        "target_usernames": target_usernames,
+                        "to_user": to_user,
+                        "until_date": until_date,
+                        "until_time": until_time,
+                        "url": url,
+                        "username_contains": username_contains,
+                        "verified_only": verified_only,
+                        "verified_type": verified_type,
+                        "within": within,
+                        "within_time": within_time,
+                    },
+                    extraction_run_params.ExtractionRunParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=await async_maybe_transform({"dry_run": dry_run}, extraction_run_params.ExtractionRunParams),
+                ),
+                cast_to=cast(
+                    Any, ExtractionRunResponse
+                ),  # Union types cannot be passed in as arguments in the type system
             ),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform({"dry_run": dry_run}, extraction_run_params.ExtractionRunParams),
-            ),
-            cast_to=ExtractionRunResponse,
         )
 
 
@@ -2417,6 +2516,9 @@ class ExtractionsResourceWithRawResponse:
         )
         self.list = to_raw_response_wrapper(
             extractions.list,
+        )
+        self.cancel = to_raw_response_wrapper(
+            extractions.cancel,
         )
         self.estimate_cost = to_raw_response_wrapper(
             extractions.estimate_cost,
@@ -2440,6 +2542,9 @@ class AsyncExtractionsResourceWithRawResponse:
         self.list = async_to_raw_response_wrapper(
             extractions.list,
         )
+        self.cancel = async_to_raw_response_wrapper(
+            extractions.cancel,
+        )
         self.estimate_cost = async_to_raw_response_wrapper(
             extractions.estimate_cost,
         )
@@ -2462,6 +2567,9 @@ class ExtractionsResourceWithStreamingResponse:
         self.list = to_streamed_response_wrapper(
             extractions.list,
         )
+        self.cancel = to_streamed_response_wrapper(
+            extractions.cancel,
+        )
         self.estimate_cost = to_streamed_response_wrapper(
             extractions.estimate_cost,
         )
@@ -2483,6 +2591,9 @@ class AsyncExtractionsResourceWithStreamingResponse:
         )
         self.list = async_to_streamed_response_wrapper(
             extractions.list,
+        )
+        self.cancel = async_to_streamed_response_wrapper(
+            extractions.cancel,
         )
         self.estimate_cost = async_to_streamed_response_wrapper(
             extractions.estimate_cost,

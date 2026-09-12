@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
+cd "$(dirname "$0")/.."
+codeql="${XQUIK_CODEQL_BIN:-$HOME/.cache/xquik-codeql/2.27.0/codeql/codeql}"
+[[ "$("$codeql" version --format=terse)" == 2.27.0 ]]
+report=$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-codeql.XXXXXX")
+echo "CodeQL evidence: $report"
+"$codeql" database create "$report/database" --language=python --build-mode=none --source-root="$PWD" --threads=2
+"$codeql" database analyze "$report/database" codeql/python-queries@1.8.10:codeql-suites/python-security-extended.qls --format=sarifv2.1.0 --output="$report/report.sarif" --threads=2
+cat "$report/report.sarif"
+uv run --locked --all-extras python scripts/verify_codeql.py "$report/report.sarif"

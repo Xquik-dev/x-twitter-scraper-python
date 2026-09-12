@@ -9,14 +9,19 @@ set -e
 cd "$(dirname "$0")/.."
 
 echo "==> Running ruff"
-uv run ruff format
-uv run ruff check --fix .
-# Format again after Ruff removes imports.
-uv run ruff format
+if [[ "${1:-}" == "--check" ]]; then
+  uv run ruff format --check
+  uv run ruff check .
+else
+  uv run ruff format
+  uv run ruff check --fix .
+  # Format again after Ruff removes imports.
+  uv run ruff format
+fi
 
 echo "==> Formatting docs"
 api_docs=()
 while IFS= read -r -d '' api_doc; do
   api_docs+=("$api_doc")
 done < <(find . -type f -name api.md -print0)
-uv run python scripts/utils/ruffen-docs.py README.md "${api_docs[@]}"
+uv run python scripts/utils/ruffen-docs.py "$@" README.md "${api_docs[@]}"

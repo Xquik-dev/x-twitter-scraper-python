@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.0 (2026-09-12)
+
+- Add optional retweet timestamps with nullable `retweeted_at` response fields.
+- Align extraction, profile, and tweet contracts with the current API.
+- Preserve eager iterable serialization across synchronous and asynchronous requests.
+
 ## 0.11.2 (2026-08-21)
 
 Full Changelog: [v0.11.1...v0.11.2](https://github.com/Xquik-dev/x-twitter-scraper-python/compare/v0.11.1...v0.11.2)

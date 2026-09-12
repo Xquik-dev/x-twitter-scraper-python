@@ -61,7 +61,7 @@ class BookmarksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get bookmarked tweets
+        Returns bookmarks from the connected X account.
 
         Args:
           cursor: Pagination cursor for bookmarks
@@ -104,7 +104,7 @@ class BookmarksResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BookmarkRetrieveFoldersResponse:
-        """Get bookmark folders"""
+        """Returns bookmark folders from the connected X account."""
         return self._get(
             "/x/bookmarks/folders",
             options=make_request_options(
@@ -149,7 +149,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get bookmarked tweets
+        Returns bookmarks from the connected X account.
 
         Args:
           cursor: Pagination cursor for bookmarks
@@ -192,7 +192,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BookmarkRetrieveFoldersResponse:
-        """Get bookmark folders"""
+        """Returns bookmark folders from the connected X account."""
         return await self._get(
             "/x/bookmarks/folders",
             options=make_request_options(

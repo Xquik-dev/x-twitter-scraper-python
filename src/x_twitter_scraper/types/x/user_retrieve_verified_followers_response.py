@@ -17,6 +17,8 @@ __all__ = [
 
 
 class UserListCoverageResponseDiagnosticStrategy(BaseModel):
+    """Result counts and stop reason for one relationship strategy."""
+
     duplicate_count: int = FieldInfo(alias="duplicateCount")
 
     pages_fetched: int = FieldInfo(alias="pagesFetched")
@@ -24,6 +26,7 @@ class UserListCoverageResponseDiagnosticStrategy(BaseModel):
     stop_reason: Literal[
         "cursor_failure", "deadline", "exhausted", "failed", "page_limit", "result_limit", "stalled"
     ] = FieldInfo(alias="stopReason")
+    """Reason a coverage strategy stopped."""
 
     strategy: int
 
@@ -34,7 +37,7 @@ class UserListCoverageResponseDiagnostic(BaseModel):
     """Coverage evidence across parallel relationship strategies."""
 
     complete: bool
-    """True when every strategy exhausted its source."""
+    """True after all active strategies exhaust their sources."""
 
     cursor_failure_count: int = FieldInfo(alias="cursorFailureCount")
 
@@ -49,7 +52,7 @@ class UserListCoverageResponseDiagnostic(BaseModel):
     pages_fetched: int = FieldInfo(alias="pagesFetched")
 
     response_truncated: bool = FieldInfo(alias="responseTruncated")
-    """Whether credits or the requested limit reduced output."""
+    """True when credits or the requested limit reduce output."""
 
     result_limit_reached: bool = FieldInfo(alias="resultLimitReached")
 
@@ -65,10 +68,7 @@ class UserListCoverageResponseDiagnostic(BaseModel):
 
 
 class UserListCoverageResponse(PaginatedUsers):
-    """Paginated user profiles.
-
-    No-mode follower, following, and verified follower requests merge independent views automatically. Response fields, page size, aliases, filters, and per-returned-profile billing stay unchanged. Existing unprefixed cursors retain legacy behavior. Follow next_cursor while has_next_page is true.
-    """
+    """Terminal relationship coverage response with diagnostics."""
 
     diagnostic: UserListCoverageResponseDiagnostic
     """Coverage evidence across parallel relationship strategies."""

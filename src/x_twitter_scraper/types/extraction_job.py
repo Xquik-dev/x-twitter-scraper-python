@@ -22,7 +22,7 @@ class ExtractionJob(BaseModel):
 
     created_at: datetime = FieldInfo(alias="createdAt")
 
-    status: Literal["running", "completed", "failed"]
+    status: Literal["pending", "running", "canceled", "completed", "failed"]
 
     tool_type: Literal[
         "article_extractor",
@@ -54,3 +54,26 @@ class ExtractionJob(BaseModel):
     total_results: int = FieldInfo(alias="totalResults")
 
     completed_at: Optional[datetime] = FieldInfo(alias="completedAt", default=None)
+
+    completion_reason: Optional[
+        Literal[
+            "budget_limited",
+            "canceled",
+            "deadline_reached",
+            "failed",
+            "pagination_safety_limit",
+            "partial_failure",
+            "requested_limit_reached",
+            "source_exhausted",
+        ]
+    ] = FieldInfo(alias="completionReason", default=None)
+    """Why a terminal job stopped."""
+
+    effective_results_limit: Optional[int] = FieldInfo(alias="effectiveResultsLimit", default=None)
+    """Result limit after affordability checks."""
+
+    error_message: Optional[str] = FieldInfo(alias="errorMessage", default=None)
+    """Safe error code for a failed job."""
+
+    results_limit: Optional[int] = FieldInfo(alias="resultsLimit", default=None)
+    """Requested result limit."""

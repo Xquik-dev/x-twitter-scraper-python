@@ -15,20 +15,26 @@ __all__ = ["ExtractionEstimateCostResponse"]
 
 
 class ExtractionEstimateCostResponse(BaseModel):
+    """Free conservative cost estimate.
+
+    Post estimates use the supported cap without a live profile lookup. It never creates a job or charges.
+    """
+
     allowed: bool
+    """Whether the balance covers the full estimate."""
 
     credits_available: str = FieldInfo(alias="creditsAvailable")
 
     credits_required: str = FieldInfo(alias="creditsRequired")
 
     estimated_results: int = FieldInfo(alias="estimatedResults")
+    """Credit calculation row count, not source availability."""
 
     source: Literal[
         "followers",
         "following",
         "collection",
         "paginationCap",
-        "posts",
         "quoteCount",
         "replyCount",
         "resultsLimit",
@@ -37,3 +43,4 @@ class ExtractionEstimateCostResponse(BaseModel):
     ]
 
     resolved_x_user_id: Optional[str] = FieldInfo(alias="resolvedXUserId", default=None)
+    """Resolved X user ID from count-based profile estimates."""

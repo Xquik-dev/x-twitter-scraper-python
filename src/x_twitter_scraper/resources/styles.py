@@ -11,7 +11,7 @@ from typing import Iterable
 import httpx
 
 from ..types import style_update_params, style_analyze_params, style_compare_params
-from .._types import Body, Query, Headers, NoneType, NotGiven, not_given
+from .._types import Body, Omit, Query, Headers, NoneType, NotGiven, not_given
 from .._utils import path_template, maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -64,7 +64,7 @@ class StylesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleProfile:
         """
-        Get cached style profile
+        Returns one cached writing style profile.
 
         Args:
           extra_headers: Send extra headers
@@ -99,10 +99,10 @@ class StylesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleProfile:
         """
-        Save style profile with custom tweets
+        Creates or replaces a style profile from supplied posts.
 
         Args:
-          label: Display label for the style
+          label: Display label. Must match the path ID, ignoring case.
 
           tweets: Array of tweet objects
 
@@ -141,7 +141,7 @@ class StylesResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleListResponse:
-        """List cached style profiles"""
+        """Returns cached writing style profiles for the account."""
         return self._get(
             "/styles",
             options=make_request_options(
@@ -162,7 +162,7 @@ class StylesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Delete a style profile
+        Permanently removes one cached style profile.
 
         Args:
           extra_headers: Send extra headers
@@ -175,7 +175,7 @@ class StylesResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", **(extra_headers or dict[str, str | Omit]())}
         return self._delete(
             path_template("/styles/{id}", id=id),
             options=make_request_options(
@@ -196,7 +196,7 @@ class StylesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleProfile:
         """
-        Analyze writing style from recent tweets
+        Builds a writing style profile from recent public posts.
 
         Args:
           username: X username to analyze
@@ -231,7 +231,7 @@ class StylesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleCompareResponse:
         """
-        Compare two style profiles
+        Compares language and engagement signals across two style profiles.
 
         Args:
           username1: First username to compare
@@ -276,7 +276,7 @@ class StylesResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleGetPerformanceResponse:
         """
-        Get engagement metrics for style tweets
+        Returns engagement metrics for an analyzed public X profile.
 
         Args:
           extra_headers: Send extra headers
@@ -332,7 +332,7 @@ class AsyncStylesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleProfile:
         """
-        Get cached style profile
+        Returns one cached writing style profile.
 
         Args:
           extra_headers: Send extra headers
@@ -367,10 +367,10 @@ class AsyncStylesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleProfile:
         """
-        Save style profile with custom tweets
+        Creates or replaces a style profile from supplied posts.
 
         Args:
-          label: Display label for the style
+          label: Display label. Must match the path ID, ignoring case.
 
           tweets: Array of tweet objects
 
@@ -409,7 +409,7 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleListResponse:
-        """List cached style profiles"""
+        """Returns cached writing style profiles for the account."""
         return await self._get(
             "/styles",
             options=make_request_options(
@@ -430,7 +430,7 @@ class AsyncStylesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Delete a style profile
+        Permanently removes one cached style profile.
 
         Args:
           extra_headers: Send extra headers
@@ -443,7 +443,7 @@ class AsyncStylesResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Accept": "*/*", **(extra_headers or {})}
+        extra_headers = {"Accept": "*/*", **(extra_headers or dict[str, str | Omit]())}
         return await self._delete(
             path_template("/styles/{id}", id=id),
             options=make_request_options(
@@ -464,7 +464,7 @@ class AsyncStylesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleProfile:
         """
-        Analyze writing style from recent tweets
+        Builds a writing style profile from recent public posts.
 
         Args:
           username: X username to analyze
@@ -499,7 +499,7 @@ class AsyncStylesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleCompareResponse:
         """
-        Compare two style profiles
+        Compares language and engagement signals across two style profiles.
 
         Args:
           username1: First username to compare
@@ -544,7 +544,7 @@ class AsyncStylesResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleGetPerformanceResponse:
         """
-        Get engagement metrics for style tweets
+        Returns engagement metrics for an analyzed public X profile.
 
         Args:
           extra_headers: Send extra headers

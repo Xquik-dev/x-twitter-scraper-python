@@ -12,6 +12,7 @@ import sys
 import json
 import asyncio
 import inspect
+import weakref
 import dataclasses
 import tracemalloc
 from typing import Any, Union, TypeVar, Callable, Iterable, Iterator, Optional, Coroutine, cast
@@ -20,6 +21,7 @@ from typing_extensions import Literal, AsyncIterator, override
 
 import httpx
 import pytest
+import httpcore
 from respx import MockRouter
 from pydantic import ValidationError
 
@@ -53,6 +55,76 @@ def _get_params(client: BaseClient[Any, Any]) -> dict[str, str]:
     return dict(url.params)
 
 
+def _collect_uncached_objects() -> None:
+    # Release interpreter lookup caches before measuring retained allocations.
+    if sys.version_info >= (3, 13):
+        sys._clear_internal_caches()
+    else:
+        sys._clear_type_cache()
+    gc.collect()
+
+
+def _assert_request_copies_collected(client: XTwitterScraper | AsyncXTwitterScraper) -> None:
+    options = FinalRequestOptions(method="get", url="/foo")
+    references: list[weakref.ReferenceType[object]] = []
+
+    def build_request(options: FinalRequestOptions) -> None:
+        client_copy = client.copy()
+        request = client_copy._build_request(options)
+        references.append(weakref.ref(client_copy))
+        references.append(weakref.ref(request))
+
+    # ensure that the machinery is warmed up before tracing starts.
+    build_request(options)
+    _collect_uncached_objects()
+    tracemalloc.start(1000)
+    snapshot_before = tracemalloc.take_snapshot()
+    ITERATIONS = 10
+    for _ in range(ITERATIONS):
+        build_request(options)
+    _collect_uncached_objects()
+    released = all(reference() is None for reference in references)
+    references.clear()
+    snapshot_after = tracemalloc.take_snapshot()
+    tracemalloc.stop()
+    assert released, "Copied clients or requests remain referenced"
+
+    def add_leak(leaks: list[tracemalloc.StatisticDiff], diff: tracemalloc.StatisticDiff) -> None:
+        if diff.count_diff <= 0:
+            # Avoid false positives by considering only leaks (i.e. allocations that persist).
+            return
+        if diff.count_diff % ITERATIONS != 0:
+            # Keep the existing per-iteration allocation check.
+            return
+        for frame in diff.traceback:
+            if any(
+                frame.filename.endswith(fragment)
+                for fragment in [
+                    # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
+                    #
+                    # removing the decorator fixes the leak for reasons we don't understand.
+                    "x_twitter_scraper/_legacy_response.py",
+                    "x_twitter_scraper/_response.py",
+                    # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
+                    "x_twitter_scraper/_compat.py",
+                    # Standard library leaks we don't care about.
+                    "/logging/__init__.py",
+                ]
+            ):
+                return
+        leaks.append(diff)
+
+    leaks: list[tracemalloc.StatisticDiff] = []
+    for diff in snapshot_after.compare_to(snapshot_before, "traceback"):
+        add_leak(leaks, diff)
+    if leaks:
+        for leak in leaks:
+            print("MEMORY LEAK:", leak)
+            for frame in leak.traceback:
+                print(frame)
+        raise AssertionError()
+
+
 def _low_retry_timeout(*_args: Any, **_kwargs: Any) -> float:
     return 0.1
 
@@ -78,7 +150,9 @@ class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
     ) -> httpx.Response:
         assert not inspect.iscoroutinefunction(self.handler), "handler must not be a coroutine function"
         assert inspect.isfunction(self.handler), "handler must be a function"
-        return self.handler(request)
+        response = self.handler(request)
+        assert isinstance(response, httpx.Response)
+        return response
 
     @override
     async def handle_async_request(
@@ -86,7 +160,9 @@ class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
         request: httpx.Request,
     ) -> httpx.Response:
         assert inspect.iscoroutinefunction(self.handler), "handler must be a coroutine function"
-        return await self.handler(request)
+        response = await self.handler(request)
+        assert isinstance(response, httpx.Response)
+        return response
 
 
 @dataclasses.dataclass
@@ -113,6 +189,7 @@ def _get_open_connections(client: XTwitterScraper | AsyncXTwitterScraper) -> int
     assert isinstance(transport, httpx.HTTPTransport) or isinstance(transport, httpx.AsyncHTTPTransport)
 
     pool = transport._pool
+    assert isinstance(pool, (httpcore.ConnectionPool, httpcore.AsyncConnectionPool))
     return len(pool._requests)
 
 
@@ -262,71 +339,8 @@ class TestXTwitterScraper:
             copy_param = copy_signature.parameters.get(name)
             assert copy_param is not None, f"copy() signature is missing the {name} param"
 
-    @pytest.mark.skipif(
-        sys.version_info >= (3, 10),
-        reason="known tracer-sensitive allocation regression on supported CPython versions",
-    )
     def test_copy_build_request(self, client: XTwitterScraper) -> None:
-        options = FinalRequestOptions(method="get", url="/foo")
-
-        def build_request(options: FinalRequestOptions) -> None:
-            client_copy = client.copy()
-            client_copy._build_request(options)
-
-        # ensure that the machinery is warmed up before tracing starts.
-        build_request(options)
-        gc.collect()
-
-        tracemalloc.start(1000)
-
-        snapshot_before = tracemalloc.take_snapshot()
-
-        ITERATIONS = 10
-        for _ in range(ITERATIONS):
-            build_request(options)
-
-        gc.collect()
-        snapshot_after = tracemalloc.take_snapshot()
-
-        tracemalloc.stop()
-
-        def add_leak(leaks: list[tracemalloc.StatisticDiff], diff: tracemalloc.StatisticDiff) -> None:
-            if diff.count == 0:
-                # Avoid false positives by considering only leaks (i.e. allocations that persist).
-                return
-
-            if diff.count % ITERATIONS != 0:
-                # Avoid false positives by considering only leaks that appear per iteration.
-                return
-
-            for frame in diff.traceback:
-                if any(
-                    frame.filename.endswith(fragment)
-                    for fragment in [
-                        # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
-                        #
-                        # removing the decorator fixes the leak for reasons we don't understand.
-                        "x_twitter_scraper/_legacy_response.py",
-                        "x_twitter_scraper/_response.py",
-                        # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
-                        "x_twitter_scraper/_compat.py",
-                        # Standard library leaks we don't care about.
-                        "/logging/__init__.py",
-                    ]
-                ):
-                    return
-
-            leaks.append(diff)
-
-        leaks: list[tracemalloc.StatisticDiff] = []
-        for diff in snapshot_after.compare_to(snapshot_before, "traceback"):
-            add_leak(leaks, diff)
-        if leaks:
-            for leak in leaks:
-                print("MEMORY LEAK:", leak)
-                for frame in leak.traceback:
-                    print(frame)
-            raise AssertionError()
+        _assert_request_copies_collected(client)
 
     def test_request_timeout(self, client: XTwitterScraper) -> None:
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -515,6 +529,13 @@ class TestXTwitterScraper:
         )
         assert request.url.raw_path == b"/files/a%2Fb?beta=true&limit=10"
 
+        request = client._build_request(
+            FinalRequestOptions(
+                method="get", url="/foo?tag=a&tag=b&blank=&remove=old", params={"limit": "10", "remove": None}
+            )
+        )
+        assert request.url.params.multi_items() == [("tag", "a"), ("tag", "b"), ("blank", ""), ("limit", "10")]
+
     def test_request_extra_json(self, client: XTwitterScraper) -> None:
         request = client._build_request(
             FinalRequestOptions(
@@ -686,24 +707,27 @@ class TestXTwitterScraper:
             assert response.content == file_content
             assert counter.value == 1
 
+    @pytest.mark.parametrize("method", ["post", "patch", "put", "delete"])
     @pytest.mark.respx(base_url=base_url)
     def test_binary_content_upload_with_body_is_deprecated(
-        self, respx_mock: MockRouter, client: XTwitterScraper
+        self, method: str, respx_mock: MockRouter, client: XTwitterScraper
     ) -> None:
-        respx_mock.post("/upload").mock(side_effect=mirror_request_content)
+        getattr(respx_mock, method)("/upload").mock(side_effect=mirror_request_content)
 
         file_content = b"Hello, this is a test file."
 
         with pytest.deprecated_call(
             match="Passing raw bytes as `body` is deprecated and will be removed in a future version. Please pass raw bytes via the `content` parameter instead."
-        ):
-            response = client.post(
+        ) as captured:
+            response = getattr(client, method)(
                 "/upload",
                 body=file_content,
                 cast_to=httpx.Response,
                 options={"headers": {"Content-Type": "application/octet-stream"}},
             )
 
+        assert len(captured) == 1
+        assert captured[0].filename == __file__
         assert response.status_code == 200
         assert response.request.headers["Content-Type"] == "application/octet-stream"
         assert response.content == file_content
@@ -1274,71 +1298,8 @@ class TestAsyncXTwitterScraper:
             copy_param = copy_signature.parameters.get(name)
             assert copy_param is not None, f"copy() signature is missing the {name} param"
 
-    @pytest.mark.skipif(
-        sys.version_info >= (3, 10),
-        reason="known tracer-sensitive allocation regression on supported CPython versions",
-    )
     def test_copy_build_request(self, async_client: AsyncXTwitterScraper) -> None:
-        options = FinalRequestOptions(method="get", url="/foo")
-
-        def build_request(options: FinalRequestOptions) -> None:
-            client_copy = async_client.copy()
-            client_copy._build_request(options)
-
-        # ensure that the machinery is warmed up before tracing starts.
-        build_request(options)
-        gc.collect()
-
-        tracemalloc.start(1000)
-
-        snapshot_before = tracemalloc.take_snapshot()
-
-        ITERATIONS = 10
-        for _ in range(ITERATIONS):
-            build_request(options)
-
-        gc.collect()
-        snapshot_after = tracemalloc.take_snapshot()
-
-        tracemalloc.stop()
-
-        def add_leak(leaks: list[tracemalloc.StatisticDiff], diff: tracemalloc.StatisticDiff) -> None:
-            if diff.count == 0:
-                # Avoid false positives by considering only leaks (i.e. allocations that persist).
-                return
-
-            if diff.count % ITERATIONS != 0:
-                # Avoid false positives by considering only leaks that appear per iteration.
-                return
-
-            for frame in diff.traceback:
-                if any(
-                    frame.filename.endswith(fragment)
-                    for fragment in [
-                        # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
-                        #
-                        # removing the decorator fixes the leak for reasons we don't understand.
-                        "x_twitter_scraper/_legacy_response.py",
-                        "x_twitter_scraper/_response.py",
-                        # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
-                        "x_twitter_scraper/_compat.py",
-                        # Standard library leaks we don't care about.
-                        "/logging/__init__.py",
-                    ]
-                ):
-                    return
-
-            leaks.append(diff)
-
-        leaks: list[tracemalloc.StatisticDiff] = []
-        for diff in snapshot_after.compare_to(snapshot_before, "traceback"):
-            add_leak(leaks, diff)
-        if leaks:
-            for leak in leaks:
-                print("MEMORY LEAK:", leak)
-                for frame in leak.traceback:
-                    print(frame)
-            raise AssertionError()
+        _assert_request_copies_collected(async_client)
 
     async def test_request_timeout(self, async_client: AsyncXTwitterScraper) -> None:
         request = async_client._build_request(FinalRequestOptions(method="get", url="/foo"))
@@ -1529,6 +1490,13 @@ class TestAsyncXTwitterScraper:
         )
         assert request.url.raw_path == b"/files/a%2Fb?beta=true&limit=10"
 
+        request = async_client._build_request(
+            FinalRequestOptions(
+                method="get", url="/foo?tag=a&tag=b&blank=&remove=old", params={"limit": "10", "remove": None}
+            )
+        )
+        assert request.url.params.multi_items() == [("tag", "a"), ("tag", "b"), ("blank", ""), ("limit", "10")]
+
     def test_request_extra_json(self, client: XTwitterScraper) -> None:
         request = client._build_request(
             FinalRequestOptions(
@@ -1700,24 +1668,27 @@ class TestAsyncXTwitterScraper:
             assert response.content == file_content
             assert counter.value == 1
 
+    @pytest.mark.parametrize("method", ["post", "patch", "put", "delete"])
     @pytest.mark.respx(base_url=base_url)
     async def test_binary_content_upload_with_body_is_deprecated(
-        self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper
+        self, method: str, respx_mock: MockRouter, async_client: AsyncXTwitterScraper
     ) -> None:
-        respx_mock.post("/upload").mock(side_effect=mirror_request_content)
+        getattr(respx_mock, method)("/upload").mock(side_effect=mirror_request_content)
 
         file_content = b"Hello, this is a test file."
 
         with pytest.deprecated_call(
             match="Passing raw bytes as `body` is deprecated and will be removed in a future version. Please pass raw bytes via the `content` parameter instead."
-        ):
-            response = await async_client.post(
+        ) as captured:
+            response = await getattr(async_client, method)(
                 "/upload",
                 body=file_content,
                 cast_to=httpx.Response,
                 options={"headers": {"Content-Type": "application/octet-stream"}},
             )
 
+        assert len(captured) == 1
+        assert captured[0].filename == __file__
         assert response.status_code == 200
         assert response.request.headers["Content-Type"] == "application/octet-stream"
         assert response.content == file_content

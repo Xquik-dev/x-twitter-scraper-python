@@ -125,7 +125,7 @@ class MonitorsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Monitor:
         """
-        Get monitor
+        Returns configuration and status for one account monitor.
 
         Args:
           extra_headers: Send extra headers
@@ -160,7 +160,7 @@ class MonitorsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Monitor:
         """
-        Update monitor
+        Updates mutable settings for an existing account monitor.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -200,7 +200,7 @@ class MonitorsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorListResponse:
-        """List monitors"""
+        """Returns account monitors with their current operating states."""
         return self._get(
             "/monitors",
             options=make_request_options(
@@ -221,7 +221,8 @@ class MonitorsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorDeactivateResponse:
         """
-        Delete monitor
+        Stops one account monitor, then removes its stored events in bounded batches.
+        Poll statusUrl until the monitor returns 404.
 
         Args:
           extra_headers: Send extra headers
@@ -329,7 +330,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Monitor:
         """
-        Get monitor
+        Returns configuration and status for one account monitor.
 
         Args:
           extra_headers: Send extra headers
@@ -364,7 +365,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> Monitor:
         """
-        Update monitor
+        Updates mutable settings for an existing account monitor.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -404,7 +405,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorListResponse:
-        """List monitors"""
+        """Returns account monitors with their current operating states."""
         return await self._get(
             "/monitors",
             options=make_request_options(
@@ -425,7 +426,8 @@ class AsyncMonitorsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorDeactivateResponse:
         """
-        Delete monitor
+        Stops one account monitor, then removes its stored events in bounded batches.
+        Poll statusUrl until the monitor returns 404.
 
         Args:
           extra_headers: Send extra headers

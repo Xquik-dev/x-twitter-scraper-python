@@ -65,7 +65,7 @@ from ._types import (
     ModelBuilderProtocol,
     not_given,
 )
-from ._utils import is_dict, is_list, asyncify, is_given, lru_cache, is_mapping
+from ._utils import is_dict, asyncify, is_given, lru_cache, is_mapping
 from ._compat import PYDANTIC_V1, model_copy, model_dump
 from ._models import GenericModel, SecurityOptions, FinalRequestOptions, validate_type, construct_type
 from ._response import (
@@ -193,8 +193,8 @@ class BasePage(GenericModel, Generic[_T]):
 
     def next_page_info(self) -> Optional[PageInfo]: ...
 
-    def _get_page_items(self) -> Iterable[_T]:  # type: ignore[empty-body]
-        ...
+    def _get_page_items(self) -> Iterable[_T]:
+        raise NotImplementedError("Page items unavailable. Implement _get_page_items in the page subclass.")
 
     def _params_from_url(self, url: URL) -> httpx.QueryParams:
         # TODO: do we have to preprocess params here?
@@ -219,13 +219,10 @@ class BasePage(GenericModel, Generic[_T]):
             if not is_mapping(info.json):
                 raise TypeError("Pagination is only supported with mappings")
 
-            if not options.json_data:
-                options.json_data = {**info.json}
-            else:
-                if not is_mapping(options.json_data):
-                    raise TypeError("Pagination is only supported with mappings")
-
-                options.json_data = {**options.json_data, **info.json}
+            json_data: object = options.json_data or {}
+            if not is_mapping(json_data):
+                raise TypeError("Pagination is only supported with mappings")
+            options.json_data = {**json_data, **info.json}
             return options
 
         raise ValueError("Unexpected PageInfo state")
@@ -255,10 +252,10 @@ class BaseSyncPage(BasePage[_T], Generic[_T]):
     # methods should continue to work as expected as there is an alternative method
     # to cast a model to a dictionary, model.dict(), which is used internally
     # by pydantic.
+    @override
     def __iter__(self) -> Iterator[_T]:  # type: ignore
         for page in self.iter_pages():
-            for item in page._get_page_items():
-                yield item
+            yield from page._get_page_items()
 
     def iter_pages(self: SyncPageT) -> Iterator[SyncPageT]:
         page = self
@@ -310,11 +307,7 @@ class AsyncPaginator(Generic[_T, AsyncPageT]):
         return await self._client.request(self._page_cls, self._options)
 
     async def __aiter__(self) -> AsyncIterator[_T]:
-        # https://github.com/microsoft/pyright/issues/3464
-        page = cast(
-            AsyncPageT,
-            await self,  # type: ignore
-        )
+        page = cast(BaseAsyncPage[_T], await self)
         async for item in page:
             yield item
 
@@ -389,8 +382,8 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         self._base_url = self._enforce_trailing_slash(URL(base_url))
         self.max_retries = max_retries
         self.timeout = timeout
-        self._custom_headers = custom_headers or {}
-        self._custom_query = custom_query or {}
+        self._custom_headers: Mapping[str, str] = custom_headers or {}
+        self._custom_query: Mapping[str, object] = custom_query or {}
         self._strict_response_validation = _strict_response_validation
         self._idempotency_header = None
         self._platform: Platform | None = None
@@ -564,8 +557,11 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         prepared_url = self._prepare_url(options.url)
         # preserve hard-coded query params from the url
         if params and prepared_url.query:
-            params = {**dict(prepared_url.params.items()), **params}
-            prepared_url = prepared_url.copy_with(raw_path=prepared_url.raw_path.split(b"?", 1)[0])
+            existing = tuple((key, value) for key, value in prepared_url.params.multi_items() if key not in params)
+            query = str(httpx.QueryParams(existing))
+            extra = self.qs.stringify(params)
+            prepared_url = prepared_url.copy_with(query="&".join(filter(None, (query, extra))).encode())
+            params = {}
         if "_" in prepared_url.host:
             # work around https://github.com/encode/httpx/discussions/2880
             kwargs["extensions"] = {"sni_hostname": prepared_url.host.replace("_", "-")}
@@ -596,43 +592,21 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
             timeout=self.timeout if isinstance(options.timeout, NotGiven) else options.timeout,
             method=options.method,
             url=prepared_url,
-            # the `Query` type that we use is incompatible with qs'
-            # `Params` type as it needs to be typed as `Mapping[str, object]`
-            # so that passing a `TypedDict` doesn't cause an error.
-            # https://github.com/microsoft/pyright/issues/3526#event-6715453066
-            params=self.qs.stringify(cast(Mapping[str, Any], params)) if params else None,
+            params=self.qs.stringify(params) if params else None,
             **kwargs,
         )
 
     def _serialize_multipartform(self, data: Mapping[object, object]) -> dict[str, object]:
-        items = self.qs.stringify_items(
-            # TODO: type ignore is required as stringify_items is well typed but we can't be
-            # well typed without heavy validation.
-            data,  # type: ignore
-            array_format="brackets",
-        )
-        serialized: dict[str, object] = {}
+        fields: dict[str, object] = {}
+        for key, value in data.items():
+            if not isinstance(key, str):
+                raise TypeError("Multipart field names must be strings")
+            fields[key] = value
+        items = self.qs.stringify_items(fields, array_format="brackets")
+        serialized: dict[str, list[str]] = {}
         for key, value in items:
-            existing = serialized.get(key)
-
-            if not existing:
-                serialized[key] = value
-                continue
-
-            # If a value has already been set for this key then that
-            # means we're sending data like `array[]=[1, 2, 3]` and we
-            # need to tell httpx that we want to send multiple values with
-            # the same key which is done by using a list or a tuple.
-            #
-            # Note: 2d arrays should never result in the same key at both
-            # levels so it's safe to assume that if the value is a list,
-            # it was because we changed it to be a list.
-            if is_list(existing):
-                existing.append(value)
-            else:
-                serialized[key] = [existing, value]
-
-        return serialized
+            serialized.setdefault(key, []).append(value)
+        return {key: values[0] if len(values) == 1 else values for key, values in serialized.items()}
 
     def _maybe_override_cast_to(self, cast_to: type[ResponseT], options: FinalRequestOptions) -> type[ResponseT]:
         if not is_given(options.headers):
@@ -652,7 +626,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         return cast_to
 
     def _should_stream_response_body(self, request: httpx.Request) -> bool:
-        return request.headers.get(RAW_RESPONSE_HEADER) == "stream"  # type: ignore[no-any-return]
+        return bool(request.headers.get(RAW_RESPONSE_HEADER) == "stream")
 
     def _process_response_data(
         self,
@@ -668,11 +642,12 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
             return cast(ResponseT, data)
 
         try:
-            if inspect.isclass(cast_to) and issubclass(cast_to, ModelBuilderProtocol):
-                return cast(ResponseT, cast_to.build(response=response, data=data))
+            origin = get_origin(cast_to) or cast_to
+            if inspect.isclass(origin) and issubclass(origin, ModelBuilderProtocol):
+                return cast(ResponseT, origin.build(response=response, data=data))
 
             if self._strict_response_validation:
-                return cast(ResponseT, validate_type(type_=cast_to, value=data))
+                return validate_type(type_=cast_to, value=data)
 
             return cast(ResponseT, construct_type(type_=cast_to, value=data))
         except pydantic.ValidationError as err:
@@ -744,25 +719,14 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         if response_headers is None:
             return None
 
-        # First, try the non-standard `retry-after-ms` header for milliseconds,
-        # which is more precise than integer-seconds `retry-after`
-        try:
-            retry_ms_header = response_headers.get("retry-after-ms", None)
-            return float(retry_ms_header) / 1000
-        except (TypeError, ValueError):
-            pass
+        # Prefer precise milliseconds, then seconds, including nonstandard floats.
+        for header, scale in (("retry-after-ms", 1000), ("retry-after", 1)):
+            try:
+                return float(response_headers.get(header)) / scale
+            except (TypeError, ValueError):
+                pass
 
-        # Next, try parsing `retry-after` header as seconds (allowing nonstandard floats).
-        retry_header = response_headers.get("retry-after")
-        try:
-            # note: the spec indicates that this should only ever be an integer
-            # but if someone sends a float there's no reason for us to not respect it
-            return float(retry_header)
-        except (TypeError, ValueError):
-            pass
-
-        # Last, try parsing `retry-after` as a date.
-        retry_date_tuple = email.utils.parsedate_tz(retry_header)
+        retry_date_tuple = email.utils.parsedate_tz(response_headers.get("retry-after"))
         if retry_date_tuple is None:
             return None
 
@@ -793,6 +757,19 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         timeout = sleep_seconds * jitter
         return timeout if timeout >= 0 else 0
 
+    def _retry_delay(
+        self, remaining_retries: int, options: FinalRequestOptions, response: httpx.Response | None
+    ) -> float:
+        if remaining_retries == 1:
+            log.debug("1 retry left")
+        else:
+            log.debug("%i retries left", remaining_retries)
+
+        timeout = self._calculate_retry_timeout(remaining_retries, options, response.headers if response else None)
+        log.info("Retrying request to %s in %f seconds", options.url, timeout)
+
+        return timeout
+
     def _should_retry(self, response: httpx.Response) -> bool:
         # Note: this is not a standard header
         should_retry_header = response.headers.get("x-should-retry")
@@ -805,23 +782,8 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
             log.debug("Not retrying as header `x-should-retry` is set to `false`")
             return False
 
-        # Retry on request timeouts.
-        if response.status_code == 408:
-            log.debug("Retrying due to status code %i", response.status_code)
-            return True
-
-        # Retry on lock timeouts.
-        if response.status_code == 409:
-            log.debug("Retrying due to status code %i", response.status_code)
-            return True
-
-        # Retry on rate limits.
-        if response.status_code == 429:
-            log.debug("Retrying due to status code %i", response.status_code)
-            return True
-
-        # Retry internal errors.
-        if response.status_code >= 500:
+        # Retry request timeouts, lock timeouts, rate limits, and internal errors.
+        if response.status_code in (408, 409, 429) or response.status_code >= 500:
             log.debug("Retrying due to status code %i", response.status_code)
             return True
 
@@ -1031,23 +993,11 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
                     stream=stream or self._should_stream_response_body(request=request),
                     **kwargs,
                 )
-            except httpx.TimeoutException as err:
-                log.debug("Encountered httpx.TimeoutException", exc_info=True)
-
-                if remaining_retries > 0:
-                    self._sleep_for_retry(
-                        retries_taken=retries_taken,
-                        max_retries=max_retries,
-                        options=input_options,
-                        response=None,
-                    )
-                    continue
-
-                log.debug("Raising timeout error")
-                raise APITimeoutError(request=request) from err
             except Exception as err:
-                log.debug("Encountered Exception", exc_info=True)
-
+                is_timeout = isinstance(err, httpx.TimeoutException)
+                log.debug(
+                    "Encountered httpx.TimeoutException" if is_timeout else "Encountered Exception", exc_info=True
+                )
                 if remaining_retries > 0:
                     self._sleep_for_retry(
                         retries_taken=retries_taken,
@@ -1057,8 +1007,9 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
                     )
                     continue
 
-                log.debug("Raising connection error")
-                raise APIConnectionError(request=request) from err
+                log.debug("Raising timeout error" if is_timeout else "Raising connection error")
+                error_type = APITimeoutError if is_timeout else APIConnectionError
+                raise error_type(request=request) from err
 
             log.debug(
                 'HTTP Response: %s %s "%i %s" %s',
@@ -1107,16 +1058,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
     def _sleep_for_retry(
         self, *, retries_taken: int, max_retries: int, options: FinalRequestOptions, response: httpx.Response | None
     ) -> None:
-        remaining_retries = max_retries - retries_taken
-        if remaining_retries == 1:
-            log.debug("1 retry left")
-        else:
-            log.debug("%i retries left", remaining_retries)
-
-        timeout = self._calculate_retry_timeout(remaining_retries, options, response.headers if response else None)
-        log.info("Retrying request to %s in %f seconds", options.url, timeout)
-
-        time.sleep(timeout)
+        time.sleep(self._retry_delay(max_retries - retries_taken, options, response))
 
     def _process_response(
         self,
@@ -1129,45 +1071,32 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         retries_taken: int = 0,
     ) -> ResponseT:
         origin = get_origin(cast_to) or cast_to
-
-        if (
+        # SSE targets describe events unless a raw response was requested.
+        custom_response = (
             inspect.isclass(origin)
             and issubclass(origin, BaseAPIResponse)
-            # we only want to actually return the custom BaseAPIResponse class if we're
-            # returning the raw response, or if we're not streaming SSE, as if we're streaming
-            # SSE then `cast_to` doesn't actively reflect the type we need to parse into
             and (not stream or bool(response.request.headers.get(RAW_RESPONSE_HEADER)))
-        ):
+        )
+        if custom_response:
             if not issubclass(origin, APIResponse):
                 raise TypeError(f"API Response types must subclass {APIResponse}; Received {origin}")
-
-            response_cls = cast("type[BaseAPIResponse[Any]]", cast_to)
-            return cast(
-                ResponseT,
-                response_cls(
-                    raw=response,
-                    client=self,
-                    cast_to=extract_response_type(response_cls),
-                    stream=stream,
-                    stream_cls=stream_cls,
-                    options=options,
-                    retries_taken=retries_taken,
-                ),
-            )
-
-        if cast_to == httpx.Response:
+            response_cls = cast("type[APIResponse[ResponseT]]", cast_to)
+            cast_to = cast("type[ResponseT]", extract_response_type(response_cls))
+        elif cast_to == httpx.Response:
             return cast(ResponseT, response)
+        else:
+            response_cls = APIResponse
 
-        api_response = APIResponse(
+        api_response = response_cls(
             raw=response,
             client=self,
-            cast_to=cast("type[ResponseT]", cast_to),  # pyright: ignore[reportUnnecessaryCast]
+            cast_to=cast_to,
             stream=stream,
             stream_cls=stream_cls,
             options=options,
             retries_taken=retries_taken,
         )
-        if bool(response.request.headers.get(RAW_RESPONSE_HEADER)):
+        if custom_response or bool(response.request.headers.get(RAW_RESPONSE_HEADER)):
             return cast(ResponseT, api_response)
 
         return api_response.parse()
@@ -1289,17 +1218,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         stream: bool = False,
         stream_cls: type[_StreamT] | None = None,
     ) -> ResponseT | _StreamT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if files is not None and content is not None:
-            raise TypeError("Passing both `files` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content, files)
         opts = FinalRequestOptions.construct(
             method="post", url=path, json_data=body, content=content, files=to_httpx_files(files), **options
         )
@@ -1315,17 +1234,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         files: RequestFiles | None = None,
         options: RequestOptions = {},
     ) -> ResponseT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if files is not None and content is not None:
-            raise TypeError("Passing both `files` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content, files)
         opts = FinalRequestOptions.construct(
             method="patch", url=path, json_data=body, content=content, files=to_httpx_files(files), **options
         )
@@ -1341,17 +1250,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         files: RequestFiles | None = None,
         options: RequestOptions = {},
     ) -> ResponseT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if files is not None and content is not None:
-            raise TypeError("Passing both `files` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content, files)
         opts = FinalRequestOptions.construct(
             method="put", url=path, json_data=body, content=content, files=to_httpx_files(files), **options
         )
@@ -1366,15 +1265,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         content: BinaryTypes | None = None,
         options: RequestOptions = {},
     ) -> ResponseT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content)
         opts = FinalRequestOptions.construct(method="delete", url=path, json_data=body, content=content, **options)
         return self.request(cast_to, opts)
 
@@ -1615,23 +1506,11 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
                     stream=stream or self._should_stream_response_body(request=request),
                     **kwargs,
                 )
-            except httpx.TimeoutException as err:
-                log.debug("Encountered httpx.TimeoutException", exc_info=True)
-
-                if remaining_retries > 0:
-                    await self._sleep_for_retry(
-                        retries_taken=retries_taken,
-                        max_retries=max_retries,
-                        options=input_options,
-                        response=None,
-                    )
-                    continue
-
-                log.debug("Raising timeout error")
-                raise APITimeoutError(request=request) from err
             except Exception as err:
-                log.debug("Encountered Exception", exc_info=True)
-
+                is_timeout = isinstance(err, httpx.TimeoutException)
+                log.debug(
+                    "Encountered httpx.TimeoutException" if is_timeout else "Encountered Exception", exc_info=True
+                )
                 if remaining_retries > 0:
                     await self._sleep_for_retry(
                         retries_taken=retries_taken,
@@ -1641,8 +1520,9 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
                     )
                     continue
 
-                log.debug("Raising connection error")
-                raise APIConnectionError(request=request) from err
+                log.debug("Raising timeout error" if is_timeout else "Raising connection error")
+                error_type = APITimeoutError if is_timeout else APIConnectionError
+                raise error_type(request=request) from err
 
             log.debug(
                 'HTTP Response: %s %s "%i %s" %s',
@@ -1691,16 +1571,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
     async def _sleep_for_retry(
         self, *, retries_taken: int, max_retries: int, options: FinalRequestOptions, response: httpx.Response | None
     ) -> None:
-        remaining_retries = max_retries - retries_taken
-        if remaining_retries == 1:
-            log.debug("1 retry left")
-        else:
-            log.debug("%i retries left", remaining_retries)
-
-        timeout = self._calculate_retry_timeout(remaining_retries, options, response.headers if response else None)
-        log.info("Retrying request to %s in %f seconds", options.url, timeout)
-
-        await anyio.sleep(timeout)
+        await anyio.sleep(self._retry_delay(max_retries - retries_taken, options, response))
 
     async def _process_response(
         self,
@@ -1713,45 +1584,32 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         retries_taken: int = 0,
     ) -> ResponseT:
         origin = get_origin(cast_to) or cast_to
-
-        if (
+        # SSE targets describe events unless a raw response was requested.
+        custom_response = (
             inspect.isclass(origin)
             and issubclass(origin, BaseAPIResponse)
-            # we only want to actually return the custom BaseAPIResponse class if we're
-            # returning the raw response, or if we're not streaming SSE, as if we're streaming
-            # SSE then `cast_to` doesn't actively reflect the type we need to parse into
             and (not stream or bool(response.request.headers.get(RAW_RESPONSE_HEADER)))
-        ):
+        )
+        if custom_response:
             if not issubclass(origin, AsyncAPIResponse):
                 raise TypeError(f"API Response types must subclass {AsyncAPIResponse}; Received {origin}")
-
-            response_cls = cast("type[BaseAPIResponse[Any]]", cast_to)
-            return cast(
-                "ResponseT",
-                response_cls(
-                    raw=response,
-                    client=self,
-                    cast_to=extract_response_type(response_cls),
-                    stream=stream,
-                    stream_cls=stream_cls,
-                    options=options,
-                    retries_taken=retries_taken,
-                ),
-            )
-
-        if cast_to == httpx.Response:
+            response_cls = cast("type[AsyncAPIResponse[ResponseT]]", cast_to)
+            cast_to = cast("type[ResponseT]", extract_response_type(response_cls))
+        elif cast_to == httpx.Response:
             return cast(ResponseT, response)
+        else:
+            response_cls = AsyncAPIResponse
 
-        api_response = AsyncAPIResponse(
+        api_response = response_cls(
             raw=response,
             client=self,
-            cast_to=cast("type[ResponseT]", cast_to),  # pyright: ignore[reportUnnecessaryCast]
+            cast_to=cast_to,
             stream=stream,
             stream_cls=stream_cls,
             options=options,
             retries_taken=retries_taken,
         )
-        if bool(response.request.headers.get(RAW_RESPONSE_HEADER)):
+        if custom_response or bool(response.request.headers.get(RAW_RESPONSE_HEADER)):
             return cast(ResponseT, api_response)
 
         return await api_response.parse()
@@ -1861,17 +1719,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         stream: bool = False,
         stream_cls: type[_AsyncStreamT] | None = None,
     ) -> ResponseT | _AsyncStreamT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if files is not None and content is not None:
-            raise TypeError("Passing both `files` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content, files)
         opts = FinalRequestOptions.construct(
             method="post", url=path, json_data=body, content=content, files=await async_to_httpx_files(files), **options
         )
@@ -1887,17 +1735,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         files: RequestFiles | None = None,
         options: RequestOptions = {},
     ) -> ResponseT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if files is not None and content is not None:
-            raise TypeError("Passing both `files` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content, files)
         opts = FinalRequestOptions.construct(
             method="patch",
             url=path,
@@ -1918,17 +1756,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         files: RequestFiles | None = None,
         options: RequestOptions = {},
     ) -> ResponseT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if files is not None and content is not None:
-            raise TypeError("Passing both `files` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content, files)
         opts = FinalRequestOptions.construct(
             method="put", url=path, json_data=body, content=content, files=await async_to_httpx_files(files), **options
         )
@@ -1943,15 +1771,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         content: AsyncBinaryTypes | None = None,
         options: RequestOptions = {},
     ) -> ResponseT:
-        if body is not None and content is not None:
-            raise TypeError("Passing both `body` and `content` is not supported")
-        if isinstance(body, bytes):
-            warnings.warn(
-                "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
-                "Please pass raw bytes via the `content` parameter instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
+        _validate_request_body(body, content)
         opts = FinalRequestOptions.construct(method="delete", url=path, json_data=body, content=content, **options)
         return await self.request(cast_to, opts)
 
@@ -1967,6 +1787,22 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
     ) -> AsyncPaginator[_T, AsyncPageT]:
         opts = FinalRequestOptions.construct(method=method, url=path, json_data=body, **options)
         return self._request_api_list(model, page, opts)
+
+
+def _validate_request_body(
+    body: Body | None, content: BinaryTypes | AsyncBinaryTypes | None, files: RequestFiles | None = None
+) -> None:
+    if body is not None and content is not None:
+        raise TypeError("Passing both `body` and `content` is not supported")
+    if files is not None and content is not None:
+        raise TypeError("Passing both `files` and `content` is not supported")
+    if isinstance(body, bytes):
+        warnings.warn(
+            "Passing raw bytes as `body` is deprecated and will be removed in a future version. "
+            "Please pass raw bytes via the `content` parameter instead.",
+            DeprecationWarning,
+            stacklevel=3,
+        )
 
 
 def make_request_options(
@@ -2001,8 +1837,7 @@ def make_request_options(
         options["idempotency_key"] = idempotency_key
 
     if is_given(post_parser):
-        # internal
-        options["post_parser"] = post_parser  # type: ignore
+        options["post_parser"] = post_parser
 
     if security is not None:
         options["security"] = security

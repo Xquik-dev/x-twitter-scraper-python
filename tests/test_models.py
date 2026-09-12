@@ -6,7 +6,7 @@ import json
 from typing import TYPE_CHECKING, Any, Dict, List, Union, Iterable, Optional, cast
 from datetime import datetime, timezone
 from collections import deque
-from typing_extensions import Literal, Annotated, TypedDict, TypeAliasType
+from typing_extensions import Literal, Protocol, Annotated, TypedDict, TypeAliasType
 
 import pytest
 import pydantic
@@ -15,10 +15,50 @@ from pydantic import Field
 from x_twitter_scraper._utils import PropertyInfo
 from x_twitter_scraper._compat import PYDANTIC_V1, parse_obj, model_dump, model_json
 from x_twitter_scraper._models import DISCRIMINATOR_CACHE, BaseModel, EagerIterable, construct_type
+from x_twitter_scraper._base_client import BasePage
 
 
 class BasicModel(BaseModel):
     foo: str
+
+
+class NamedModel(BaseModel):
+    name: str
+
+
+class BooleanBarModel(BaseModel):
+    bar: bool
+
+
+class ThingModel(BaseModel):
+    thing: str
+
+
+class LevelModel(BaseModel):
+    level: int
+
+
+class DatetimeModel(BaseModel):
+    created_at: datetime
+
+
+class AliasedOptionalModel(BaseModel):
+    foo: Optional[str] = Field(alias="FOO", default=None)
+
+
+class StringVariant(BaseModel):
+    type: Literal["a"]
+    data: str
+
+
+class IntegerVariant(BaseModel):
+    type: Literal["b"]
+    data: int
+
+
+class BooleanVariant(BaseModel):
+    type: Literal["c"]
+    data: bool
 
 
 @pytest.mark.parametrize("value", ["hello", 1], ids=["correct type", "mismatched"])
@@ -34,10 +74,6 @@ def test_directly_nested_model() -> None:
     m = NestedModel.construct(nested={"foo": "Foo!"})
     assert m.nested.foo == "Foo!"
 
-    # mismatched types
-    m = NestedModel.construct(nested="hello!")
-    assert cast(Any, m.nested) == "hello!"
-
 
 def test_optional_nested_model() -> None:
     class NestedModel(BaseModel):
@@ -50,51 +86,33 @@ def test_optional_nested_model() -> None:
     assert m2.nested is not None
     assert m2.nested.foo == "bar"
 
-    # mismatched types
-    m3 = NestedModel.construct(nested={"foo"})
-    assert isinstance(cast(Any, m3.nested), set)
-    assert cast(Any, m3.nested) == {"foo"}
+
+class ListNestedModel(BaseModel):
+    nested: List[BasicModel]
 
 
-def test_list_nested_model() -> None:
-    class NestedModel(BaseModel):
-        nested: List[BasicModel]
-
-    m = NestedModel.construct(nested=[{"foo": "bar"}, {"foo": "2"}])
-    assert m.nested is not None
-    assert isinstance(m.nested, list)
-    assert len(m.nested) == 2
-    assert m.nested[0].foo == "bar"
-    assert m.nested[1].foo == "2"
-
-    # mismatched types
-    m = NestedModel.construct(nested=True)
-    assert cast(Any, m.nested) is True
-
-    m = NestedModel.construct(nested=[False])
-    assert cast(Any, m.nested) == [False]
+class OptionalListNestedModel(BaseModel):
+    nested: Optional[List[BasicModel]]
 
 
-def test_optional_list_nested_model() -> None:
-    class NestedModel(BaseModel):
-        nested: Optional[List[BasicModel]]
+@pytest.mark.parametrize("model_type", [ListNestedModel, OptionalListNestedModel])
+def test_list_nested_model(model_type: type[ListNestedModel] | type[OptionalListNestedModel]) -> None:
+    model = model_type.construct(nested=[{"foo": "bar"}, {"foo": "2"}])
+    assert model.nested is not None
+    assert isinstance(model.nested, list)
+    assert len(model.nested) == 2
+    assert model.nested[0].foo == "bar"
+    assert model.nested[1].foo == "2"
 
-    m1 = NestedModel.construct(nested=[{"foo": "bar"}, {"foo": "2"}])
-    assert m1.nested is not None
-    assert isinstance(m1.nested, list)
-    assert len(m1.nested) == 2
-    assert m1.nested[0].foo == "bar"
-    assert m1.nested[1].foo == "2"
 
-    m2 = NestedModel.construct(nested=None)
-    assert m2.nested is None
-
-    # mismatched types
-    m3 = NestedModel.construct(nested={1})
-    assert cast(Any, m3.nested) == {1}
-
-    m4 = NestedModel.construct(nested=[False])
-    assert cast(Any, m4.nested) == [False]
+@pytest.mark.parametrize("model_type", [ListNestedModel, OptionalListNestedModel])
+@pytest.mark.parametrize("value", [None, True, {1}, [False]])
+def test_list_nested_model_preserves_mismatched_values(
+    model_type: type[ListNestedModel] | type[OptionalListNestedModel], value: object
+) -> None:
+    actual = model_type.construct(nested=value).nested
+    assert actual == value
+    assert type(actual) is type(value)
 
 
 def test_list_optional_items_nested_model() -> None:
@@ -109,20 +127,23 @@ def test_list_optional_items_nested_model() -> None:
     assert m.nested[1] is not None
     assert m.nested[1].foo == "bar"
 
-    # mismatched types
-    m3 = NestedModel.construct(nested="foo")
-    assert cast(Any, m3.nested) == "foo"
 
-    m4 = NestedModel.construct(nested=[False])
-    assert cast(Any, m4.nested) == [False]
-
-
-def test_list_mismatched_type() -> None:
-    class NestedModel(BaseModel):
-        nested: List[str]
-
-    m = NestedModel.construct(nested=False)
-    assert cast(Any, m.nested) is False
+@pytest.mark.parametrize(
+    "annotation,value",
+    [
+        (BasicModel, "hello!"),
+        (Optional[BasicModel], {"foo"}),
+        (List[Optional[BasicModel]], "foo"),
+        (List[Optional[BasicModel]], [False]),
+        (List[str], False),
+        (Dict[str, str], False),
+    ],
+)
+def test_nested_construction_preserves_mismatched_values(annotation: object, value: object) -> None:
+    model_type = pydantic.create_model("NestedModel", __base__=BaseModel, nested=(annotation, ...))
+    actual: object = model_type.construct(nested=value).__dict__["nested"]
+    assert actual == value
+    assert type(actual) is type(value)
 
 
 def test_raw_dictionary() -> None:
@@ -131,10 +152,6 @@ def test_raw_dictionary() -> None:
 
     m = NestedModel.construct(nested={"hello": "world"})
     assert m.nested == {"hello": "world"}
-
-    # mismatched types
-    m = NestedModel.construct(nested=False)
-    assert cast(Any, m.nested) is False
 
 
 def test_nested_dictionary_model() -> None:
@@ -150,39 +167,29 @@ def test_nested_dictionary_model() -> None:
     assert cast(Any, m.nested["hello"]) is False
 
 
-def test_unknown_fields() -> None:
-    m1 = BasicModel.construct(foo="foo", unknown=1)
-    assert m1.foo == "foo"
-    assert cast(Any, m1).unknown == 1
-
-    m2 = BasicModel.construct(foo="foo", unknown={"foo_bar": True})
-    assert m2.foo == "foo"
-    assert cast(Any, m2).unknown == {"foo_bar": True}
-
-    assert model_dump(m2) == {"foo": "foo", "unknown": {"foo_bar": True}}
+@pytest.mark.parametrize("unknown, expected", [(1, 1), ({"foo_bar": True}, {"foo_bar": True})])
+def test_unknown_fields(unknown: object, expected: object) -> None:
+    model = BasicModel.construct(foo="foo", unknown=unknown)
+    assert model.foo == "foo"
+    assert cast(Any, model).unknown == expected
+    assert model_dump(model) == {"foo": "foo", "unknown": expected}
 
 
 def test_strict_validation_unknown_fields() -> None:
-    class Model(BaseModel):
-        foo: str
-
-    model = parse_obj(Model, dict(foo="hello!", user="Robert"))
+    model = parse_obj(BasicModel, dict(foo="hello!", user="Robert"))
     assert model.foo == "hello!"
     assert cast(Any, model).user == "Robert"
 
     assert model_dump(model) == {"foo": "hello!", "user": "Robert"}
 
 
-def test_aliases() -> None:
+@pytest.mark.parametrize("value, expected", [(1, 1), ({"hello": False}, {"hello": False})])
+def test_aliases(value: object, expected: object) -> None:
     class Model(BaseModel):
         my_field: int = Field(alias="myField")
 
-    m = Model.construct(myField=1)
-    assert m.my_field == 1
-
-    # mismatched types
-    m = Model.construct(myField={"hello": False})
-    assert cast(Any, m.my_field) == {"hello": False}
+    model = Model.construct(myField=value)
+    assert cast(Any, model.my_field) == expected
 
 
 def test_repr() -> None:
@@ -206,11 +213,8 @@ def test_repr_nested_model() -> None:
 
 
 def test_optional_list() -> None:
-    class Submodel(BaseModel):
-        name: str
-
     class Model(BaseModel):
-        items: Optional[List[Submodel]]
+        items: Optional[List[NamedModel]]
 
     m = Model.construct(items=None)
     assert m.items is None
@@ -225,26 +229,17 @@ def test_optional_list() -> None:
 
 
 def test_nested_union_of_models() -> None:
-    class Submodel1(BaseModel):
-        bar: bool
-
-    class Submodel2(BaseModel):
-        thing: str
-
     class Model(BaseModel):
-        foo: Union[Submodel1, Submodel2]
+        foo: Union[BooleanBarModel, ThingModel]
 
     m = Model.construct(foo={"thing": "hello"})
-    assert isinstance(m.foo, Submodel2)
+    assert isinstance(m.foo, ThingModel)
     assert m.foo.thing == "hello"
 
 
 def test_nested_union_of_mixed_types() -> None:
-    class Submodel1(BaseModel):
-        bar: bool
-
     class Model(BaseModel):
-        foo: Union[Submodel1, Literal[True], Literal["CARD_HOLDER"]]
+        foo: Union[BooleanBarModel, Literal[True], Literal["CARD_HOLDER"]]
 
     m = Model.construct(foo=True)
     assert m.foo is True
@@ -253,25 +248,19 @@ def test_nested_union_of_mixed_types() -> None:
     assert m.foo == "CARD_HOLDER"
 
     m = Model.construct(foo={"bar": False})
-    assert isinstance(m.foo, Submodel1)
+    assert isinstance(m.foo, BooleanBarModel)
     assert m.foo.bar is False
 
 
 def test_nested_union_multiple_variants() -> None:
-    class Submodel1(BaseModel):
-        bar: bool
-
-    class Submodel2(BaseModel):
-        thing: str
-
     class Submodel3(BaseModel):
         foo: int
 
     class Model(BaseModel):
-        foo: Union[Submodel1, Submodel2, None, Submodel3]
+        foo: Union[BooleanBarModel, ThingModel, None, Submodel3]
 
     m = Model.construct(foo={"thing": "hello"})
-    assert isinstance(m.foo, Submodel2)
+    assert isinstance(m.foo, ThingModel)
     assert m.foo.thing == "hello"
 
     m = Model.construct(foo=None)
@@ -286,112 +275,88 @@ def test_nested_union_multiple_variants() -> None:
 
 
 def test_nested_union_invalid_data() -> None:
-    class Submodel1(BaseModel):
-        level: int
-
-    class Submodel2(BaseModel):
-        name: str
+    class ExtraName(Protocol):
+        name: object
 
     class Model(BaseModel):
-        foo: Union[Submodel1, Submodel2]
+        foo: Union[LevelModel, NamedModel]
 
     m = Model.construct(foo=True)
-    assert cast(bool, m.foo) is True
+    assert cast(object, m.foo) is True
 
     m = Model.construct(foo={"name": 3})
     if PYDANTIC_V1:
-        assert isinstance(m.foo, Submodel2)
+        assert isinstance(m.foo, NamedModel)
         assert m.foo.name == "3"
     else:
-        assert isinstance(m.foo, Submodel1)
-        assert m.foo.name == 3  # type: ignore
+        assert isinstance(m.foo, LevelModel)
+        assert cast(ExtraName, m.foo).name == 3
 
 
 def test_list_of_unions() -> None:
-    class Submodel1(BaseModel):
-        level: int
-
-    class Submodel2(BaseModel):
-        name: str
-
     class Model(BaseModel):
-        items: List[Union[Submodel1, Submodel2]]
+        items: List[Union[LevelModel, NamedModel]]
 
     m = Model.construct(items=[{"level": 1}, {"name": "Robert"}])
     assert len(m.items) == 2
-    assert isinstance(m.items[0], Submodel1)
+    assert isinstance(m.items[0], LevelModel)
     assert m.items[0].level == 1
-    assert isinstance(m.items[1], Submodel2)
+    assert isinstance(m.items[1], NamedModel)
     assert m.items[1].name == "Robert"
 
     m = Model.construct(items=[{"level": -1}, 156])
     assert len(m.items) == 2
-    assert isinstance(m.items[0], Submodel1)
+    assert isinstance(m.items[0], LevelModel)
     assert m.items[0].level == -1
     assert cast(Any, m.items[1]) == 156
 
 
 def test_union_of_lists() -> None:
-    class SubModel1(BaseModel):
-        level: int
-
-    class SubModel2(BaseModel):
-        name: str
-
     class Model(BaseModel):
-        items: Union[List[SubModel1], List[SubModel2]]
+        items: Union[List[LevelModel], List[NamedModel]]
 
     # with one valid entry
     m = Model.construct(items=[{"name": "Robert"}])
     assert len(m.items) == 1
-    assert isinstance(m.items[0], SubModel2)
+    assert isinstance(m.items[0], NamedModel)
     assert m.items[0].name == "Robert"
 
     # with two entries pointing to different types
     m = Model.construct(items=[{"level": 1}, {"name": "Robert"}])
     assert len(m.items) == 2
-    assert isinstance(m.items[0], SubModel1)
+    assert isinstance(m.items[0], LevelModel)
     assert m.items[0].level == 1
-    assert isinstance(m.items[1], SubModel1)
+    assert isinstance(m.items[1], LevelModel)
     assert cast(Any, m.items[1]).name == "Robert"
 
     # with two entries pointing to *completely* different types
     m = Model.construct(items=[{"level": -1}, 156])
     assert len(m.items) == 2
-    assert isinstance(m.items[0], SubModel1)
+    assert isinstance(m.items[0], LevelModel)
     assert m.items[0].level == -1
     assert cast(Any, m.items[1]) == 156
 
 
 def test_dict_of_union() -> None:
-    class SubModel1(BaseModel):
-        name: str
-
-    class SubModel2(BaseModel):
-        foo: str
-
     class Model(BaseModel):
-        data: Dict[str, Union[SubModel1, SubModel2]]
+        data: Dict[str, Union[NamedModel, BasicModel]]
 
     m = Model.construct(data={"hello": {"name": "there"}, "foo": {"foo": "bar"}})
     assert len(list(m.data.keys())) == 2
-    assert isinstance(m.data["hello"], SubModel1)
+    assert isinstance(m.data["hello"], NamedModel)
     assert m.data["hello"].name == "there"
-    assert isinstance(m.data["foo"], SubModel2)
+    assert isinstance(m.data["foo"], BasicModel)
     assert m.data["foo"].foo == "bar"
 
     # TODO: test mismatched type
 
 
 def test_double_nested_union() -> None:
-    class SubModel1(BaseModel):
-        name: str
-
     class SubModel2(BaseModel):
         bar: str
 
     class Model(BaseModel):
-        data: Dict[str, List[Union[SubModel1, SubModel2]]]
+        data: Dict[str, List[Union[NamedModel, SubModel2]]]
 
     m = Model.construct(data={"foo": [{"bar": "baz"}, {"name": "Robert"}]})
     assert len(m.data["foo"]) == 2
@@ -401,34 +366,26 @@ def test_double_nested_union() -> None:
     assert entry1.bar == "baz"
 
     entry2 = m.data["foo"][1]
-    assert isinstance(entry2, SubModel1)
+    assert isinstance(entry2, NamedModel)
     assert entry2.name == "Robert"
 
     # TODO: test mismatched type
 
 
 def test_union_of_dict() -> None:
-    class SubModel1(BaseModel):
-        name: str
-
-    class SubModel2(BaseModel):
-        foo: str
-
     class Model(BaseModel):
-        data: Union[Dict[str, SubModel1], Dict[str, SubModel2]]
+        data: Union[Dict[str, NamedModel], Dict[str, BasicModel]]
 
     m = Model.construct(data={"hello": {"name": "there"}, "foo": {"foo": "bar"}})
     assert len(list(m.data.keys())) == 2
-    assert isinstance(m.data["hello"], SubModel1)
+    assert isinstance(m.data["hello"], NamedModel)
     assert m.data["hello"].name == "there"
-    assert isinstance(m.data["foo"], SubModel1)
+    assert isinstance(m.data["foo"], NamedModel)
     assert cast(Any, m.data["foo"]).foo == "bar"
 
 
-def test_iso8601_datetime() -> None:
-    class Model(BaseModel):
-        created_at: datetime
-
+@pytest.mark.parametrize("validated", [False, True], ids=["construct", "validate"])
+def test_iso8601_datetime(validated: bool) -> None:
     expected = datetime(2019, 12, 27, 18, 11, 19, 117000, tzinfo=timezone.utc)
 
     if PYDANTIC_V1:
@@ -436,11 +393,8 @@ def test_iso8601_datetime() -> None:
     else:
         expected_json = '{"created_at":"2019-12-27T18:11:19.117000Z"}'
 
-    model = Model.construct(created_at="2019-12-27T18:11:19.117Z")
-    assert model.created_at == expected
-    assert model_json(model) == expected_json
-
-    model = parse_obj(Model, dict(created_at="2019-12-27T18:11:19.117Z"))
+    values = {"created_at": "2019-12-27T18:11:19.117Z"}
+    model = parse_obj(DatetimeModel, values) if validated else DatetimeModel.construct(_fields_set=None, **values)
     assert model.created_at == expected
     assert model_json(model) == expected_json
 
@@ -455,25 +409,18 @@ def test_does_not_coerce_int() -> None:
     assert Model.construct(bar=False).bar is False
 
 
-def test_int_to_float_safe_conversion() -> None:
+@pytest.mark.parametrize("value,expected,kind", [(10, 10.0, float), (10.12, 10.12, float), (2**53 + 1, 2**53 + 1, int)])
+def test_int_to_float_safe_conversion(value: int | float, expected: int | float, kind: type) -> None:
     class Model(BaseModel):
         float_field: float
 
-    m = Model.construct(float_field=10)
-    assert m.float_field == 10.0
-    assert isinstance(m.float_field, float)
-
-    m = Model.construct(float_field=10.12)
-    assert m.float_field == 10.12
-    assert isinstance(m.float_field, float)
-
-    # number too big
-    m = Model.construct(float_field=2**53 + 1)
-    assert m.float_field == 2**53 + 1
-    assert isinstance(m.float_field, int)
+    m = Model.construct(float_field=value)
+    assert m.float_field == expected
+    assert isinstance(m.float_field, kind)
 
 
-def test_deprecated_alias() -> None:
+@pytest.mark.parametrize("validated", [False, True], ids=["construct", "validate"])
+def test_deprecated_alias(validated: bool) -> None:
     class Model(BaseModel):
         resource_id: str = Field(alias="model_id")
 
@@ -481,164 +428,85 @@ def test_deprecated_alias() -> None:
         def model_id(self) -> str:
             return self.resource_id
 
-    m = Model.construct(model_id="id")
-    assert m.model_id == "id"
-    assert m.resource_id == "id"
-    assert m.resource_id is m.model_id
-
-    m = parse_obj(Model, {"model_id": "id"})
+    m = parse_obj(Model, {"model_id": "id"}) if validated else Model.construct(model_id="id")
     assert m.model_id == "id"
     assert m.resource_id == "id"
     assert m.resource_id is m.model_id
 
 
-def test_omitted_fields() -> None:
+@pytest.mark.parametrize(
+    "values,expected", [({}, None), ({"resource_id": None}, None), ({"resource_id": "foo"}, "foo")]
+)
+def test_omitted_fields(values: dict[str, str | None], expected: str | None) -> None:
     class Model(BaseModel):
         resource_id: Optional[str] = None
 
-    m = Model.construct()
-    assert m.resource_id is None
-    assert "resource_id" not in m.model_fields_set
-
-    m = Model.construct(resource_id=None)
-    assert m.resource_id is None
-    assert "resource_id" in m.model_fields_set
-
-    m = Model.construct(resource_id="foo")
-    assert m.resource_id == "foo"
-    assert "resource_id" in m.model_fields_set
+    m = Model.construct(_fields_set=None, **values)
+    assert m.resource_id is expected if expected is None else m.resource_id == expected
+    assert m.model_fields_set == set(values)
 
 
-def test_to_dict() -> None:
-    class Model(BaseModel):
-        foo: Optional[str] = Field(alias="FOO", default=None)
+@pytest.mark.parametrize("as_json", [False, True], ids=["dict", "json"])
+@pytest.mark.parametrize("api_defaults", [False, True], ids=["model_dump", "to"])
+def test_model_serialization(as_json: bool, api_defaults: bool) -> None:
+    if api_defaults:
+        dump = BaseModel.to_json if as_json else BaseModel.to_dict
+    else:
+        dump = BaseModel.model_dump_json if as_json else BaseModel.model_dump
 
-    m = Model(FOO="hello")
-    assert m.to_dict() == {"FOO": "hello"}
-    assert m.to_dict(use_api_names=False) == {"foo": "hello"}
+    def decode(value: object) -> object:
+        decoded: object = json.loads(value) if isinstance(value, str) else value
+        assert isinstance(value, str if as_json else dict)
+        return decoded
 
-    m2 = Model()
-    assert m2.to_dict() == {}
-    assert m2.to_dict(exclude_unset=False) == {"FOO": None}
-    assert m2.to_dict(exclude_unset=False, exclude_none=True) == {}
-    assert m2.to_dict(exclude_unset=False, exclude_defaults=True) == {}
+    key = "FOO" if api_defaults else "foo"
+    m = AliasedOptionalModel(FOO="hello")
+    assert decode(dump(m)) == {key: "hello"}
+    if api_defaults:
+        assert decode(m.to_json(use_api_names=False) if as_json else m.to_dict(use_api_names=False)) == {"foo": "hello"}
+    else:
+        native_dump = BaseModel.model_dump_json if as_json else BaseModel.model_dump
+        assert decode(native_dump(m, include={"bar"})) == {}
+        assert decode(native_dump(m, exclude={"foo"})) == {}
+        assert decode(native_dump(m, include={"foo"})) == {"foo": "hello"}
+        assert decode(native_dump(m, by_alias=True)) == {"FOO": "hello"}
+        if PYDANTIC_V1:
+            with pytest.raises(ValueError, match="round_trip is only supported in Pydantic v2"):
+                native_dump(m, round_trip=True)
+            with pytest.raises(ValueError, match="polymorphic_serialization is only supported in Pydantic v2"):
+                native_dump(m, polymorphic_serialization=True)
 
-    m3 = Model(FOO=None)
-    assert m3.to_dict() == {"FOO": None}
-    assert m3.to_dict(exclude_none=True) == {}
-    assert m3.to_dict(exclude_defaults=True) == {}
+    m2 = AliasedOptionalModel()
+    assert decode(dump(m2)) == ({} if api_defaults else {"foo": None})
+    assert decode(dump(m2, exclude_unset=True)) == {}
+    assert decode(dump(m2, exclude_unset=False)) == {key: None}
+    assert decode(dump(m2, exclude_none=True)) == {}
+    assert decode(dump(m2, exclude_defaults=True)) == {}
+    assert decode(dump(m2, exclude_unset=False, exclude_none=True)) == {}
+    assert decode(dump(m2, exclude_unset=False, exclude_defaults=True)) == {}
 
-    class Model2(BaseModel):
-        created_at: datetime
+    m3 = AliasedOptionalModel(FOO=None)
+    assert decode(dump(m3)) == {key: None}
+    assert decode(dump(m3, exclude_none=True)) == {}
+    assert decode(dump(m3, exclude_defaults=True)) == {}
+    if PYDANTIC_V1:
+        with pytest.raises(ValueError, match="warnings is only supported in Pydantic v2"):
+            dump(m, warnings=False)
 
+
+def test_serialization_formatting() -> None:
+    m = AliasedOptionalModel(FOO="hello")
+    assert m.to_json(indent=None) == ('{"FOO": "hello"}' if PYDANTIC_V1 else '{"FOO":"hello"}')
+    assert m.model_dump_json(indent=2) == '{\n  "foo": "hello"\n}'
     time_str = "2024-03-21T11:39:01.275859"
-    m4 = Model2.construct(created_at=time_str)
-    assert m4.to_dict(mode="python") == {"created_at": datetime.fromisoformat(time_str)}
-    assert m4.to_dict(mode="json") == {"created_at": time_str}
-
-    if PYDANTIC_V1:
-        with pytest.raises(ValueError, match="warnings is only supported in Pydantic v2"):
-            m.to_dict(warnings=False)
-
-
-def test_forwards_compat_model_dump_method() -> None:
-    class Model(BaseModel):
-        foo: Optional[str] = Field(alias="FOO", default=None)
-
-    m = Model(FOO="hello")
-    assert m.model_dump() == {"foo": "hello"}
-    assert m.model_dump(include={"bar"}) == {}
-    assert m.model_dump(exclude={"foo"}) == {}
-    assert m.model_dump(by_alias=True) == {"FOO": "hello"}
-
-    m2 = Model()
-    assert m2.model_dump() == {"foo": None}
-    assert m2.model_dump(exclude_unset=True) == {}
-    assert m2.model_dump(exclude_none=True) == {}
-    assert m2.model_dump(exclude_defaults=True) == {}
-
-    m3 = Model(FOO=None)
-    assert m3.model_dump() == {"foo": None}
-    assert m3.model_dump(exclude_none=True) == {}
-
-    if PYDANTIC_V1:
-        with pytest.raises(ValueError, match="round_trip is only supported in Pydantic v2"):
-            m.model_dump(round_trip=True)
-
-        with pytest.raises(ValueError, match="warnings is only supported in Pydantic v2"):
-            m.model_dump(warnings=False)
-
-        with pytest.raises(ValueError, match="polymorphic_serialization is only supported in Pydantic v2"):
-            m.model_dump(polymorphic_serialization=True)
+    moment = DatetimeModel.construct(created_at=time_str)
+    assert moment.to_dict(mode="python") == {"created_at": datetime.fromisoformat(time_str)}
+    assert moment.to_dict(mode="json") == {"created_at": time_str}
 
 
 def test_compat_method_no_error_for_warnings() -> None:
-    class Model(BaseModel):
-        foo: Optional[str]
-
-    m = Model(foo="hello")
+    m = BasicModel(foo="hello")
     assert isinstance(model_dump(m, warnings=False), dict)
-
-
-def test_to_json() -> None:
-    class Model(BaseModel):
-        foo: Optional[str] = Field(alias="FOO", default=None)
-
-    m = Model(FOO="hello")
-    assert json.loads(m.to_json()) == {"FOO": "hello"}
-    assert json.loads(m.to_json(use_api_names=False)) == {"foo": "hello"}
-
-    if PYDANTIC_V1:
-        assert m.to_json(indent=None) == '{"FOO": "hello"}'
-    else:
-        assert m.to_json(indent=None) == '{"FOO":"hello"}'
-
-    m2 = Model()
-    assert json.loads(m2.to_json()) == {}
-    assert json.loads(m2.to_json(exclude_unset=False)) == {"FOO": None}
-    assert json.loads(m2.to_json(exclude_unset=False, exclude_none=True)) == {}
-    assert json.loads(m2.to_json(exclude_unset=False, exclude_defaults=True)) == {}
-
-    m3 = Model(FOO=None)
-    assert json.loads(m3.to_json()) == {"FOO": None}
-    assert json.loads(m3.to_json(exclude_none=True)) == {}
-
-    if PYDANTIC_V1:
-        with pytest.raises(ValueError, match="warnings is only supported in Pydantic v2"):
-            m.to_json(warnings=False)
-
-
-def test_forwards_compat_model_dump_json_method() -> None:
-    class Model(BaseModel):
-        foo: Optional[str] = Field(alias="FOO", default=None)
-
-    m = Model(FOO="hello")
-    assert json.loads(m.model_dump_json()) == {"foo": "hello"}
-    assert json.loads(m.model_dump_json(include={"bar"})) == {}
-    assert json.loads(m.model_dump_json(include={"foo"})) == {"foo": "hello"}
-    assert json.loads(m.model_dump_json(by_alias=True)) == {"FOO": "hello"}
-
-    assert m.model_dump_json(indent=2) == '{\n  "foo": "hello"\n}'
-
-    m2 = Model()
-    assert json.loads(m2.model_dump_json()) == {"foo": None}
-    assert json.loads(m2.model_dump_json(exclude_unset=True)) == {}
-    assert json.loads(m2.model_dump_json(exclude_none=True)) == {}
-    assert json.loads(m2.model_dump_json(exclude_defaults=True)) == {}
-
-    m3 = Model(FOO=None)
-    assert json.loads(m3.model_dump_json()) == {"foo": None}
-    assert json.loads(m3.model_dump_json(exclude_none=True)) == {}
-
-    if PYDANTIC_V1:
-        with pytest.raises(ValueError, match="round_trip is only supported in Pydantic v2"):
-            m.model_dump_json(round_trip=True)
-
-        with pytest.raises(ValueError, match="warnings is only supported in Pydantic v2"):
-            m.model_dump_json(warnings=False)
-
-        with pytest.raises(ValueError, match="polymorphic_serialization is only supported in Pydantic v2"):
-            m.model_dump_json(polymorphic_serialization=True)
 
 
 def test_type_compat() -> None:
@@ -665,96 +533,47 @@ def test_annotated_types() -> None:
     assert m.value == "foo"
 
 
-def test_discriminated_unions_invalid_data() -> None:
-    class A(BaseModel):
-        type: Literal["a"]
-
-        data: str
-
-    class B(BaseModel):
-        type: Literal["b"]
-
-        data: int
-
+@pytest.mark.parametrize(
+    "value, is_b, expected_data",
+    [
+        ({"type": "b", "data": "foo"}, True, "foo"),
+        # Pydantic v1 coerces the string field; v2 preserves the invalid input.
+        ({"type": "a", "data": 100}, False, "100" if PYDANTIC_V1 else 100),
+        ({"type": "c", "data": None, "new_thing": "bar"}, False, None),
+    ],
+    ids=["invalid integer", "invalid string", "unknown variant"],
+)
+def test_discriminated_unions_invalid_data(value: dict[str, object], is_b: bool, expected_data: object) -> None:
     m = construct_type(
-        value={"type": "b", "data": "foo"},
-        type_=cast(Any, Annotated[Union[A, B], PropertyInfo(discriminator="type")]),
+        value=value,
+        type_=cast(Any, Annotated[Union[StringVariant, IntegerVariant], PropertyInfo(discriminator="type")]),
     )
-    assert isinstance(m, B)
-    assert m.type == "b"
-    assert m.data == "foo"  # type: ignore[comparison-overlap]
+    assert isinstance(m, IntegerVariant if is_b else StringVariant)
+    assert m.type == value["type"]
+    assert m.data == expected_data
+    if "new_thing" in value:
+        assert cast(Any, m).new_thing == "bar"
 
+
+@pytest.mark.parametrize("variant", ["b", "c"])
+def test_discriminated_unions_invalid_data_nested_unions(variant: str) -> None:
     m = construct_type(
-        value={"type": "a", "data": 100},
-        type_=cast(Any, Annotated[Union[A, B], PropertyInfo(discriminator="type")]),
+        value={"type": variant, "data": "foo"},
+        type_=cast(
+            Any,
+            Annotated[Union[Union[StringVariant, IntegerVariant], BooleanVariant], PropertyInfo(discriminator="type")],
+        ),
     )
-    assert isinstance(m, A)
-    assert m.type == "a"
-    if PYDANTIC_V1:
-        # pydantic v1 automatically converts inputs to strings
-        # if the expected type is a str
-        assert m.data == "100"
-    else:
-        assert m.data == 100  # type: ignore[comparison-overlap]
-
-
-def test_discriminated_unions_unknown_variant() -> None:
-    class A(BaseModel):
-        type: Literal["a"]
-
-        data: str
-
-    class B(BaseModel):
-        type: Literal["b"]
-
-        data: int
-
-    m = construct_type(
-        value={"type": "c", "data": None, "new_thing": "bar"},
-        type_=cast(Any, Annotated[Union[A, B], PropertyInfo(discriminator="type")]),
-    )
-
-    # just chooses the first variant
-    assert isinstance(m, A)
-    assert m.type == "c"  # type: ignore[comparison-overlap]
-    assert m.data == None  # type: ignore[unreachable]
-    assert m.new_thing == "bar"
-
-
-def test_discriminated_unions_invalid_data_nested_unions() -> None:
-    class A(BaseModel):
-        type: Literal["a"]
-
-        data: str
-
-    class B(BaseModel):
-        type: Literal["b"]
-
-        data: int
-
-    class C(BaseModel):
-        type: Literal["c"]
-
-        data: bool
-
-    m = construct_type(
-        value={"type": "b", "data": "foo"},
-        type_=cast(Any, Annotated[Union[Union[A, B], C], PropertyInfo(discriminator="type")]),
-    )
-    assert isinstance(m, B)
-    assert m.type == "b"
-    assert m.data == "foo"  # type: ignore[comparison-overlap]
-
-    m = construct_type(
-        value={"type": "c", "data": "foo"},
-        type_=cast(Any, Annotated[Union[Union[A, B], C], PropertyInfo(discriminator="type")]),
-    )
-    assert isinstance(m, C)
-    assert m.type == "c"
+    assert isinstance(m, IntegerVariant if variant == "b" else BooleanVariant)
+    assert m.type == variant
     assert m.data == "foo"  # type: ignore[comparison-overlap]
 
 
-def test_discriminated_unions_with_aliases_invalid_data() -> None:
+@pytest.mark.parametrize(
+    "variant,value,expected",
+    [("b", "foo", "foo"), ("a", 100, "100" if PYDANTIC_V1 else 100)],
+)
+def test_discriminated_unions_with_aliases_invalid_data(variant: str, value: object, expected: object) -> None:
     class A(BaseModel):
         foo_type: Literal["a"] = Field(alias="type")
 
@@ -766,25 +585,12 @@ def test_discriminated_unions_with_aliases_invalid_data() -> None:
         data: int
 
     m = construct_type(
-        value={"type": "b", "data": "foo"},
+        value={"type": variant, "data": value},
         type_=cast(Any, Annotated[Union[A, B], PropertyInfo(discriminator="foo_type")]),
     )
-    assert isinstance(m, B)
-    assert m.foo_type == "b"
-    assert m.data == "foo"  # type: ignore[comparison-overlap]
-
-    m = construct_type(
-        value={"type": "a", "data": 100},
-        type_=cast(Any, Annotated[Union[A, B], PropertyInfo(discriminator="foo_type")]),
-    )
-    assert isinstance(m, A)
-    assert m.foo_type == "a"
-    if PYDANTIC_V1:
-        # pydantic v1 automatically converts inputs to strings
-        # if the expected type is a str
-        assert m.data == "100"
-    else:
-        assert m.data == 100  # type: ignore[comparison-overlap]
+    assert isinstance(m, B if variant == "b" else A)
+    assert m.foo_type == variant
+    assert m.data == expected
 
 
 def test_discriminated_unions_overlapping_discriminators_invalid_data() -> None:
@@ -808,15 +614,11 @@ def test_discriminated_unions_overlapping_discriminators_invalid_data() -> None:
 
 
 def test_discriminated_unions_invalid_data_uses_cache() -> None:
-    class A(BaseModel):
-        type: Literal["a"]
+    class A(StringVariant):
+        pass
 
-        data: str
-
-    class B(BaseModel):
-        type: Literal["b"]
-
-        data: int
+    class B(IntegerVariant):
+        pass
 
     UnionType = cast(Any, Union[A, B])
 
@@ -844,23 +646,25 @@ def test_discriminated_unions_invalid_data_uses_cache() -> None:
     assert DISCRIMINATOR_CACHE.get(UnionType) is discriminator
 
 
-@pytest.mark.skipif(PYDANTIC_V1, reason="TypeAliasType is not supported in Pydantic v1")
 def test_type_alias_type() -> None:
     Alias = TypeAliasType("Alias", str)  # pyright: ignore
 
     class Model(BaseModel):
         alias: Alias
         union: Union[int, Alias]
+        many: list[Alias]
+        annotated: Annotated[Alias, Field(alias="annotatedAlias")]
 
-    m = construct_type(value={"alias": "foo", "union": "bar"}, type_=Model)
+    m = construct_type(value={"alias": "foo", "union": "bar", "many": ["baz"], "annotatedAlias": "qux"}, type_=Model)
     assert isinstance(m, Model)
     assert isinstance(m.alias, str)
     assert m.alias == "foo"
     assert isinstance(m.union, str)
     assert m.union == "bar"
+    assert m.many == ["baz"]
+    assert m.annotated == "qux"
 
 
-@pytest.mark.skipif(PYDANTIC_V1, reason="TypeAliasType is not supported in Pydantic v1")
 def test_field_named_cls() -> None:
     class Model(BaseModel):
         cls: str
@@ -868,6 +672,7 @@ def test_field_named_cls() -> None:
     m = construct_type(value={"cls": "foo"}, type_=Model)
     assert isinstance(m, Model)
     assert isinstance(m.cls, str)
+    assert m.cls == "foo"
 
 
 def test_discriminated_union_case() -> None:
@@ -947,8 +752,8 @@ def test_nested_discriminated_union() -> None:
     assert isinstance(model.value, InnerType2)
 
 
-@pytest.mark.skipif(PYDANTIC_V1, reason="this is only supported in pydantic v2 for now")
-def test_extra_properties() -> None:
+@pytest.mark.parametrize("inherited", [False, True])
+def test_extra_properties(inherited: bool) -> None:
     class Item(BaseModel):
         prop: int
 
@@ -961,8 +766,11 @@ def test_extra_properties() -> None:
 
             def __getattr__(self, attr: str) -> Item: ...
 
+    class Child(Model):
+        pass
+
     model = construct_type(
-        type_=Model,
+        type_=Child if inherited else Model,
         value={
             "a": {"prop": 1},
             "other": "foo",
@@ -993,7 +801,6 @@ def test_extra_properties() -> None:
     ],
     ids=["list", "tuple", "set", "iterator", "empty", "generator", "map", "frozenset", "deque"],
 )
-@pytest.mark.skipif(PYDANTIC_V1, reason="this is only supported in pydantic v2")
 def test_iterable_construction(data: Iterable[int], expected_validated: Iterable[int]) -> None:
     class TypeWithIterable(TypedDict):
         items: EagerIterable[int]
@@ -1001,15 +808,15 @@ def test_iterable_construction(data: Iterable[int], expected_validated: Iterable
     class Model(BaseModel):
         data: TypeWithIterable
 
-    m = Model.model_validate({"data": {"items": data}})
+    m = parse_obj(Model, {"data": {"items": data}})
     assert m.data["items"] == expected_validated
+    assert type(m.data["items"]) is type(expected_validated)
 
     # Verify repeated dumps don't lose data (the original bug)
     assert m.model_dump()["data"]["items"] == list(expected_validated)
     assert m.model_dump()["data"]["items"] == list(expected_validated)
 
 
-@pytest.mark.skipif(PYDANTIC_V1, reason="this is only supported in pydantic v2")
 def test_iterable_construction_str_falls_back_to_list() -> None:
     # str is iterable (over chars), but str(list_of_chars) produces the list's repr
     # rather than reconstructing a string from items. We special-case str to fall
@@ -1020,8 +827,49 @@ def test_iterable_construction_str_falls_back_to_list() -> None:
     class Model(BaseModel):
         data: TypeWithIterable
 
-    m = Model.model_validate({"data": {"items": "hello"}})
+    m = parse_obj(Model, {"data": {"items": "hello"}})
 
     # falls back to list of chars rather than calling str(["h", "e", "l", "l", "o"])
     assert m.data["items"] == ["h", "e", "l", "l", "o"]
     assert m.model_dump()["data"]["items"] == ["h", "e", "l", "l", "o"]
+
+
+@pytest.mark.parametrize("value", ["ordinary", 7])
+def test_eager_iterable_union_preserves_scalar(value: str | int) -> None:
+    class Model(BaseModel):
+        items: Union[EagerIterable[int], int, str]
+
+    model = parse_obj(Model, {"items": value})
+    assert model.items == value
+    assert model.model_dump() == {"items": value}
+    assert model.model_dump(mode="json") == {"items": value}
+    assert json.loads(model.model_dump_json()) == {"items": value}
+
+
+@pytest.mark.parametrize("invalid", [None, "invalid"])
+def test_eager_iterable_rejects_invalid_items(invalid: object) -> None:
+    class Model(BaseModel):
+        items: EagerIterable[int]
+
+    with pytest.raises(pydantic.ValidationError) as error:
+        parse_obj(Model, {"items": [1, invalid]})
+    assert error.value.errors()[0]["loc"] == ("items", 1)
+    assert "items" in str(error.value)
+
+
+@pytest.mark.parametrize("exclude_unset, exclude_defaults", [(True, False), (False, True), (True, True)])
+def test_eager_iterable_preserves_default_exclusions(exclude_unset: bool, exclude_defaults: bool) -> None:
+    class Model(BaseModel):
+        items: EagerIterable[int] = (1, 2)
+
+    model = Model()
+    assert model.model_dump(exclude_unset=exclude_unset, exclude_defaults=exclude_defaults) == {}
+    assert json.loads(model.model_dump_json(exclude_unset=exclude_unset, exclude_defaults=exclude_defaults)) == {}
+    assert model.items == (1, 2)
+
+
+def test_base_page_requires_item_implementation() -> None:
+    with pytest.raises(
+        NotImplementedError, match=r"^Page items unavailable\. Implement _get_page_items in the page subclass\.$"
+    ):
+        BasePage[int]().has_next_page()

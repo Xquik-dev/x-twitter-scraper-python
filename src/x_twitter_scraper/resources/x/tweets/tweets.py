@@ -109,7 +109,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetCreateResponse:
         """
-        Create tweet
+        Publishes a post through a connected X account.
 
         Args:
           account: X account (@username or account ID)
@@ -128,7 +128,7 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             "/x/tweets",
             body=maybe_transform(
@@ -160,7 +160,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Get tweet with full text, author, metrics and media
+        Returns one public tweet with author, metrics, and media.
 
         Args:
           extra_headers: Send extra headers
@@ -193,7 +193,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get multiple tweets by IDs
+        Returns public tweet records for the requested IDs.
 
         Args:
           ids: Comma-separated tweet IDs (max 100)
@@ -232,7 +232,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetDeleteResponse:
         """
-        Delete tweet
+        Deletes an authored post through a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -247,7 +247,7 @@ class TweetsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
@@ -303,7 +303,7 @@ class TweetsResource(SyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -311,13 +311,13 @@ class TweetsResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Maximum user profiles requested from this page (20-200, default 200). Source,
-              filters, or credits can return fewer profiles. Keep requesting next_cursor while
-              has_next_page is true. Deprecated aliases remain accepted.
+          page_size: Maximum user profiles requested from this page (1-200, default 200). Source,
+              filters, or credits can return fewer profiles. Follow next_cursor while the
+              response reports more pages. Deprecated aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -394,11 +394,12 @@ class TweetsResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
         min_views: int | Omit = omit,
+        mode: Literal["standard"] | Omit = omit,
         native_retweets: bool | Omit = omit,
         near: str | Omit = omit,
         news: bool | Omit = omit,
@@ -428,7 +429,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List quote tweets of a tweet
+        Returns public posts quoting the selected tweet.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -442,9 +443,10 @@ class TweetsResource(SyncAPIResource):
 
           conversation_id: Conversation ID filter.
 
-          cursor: Pagination cursor for quote tweets
+          cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
+              Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -456,11 +458,11 @@ class TweetsResource(SyncAPIResource):
 
           hashtags: Hashtags separated by spaces, commas, or lines.
 
-          include_replies: Include reply quotes (default false)
+          include_replies: Include reply tweets unless replies specifies another mode.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -472,13 +474,13 @@ class TweetsResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -488,23 +490,25 @@ class TweetsResource(SyncAPIResource):
 
           min_views: Minimum view count threshold.
 
+          mode: Optional legacy pagination override.
+
           native_retweets: Only return native reposts.
 
           near: Match a place name.
 
           news: Only return news results.
 
-          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+          page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -514,7 +518,7 @@ class TweetsResource(SyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Unix timestamp - return quotes posted after this time
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           source: Match the source application.
 
@@ -522,7 +526,7 @@ class TweetsResource(SyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Unix timestamp - return quotes posted before this time
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -574,11 +578,12 @@ class TweetsResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
                         "min_views": min_views,
+                        "mode": mode,
                         "native_retweets": native_retweets,
                         "near": near,
                         "news": news,
@@ -638,7 +643,7 @@ class TweetsResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -674,11 +679,10 @@ class TweetsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetGetRepliesResponse:
-        """Returns direct replies.
+        """Returns direct replies with automatic maximum coverage and pagination.
 
-        Omit mode for automatic maximum coverage with resumable
-        pagination. Complete mode returns nested replies, diagnostics, and 424 when
-        direct coverage stays below 80%.
+        Complete
+        mode adds nested replies, diagnostics, and a 424 below 80% coverage.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -695,7 +699,7 @@ class TweetsResource(SyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_original_author: Exclude replies written by the source-post author.
 
@@ -715,11 +719,11 @@ class TweetsResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
-          limit: With mode=complete, maximum combined direct and nested reply rows (1-25000,
-              default 25000). Automatic pages accept 1-300. Standard pages accept 1-100.
-              Prefer pageSize outside complete mode.
+          limit: Complete mode defaults to 25,000 combined direct and nested replies. Set a
+              smaller or larger total with limit. Automatic pages accept 1-300. Standard pages
+              accept 1-100.
 
           max_depth: Maximum reply depth from the source post.
 
@@ -733,13 +737,13 @@ class TweetsResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -749,10 +753,8 @@ class TweetsResource(SyncAPIResource):
 
           min_views: Minimum view count threshold.
 
-          mode: Optional advanced override. Omit mode for automatic maximum direct reply
-              coverage with pagination. Standard keeps legacy pagination. Complete returns
-              direct and nested replies with diagnostics, scope, depth, sorting, and
-              original-post controls.
+          mode: Override automatic coverage. Standard uses legacy pagination. Complete adds
+              nested replies, diagnostics, scope, depth, sorting, and original-post controls.
 
           native_retweets: Only return native reposts.
 
@@ -761,15 +763,16 @@ class TweetsResource(SyncAPIResource):
           news: Only return news results.
 
           page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
-              Continue while has_next_page is true. Deprecated aliases remain accepted.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -781,7 +784,7 @@ class TweetsResource(SyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Unix timestamp - return replies posted after this time
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           sort: Sort the selected replies before applying limit.
 
@@ -791,7 +794,7 @@ class TweetsResource(SyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Unix timestamp - return replies posted before this time
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -847,7 +850,7 @@ class TweetsResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -891,6 +894,7 @@ class TweetsResource(SyncAPIResource):
         cursor: str | Omit = omit,
         has_location: bool | Omit = omit,
         has_website: bool | Omit = omit,
+        include_retweet_timestamp: bool | Omit = omit,
         location_contains: str | Omit = omit,
         max_followers: int | Omit = omit,
         max_following: int | Omit = omit,
@@ -910,8 +914,10 @@ class TweetsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List users who retweeted a tweet
+        """Lists reposting profiles.
+
+        Optional timestamps come from the newest profile page.
+        Extra reads add latency. Missing or failed matches leave null timestamps.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
@@ -922,11 +928,13 @@ class TweetsResource(SyncAPIResource):
 
           has_website: Only return profiles with a website.
 
+          include_retweet_timestamp: Look up repost event times.
+
           location_contains: Match a location substring, ignoring case.
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -934,13 +942,13 @@ class TweetsResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Maximum user profiles requested from this page (20-200, default 200). Source,
-              filters, or credits can return fewer profiles. Keep requesting next_cursor while
-              has_next_page is true. Deprecated aliases remain accepted.
+          page_size: Maximum user profiles requested from this page (1-200, default 200). Source,
+              filters, or credits can return fewer profiles. Follow next_cursor while the
+              response reports more pages. Deprecated aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -971,6 +979,7 @@ class TweetsResource(SyncAPIResource):
                         "cursor": cursor,
                         "has_location": has_location,
                         "has_website": has_website,
+                        "include_retweet_timestamp": include_retweet_timestamp,
                         "location_contains": location_contains,
                         "max_followers": max_followers,
                         "max_following": max_following,
@@ -1012,7 +1021,7 @@ class TweetsResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -1036,7 +1045,7 @@ class TweetsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get full conversation thread for a tweet
+        Returns visible posts from the selected conversation thread.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -1050,7 +1059,7 @@ class TweetsResource(SyncAPIResource):
 
           cursor: Pagination cursor for thread tweets
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
 
@@ -1060,7 +1069,7 @@ class TweetsResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -1070,13 +1079,13 @@ class TweetsResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1087,16 +1096,16 @@ class TweetsResource(SyncAPIResource):
           min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -1147,7 +1156,7 @@ class TweetsResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -1200,7 +1209,7 @@ class TweetsResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -1237,14 +1246,15 @@ class TweetsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetSearchResponse:
-        """No-mode search maximizes coverage.
+        """Returns normalized tweets with author, like count, media, URL, and cursors.
 
-        New cursorless `Latest` sessions return rows
-        newest-first across cursor pages. Existing cursors preserve their established
-        ordering.
+        Set
+        q, limit, queryType, and minLikes. Omit mode for maximum coverage. Reuse
+        next_cursor without changing filters.
 
         Args:
-          q: Query, Tweet ID, or status URL. Valid inline bounds apply per page.
+          q: Query, Tweet ID, or URL. Hyphens negate terms. Use exactPhrase for literals.
+              Valid bounds apply per page.
 
           advanced_query: Raw advanced search query appended as-is.
 
@@ -1264,7 +1274,7 @@ class TweetsResource(SyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -1278,11 +1288,12 @@ class TweetsResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
-          limit: Result upper bound. Omit it for the existing 20-row page size. Explicit coverage
-              defaults to 2000 and allows 10000. For paid requests, remaining credits can
-              reduce results. Zero affordable results returns 402.
+          limit: Unique matching result upper bound after filtering. Default 20. Explicit
+              coverage defaults to 2000. It returns retained rows and deadline diagnostics
+              when time expires. Only returned rows are billed. Credits may reduce results;
+              zero affordable rows returns 402. Aliases: pageSize, count, max_results.
 
           list_id: Search within a list ID.
 
@@ -1296,13 +1307,13 @@ class TweetsResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1327,15 +1338,15 @@ class TweetsResource(SyncAPIResource):
 
           point_radius: Geo point radius, e.g. -73.99 40.73 25mi.
 
-          query_type: Sort order - Latest (chronological) or Top (engagement-ranked)
+          query_type: Latest is chronological; Top ranks engagement. Aliases: result_type, sort_order.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -1345,7 +1356,7 @@ class TweetsResource(SyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Inclusive ISO bound.
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           source: Match the source application.
 
@@ -1353,7 +1364,7 @@ class TweetsResource(SyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Exclusive ISO bound.
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -1409,7 +1420,7 @@ class TweetsResource(SyncAPIResource):
                             "media_type": media_type,
                             "mentioning": mentioning,
                             "min_bookmarks": min_bookmarks,
-                            "min_faves": min_faves,
+                            "min_likes": min_likes,
                             "min_quotes": min_quotes,
                             "min_replies": min_replies,
                             "min_retweets": min_retweets,
@@ -1498,7 +1509,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetCreateResponse:
         """
-        Create tweet
+        Publishes a post through a connected X account.
 
         Args:
           account: X account (@username or account ID)
@@ -1517,7 +1528,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             "/x/tweets",
             body=await async_maybe_transform(
@@ -1549,7 +1560,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetRetrieveResponse:
         """
-        Get tweet with full text, author, metrics and media
+        Returns one public tweet with author, metrics, and media.
 
         Args:
           extra_headers: Send extra headers
@@ -1582,7 +1593,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get multiple tweets by IDs
+        Returns public tweet records for the requested IDs.
 
         Args:
           ids: Comma-separated tweet IDs (max 100)
@@ -1621,7 +1632,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetDeleteResponse:
         """
-        Delete tweet
+        Deletes an authored post through a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -1636,7 +1647,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=await async_maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
@@ -1692,7 +1703,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -1700,13 +1711,13 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Maximum user profiles requested from this page (20-200, default 200). Source,
-              filters, or credits can return fewer profiles. Keep requesting next_cursor while
-              has_next_page is true. Deprecated aliases remain accepted.
+          page_size: Maximum user profiles requested from this page (1-200, default 200). Source,
+              filters, or credits can return fewer profiles. Follow next_cursor while the
+              response reports more pages. Deprecated aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -1783,11 +1794,12 @@ class AsyncTweetsResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
         min_views: int | Omit = omit,
+        mode: Literal["standard"] | Omit = omit,
         native_retweets: bool | Omit = omit,
         near: str | Omit = omit,
         news: bool | Omit = omit,
@@ -1817,7 +1829,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List quote tweets of a tweet
+        Returns public posts quoting the selected tweet.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -1831,9 +1843,10 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           conversation_id: Conversation ID filter.
 
-          cursor: Pagination cursor for quote tweets
+          cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
+              Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -1845,11 +1858,11 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           hashtags: Hashtags separated by spaces, commas, or lines.
 
-          include_replies: Include reply quotes (default false)
+          include_replies: Include reply tweets unless replies specifies another mode.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -1861,13 +1874,13 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1877,23 +1890,25 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_views: Minimum view count threshold.
 
+          mode: Optional legacy pagination override.
+
           native_retweets: Only return native reposts.
 
           near: Match a place name.
 
           news: Only return news results.
 
-          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+          page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -1903,7 +1918,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Unix timestamp - return quotes posted after this time
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           source: Match the source application.
 
@@ -1911,7 +1926,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Unix timestamp - return quotes posted before this time
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -1963,11 +1978,12 @@ class AsyncTweetsResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
                         "min_views": min_views,
+                        "mode": mode,
                         "native_retweets": native_retweets,
                         "near": near,
                         "news": news,
@@ -2027,7 +2043,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -2063,11 +2079,10 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetGetRepliesResponse:
-        """Returns direct replies.
+        """Returns direct replies with automatic maximum coverage and pagination.
 
-        Omit mode for automatic maximum coverage with resumable
-        pagination. Complete mode returns nested replies, diagnostics, and 424 when
-        direct coverage stays below 80%.
+        Complete
+        mode adds nested replies, diagnostics, and a 424 below 80% coverage.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -2084,7 +2099,7 @@ class AsyncTweetsResource(AsyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_original_author: Exclude replies written by the source-post author.
 
@@ -2104,11 +2119,11 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
-          limit: With mode=complete, maximum combined direct and nested reply rows (1-25000,
-              default 25000). Automatic pages accept 1-300. Standard pages accept 1-100.
-              Prefer pageSize outside complete mode.
+          limit: Complete mode defaults to 25,000 combined direct and nested replies. Set a
+              smaller or larger total with limit. Automatic pages accept 1-300. Standard pages
+              accept 1-100.
 
           max_depth: Maximum reply depth from the source post.
 
@@ -2122,13 +2137,13 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2138,10 +2153,8 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_views: Minimum view count threshold.
 
-          mode: Optional advanced override. Omit mode for automatic maximum direct reply
-              coverage with pagination. Standard keeps legacy pagination. Complete returns
-              direct and nested replies with diagnostics, scope, depth, sorting, and
-              original-post controls.
+          mode: Override automatic coverage. Standard uses legacy pagination. Complete adds
+              nested replies, diagnostics, scope, depth, sorting, and original-post controls.
 
           native_retweets: Only return native reposts.
 
@@ -2150,15 +2163,16 @@ class AsyncTweetsResource(AsyncAPIResource):
           news: Only return news results.
 
           page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
-              Continue while has_next_page is true. Deprecated aliases remain accepted.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -2170,7 +2184,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Unix timestamp - return replies posted after this time
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           sort: Sort the selected replies before applying limit.
 
@@ -2180,7 +2194,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Unix timestamp - return replies posted before this time
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -2236,7 +2250,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -2280,6 +2294,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         cursor: str | Omit = omit,
         has_location: bool | Omit = omit,
         has_website: bool | Omit = omit,
+        include_retweet_timestamp: bool | Omit = omit,
         location_contains: str | Omit = omit,
         max_followers: int | Omit = omit,
         max_following: int | Omit = omit,
@@ -2299,8 +2314,10 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
-        """
-        List users who retweeted a tweet
+        """Lists reposting profiles.
+
+        Optional timestamps come from the newest profile page.
+        Extra reads add latency. Missing or failed matches leave null timestamps.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
@@ -2311,11 +2328,13 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           has_website: Only return profiles with a website.
 
+          include_retweet_timestamp: Look up repost event times.
+
           location_contains: Match a location substring, ignoring case.
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -2323,13 +2342,13 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Maximum user profiles requested from this page (20-200, default 200). Source,
-              filters, or credits can return fewer profiles. Keep requesting next_cursor while
-              has_next_page is true. Deprecated aliases remain accepted.
+          page_size: Maximum user profiles requested from this page (1-200, default 200). Source,
+              filters, or credits can return fewer profiles. Follow next_cursor while the
+              response reports more pages. Deprecated aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -2360,6 +2379,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                         "cursor": cursor,
                         "has_location": has_location,
                         "has_website": has_website,
+                        "include_retweet_timestamp": include_retweet_timestamp,
                         "location_contains": location_contains,
                         "max_followers": max_followers,
                         "max_following": max_following,
@@ -2401,7 +2421,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -2425,7 +2445,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Get full conversation thread for a tweet
+        Returns visible posts from the selected conversation thread.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -2439,7 +2459,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           cursor: Pagination cursor for thread tweets
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
 
@@ -2449,7 +2469,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -2459,13 +2479,13 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2476,16 +2496,16 @@ class AsyncTweetsResource(AsyncAPIResource):
           min_views: Minimum view count threshold.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -2536,7 +2556,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -2589,7 +2609,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -2626,14 +2646,15 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TweetSearchResponse:
-        """No-mode search maximizes coverage.
+        """Returns normalized tweets with author, like count, media, URL, and cursors.
 
-        New cursorless `Latest` sessions return rows
-        newest-first across cursor pages. Existing cursors preserve their established
-        ordering.
+        Set
+        q, limit, queryType, and minLikes. Omit mode for maximum coverage. Reuse
+        next_cursor without changing filters.
 
         Args:
-          q: Query, Tweet ID, or status URL. Valid inline bounds apply per page.
+          q: Query, Tweet ID, or URL. Hyphens negate terms. Use exactPhrase for literals.
+              Valid bounds apply per page.
 
           advanced_query: Raw advanced search query appended as-is.
 
@@ -2653,7 +2674,7 @@ class AsyncTweetsResource(AsyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -2667,11 +2688,12 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
-          limit: Result upper bound. Omit it for the existing 20-row page size. Explicit coverage
-              defaults to 2000 and allows 10000. For paid requests, remaining credits can
-              reduce results. Zero affordable results returns 402.
+          limit: Unique matching result upper bound after filtering. Default 20. Explicit
+              coverage defaults to 2000. It returns retained rows and deadline diagnostics
+              when time expires. Only returned rows are billed. Credits may reduce results;
+              zero affordable rows returns 402. Aliases: pageSize, count, max_results.
 
           list_id: Search within a list ID.
 
@@ -2685,13 +2707,13 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2716,15 +2738,15 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           point_radius: Geo point radius, e.g. -73.99 40.73 25mi.
 
-          query_type: Sort order - Latest (chronological) or Top (engagement-ranked)
+          query_type: Latest is chronological; Top ranks engagement. Aliases: result_type, sort_order.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -2734,7 +2756,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Inclusive ISO bound.
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           source: Match the source application.
 
@@ -2742,7 +2764,7 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Exclusive ISO bound.
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -2798,7 +2820,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                             "media_type": media_type,
                             "mentioning": mentioning,
                             "min_bookmarks": min_bookmarks,
-                            "min_faves": min_faves,
+                            "min_likes": min_likes,
                             "min_quotes": min_quotes,
                             "min_replies": min_replies,
                             "min_retweets": min_retweets,

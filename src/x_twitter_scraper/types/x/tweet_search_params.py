@@ -17,7 +17,10 @@ __all__ = ["TweetSearchParams"]
 
 class TweetSearchParams(TypedDict, total=False):
     q: Required[str]
-    """Query, Tweet ID, or status URL. Valid inline bounds apply per page."""
+    """Query, Tweet ID, or URL.
+
+    Hyphens negate terms. Use exactPhrase for literals. Valid bounds apply per page.
+    """
 
     advanced_query: Annotated[str, PropertyInfo(alias="advancedQuery")]
     """Raw advanced search query appended as-is."""
@@ -51,7 +54,7 @@ class TweetSearchParams(TypedDict, total=False):
     """
 
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
-    """Exact phrase to match."""
+    """Match this literal phrase, including any hyphens."""
 
     exclude_source: Annotated[str, PropertyInfo(alias="excludeSource")]
     """Exclude a source application."""
@@ -72,14 +75,15 @@ class TweetSearchParams(TypedDict, total=False):
     """Only replies to this tweet ID."""
 
     language: str
-    """Language code filter, e.g. en or tr."""
+    """Filter by language. Alias `lang` is accepted."""
 
     limit: int
-    """Result upper bound.
+    """Unique matching result upper bound after filtering.
 
-    Omit it for the existing 20-row page size. Explicit coverage defaults to 2000
-    and allows 10000. For paid requests, remaining credits can reduce results. Zero
-    affordable results returns 402.
+    Default 20. Explicit coverage defaults to 2000. It returns retained rows and
+    deadline diagnostics when time expires. Only returned rows are billed. Credits
+    may reduce results; zero affordable rows returns 402. Aliases: pageSize, count,
+    max_results.
     """
 
     list_id: Annotated[str, PropertyInfo(alias="listId")]
@@ -103,7 +107,7 @@ class TweetSearchParams(TypedDict, total=False):
     media_type: Annotated[
         Literal["images", "videos", "gifs", "media", "links", "none"], PropertyInfo(alias="mediaType")
     ]
-    """Filter by media type."""
+    """Filter media. Aliases: has_video, has_media."""
 
     mentioning: str
     """Filter tweets mentioning a username."""
@@ -111,8 +115,8 @@ class TweetSearchParams(TypedDict, total=False):
     min_bookmarks: Annotated[int, PropertyInfo(alias="minBookmarks")]
     """Minimum bookmark count threshold."""
 
-    min_faves: Annotated[int, PropertyInfo(alias="minFaves")]
-    """Minimum likes threshold. minLikes is also accepted."""
+    min_likes: Annotated[int, PropertyInfo(alias="minLikes")]
+    """Minimum likes. Aliases: minFaves, min_likes, min_faves."""
 
     min_quotes: Annotated[int, PropertyInfo(alias="minQuotes")]
     """Minimum quote count threshold."""
@@ -152,19 +156,22 @@ class TweetSearchParams(TypedDict, total=False):
     """Geo point radius, e.g. -73.99 40.73 25mi."""
 
     query_type: Annotated[Literal["Latest", "Top"], PropertyInfo(alias="queryType")]
-    """Sort order - Latest (chronological) or Top (engagement-ranked)"""
+    """Latest is chronological; Top ranks engagement.
+
+    Aliases: result_type, sort_order.
+    """
 
     quotes: Literal["include", "exclude", "only"]
-    """Quote mode."""
+    """Only when the caller requests a quote mode."""
 
     quotes_of_tweet_id: Annotated[str, PropertyInfo(alias="quotesOfTweetId")]
     """Only quotes of this tweet ID."""
 
     replies: Literal["include", "exclude", "only"]
-    """Reply mode."""
+    """Only when the caller requests a reply mode."""
 
     retweets: Literal["include", "exclude", "only"]
-    """Retweet mode."""
+    """Only when the caller requests a repost mode."""
 
     retweets_of_tweet_id: Annotated[str, PropertyInfo(alias="retweetsOfTweetId")]
     """Only retweets of this tweet ID."""
@@ -179,7 +186,7 @@ class TweetSearchParams(TypedDict, total=False):
     """Return Tweets newer than this Tweet ID."""
 
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
-    """Inclusive ISO bound."""
+    """Inclusive ISO bound for Tweet creation time."""
 
     source: str
     """Match the source application."""
@@ -191,7 +198,7 @@ class TweetSearchParams(TypedDict, total=False):
     """End date in YYYY-MM-DD format."""
 
     until_time: Annotated[str, PropertyInfo(alias="untilTime")]
-    """Exclusive ISO bound."""
+    """Exclusive ISO bound for Tweet creation time."""
 
     url: str
     """URL substring or domain filter."""

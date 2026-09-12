@@ -112,7 +112,7 @@ class KeywordsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordRetrieveResponse:
         """
-        Get keyword monitor
+        Returns configuration and status for one keyword monitor.
 
         Args:
           extra_headers: Send extra headers
@@ -147,7 +147,7 @@ class KeywordsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordUpdateResponse:
         """
-        Update keyword monitor
+        Updates mutable settings for an existing keyword monitor.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -187,7 +187,7 @@ class KeywordsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordListResponse:
-        """List keyword monitors"""
+        """Returns keyword monitors with their current operating states."""
         return self._get(
             "/monitors/keywords",
             options=make_request_options(
@@ -208,7 +208,8 @@ class KeywordsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordDeactivateResponse:
         """
-        Delete keyword monitor
+        Stops one keyword monitor, then removes its stored events in bounded batches.
+        Poll statusUrl until the monitor returns 404.
 
         Args:
           extra_headers: Send extra headers
@@ -310,7 +311,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordRetrieveResponse:
         """
-        Get keyword monitor
+        Returns configuration and status for one keyword monitor.
 
         Args:
           extra_headers: Send extra headers
@@ -345,7 +346,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordUpdateResponse:
         """
-        Update keyword monitor
+        Updates mutable settings for an existing keyword monitor.
 
         Args:
           event_types: Array of event types to subscribe to.
@@ -385,7 +386,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordListResponse:
-        """List keyword monitors"""
+        """Returns keyword monitors with their current operating states."""
         return await self._get(
             "/monitors/keywords",
             options=make_request_options(
@@ -406,7 +407,8 @@ class AsyncKeywordsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordDeactivateResponse:
         """
-        Delete keyword monitor
+        Stops one keyword monitor, then removes its stored events in bounded batches.
+        Poll statusUrl until the monitor returns 404.
 
         Args:
           extra_headers: Send extra headers

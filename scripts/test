@@ -9,16 +9,17 @@ set -e
 cd "$(dirname "$0")/.."
 export DEFER_PYDANTIC_BUILD=false
 
-# Pin patch floors to exclude prereleases.
-PY_VERSION_MIN=">=3.10.0"
-PY_VERSION_MAX=">=3.14.0"
+# Test supported endpoints using current patch releases.
+PY_VERSION_MIN="3.10.21"
+PY_VERSION_MAX="3.14.7"
 
 function run_tests() {
     echo "==> Running tests with Pydantic v2"
     uv run --isolated --all-extras pytest "$@"
 
     # Pydantic v1 does not support the latest Python.
-    if [[ "$UV_PYTHON" != "$PY_VERSION_MAX" ]]; then
+    python_executable="$(uv python find "$UV_PYTHON")"
+    if "$python_executable" -c 'import sys; sys.exit(sys.version_info >= (3, 14))'; then
         echo "==> Running tests with Pydantic v1"
         uv run --isolated --all-extras --group=pydantic-v1 pytest "$@"
     fi

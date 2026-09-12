@@ -15,7 +15,7 @@ __all__ = ["UserRetrieveVerifiedFollowersParams"]
 
 class UserRetrieveVerifiedFollowersParams(TypedDict, total=False):
     after: str
-    """Legacy cursor alias. Prefer cursor."""
+    """Legacy verified-follower cursor alias. Prefer cursor."""
 
     bio_contains: Annotated[str, PropertyInfo(alias="bioContains")]
     """Match any comma-separated or line-separated bio term, ignoring case."""
@@ -34,7 +34,7 @@ class UserRetrieveVerifiedFollowersParams(TypedDict, total=False):
     """Only return profiles with a website."""
 
     limit: int
-    """Legacy page-size alias outside explicit coverage mode.
+    """Legacy verified-follower page-size alias.
 
     Coverage accepts 1-10000. Prefer pageSize.
     """
@@ -46,7 +46,7 @@ class UserRetrieveVerifiedFollowersParams(TypedDict, total=False):
     """Maximum follower count. Missing counts pass this maximum."""
 
     max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
-    """Maximum following count."""
+    """Profiles may follow at most this many accounts."""
 
     max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
     """Maximum post count. maxPosts is also accepted."""
@@ -58,7 +58,7 @@ class UserRetrieveVerifiedFollowersParams(TypedDict, total=False):
     """Minimum follower count. Filtering happens before billing."""
 
     min_following: Annotated[int, PropertyInfo(alias="minFollowing")]
-    """Minimum following count."""
+    """Profiles must follow at least this many accounts."""
 
     min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
     """Minimum post count. minPosts is also accepted."""
@@ -73,7 +73,8 @@ class UserRetrieveVerifiedFollowersParams(TypedDict, total=False):
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
     """Maximum user profiles: automatic 300; standard 200.
 
-    Sources return fewer profiles. Continue with has_next_page.
+    Sources return fewer profiles. Follow next_cursor while the response reports
+    more pages.
     """
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]

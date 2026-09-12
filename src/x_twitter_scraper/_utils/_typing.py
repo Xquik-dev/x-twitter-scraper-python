@@ -22,8 +22,8 @@ from .._types import InheritsGeneric
 from ._compat import is_union as _is_union
 
 
-def is_annotated_type(typ: type) -> bool:
-    return get_origin(typ) == Annotated
+def is_annotated_type(typ: object) -> bool:
+    return get_origin(typ) is Annotated
 
 
 def is_list_type(typ: type) -> bool:
@@ -46,16 +46,14 @@ def is_union_type(typ: type) -> bool:
 
 
 def is_required_type(typ: type) -> bool:
-    return get_origin(typ) == Required
+    return get_origin(typ) is Required
 
 
-def is_typevar(typ: type) -> bool:
-    # type ignore is required because type checkers
-    # think this expression will always return False
-    return type(typ) == TypeVar  # type: ignore
+def is_typevar(typ: object) -> bool:
+    return type(typ) == TypeVar
 
 
-_TYPE_ALIAS_TYPES: tuple[type[typing_extensions.TypeAliasType], ...] = (typing_extensions.TypeAliasType,)
+_TYPE_ALIAS_TYPES: tuple[type, ...] = (typing_extensions.TypeAliasType,)
 if sys.version_info >= (3, 12):
     _TYPE_ALIAS_TYPES = (*_TYPE_ALIAS_TYPES, typing.TypeAliasType)
 
@@ -84,7 +82,7 @@ def strip_annotated_type(typ: type) -> type:
     return typ
 
 
-def extract_type_arg(typ: type, index: int) -> type:
+def extract_type_arg(typ: object, index: int) -> type:
     args = get_args(typ)
     try:
         return cast(type, args[index])

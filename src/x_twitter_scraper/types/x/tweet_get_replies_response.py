@@ -1,13 +1,12 @@
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from __future__ import annotations
-
 from typing import List, Optional
 from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
+from ..shared.search_tweet import SearchTweet
 from ..shared.paginated_tweets import PaginatedTweets
 
 __all__ = [
@@ -62,6 +61,8 @@ class TweetGetRepliesResponseDiagnosticRichness(BaseModel):
 
 
 class TweetGetRepliesResponseDiagnosticStrategiesAttempted(BaseModel):
+    """Result counts and stop reason for one reply strategy."""
+
     name: str
 
     new_direct_replies: int = FieldInfo(alias="newDirectReplies")
@@ -144,8 +145,5 @@ class TweetGetRepliesResponse(PaginatedTweets):
     diagnostic: Optional[TweetGetRepliesResponseDiagnostic] = None
     """Evidence for direct-reply coverage and collector behavior."""
 
-    nested_replies: Optional[List["SearchTweet"]] = None
+    nested_replies: Optional[List[SearchTweet]] = None
     """Nested replies. Excluded from direct coverage."""
-
-
-from ..shared.search_tweet import SearchTweet

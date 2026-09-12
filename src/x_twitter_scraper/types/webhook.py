@@ -29,14 +29,15 @@ class Webhook(BaseModel):
     delivery_status: Literal["active", "paused", "needs_attention"] = FieldInfo(alias="deliveryStatus")
     """Endpoint delivery state.
 
-    needs_attention means delivery stopped after repeated failures.
+    paused means the user paused delivery. needs_attention marks repeated failures.
+    Delivery attempts continue.
     """
 
     event_types: List[EventType] = FieldInfo(alias="eventTypes")
     """Array of event types to subscribe to."""
 
     failure_hard_cap: int = FieldInfo(alias="failureHardCap")
-    """Consecutive delivery failures that pause the endpoint."""
+    """Maximum reported failures before needs_attention. It does not pause delivery."""
 
     is_active: bool = FieldInfo(alias="isActive")
 

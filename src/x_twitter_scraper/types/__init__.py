@@ -6,8 +6,6 @@
 
 from __future__ import annotations
 
-from . import x, shared
-from .. import _compat
 from .draft import Draft as Draft
 from .event import Event as Event
 from .shared import (
@@ -75,6 +73,7 @@ from .extraction_list_response import ExtractionListResponse as ExtractionListRe
 from .account_retrieve_response import AccountRetrieveResponse as AccountRetrieveResponse
 from .guest_wallet_topup_params import GuestWalletTopupParams as GuestWalletTopupParams
 from .subscribe_create_response import SubscribeCreateResponse as SubscribeCreateResponse
+from .extraction_cancel_response import ExtractionCancelResponse as ExtractionCancelResponse
 from .extraction_retrieve_params import ExtractionRetrieveParams as ExtractionRetrieveParams
 from .guest_wallet_create_params import GuestWalletCreateParams as GuestWalletCreateParams
 from .x_get_home_timeline_params import XGetHomeTimelineParams as XGetHomeTimelineParams
@@ -113,22 +112,3 @@ from .radar_retrieve_trending_topics_params import (
 from .radar_retrieve_trending_topics_response import (
     RadarRetrieveTrendingTopicsResponse as RadarRetrieveTrendingTopicsResponse,
 )
-
-# Rebuild cyclical models only after all modules are imported.
-# This ensures that, when building the deferred (due to cyclical references) model schema,
-# Pydantic can resolve the necessary references.
-# See: https://github.com/pydantic/pydantic/issues/11250 for more context.
-if _compat.PYDANTIC_V1:
-    x.tweet_get_replies_response.TweetGetRepliesResponse.update_forward_refs()  # type: ignore
-    x.tweet_detail.TweetDetail.update_forward_refs()  # type: ignore
-    x.tweet_retrieve_response.TweetRetrieveResponse.update_forward_refs()  # type: ignore
-    shared.embedded_tweet.EmbeddedTweet.update_forward_refs()  # type: ignore
-    shared.paginated_tweets.PaginatedTweets.update_forward_refs()  # type: ignore
-    shared.search_tweet.SearchTweet.update_forward_refs()  # type: ignore
-else:
-    x.tweet_get_replies_response.TweetGetRepliesResponse.model_rebuild(_parent_namespace_depth=0)
-    x.tweet_detail.TweetDetail.model_rebuild(_parent_namespace_depth=0)
-    x.tweet_retrieve_response.TweetRetrieveResponse.model_rebuild(_parent_namespace_depth=0)
-    shared.embedded_tweet.EmbeddedTweet.model_rebuild(_parent_namespace_depth=0)
-    shared.paginated_tweets.PaginatedTweets.model_rebuild(_parent_namespace_depth=0)
-    shared.search_tweet.SearchTweet.model_rebuild(_parent_namespace_depth=0)

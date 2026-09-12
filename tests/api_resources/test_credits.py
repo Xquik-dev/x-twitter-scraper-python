@@ -29,7 +29,7 @@ class TestCredits:
     @parametrize
     def test_method_redirect_topup_checkout(self, client: XTwitterScraper) -> None:
         credit = client.credits.redirect_topup_checkout(
-            session_id="session_id",
+            session_id="P",
         )
         assert credit is None
 
@@ -37,7 +37,7 @@ class TestCredits:
     @parametrize
     def test_raw_response_redirect_topup_checkout(self, client: XTwitterScraper) -> None:
         response = client.credits.with_raw_response.redirect_topup_checkout(
-            session_id="session_id",
+            session_id="P",
         )
 
         assert response.is_closed is True
@@ -49,7 +49,7 @@ class TestCredits:
     @parametrize
     def test_streaming_response_redirect_topup_checkout(self, client: XTwitterScraper) -> None:
         with client.credits.with_streaming_response.redirect_topup_checkout(
-            session_id="session_id",
+            session_id="P",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -174,7 +174,7 @@ class TestAsyncCredits:
     @parametrize
     async def test_method_redirect_topup_checkout(self, async_client: AsyncXTwitterScraper) -> None:
         credit = await async_client.credits.redirect_topup_checkout(
-            session_id="session_id",
+            session_id="P",
         )
         assert credit is None
 
@@ -182,7 +182,7 @@ class TestAsyncCredits:
     @parametrize
     async def test_raw_response_redirect_topup_checkout(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.credits.with_raw_response.redirect_topup_checkout(
-            session_id="session_id",
+            session_id="P",
         )
 
         assert response.is_closed is True
@@ -194,7 +194,7 @@ class TestAsyncCredits:
     @parametrize
     async def test_streaming_response_redirect_topup_checkout(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.credits.with_streaming_response.redirect_topup_checkout(
-            session_id="session_id",
+            session_id="P",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"

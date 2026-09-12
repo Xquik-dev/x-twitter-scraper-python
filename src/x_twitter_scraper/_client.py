@@ -26,7 +26,6 @@ from ._types import (
 )
 from ._utils import (
     is_given,
-    is_mapping_t,
     get_async_library,
 )
 from ._compat import cached_property
@@ -42,22 +41,22 @@ from ._base_client import (
 
 if TYPE_CHECKING:
     from .resources import (
-        x,
-        draws,
-        radar,
-        drafts,
-        events,
-        styles,
-        trends,
-        account,
-        compose,
-        credits,
-        support,
-        monitors,
-        webhooks,
-        subscribe,
-        extractions,
-        guest_wallets,
+        x as x_resources,
+        draws as draws_resources,
+        radar as radar_resources,
+        drafts as drafts_resources,
+        events as events_resources,
+        styles as styles_resources,
+        trends as trends_resources,
+        account as account_resources,
+        compose as compose_resources,
+        credits as credits_resources,
+        support as support_resources,
+        monitors as monitors_resources,
+        webhooks as webhooks_resources,
+        subscribe as subscribe_resources,
+        extractions as extractions_resources,
+        guest_wallets as guest_wallets_resources,
     )
     from .resources.x.x import XResource, AsyncXResource
     from .resources.draws import DrawsResource, AsyncDrawsResource
@@ -143,7 +142,9 @@ class XTwitterScraper(SyncAPIClient):
                 colon = line.find(":")
                 if colon >= 0:
                     parsed[line[:colon].strip()] = line[colon + 1 :].strip()
-            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+            if isinstance(default_headers, Mapping):
+                parsed.update(default_headers)
+            default_headers = parsed
 
         super().__init__(
             version=__version__,
@@ -214,7 +215,7 @@ class XTwitterScraper(SyncAPIClient):
 
     @cached_property
     def extractions(self) -> ExtractionsResource:
-        """Bulk data extraction (23 tool types)"""
+        """Saved or bulk data extraction (23 tool types)"""
         from .resources.extractions import ExtractionsResource
 
         return ExtractionsResource(self)
@@ -467,7 +468,9 @@ class AsyncXTwitterScraper(AsyncAPIClient):
                 colon = line.find(":")
                 if colon >= 0:
                     parsed[line[:colon].strip()] = line[colon + 1 :].strip()
-            default_headers = {**parsed, **(default_headers if is_mapping_t(default_headers) else {})}
+            if isinstance(default_headers, Mapping):
+                parsed.update(default_headers)
+            default_headers = parsed
 
         super().__init__(
             version=__version__,
@@ -538,7 +541,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
 
     @cached_property
     def extractions(self) -> AsyncExtractionsResource:
-        """Bulk data extraction (23 tool types)"""
+        """Saved or bulk data extraction (23 tool types)"""
         from .resources.extractions import AsyncExtractionsResource
 
         return AsyncExtractionsResource(self)
@@ -743,110 +746,110 @@ class XTwitterScraperWithRawResponse:
         self._client = client
 
     @cached_property
-    def account(self) -> account.AccountResourceWithRawResponse:
+    def account(self) -> account_resources.AccountResourceWithRawResponse:
         """Account info and settings"""
         from .resources.account import AccountResourceWithRawResponse
 
         return AccountResourceWithRawResponse(self._client.account)
 
     @cached_property
-    def subscribe(self) -> subscribe.SubscribeResourceWithRawResponse:
+    def subscribe(self) -> subscribe_resources.SubscribeResourceWithRawResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithRawResponse
 
         return SubscribeResourceWithRawResponse(self._client.subscribe)
 
     @cached_property
-    def compose(self) -> compose.ComposeResourceWithRawResponse:
+    def compose(self) -> compose_resources.ComposeResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import ComposeResourceWithRawResponse
 
         return ComposeResourceWithRawResponse(self._client.compose)
 
     @cached_property
-    def drafts(self) -> drafts.DraftsResourceWithRawResponse:
+    def drafts(self) -> drafts_resources.DraftsResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import DraftsResourceWithRawResponse
 
         return DraftsResourceWithRawResponse(self._client.drafts)
 
     @cached_property
-    def styles(self) -> styles.StylesResourceWithRawResponse:
+    def styles(self) -> styles_resources.StylesResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import StylesResourceWithRawResponse
 
         return StylesResourceWithRawResponse(self._client.styles)
 
     @cached_property
-    def radar(self) -> radar.RadarResourceWithRawResponse:
+    def radar(self) -> radar_resources.RadarResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import RadarResourceWithRawResponse
 
         return RadarResourceWithRawResponse(self._client.radar)
 
     @cached_property
-    def monitors(self) -> monitors.MonitorsResourceWithRawResponse:
+    def monitors(self) -> monitors_resources.MonitorsResourceWithRawResponse:
         """X account monitoring with 1-second checks"""
         from .resources.monitors import MonitorsResourceWithRawResponse
 
         return MonitorsResourceWithRawResponse(self._client.monitors)
 
     @cached_property
-    def events(self) -> events.EventsResourceWithRawResponse:
+    def events(self) -> events_resources.EventsResourceWithRawResponse:
         """Activity events from monitored accounts"""
         from .resources.events import EventsResourceWithRawResponse
 
         return EventsResourceWithRawResponse(self._client.events)
 
     @cached_property
-    def extractions(self) -> extractions.ExtractionsResourceWithRawResponse:
-        """Bulk data extraction (23 tool types)"""
+    def extractions(self) -> extractions_resources.ExtractionsResourceWithRawResponse:
+        """Saved or bulk data extraction (23 tool types)"""
         from .resources.extractions import ExtractionsResourceWithRawResponse
 
         return ExtractionsResourceWithRawResponse(self._client.extractions)
 
     @cached_property
-    def draws(self) -> draws.DrawsResourceWithRawResponse:
+    def draws(self) -> draws_resources.DrawsResourceWithRawResponse:
         """Giveaway draws from tweet replies"""
         from .resources.draws import DrawsResourceWithRawResponse
 
         return DrawsResourceWithRawResponse(self._client.draws)
 
     @cached_property
-    def webhooks(self) -> webhooks.WebhooksResourceWithRawResponse:
+    def webhooks(self) -> webhooks_resources.WebhooksResourceWithRawResponse:
         """Webhook endpoint management and delivery"""
         from .resources.webhooks import WebhooksResourceWithRawResponse
 
         return WebhooksResourceWithRawResponse(self._client.webhooks)
 
     @cached_property
-    def x(self) -> x.XResourceWithRawResponse:
+    def x(self) -> x_resources.XResourceWithRawResponse:
         from .resources.x import XResourceWithRawResponse
 
         return XResourceWithRawResponse(self._client.x)
 
     @cached_property
-    def trends(self) -> trends.TrendsResourceWithRawResponse:
+    def trends(self) -> trends_resources.TrendsResourceWithRawResponse:
         """Trending topics and hashtags by region"""
         from .resources.trends import TrendsResourceWithRawResponse
 
         return TrendsResourceWithRawResponse(self._client.trends)
 
     @cached_property
-    def support(self) -> support.SupportResourceWithRawResponse:
+    def support(self) -> support_resources.SupportResourceWithRawResponse:
         from .resources.support import SupportResourceWithRawResponse
 
         return SupportResourceWithRawResponse(self._client.support)
 
     @cached_property
-    def credits(self) -> credits.CreditsResourceWithRawResponse:
+    def credits(self) -> credits_resources.CreditsResourceWithRawResponse:
         """Subscription, billing, and credits"""
         from .resources.credits import CreditsResourceWithRawResponse
 
         return CreditsResourceWithRawResponse(self._client.credits)
 
     @cached_property
-    def guest_wallets(self) -> guest_wallets.GuestWalletsResourceWithRawResponse:
+    def guest_wallets(self) -> guest_wallets_resources.GuestWalletsResourceWithRawResponse:
         """Accountless prepaid access for paid read endpoints"""
         from .resources.guest_wallets import GuestWalletsResourceWithRawResponse
 
@@ -860,110 +863,110 @@ class AsyncXTwitterScraperWithRawResponse:
         self._client = client
 
     @cached_property
-    def account(self) -> account.AsyncAccountResourceWithRawResponse:
+    def account(self) -> account_resources.AsyncAccountResourceWithRawResponse:
         """Account info and settings"""
         from .resources.account import AsyncAccountResourceWithRawResponse
 
         return AsyncAccountResourceWithRawResponse(self._client.account)
 
     @cached_property
-    def subscribe(self) -> subscribe.AsyncSubscribeResourceWithRawResponse:
+    def subscribe(self) -> subscribe_resources.AsyncSubscribeResourceWithRawResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import AsyncSubscribeResourceWithRawResponse
 
         return AsyncSubscribeResourceWithRawResponse(self._client.subscribe)
 
     @cached_property
-    def compose(self) -> compose.AsyncComposeResourceWithRawResponse:
+    def compose(self) -> compose_resources.AsyncComposeResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import AsyncComposeResourceWithRawResponse
 
         return AsyncComposeResourceWithRawResponse(self._client.compose)
 
     @cached_property
-    def drafts(self) -> drafts.AsyncDraftsResourceWithRawResponse:
+    def drafts(self) -> drafts_resources.AsyncDraftsResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import AsyncDraftsResourceWithRawResponse
 
         return AsyncDraftsResourceWithRawResponse(self._client.drafts)
 
     @cached_property
-    def styles(self) -> styles.AsyncStylesResourceWithRawResponse:
+    def styles(self) -> styles_resources.AsyncStylesResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import AsyncStylesResourceWithRawResponse
 
         return AsyncStylesResourceWithRawResponse(self._client.styles)
 
     @cached_property
-    def radar(self) -> radar.AsyncRadarResourceWithRawResponse:
+    def radar(self) -> radar_resources.AsyncRadarResourceWithRawResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import AsyncRadarResourceWithRawResponse
 
         return AsyncRadarResourceWithRawResponse(self._client.radar)
 
     @cached_property
-    def monitors(self) -> monitors.AsyncMonitorsResourceWithRawResponse:
+    def monitors(self) -> monitors_resources.AsyncMonitorsResourceWithRawResponse:
         """X account monitoring with 1-second checks"""
         from .resources.monitors import AsyncMonitorsResourceWithRawResponse
 
         return AsyncMonitorsResourceWithRawResponse(self._client.monitors)
 
     @cached_property
-    def events(self) -> events.AsyncEventsResourceWithRawResponse:
+    def events(self) -> events_resources.AsyncEventsResourceWithRawResponse:
         """Activity events from monitored accounts"""
         from .resources.events import AsyncEventsResourceWithRawResponse
 
         return AsyncEventsResourceWithRawResponse(self._client.events)
 
     @cached_property
-    def extractions(self) -> extractions.AsyncExtractionsResourceWithRawResponse:
-        """Bulk data extraction (23 tool types)"""
+    def extractions(self) -> extractions_resources.AsyncExtractionsResourceWithRawResponse:
+        """Saved or bulk data extraction (23 tool types)"""
         from .resources.extractions import AsyncExtractionsResourceWithRawResponse
 
         return AsyncExtractionsResourceWithRawResponse(self._client.extractions)
 
     @cached_property
-    def draws(self) -> draws.AsyncDrawsResourceWithRawResponse:
+    def draws(self) -> draws_resources.AsyncDrawsResourceWithRawResponse:
         """Giveaway draws from tweet replies"""
         from .resources.draws import AsyncDrawsResourceWithRawResponse
 
         return AsyncDrawsResourceWithRawResponse(self._client.draws)
 
     @cached_property
-    def webhooks(self) -> webhooks.AsyncWebhooksResourceWithRawResponse:
+    def webhooks(self) -> webhooks_resources.AsyncWebhooksResourceWithRawResponse:
         """Webhook endpoint management and delivery"""
         from .resources.webhooks import AsyncWebhooksResourceWithRawResponse
 
         return AsyncWebhooksResourceWithRawResponse(self._client.webhooks)
 
     @cached_property
-    def x(self) -> x.AsyncXResourceWithRawResponse:
+    def x(self) -> x_resources.AsyncXResourceWithRawResponse:
         from .resources.x import AsyncXResourceWithRawResponse
 
         return AsyncXResourceWithRawResponse(self._client.x)
 
     @cached_property
-    def trends(self) -> trends.AsyncTrendsResourceWithRawResponse:
+    def trends(self) -> trends_resources.AsyncTrendsResourceWithRawResponse:
         """Trending topics and hashtags by region"""
         from .resources.trends import AsyncTrendsResourceWithRawResponse
 
         return AsyncTrendsResourceWithRawResponse(self._client.trends)
 
     @cached_property
-    def support(self) -> support.AsyncSupportResourceWithRawResponse:
+    def support(self) -> support_resources.AsyncSupportResourceWithRawResponse:
         from .resources.support import AsyncSupportResourceWithRawResponse
 
         return AsyncSupportResourceWithRawResponse(self._client.support)
 
     @cached_property
-    def credits(self) -> credits.AsyncCreditsResourceWithRawResponse:
+    def credits(self) -> credits_resources.AsyncCreditsResourceWithRawResponse:
         """Subscription, billing, and credits"""
         from .resources.credits import AsyncCreditsResourceWithRawResponse
 
         return AsyncCreditsResourceWithRawResponse(self._client.credits)
 
     @cached_property
-    def guest_wallets(self) -> guest_wallets.AsyncGuestWalletsResourceWithRawResponse:
+    def guest_wallets(self) -> guest_wallets_resources.AsyncGuestWalletsResourceWithRawResponse:
         """Accountless prepaid access for paid read endpoints"""
         from .resources.guest_wallets import AsyncGuestWalletsResourceWithRawResponse
 
@@ -977,110 +980,110 @@ class XTwitterScraperWithStreamedResponse:
         self._client = client
 
     @cached_property
-    def account(self) -> account.AccountResourceWithStreamingResponse:
+    def account(self) -> account_resources.AccountResourceWithStreamingResponse:
         """Account info and settings"""
         from .resources.account import AccountResourceWithStreamingResponse
 
         return AccountResourceWithStreamingResponse(self._client.account)
 
     @cached_property
-    def subscribe(self) -> subscribe.SubscribeResourceWithStreamingResponse:
+    def subscribe(self) -> subscribe_resources.SubscribeResourceWithStreamingResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithStreamingResponse
 
         return SubscribeResourceWithStreamingResponse(self._client.subscribe)
 
     @cached_property
-    def compose(self) -> compose.ComposeResourceWithStreamingResponse:
+    def compose(self) -> compose_resources.ComposeResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import ComposeResourceWithStreamingResponse
 
         return ComposeResourceWithStreamingResponse(self._client.compose)
 
     @cached_property
-    def drafts(self) -> drafts.DraftsResourceWithStreamingResponse:
+    def drafts(self) -> drafts_resources.DraftsResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import DraftsResourceWithStreamingResponse
 
         return DraftsResourceWithStreamingResponse(self._client.drafts)
 
     @cached_property
-    def styles(self) -> styles.StylesResourceWithStreamingResponse:
+    def styles(self) -> styles_resources.StylesResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import StylesResourceWithStreamingResponse
 
         return StylesResourceWithStreamingResponse(self._client.styles)
 
     @cached_property
-    def radar(self) -> radar.RadarResourceWithStreamingResponse:
+    def radar(self) -> radar_resources.RadarResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import RadarResourceWithStreamingResponse
 
         return RadarResourceWithStreamingResponse(self._client.radar)
 
     @cached_property
-    def monitors(self) -> monitors.MonitorsResourceWithStreamingResponse:
+    def monitors(self) -> monitors_resources.MonitorsResourceWithStreamingResponse:
         """X account monitoring with 1-second checks"""
         from .resources.monitors import MonitorsResourceWithStreamingResponse
 
         return MonitorsResourceWithStreamingResponse(self._client.monitors)
 
     @cached_property
-    def events(self) -> events.EventsResourceWithStreamingResponse:
+    def events(self) -> events_resources.EventsResourceWithStreamingResponse:
         """Activity events from monitored accounts"""
         from .resources.events import EventsResourceWithStreamingResponse
 
         return EventsResourceWithStreamingResponse(self._client.events)
 
     @cached_property
-    def extractions(self) -> extractions.ExtractionsResourceWithStreamingResponse:
-        """Bulk data extraction (23 tool types)"""
+    def extractions(self) -> extractions_resources.ExtractionsResourceWithStreamingResponse:
+        """Saved or bulk data extraction (23 tool types)"""
         from .resources.extractions import ExtractionsResourceWithStreamingResponse
 
         return ExtractionsResourceWithStreamingResponse(self._client.extractions)
 
     @cached_property
-    def draws(self) -> draws.DrawsResourceWithStreamingResponse:
+    def draws(self) -> draws_resources.DrawsResourceWithStreamingResponse:
         """Giveaway draws from tweet replies"""
         from .resources.draws import DrawsResourceWithStreamingResponse
 
         return DrawsResourceWithStreamingResponse(self._client.draws)
 
     @cached_property
-    def webhooks(self) -> webhooks.WebhooksResourceWithStreamingResponse:
+    def webhooks(self) -> webhooks_resources.WebhooksResourceWithStreamingResponse:
         """Webhook endpoint management and delivery"""
         from .resources.webhooks import WebhooksResourceWithStreamingResponse
 
         return WebhooksResourceWithStreamingResponse(self._client.webhooks)
 
     @cached_property
-    def x(self) -> x.XResourceWithStreamingResponse:
+    def x(self) -> x_resources.XResourceWithStreamingResponse:
         from .resources.x import XResourceWithStreamingResponse
 
         return XResourceWithStreamingResponse(self._client.x)
 
     @cached_property
-    def trends(self) -> trends.TrendsResourceWithStreamingResponse:
+    def trends(self) -> trends_resources.TrendsResourceWithStreamingResponse:
         """Trending topics and hashtags by region"""
         from .resources.trends import TrendsResourceWithStreamingResponse
 
         return TrendsResourceWithStreamingResponse(self._client.trends)
 
     @cached_property
-    def support(self) -> support.SupportResourceWithStreamingResponse:
+    def support(self) -> support_resources.SupportResourceWithStreamingResponse:
         from .resources.support import SupportResourceWithStreamingResponse
 
         return SupportResourceWithStreamingResponse(self._client.support)
 
     @cached_property
-    def credits(self) -> credits.CreditsResourceWithStreamingResponse:
+    def credits(self) -> credits_resources.CreditsResourceWithStreamingResponse:
         """Subscription, billing, and credits"""
         from .resources.credits import CreditsResourceWithStreamingResponse
 
         return CreditsResourceWithStreamingResponse(self._client.credits)
 
     @cached_property
-    def guest_wallets(self) -> guest_wallets.GuestWalletsResourceWithStreamingResponse:
+    def guest_wallets(self) -> guest_wallets_resources.GuestWalletsResourceWithStreamingResponse:
         """Accountless prepaid access for paid read endpoints"""
         from .resources.guest_wallets import GuestWalletsResourceWithStreamingResponse
 
@@ -1094,110 +1097,110 @@ class AsyncXTwitterScraperWithStreamedResponse:
         self._client = client
 
     @cached_property
-    def account(self) -> account.AsyncAccountResourceWithStreamingResponse:
+    def account(self) -> account_resources.AsyncAccountResourceWithStreamingResponse:
         """Account info and settings"""
         from .resources.account import AsyncAccountResourceWithStreamingResponse
 
         return AsyncAccountResourceWithStreamingResponse(self._client.account)
 
     @cached_property
-    def subscribe(self) -> subscribe.AsyncSubscribeResourceWithStreamingResponse:
+    def subscribe(self) -> subscribe_resources.AsyncSubscribeResourceWithStreamingResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import AsyncSubscribeResourceWithStreamingResponse
 
         return AsyncSubscribeResourceWithStreamingResponse(self._client.subscribe)
 
     @cached_property
-    def compose(self) -> compose.AsyncComposeResourceWithStreamingResponse:
+    def compose(self) -> compose_resources.AsyncComposeResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.compose import AsyncComposeResourceWithStreamingResponse
 
         return AsyncComposeResourceWithStreamingResponse(self._client.compose)
 
     @cached_property
-    def drafts(self) -> drafts.AsyncDraftsResourceWithStreamingResponse:
+    def drafts(self) -> drafts_resources.AsyncDraftsResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.drafts import AsyncDraftsResourceWithStreamingResponse
 
         return AsyncDraftsResourceWithStreamingResponse(self._client.drafts)
 
     @cached_property
-    def styles(self) -> styles.AsyncStylesResourceWithStreamingResponse:
+    def styles(self) -> styles_resources.AsyncStylesResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.styles import AsyncStylesResourceWithStreamingResponse
 
         return AsyncStylesResourceWithStreamingResponse(self._client.styles)
 
     @cached_property
-    def radar(self) -> radar.AsyncRadarResourceWithStreamingResponse:
+    def radar(self) -> radar_resources.AsyncRadarResourceWithStreamingResponse:
         """AI tweet composition, drafts, writing styles, and radar"""
         from .resources.radar import AsyncRadarResourceWithStreamingResponse
 
         return AsyncRadarResourceWithStreamingResponse(self._client.radar)
 
     @cached_property
-    def monitors(self) -> monitors.AsyncMonitorsResourceWithStreamingResponse:
+    def monitors(self) -> monitors_resources.AsyncMonitorsResourceWithStreamingResponse:
         """X account monitoring with 1-second checks"""
         from .resources.monitors import AsyncMonitorsResourceWithStreamingResponse
 
         return AsyncMonitorsResourceWithStreamingResponse(self._client.monitors)
 
     @cached_property
-    def events(self) -> events.AsyncEventsResourceWithStreamingResponse:
+    def events(self) -> events_resources.AsyncEventsResourceWithStreamingResponse:
         """Activity events from monitored accounts"""
         from .resources.events import AsyncEventsResourceWithStreamingResponse
 
         return AsyncEventsResourceWithStreamingResponse(self._client.events)
 
     @cached_property
-    def extractions(self) -> extractions.AsyncExtractionsResourceWithStreamingResponse:
-        """Bulk data extraction (23 tool types)"""
+    def extractions(self) -> extractions_resources.AsyncExtractionsResourceWithStreamingResponse:
+        """Saved or bulk data extraction (23 tool types)"""
         from .resources.extractions import AsyncExtractionsResourceWithStreamingResponse
 
         return AsyncExtractionsResourceWithStreamingResponse(self._client.extractions)
 
     @cached_property
-    def draws(self) -> draws.AsyncDrawsResourceWithStreamingResponse:
+    def draws(self) -> draws_resources.AsyncDrawsResourceWithStreamingResponse:
         """Giveaway draws from tweet replies"""
         from .resources.draws import AsyncDrawsResourceWithStreamingResponse
 
         return AsyncDrawsResourceWithStreamingResponse(self._client.draws)
 
     @cached_property
-    def webhooks(self) -> webhooks.AsyncWebhooksResourceWithStreamingResponse:
+    def webhooks(self) -> webhooks_resources.AsyncWebhooksResourceWithStreamingResponse:
         """Webhook endpoint management and delivery"""
         from .resources.webhooks import AsyncWebhooksResourceWithStreamingResponse
 
         return AsyncWebhooksResourceWithStreamingResponse(self._client.webhooks)
 
     @cached_property
-    def x(self) -> x.AsyncXResourceWithStreamingResponse:
+    def x(self) -> x_resources.AsyncXResourceWithStreamingResponse:
         from .resources.x import AsyncXResourceWithStreamingResponse
 
         return AsyncXResourceWithStreamingResponse(self._client.x)
 
     @cached_property
-    def trends(self) -> trends.AsyncTrendsResourceWithStreamingResponse:
+    def trends(self) -> trends_resources.AsyncTrendsResourceWithStreamingResponse:
         """Trending topics and hashtags by region"""
         from .resources.trends import AsyncTrendsResourceWithStreamingResponse
 
         return AsyncTrendsResourceWithStreamingResponse(self._client.trends)
 
     @cached_property
-    def support(self) -> support.AsyncSupportResourceWithStreamingResponse:
+    def support(self) -> support_resources.AsyncSupportResourceWithStreamingResponse:
         from .resources.support import AsyncSupportResourceWithStreamingResponse
 
         return AsyncSupportResourceWithStreamingResponse(self._client.support)
 
     @cached_property
-    def credits(self) -> credits.AsyncCreditsResourceWithStreamingResponse:
+    def credits(self) -> credits_resources.AsyncCreditsResourceWithStreamingResponse:
         """Subscription, billing, and credits"""
         from .resources.credits import AsyncCreditsResourceWithStreamingResponse
 
         return AsyncCreditsResourceWithStreamingResponse(self._client.credits)
 
     @cached_property
-    def guest_wallets(self) -> guest_wallets.AsyncGuestWalletsResourceWithStreamingResponse:
+    def guest_wallets(self) -> guest_wallets_resources.AsyncGuestWalletsResourceWithStreamingResponse:
         """Accountless prepaid access for paid read endpoints"""
         from .resources.guest_wallets import AsyncGuestWalletsResourceWithStreamingResponse
 

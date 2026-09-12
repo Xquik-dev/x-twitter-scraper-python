@@ -4,18 +4,11 @@
 
 from __future__ import annotations
 
+from functools import partial
+
 import pytest
 
 from x_twitter_scraper._utils import required_args
-
-
-def test_too_many_positional_params() -> None:
-    @required_args(["a"])
-    def foo(a: str | None = None) -> str | None:
-        return a
-
-    with pytest.raises(TypeError, match=r"foo\(\) takes 1 argument\(s\) but 2 were given"):
-        foo("a", "b")  # type: ignore
 
 
 def test_positional_param() -> None:
@@ -29,6 +22,10 @@ def test_positional_param() -> None:
 
     with pytest.raises(TypeError, match="Missing required argument: 'a'"):
         foo()
+
+    with pytest.raises(TypeError, match=r"foo\(\) takes 1 argument\(s\) but 2 were given"):
+        arguments = ["a", "b"]
+        foo(*arguments)
 
 
 def test_keyword_only_param() -> None:
@@ -53,17 +50,10 @@ def test_multiple_params() -> None:
 
     error_message = r"Missing required arguments.*"
 
-    with pytest.raises(TypeError, match=error_message):
-        foo()
-
-    with pytest.raises(TypeError, match=error_message):
-        foo(a="a")
-
-    with pytest.raises(TypeError, match=error_message):
-        foo(b="b")
-
-    with pytest.raises(TypeError, match=error_message):
-        foo(c="c")
+    missing: tuple[dict[str, str], ...] = ({}, {"a": "a"}, {"b": "b"}, {"c": "c"})
+    for arguments in missing:
+        with pytest.raises(TypeError, match=error_message):
+            foo(**arguments)
 
     with pytest.raises(TypeError, match=r"Missing required argument: 'a'"):
         foo(b="a", c="c")
@@ -101,15 +91,22 @@ def test_multiple_params_multiple_variants() -> None:
 
     error_message = r"Missing required arguments; Expected either \('a' and 'b'\) or \('c'\) arguments to be given"
 
-    with pytest.raises(TypeError, match=error_message):
-        foo(a="foo")
-
-    with pytest.raises(TypeError, match=error_message):
-        foo(b="bar")
-
-    with pytest.raises(TypeError, match=error_message):
-        foo()
+    missing: tuple[dict[str, str], ...] = ({"a": "foo"}, {"b": "bar"}, {})
+    for arguments in missing:
+        with pytest.raises(TypeError, match=error_message):
+            foo(**arguments)
 
     assert foo(a=None, b="bar") == "bar"
     assert foo(c=None) is None
     assert foo(c="foo") == "foo"
+
+
+def test_partial_rejects_extra_positional_arguments() -> None:
+    def foo(a: str) -> str:
+        return a
+
+    wrapped = required_args(["a"])(partial(foo))
+    assert wrapped("value") == "value"
+    values = ["a", "b"]
+    with pytest.raises(TypeError, match=r"partial\(\) takes 1 argument\(s\) but 2 were given"):
+        wrapped(*values)

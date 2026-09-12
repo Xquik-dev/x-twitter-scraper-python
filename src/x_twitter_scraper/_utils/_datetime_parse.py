@@ -57,7 +57,7 @@ def _from_unix_seconds(seconds: Union[int, float]) -> datetime:
     return dt.replace(tzinfo=timezone.utc)
 
 
-def _parse_timezone(value: Optional[str]) -> Union[None, int, timezone]:
+def _parse_timezone(value: Optional[str]) -> Optional[timezone]:
     if value == "Z":
         return timezone.utc
     elif value is not None:
@@ -101,10 +101,8 @@ def parse_datetime(value: Union[datetime, StrBytesIntFloat]) -> datetime:
         kw["microsecond"] = kw["microsecond"].ljust(6, "0")
 
     tzinfo = _parse_timezone(kw.pop("tzinfo"))
-    kw_: Dict[str, Union[None, int, timezone]] = {k: int(v) for k, v in kw.items() if v is not None}
-    kw_["tzinfo"] = tzinfo
-
-    return datetime(**kw_)  # type: ignore
+    kw_: Dict[str, int] = {k: int(v) for k, v in kw.items() if v is not None}
+    return datetime(**kw_, tzinfo=tzinfo)
 
 
 def parse_date(value: Union[date, StrBytesIntFloat]) -> date:

@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
+SECONDS=0
+cd "$(dirname "$0")/.."
+parent_coverage="${1:?Pass the parent coverage JSON path.}"
+[[ -f "$parent_coverage" ]] || { echo "Parent coverage file is missing. Generate its baseline first." >&2; exit 1; }
+parent_revision="${2:-HEAD}"
+export UV_PYTHON="${UV_PYTHON:-3.14.7}"
+evidence="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-check.XXXXXX")"
+echo "Check evidence: $evidence"
+uv sync --locked --all-extras
+pids=()
+names=()
+run_check() {
+  local name="$1"
+  shift
+  ( start=$SECONDS; status=0; "$@" || status=$?; echo "$name elapsed: $((SECONDS - start))s"; exit "$status" ) >"$evidence/$name.log" 2>&1 &
+  pids+=("$!")
+  names+=("$name")
+}
+run_check fuzz bash scripts/fuzz
+run_check coverage bash scripts/coverage "$parent_coverage" "$parent_revision"
+check_quality() {
+  local status=0
+  UV_NO_SYNC=1 bash scripts/lint || status=$?
+  bash scripts/codeql-security || status=$?
+  return "$status"
+}
+run_check quality check_quality
+run_check formatting env UV_NO_SYNC=1 bash scripts/format --check
+run_check dependencies bash scripts/audit
+run_check licensing bun run check:licenses
+run_check loc bash scripts/check-loc "$parent_revision"
+failed=0
+for index in "${!pids[@]}"; do
+  wait "${pids[$index]}" || failed=1
+  echo "==> ${names[$index]}"
+  cat "$evidence/${names[$index]}.log"
+done
+git diff --check || failed=1
+echo "P99 measurement coverage remains incomplete."
+echo "Total check time: ${SECONDS}s"
+exit "$failed"

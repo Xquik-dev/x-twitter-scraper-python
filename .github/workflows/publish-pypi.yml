@@ -30,7 +30,7 @@ jobs:
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: false
-          version: "0.11.6"
+          version: "0.12.13"
 
       - name: Verify reproducible distributions
         run: ./scripts/check-reproducible
@@ -46,7 +46,7 @@ jobs:
         run: SOURCE_DATE_EPOCH=946684800 uv build
 
       - name: Check package metadata
-        run: uvx --from twine==6.2.0 twine check dist/*
+        run: uv run --locked --all-extras twine check dist/*
 
       - name: Upload distributions
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1

@@ -8,7 +8,6 @@ import re
 from typing import (
     Any,
     Mapping,
-    Callable,
 )
 from urllib.parse import quote
 
@@ -18,44 +17,18 @@ _DOT_SEGMENT_RE = re.compile(r"^(?:\.|%2[eE]){1,2}$")
 _PLACEHOLDER_RE = re.compile(r"\{(\w+)\}")
 
 
-def _quote_path_segment_part(value: str) -> str:
-    """Percent-encode `value` for use in a URI path segment.
-
-    Considers characters not in `pchar` set from RFC 3986 §3.3 to be unsafe.
-    https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
-    """
-    # quote() already treats unreserved characters (letters, digits, and -._~)
-    # as safe, so we only need to add sub-delims, ':', and '@'.
-    # Notably, unlike the default `safe` for quote(), / is unsafe and must be quoted.
-    return quote(value, safe="!$&'()*+,;=:@")
-
-
-def _quote_query_part(value: str) -> str:
-    """Percent-encode `value` for use in a URI query string.
-
-    Considers &, = and characters not in `query` set from RFC 3986 §3.4 to be unsafe.
-    https://datatracker.ietf.org/doc/html/rfc3986#section-3.4
-    """
-    return quote(value, safe="!$'()*+,;:@/?")
-
-
-def _quote_fragment_part(value: str) -> str:
-    """Percent-encode `value` for use in a URI fragment.
-
-    Considers characters not in `fragment` set from RFC 3986 §3.5 to be unsafe.
-    https://datatracker.ietf.org/doc/html/rfc3986#section-3.5
-    """
-    return quote(value, safe="!$&'()*+,;=:@/?")
-
-
 def _interpolate(
     template: str,
     values: Mapping[str, Any],
-    quoter: Callable[[str], str],
+    safe: str,
 ) -> str:
-    """Replace {name} placeholders in `template`, quoting each value with `quoter`.
+    """Replace {name} placeholders, percent-encoding values with the component's safe characters.
 
-    Placeholder names are looked up in `values`.
+    Placeholder names are looked up in `values`. Unreserved characters remain safe.
+    Callers supply RFC 3986 component characters: path pchar (§3.3), query (§3.4),
+    or fragment (§3.5). Query values additionally encode & and = to prevent injection.
+    Path values encode /, while query and fragment values permit / and ?.
+    https://datatracker.ietf.org/doc/html/rfc3986#section-3.3
 
     Raises:
         KeyError: If a placeholder is not found in `values`.
@@ -74,7 +47,7 @@ def _interpolate(
         elif isinstance(val, bool):
             parts[i] = "true" if val else "false"
         else:
-            parts[i] = quoter(str(values[name]))
+            parts[i] = quote(str(values[name]), safe=safe)
 
     return "".join(parts)
 
@@ -100,18 +73,11 @@ def path_template(template: str, /, **kwargs: Any) -> str:
         ValueError: If resulting path contains /./ or /../ segments (including percent-encoded dot-segments).
     """
     # Split the template into path, query, and fragment portions.
-    fragment_template: str | None = None
-    query_template: str | None = None
-
-    rest = template
-    if "#" in rest:
-        rest, fragment_template = rest.split("#", 1)
-    if "?" in rest:
-        rest, query_template = rest.split("?", 1)
-    path_template = rest
+    rest, fragment_separator, fragment_template = template.partition("#")
+    path_template, query_separator, query_template = rest.partition("?")
 
     # Interpolate each portion with the appropriate quoting rules.
-    path_result = _interpolate(path_template, kwargs, _quote_path_segment_part)
+    path_result = _interpolate(path_template, kwargs, "!$&'()*+,;=:@")
 
     # Reject dot-segments (. and ..) in the final assembled path.  The check
     # runs after interpolation so that adjacent placeholders or a mix of static
@@ -123,9 +89,9 @@ def path_template(template: str, /, **kwargs: Any) -> str:
             raise ValueError(f"Constructed path {path_result!r} contains dot-segment {segment!r} which is not allowed")
 
     result = path_result
-    if query_template is not None:
-        result += "?" + _interpolate(query_template, kwargs, _quote_query_part)
-    if fragment_template is not None:
-        result += "#" + _interpolate(fragment_template, kwargs, _quote_fragment_part)
+    if query_separator:
+        result += "?" + _interpolate(query_template, kwargs, "!$'()*+,;:@/?")
+    if fragment_separator:
+        result += "#" + _interpolate(fragment_template, kwargs, "!$&'()*+,;=:@/?")
 
     return result

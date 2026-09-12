@@ -56,7 +56,7 @@ class AccountConnectionAttemptsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountConnectionAttemptRetrieveResponse:
         """
-        Get X account connection status
+        Returns progress for an X account connection attempt.
 
         Args:
           extra_headers: Send extra headers
@@ -117,7 +117,7 @@ class AsyncAccountConnectionAttemptsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountConnectionAttemptRetrieveResponse:
         """
-        Get X account connection status
+        Returns progress for an X account connection attempt.
 
         Args:
           extra_headers: Send extra headers

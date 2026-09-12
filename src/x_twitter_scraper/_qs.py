@@ -4,34 +4,19 @@
 
 from __future__ import annotations
 
-from typing import Any, List, Tuple, Union, Mapping, TypeVar
+from typing import Mapping, Iterable
+from dataclasses import dataclass
 from urllib.parse import parse_qs, urlencode
 from typing_extensions import get_args
 
-from ._types import NotGiven, ArrayFormat, NestedFormat, not_given
-from ._utils import flatten
-
-_T = TypeVar("_T")
-
-PrimitiveData = Union[str, int, float, bool, None]
-# this should be Data = Union[PrimitiveData, "List[Data]", "Tuple[Data]", "Mapping[str, Data]"]
-# https://github.com/microsoft/pyright/issues/3555
-Data = Union[PrimitiveData, List[Any], Tuple[Any], "Mapping[str, Any]"]
-Params = Mapping[str, Data]
+from ._types import Query as Params, NotGiven, ArrayFormat, NestedFormat, not_given
+from ._utils import is_list, is_tuple, is_mapping
 
 
+@dataclass(kw_only=True, eq=False, repr=False)
 class Querystring:
-    array_format: ArrayFormat
-    nested_format: NestedFormat
-
-    def __init__(
-        self,
-        *,
-        array_format: ArrayFormat = "repeat",
-        nested_format: NestedFormat = "brackets",
-    ) -> None:
-        self.array_format = array_format
-        self.nested_format = nested_format
+    array_format: ArrayFormat = "repeat"
+    nested_format: NestedFormat = "brackets"
 
     def parse(self, query: str) -> Mapping[str, object]:
         # Note: custom format syntax is not supported yet
@@ -59,69 +44,46 @@ class Querystring:
         array_format: ArrayFormat | NotGiven = not_given,
         nested_format: NestedFormat | NotGiven = not_given,
     ) -> list[tuple[str, str]]:
-        opts = Options(
-            qs=self,
-            array_format=array_format,
-            nested_format=nested_format,
+        opts = Querystring(
+            array_format=self.array_format if isinstance(array_format, NotGiven) else array_format,
+            nested_format=self.nested_format if isinstance(nested_format, NotGiven) else nested_format,
         )
-        return flatten([self._stringify_item(key, value, opts) for key, value in params.items()])
+        return [item for key, value in params.items() for item in self._stringify_item(key, value, opts)]
 
     def _stringify_item(
         self,
         key: str,
-        value: Data,
-        opts: Options,
+        value: object,
+        opts: Querystring,
     ) -> list[tuple[str, str]]:
-        if isinstance(value, Mapping):
-            items: list[tuple[str, str]] = []
+        entries: Iterable[tuple[str, object]]
+        if is_mapping(value):
             nested_format = opts.nested_format
-            for subkey, subvalue in value.items():
-                items.extend(
-                    self._stringify_item(
-                        # TODO: error if unknown format
-                        f"{key}.{subkey}" if nested_format == "dots" else f"{key}[{subkey}]",
-                        subvalue,
-                        opts,
-                    )
-                )
-            return items
-
-        if isinstance(value, (list, tuple)):
+            entries = (
+                (f"{key}.{subkey}" if nested_format == "dots" else f"{key}[{subkey}]", subvalue)
+                for subkey, subvalue in value.items()
+            )
+        elif is_list(value) or is_tuple(value):
             array_format = opts.array_format
             if array_format == "comma":
-                return [
-                    (
-                        key,
-                        ",".join(self._primitive_value_to_str(item) for item in value if item is not None),
-                    ),
-                ]
-            elif array_format == "repeat":
-                items = []
-                for item in value:
-                    items.extend(self._stringify_item(key, item, opts))
-                return items
-            elif array_format == "indices":
-                items = []
-                for i, item in enumerate(value):
-                    items.extend(self._stringify_item(f"{key}[{i}]", item, opts))
-                return items
-            elif array_format == "brackets":
-                items = []
-                key = key + "[]"
-                for item in value:
-                    items.extend(self._stringify_item(key, item, opts))
-                return items
-            else:
+                return [(key, ",".join(self._primitive_value_to_str(item) for item in value if item is not None))]
+            if array_format not in ("repeat", "indices", "brackets"):
                 raise NotImplementedError(
                     f"Unknown array_format value: {array_format}, choose from {', '.join(get_args(ArrayFormat))}"
                 )
+            entries = (
+                (
+                    f"{key}[{i}]" if array_format == "indices" else key + "[]" if array_format == "brackets" else key,
+                    item,
+                )
+                for i, item in enumerate(value)
+            )
+        else:
+            serialised = self._primitive_value_to_str(value)
+            return [(key, serialised)] if serialised else []
+        return [pair for subkey, item in entries for pair in self._stringify_item(subkey, item, opts)]
 
-        serialised = self._primitive_value_to_str(value)
-        if not serialised:
-            return []
-        return [(key, serialised)]
-
-    def _primitive_value_to_str(self, value: PrimitiveData) -> str:
+    def _primitive_value_to_str(self, value: object) -> str:
         # copied from httpx
         if value is True:
             return "true"
@@ -136,18 +98,3 @@ _qs = Querystring()
 parse = _qs.parse
 stringify = _qs.stringify
 stringify_items = _qs.stringify_items
-
-
-class Options:
-    array_format: ArrayFormat
-    nested_format: NestedFormat
-
-    def __init__(
-        self,
-        qs: Querystring = _qs,
-        *,
-        array_format: ArrayFormat | NotGiven = not_given,
-        nested_format: NestedFormat | NotGiven = not_given,
-    ) -> None:
-        self.array_format = qs.array_format if isinstance(array_format, NotGiven) else array_format
-        self.nested_format = qs.nested_format if isinstance(nested_format, NotGiven) else nested_format

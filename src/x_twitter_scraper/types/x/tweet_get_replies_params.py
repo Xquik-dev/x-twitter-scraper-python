@@ -42,7 +42,7 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """
 
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
-    """Exact phrase to match."""
+    """Match this literal phrase, including any hyphens."""
 
     exclude_original_author: Annotated[bool, PropertyInfo(alias="excludeOriginalAuthor")]
     """Exclude replies written by the source-post author."""
@@ -72,13 +72,13 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Only replies to this tweet ID."""
 
     language: str
-    """Language code filter, e.g. en or tr."""
+    """Filter by language. Alias `lang` is accepted."""
 
     limit: int
-    """
-    With mode=complete, maximum combined direct and nested reply rows (1-25000,
-    default 25000). Automatic pages accept 1-300. Standard pages accept 1-100.
-    Prefer pageSize outside complete mode.
+    """Complete mode defaults to 25,000 combined direct and nested replies.
+
+    Set a smaller or larger total with limit. Automatic pages accept 1-300. Standard
+    pages accept 1-100.
     """
 
     max_depth: Annotated[int, PropertyInfo(alias="maxDepth")]
@@ -102,7 +102,7 @@ class TweetGetRepliesParams(TypedDict, total=False):
     media_type: Annotated[
         Literal["images", "videos", "gifs", "media", "links", "none"], PropertyInfo(alias="mediaType")
     ]
-    """Filter by media type."""
+    """Filter media. Aliases: has_video, has_media."""
 
     mentioning: str
     """Filter tweets mentioning a username."""
@@ -110,8 +110,8 @@ class TweetGetRepliesParams(TypedDict, total=False):
     min_bookmarks: Annotated[int, PropertyInfo(alias="minBookmarks")]
     """Minimum bookmark count threshold."""
 
-    min_faves: Annotated[int, PropertyInfo(alias="minFaves")]
-    """Minimum likes threshold. minLikes is also accepted."""
+    min_likes: Annotated[int, PropertyInfo(alias="minLikes")]
+    """Minimum likes. Aliases: minFaves, min_likes, min_faves."""
 
     min_quotes: Annotated[int, PropertyInfo(alias="minQuotes")]
     """Minimum quote count threshold."""
@@ -126,11 +126,10 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Minimum view count threshold."""
 
     mode: Literal["standard", "complete"]
-    """Optional advanced override.
+    """Override automatic coverage.
 
-    Omit mode for automatic maximum direct reply coverage with pagination. Standard
-    keeps legacy pagination. Complete returns direct and nested replies with
-    diagnostics, scope, depth, sorting, and original-post controls.
+    Standard uses legacy pagination. Complete adds nested replies, diagnostics,
+    scope, depth, sorting, and original-post controls.
     """
 
     native_retweets: Annotated[bool, PropertyInfo(alias="nativeRetweets")]
@@ -145,21 +144,21 @@ class TweetGetRepliesParams(TypedDict, total=False):
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
     """Automatic pages accept 1-300 Tweets.
 
-    Standard pages keep 1-100. Default 20. Continue while has_next_page is true.
-    Deprecated aliases remain accepted.
+    Standard pages keep 1-100. Default 20. Follow next_cursor while the response
+    reports more pages. Deprecated aliases remain accepted.
     """
 
     quotes: Literal["include", "exclude", "only"]
-    """Quote mode."""
+    """Only when the caller requests a quote mode."""
 
     quotes_of_tweet_id: Annotated[str, PropertyInfo(alias="quotesOfTweetId")]
     """Only quotes of this tweet ID."""
 
     replies: Literal["include", "exclude", "only"]
-    """Reply mode."""
+    """Only when the caller requests a reply mode."""
 
     retweets: Literal["include", "exclude", "only"]
-    """Retweet mode."""
+    """Only when the caller requests a repost mode."""
 
     retweets_of_tweet_id: Annotated[str, PropertyInfo(alias="retweetsOfTweetId")]
     """Only retweets of this tweet ID."""
@@ -177,7 +176,7 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Return Tweets newer than this Tweet ID."""
 
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
-    """Unix timestamp - return replies posted after this time"""
+    """Inclusive ISO bound for Tweet creation time."""
 
     sort: Literal["relevance", "latest", "oldest", "likes"]
     """Sort the selected replies before applying limit."""
@@ -192,7 +191,7 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """End date in YYYY-MM-DD format."""
 
     until_time: Annotated[str, PropertyInfo(alias="untilTime")]
-    """Unix timestamp - return replies posted before this time"""
+    """Exclusive ISO bound for Tweet creation time."""
 
     url: str
     """URL substring or domain filter."""

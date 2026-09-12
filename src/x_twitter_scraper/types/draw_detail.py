@@ -4,27 +4,15 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import Optional
-from datetime import datetime
-
 from pydantic import Field as FieldInfo
 
-from .._models import BaseModel
+from .draw_list_item import DrawListItem
 
 __all__ = ["DrawDetail"]
 
 
-class DrawDetail(BaseModel):
+class DrawDetail(DrawListItem):
     """Full giveaway draw with tweet metrics, entries, and timing."""
-
-    id: str
-    """Draw public ID."""
-
-    created_at: datetime = FieldInfo(alias="createdAt")
-
-    status: str
-
-    total_entries: int = FieldInfo(alias="totalEntries")
 
     tweet_author_username: str = FieldInfo(alias="tweetAuthorUsername")
 
@@ -39,9 +27,3 @@ class DrawDetail(BaseModel):
     tweet_retweet_count: int = FieldInfo(alias="tweetRetweetCount")
 
     tweet_text: str = FieldInfo(alias="tweetText")
-
-    tweet_url: str = FieldInfo(alias="tweetUrl")
-
-    valid_entries: int = FieldInfo(alias="validEntries")
-
-    drawn_at: Optional[datetime] = FieldInfo(alias="drawnAt", default=None)

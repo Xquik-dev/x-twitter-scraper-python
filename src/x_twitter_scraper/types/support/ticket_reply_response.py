@@ -23,6 +23,8 @@ class Attachment(BaseModel):
 
 
 class TicketReplyResponse(BaseModel):
+    """Support submission receipt."""
+
     attachments: List[Attachment]
 
     public_id: str = FieldInfo(alias="publicId")

@@ -36,7 +36,7 @@ class UserRetrieveSearchParams(TypedDict, total=False):
     """Maximum follower count. Missing counts pass this maximum."""
 
     max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
-    """Maximum following count."""
+    """Profiles may follow at most this many accounts."""
 
     max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
     """Maximum post count. maxPosts is also accepted."""
@@ -48,10 +48,17 @@ class UserRetrieveSearchParams(TypedDict, total=False):
     """Minimum follower count. Filtering happens before billing."""
 
     min_following: Annotated[int, PropertyInfo(alias="minFollowing")]
-    """Minimum following count."""
+    """Profiles must follow at least this many accounts."""
 
     min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
     """Minimum post count. minPosts is also accepted."""
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Maximum page items (1-100, default 20).
+
+    Source, filters, or credits can reduce results. Follow next_cursor while the
+    response reports more pages. Deprecated limit and count aliases remain accepted.
+    """
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]
     """Match a username substring, ignoring case."""

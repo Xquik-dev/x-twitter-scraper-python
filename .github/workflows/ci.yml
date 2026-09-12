@@ -37,7 +37,7 @@ jobs:
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: false
-          version: "0.11.6"
+          version: "0.12.13"
 
       - name: Install dependencies
         run: uv sync --locked --all-extras
@@ -63,7 +63,7 @@ jobs:
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: false
-          version: "0.11.6"
+          version: "0.12.13"
 
       - name: Verify reproducible distributions
         run: ./scripts/check-reproducible
@@ -72,7 +72,7 @@ jobs:
         run: SOURCE_DATE_EPOCH=946684800 uv build
 
       - name: Check package metadata
-        run: uvx --from twine==6.2.0 twine check dist/*
+        run: uv run --locked --all-extras twine check dist/*
 
   test:
     timeout-minutes: 20
@@ -83,12 +83,13 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+          fetch-depth: 0
 
       - name: Install uv
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: false
-          version: "0.11.6"
+          version: "0.12.13"
 
       - name: Bootstrap
         run: ./scripts/bootstrap
@@ -96,8 +97,15 @@ jobs:
       - name: Run tests
         run: ./scripts/test
 
+      - name: Measure parent coverage
+        id: parent
+        run: bash scripts/coverage-parent HEAD^
+
       - name: Enforce coverage
-        run: ./scripts/coverage
+        env:
+          PARENT_REPORT: ${{ steps.parent.outputs.report }}
+          PARENT_REVISION: ${{ steps.parent.outputs.revision }}
+        run: bash scripts/coverage "$PARENT_REPORT" "$PARENT_REVISION"
 
   security:
     timeout-minutes: 15
@@ -113,7 +121,7 @@ jobs:
         uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
         with:
           enable-cache: false
-          version: "0.11.6"
+          version: "0.12.13"
 
       - name: Audit locked dependencies
         run: ./scripts/audit

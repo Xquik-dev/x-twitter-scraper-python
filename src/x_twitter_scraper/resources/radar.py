@@ -68,7 +68,7 @@ class RadarResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> RadarRetrieveTrendingTopicsResponse:
         """
-        Get trending topics from curated sources
+        Returns current topics and sources for writing research.
 
         Args:
           after: Cursor for pagination (from prior response nextCursor).
@@ -156,7 +156,7 @@ class AsyncRadarResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> RadarRetrieveTrendingTopicsResponse:
         """
-        Get trending topics from curated sources
+        Returns current topics and sources for writing research.
 
         Args:
           after: Cursor for pagination (from prior response nextCursor).

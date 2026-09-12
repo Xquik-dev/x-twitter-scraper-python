@@ -13,7 +13,7 @@ import httpx
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
-from ...types.x import account_create_params, account_reauth_params
+from ...types.x import account_list_params, account_create_params, account_reauth_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
     to_raw_response_wrapper,
@@ -69,7 +69,7 @@ class AccountsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountCreateResponse:
         """
-        Connect X account
+        Starts a secure X account connection flow.
 
         Args:
           email: Account email
@@ -122,7 +122,7 @@ class AccountsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XAccountDetail:
         """
-        Get X account details
+        Returns one connected X account and its current status.
 
         Args:
           extra_headers: Send extra headers
@@ -146,6 +146,8 @@ class AccountsResource(SyncAPIResource):
     def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -153,11 +155,39 @@ class AccountsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountListResponse:
-        """List connected X accounts"""
+        """Returns connected accounts in creation order.
+
+        Omit pagination for up to 10,000
+        accounts. Send limit or cursor for legacy pagination.
+
+        Args:
+          cursor: Previous nextCursor. Offset pagination is not supported.
+
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    account_list_params.AccountListParams,
+                ),
             ),
             cast_to=AccountListResponse,
         )
@@ -174,7 +204,7 @@ class AccountsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountDeleteResponse:
         """
-        Disconnect X account
+        Disconnects one X account and removes stored session access.
 
         Args:
           extra_headers: Send extra headers
@@ -232,7 +262,7 @@ class AccountsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountReauthResponse:
         """
-        Re-authenticate X account
+        Starts re-authentication for an existing X account connection.
 
         Args:
           password: Updated account password
@@ -305,7 +335,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountCreateResponse:
         """
-        Connect X account
+        Starts a secure X account connection flow.
 
         Args:
           email: Account email
@@ -358,7 +388,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XAccountDetail:
         """
-        Get X account details
+        Returns one connected X account and its current status.
 
         Args:
           extra_headers: Send extra headers
@@ -382,6 +412,8 @@ class AsyncAccountsResource(AsyncAPIResource):
     async def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -389,11 +421,39 @@ class AsyncAccountsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountListResponse:
-        """List connected X accounts"""
+        """Returns connected accounts in creation order.
+
+        Omit pagination for up to 10,000
+        accounts. Send limit or cursor for legacy pagination.
+
+        Args:
+          cursor: Previous nextCursor. Offset pagination is not supported.
+
+          limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
+              The endpoint returns 402 insufficient_credits when none are affordable.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/x/accounts",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    account_list_params.AccountListParams,
+                ),
             ),
             cast_to=AccountListResponse,
         )
@@ -410,7 +470,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountDeleteResponse:
         """
-        Disconnect X account
+        Disconnects one X account and removes stored session access.
 
         Args:
           extra_headers: Send extra headers
@@ -468,7 +528,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountReauthResponse:
         """
-        Re-authenticate X account
+        Starts re-authentication for an existing X account connection.
 
         Args:
           password: Updated account password

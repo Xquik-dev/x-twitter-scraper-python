@@ -33,10 +33,6 @@ class Route:
     response_type: ResponseType
 
 
-def _resource_root() -> Path:
-    return Path(resources.__file__).parent
-
-
 def _cast_name(node: ast.expr) -> str:
     if isinstance(node, ast.Call):
         if not isinstance(node.func, ast.Name) or node.func.id != "cast":
@@ -50,18 +46,13 @@ def _cast_name(node: ast.expr) -> str:
 
 
 def _path_template(node: ast.expr) -> str:
-    if isinstance(node, ast.Constant) and isinstance(node.value, str):
-        return node.value
-    if (
-        isinstance(node, ast.Call)
-        and isinstance(node.func, ast.Name)
-        and node.func.id == "path_template"
-        and node.args
-        and isinstance(node.args[0], ast.Constant)
-        and isinstance(node.args[0].value, str)
-    ):
-        return node.args[0].value
-    raise ValueError(f"Unsupported path expression: {ast.unparse(node)}")
+    match node:
+        case ast.Constant(value=str() as value):
+            return value
+        case ast.Call(func=ast.Name(id="path_template"), args=[ast.Constant(value=str() as value), *_]):
+            return value
+        case _:
+            raise ValueError(f"Unsupported path expression: {ast.unparse(node)}")
 
 
 def _route_pattern(template: str) -> re.Pattern[str]:
@@ -79,10 +70,7 @@ def _response_type(module_name: str, name: str) -> ResponseType:
         return ResponseKind.JSON_OBJECT
 
     module = importlib.import_module(module_name)
-    response_type = getattr(module, name, None)
-    if isinstance(response_type, type) and issubclass(response_type, BaseModel):
-        return response_type
-    pending = list(get_args(response_type))
+    pending = [getattr(module, name, None)]
     while pending:
         variant = pending.pop(0)
         if isinstance(variant, type) and issubclass(variant, BaseModel):
@@ -93,7 +81,7 @@ def _response_type(module_name: str, name: str) -> ResponseType:
 
 def _build_routes() -> tuple[Route, ...]:
     route_types: dict[tuple[str, str], tuple[str, ResponseType]] = {}
-    root = _resource_root()
+    root = Path(resources.__file__).parent
     for source_path in sorted(root.rglob("*.py")):
         relative = source_path.relative_to(root.parent)
         module_name = ".".join(("x_twitter_scraper", *relative.with_suffix("").parts))

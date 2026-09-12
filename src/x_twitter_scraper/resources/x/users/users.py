@@ -94,7 +94,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserProfile:
         """
-        Get user profile with follower counts and verification
+        Returns one public profile with counts and verification details.
 
         Args:
           extra_headers: Send extra headers
@@ -129,7 +129,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRemoveFollowerResponse:
         """
-        Remove follower
+        Removes a follower from a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -144,7 +144,7 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             path_template("/x/users/{id}/remove-follower", id=id),
             body=maybe_transform({"account": account}, user_remove_follower_params.UserRemoveFollowerParams),
@@ -158,6 +158,10 @@ class UsersResource(SyncAPIResource):
         self,
         *,
         ids: str,
+        max_followers: int | Omit = omit,
+        min_account_age_days: int | Omit = omit,
+        min_followers: int | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -166,11 +170,19 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchResponse:
         """
-        Look up multiple users by IDs in one call
+        Returns public profiles for the requested user IDs.
 
         Args:
           ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
               preserving first-seen order.
+
+          max_followers: Maximum follower count. Missing counts pass this maximum.
+
+          min_account_age_days: Minimum account age in whole days.
+
+          min_followers: Minimum follower count. Filtering happens before billing.
+
+          verified_only: Only return verified profiles.
 
           extra_headers: Send extra headers
 
@@ -187,7 +199,16 @@ class UsersResource(SyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
+                query=maybe_transform(
+                    {
+                        "ids": ids,
+                        "max_followers": max_followers,
+                        "min_account_age_days": min_account_age_days,
+                        "min_followers": min_followers,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_batch_params.UserRetrieveBatchParams,
+                ),
             ),
             cast_to=UserRetrieveBatchResponse,
         )
@@ -222,12 +243,11 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveFollowersResponse:
-        """List followers of a user
+        """
+        Returns public follower profiles for the selected user.
 
         Args:
-          after: Legacy cursor alias.
-
-        Prefer cursor.
+          after: Legacy cursor alias. Prefer cursor.
 
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
@@ -238,14 +258,13 @@ class UsersResource(SyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          limit: Legacy page-size alias outside explicit coverage mode. Coverage accepts 1-10000.
-              Prefer pageSize.
+          limit: Legacy follower limit. Coverage accepts 1-10000. Prefer pageSize.
 
           location_contains: Match a location substring, ignoring case.
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -253,7 +272,7 @@ class UsersResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -261,7 +280,7 @@ class UsersResource(SyncAPIResource):
               Coverage returns diagnostics once and rejects cursors.
 
           page_size: Maximum user profiles: automatic 300; standard 200. Sources return fewer
-              profiles. Continue with has_next_page.
+              profiles. Follow next_cursor while the response reports more pages.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -347,7 +366,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        List mutual followers between you and a user
+        Returns mutual profiles visible to the connected X account.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
@@ -362,7 +381,7 @@ class UsersResource(SyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -370,13 +389,13 @@ class UsersResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Maximum user profiles requested from this page (20-200, default 200). Source,
-              filters, or credits can return fewer profiles. Keep requesting next_cursor while
-              has_next_page is true. Deprecated aliases remain accepted.
+          page_size: Maximum user profiles requested from this page (1-200, default 200). Source,
+              filters, or credits can return fewer profiles. Follow next_cursor while the
+              response reports more pages. Deprecated aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -456,12 +475,11 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveFollowingResponse:
-        """List accounts a user follows
+        """
+        Returns public profiles followed by the selected user.
 
         Args:
-          after: Deprecated following cursor alias.
-
-        Prefer cursor.
+          after: Deprecated following cursor alias. Prefer cursor.
 
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
@@ -479,7 +497,7 @@ class UsersResource(SyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -487,7 +505,7 @@ class UsersResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -495,7 +513,7 @@ class UsersResource(SyncAPIResource):
               Coverage returns diagnostics once and rejects cursors.
 
           page_size: Maximum user profiles: automatic 300; standard 200. Sources return fewer
-              profiles. Continue with has_next_page.
+              profiles. Follow next_cursor while the response reports more pages.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -579,7 +597,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -611,7 +629,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets liked by a user
+        Returns visible tweets liked by the selected user.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -627,7 +645,7 @@ class UsersResource(SyncAPIResource):
 
           cursor: Pagination cursor for liked tweets
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -641,7 +659,7 @@ class UsersResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -653,13 +671,13 @@ class UsersResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -676,16 +694,16 @@ class UsersResource(SyncAPIResource):
           news: Only return news results.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -750,7 +768,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -807,7 +825,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -839,7 +857,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List media tweets posted by a user
+        Returns public media posts from the selected user.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -855,7 +873,7 @@ class UsersResource(SyncAPIResource):
 
           cursor: Pagination cursor for media tweets
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -869,7 +887,7 @@ class UsersResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -881,13 +899,13 @@ class UsersResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -904,16 +922,16 @@ class UsersResource(SyncAPIResource):
           news: Only return news results.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -978,7 +996,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -1035,7 +1053,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -1069,7 +1087,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets mentioning a user
+        Returns public posts mentioning the selected user.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -1085,7 +1103,7 @@ class UsersResource(SyncAPIResource):
 
           cursor: Pagination cursor for mentions
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -1099,7 +1117,7 @@ class UsersResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -1111,13 +1129,13 @@ class UsersResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1134,16 +1152,16 @@ class UsersResource(SyncAPIResource):
           news: Only return news results.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -1153,7 +1171,7 @@ class UsersResource(SyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Unix timestamp - return mentions after this time
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           source: Match the source application.
 
@@ -1161,7 +1179,7 @@ class UsersResource(SyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Unix timestamp - return mentions before this time
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -1212,7 +1230,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -1272,7 +1290,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -1324,7 +1342,7 @@ class UsersResource(SyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -1340,7 +1358,7 @@ class UsersResource(SyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -1352,13 +1370,13 @@ class UsersResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1375,15 +1393,16 @@ class UsersResource(SyncAPIResource):
           news: Only return news results.
 
           page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
-              Continue while has_next_page is true. Deprecated aliases remain accepted.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -1449,7 +1468,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -1496,6 +1515,7 @@ class UsersResource(SyncAPIResource):
         min_followers: int | Omit = omit,
         min_following: int | Omit = omit,
         min_statuses: int | Omit = omit,
+        page_size: int | Omit = omit,
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
@@ -1507,7 +1527,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Search users by name or username
+        Returns public profiles matching a name or username.
 
         Args:
           q: User search query
@@ -1524,7 +1544,7 @@ class UsersResource(SyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -1532,9 +1552,13 @@ class UsersResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
+
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -1572,6 +1596,7 @@ class UsersResource(SyncAPIResource):
                         "min_followers": min_followers,
                         "min_following": min_following,
                         "min_statuses": min_statuses,
+                        "page_size": page_size,
                         "username_contains": username_contains,
                         "verified_only": verified_only,
                         "verified_type": verified_type,
@@ -1610,7 +1635,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -1641,10 +1666,10 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """Omit mode for automatic maximum coverage.
-
-        Pass next_cursor unchanged. Unprefixed
-        cursors use legacy pagination. Shape and billing stay the same.
+        """
+        For multiple users, use createExtraction with tweet_search_extractor and
+        targetUsernames. Omit mode for automatic maximum coverage. Pass next_cursor
+        unchanged. Unprefixed cursors use legacy pagination.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -1661,7 +1686,7 @@ class UsersResource(SyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -1675,11 +1700,11 @@ class UsersResource(SyncAPIResource):
 
           include_parent_tweet: Include parent tweet for replies
 
-          include_replies: Include reply tweets
+          include_replies: Include reply tweets unless replies specifies another mode.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -1691,13 +1716,13 @@ class UsersResource(SyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -1714,15 +1739,16 @@ class UsersResource(SyncAPIResource):
           news: Only return news results.
 
           page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
-              Continue while has_next_page is true. Deprecated aliases remain accepted.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -1789,7 +1815,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -1850,12 +1876,11 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveVerifiedFollowersResponse:
-        """List verified followers of a user
+        """
+        Returns verified public profiles following the selected user.
 
         Args:
-          after: Legacy cursor alias.
-
-        Prefer cursor.
+          after: Legacy verified-follower cursor alias. Prefer cursor.
 
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
@@ -1866,14 +1891,14 @@ class UsersResource(SyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          limit: Legacy page-size alias outside explicit coverage mode. Coverage accepts 1-10000.
-              Prefer pageSize.
+          limit: Legacy verified-follower page-size alias. Coverage accepts 1-10000. Prefer
+              pageSize.
 
           location_contains: Match a location substring, ignoring case.
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -1881,7 +1906,7 @@ class UsersResource(SyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -1889,7 +1914,7 @@ class UsersResource(SyncAPIResource):
               Coverage returns diagnostics once and rejects cursors.
 
           page_size: Maximum user profiles: automatic 300; standard 200. Sources return fewer
-              profiles. Continue with has_next_page.
+              profiles. Follow next_cursor while the response reports more pages.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -1985,7 +2010,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserProfile:
         """
-        Get user profile with follower counts and verification
+        Returns one public profile with counts and verification details.
 
         Args:
           extra_headers: Send extra headers
@@ -2020,7 +2045,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRemoveFollowerResponse:
         """
-        Remove follower
+        Removes a follower from a connected X account.
 
         Args:
           account: X account identifier (@username or account ID)
@@ -2035,7 +2060,7 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             path_template("/x/users/{id}/remove-follower", id=id),
             body=await async_maybe_transform(
@@ -2051,6 +2076,10 @@ class AsyncUsersResource(AsyncAPIResource):
         self,
         *,
         ids: str,
+        max_followers: int | Omit = omit,
+        min_account_age_days: int | Omit = omit,
+        min_followers: int | Omit = omit,
+        verified_only: bool | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -2059,11 +2088,19 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchResponse:
         """
-        Look up multiple users by IDs in one call
+        Returns public profiles for the requested user IDs.
 
         Args:
           ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
               preserving first-seen order.
+
+          max_followers: Maximum follower count. Missing counts pass this maximum.
+
+          min_account_age_days: Minimum account age in whole days.
+
+          min_followers: Minimum follower count. Filtering happens before billing.
+
+          verified_only: Only return verified profiles.
 
           extra_headers: Send extra headers
 
@@ -2080,7 +2117,16 @@ class AsyncUsersResource(AsyncAPIResource):
                 extra_query=extra_query,
                 extra_body=extra_body,
                 timeout=timeout,
-                query=await async_maybe_transform({"ids": ids}, user_retrieve_batch_params.UserRetrieveBatchParams),
+                query=await async_maybe_transform(
+                    {
+                        "ids": ids,
+                        "max_followers": max_followers,
+                        "min_account_age_days": min_account_age_days,
+                        "min_followers": min_followers,
+                        "verified_only": verified_only,
+                    },
+                    user_retrieve_batch_params.UserRetrieveBatchParams,
+                ),
             ),
             cast_to=UserRetrieveBatchResponse,
         )
@@ -2115,12 +2161,11 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveFollowersResponse:
-        """List followers of a user
+        """
+        Returns public follower profiles for the selected user.
 
         Args:
-          after: Legacy cursor alias.
-
-        Prefer cursor.
+          after: Legacy cursor alias. Prefer cursor.
 
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
@@ -2131,14 +2176,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          limit: Legacy page-size alias outside explicit coverage mode. Coverage accepts 1-10000.
-              Prefer pageSize.
+          limit: Legacy follower limit. Coverage accepts 1-10000. Prefer pageSize.
 
           location_contains: Match a location substring, ignoring case.
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -2146,7 +2190,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -2154,7 +2198,7 @@ class AsyncUsersResource(AsyncAPIResource):
               Coverage returns diagnostics once and rejects cursors.
 
           page_size: Maximum user profiles: automatic 300; standard 200. Sources return fewer
-              profiles. Continue with has_next_page.
+              profiles. Follow next_cursor while the response reports more pages.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -2240,7 +2284,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        List mutual followers between you and a user
+        Returns mutual profiles visible to the connected X account.
 
         Args:
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
@@ -2255,7 +2299,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -2263,13 +2307,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
-          page_size: Maximum user profiles requested from this page (20-200, default 200). Source,
-              filters, or credits can return fewer profiles. Keep requesting next_cursor while
-              has_next_page is true. Deprecated aliases remain accepted.
+          page_size: Maximum user profiles requested from this page (1-200, default 200). Source,
+              filters, or credits can return fewer profiles. Follow next_cursor while the
+              response reports more pages. Deprecated aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -2349,12 +2393,11 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveFollowingResponse:
-        """List accounts a user follows
+        """
+        Returns public profiles followed by the selected user.
 
         Args:
-          after: Deprecated following cursor alias.
-
-        Prefer cursor.
+          after: Deprecated following cursor alias. Prefer cursor.
 
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
@@ -2372,7 +2415,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -2380,7 +2423,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -2388,7 +2431,7 @@ class AsyncUsersResource(AsyncAPIResource):
               Coverage returns diagnostics once and rejects cursors.
 
           page_size: Maximum user profiles: automatic 300; standard 200. Sources return fewer
-              profiles. Continue with has_next_page.
+              profiles. Follow next_cursor while the response reports more pages.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -2472,7 +2515,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -2504,7 +2547,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets liked by a user
+        Returns visible tweets liked by the selected user.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -2520,7 +2563,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           cursor: Pagination cursor for liked tweets
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -2534,7 +2577,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -2546,13 +2589,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2569,16 +2612,16 @@ class AsyncUsersResource(AsyncAPIResource):
           news: Only return news results.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -2643,7 +2686,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -2700,7 +2743,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -2732,7 +2775,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List media tweets posted by a user
+        Returns public media posts from the selected user.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -2748,7 +2791,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           cursor: Pagination cursor for media tweets
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -2762,7 +2805,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -2774,13 +2817,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -2797,16 +2840,16 @@ class AsyncUsersResource(AsyncAPIResource):
           news: Only return news results.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -2871,7 +2914,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -2928,7 +2971,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -2962,7 +3005,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        List tweets mentioning a user
+        Returns public posts mentioning the selected user.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -2978,7 +3021,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           cursor: Pagination cursor for mentions
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -2992,7 +3035,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -3004,13 +3047,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -3027,16 +3070,16 @@ class AsyncUsersResource(AsyncAPIResource):
           news: Only return news results.
 
           page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Continue while has_next_page is true. Deprecated limit and count
-              aliases remain accepted.
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -3046,7 +3089,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           since_id: Return Tweets newer than this Tweet ID.
 
-          since_time: Unix timestamp - return mentions after this time
+          since_time: Inclusive ISO bound for Tweet creation time.
 
           source: Match the source application.
 
@@ -3054,7 +3097,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           until_date: End date in YYYY-MM-DD format.
 
-          until_time: Unix timestamp - return mentions before this time
+          until_time: Exclusive ISO bound for Tweet creation time.
 
           url: URL substring or domain filter.
 
@@ -3105,7 +3148,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -3165,7 +3208,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -3217,7 +3260,7 @@ class AsyncUsersResource(AsyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -3233,7 +3276,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -3245,13 +3288,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -3268,15 +3311,16 @@ class AsyncUsersResource(AsyncAPIResource):
           news: Only return news results.
 
           page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
-              Continue while has_next_page is true. Deprecated aliases remain accepted.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -3342,7 +3386,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -3389,6 +3433,7 @@ class AsyncUsersResource(AsyncAPIResource):
         min_followers: int | Omit = omit,
         min_following: int | Omit = omit,
         min_statuses: int | Omit = omit,
+        page_size: int | Omit = omit,
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
@@ -3400,7 +3445,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedUsers:
         """
-        Search users by name or username
+        Returns public profiles matching a name or username.
 
         Args:
           q: User search query
@@ -3417,7 +3462,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -3425,9 +3470,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
+
+          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
+              results. Follow next_cursor while the response reports more pages. Deprecated
+              limit and count aliases remain accepted.
 
           username_contains: Match a username substring, ignoring case.
 
@@ -3465,6 +3514,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "min_followers": min_followers,
                         "min_following": min_following,
                         "min_statuses": min_statuses,
+                        "page_size": page_size,
                         "username_contains": username_contains,
                         "verified_only": verified_only,
                         "verified_type": verified_type,
@@ -3503,7 +3553,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
-        min_faves: int | Omit = omit,
+        min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
@@ -3534,10 +3584,10 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """Omit mode for automatic maximum coverage.
-
-        Pass next_cursor unchanged. Unprefixed
-        cursors use legacy pagination. Shape and billing stay the same.
+        """
+        For multiple users, use createExtraction with tweet_search_extractor and
+        targetUsernames. Omit mode for automatic maximum coverage. Pass next_cursor
+        unchanged. Unprefixed cursors use legacy pagination.
 
         Args:
           any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
@@ -3554,7 +3604,7 @@ class AsyncUsersResource(AsyncAPIResource):
           cursor: Cursor from the previous response. Xquik cursors resume automatic coverage.
               Existing unprefixed cursors keep legacy standard behavior.
 
-          exact_phrase: Exact phrase to match.
+          exact_phrase: Match this literal phrase, including any hyphens.
 
           exclude_source: Exclude a source application.
 
@@ -3568,11 +3618,11 @@ class AsyncUsersResource(AsyncAPIResource):
 
           include_parent_tweet: Include parent tweet for replies
 
-          include_replies: Include reply tweets
+          include_replies: Include reply tweets unless replies specifies another mode.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
-          language: Language code filter, e.g. en or tr.
+          language: Filter by language. Alias `lang` is accepted.
 
           max_faves: Maximum likes threshold. maxLikes is also accepted.
 
@@ -3584,13 +3634,13 @@ class AsyncUsersResource(AsyncAPIResource):
 
           max_retweets: Maximum retweets threshold.
 
-          media_type: Filter by media type.
+          media_type: Filter media. Aliases: has_video, has_media.
 
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
 
-          min_faves: Minimum likes threshold. minLikes is also accepted.
+          min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
           min_quotes: Minimum quote count threshold.
 
@@ -3607,15 +3657,16 @@ class AsyncUsersResource(AsyncAPIResource):
           news: Only return news results.
 
           page_size: Automatic pages accept 1-300 Tweets. Standard pages keep 1-100. Default 20.
-              Continue while has_next_page is true. Deprecated aliases remain accepted.
+              Follow next_cursor while the response reports more pages. Deprecated aliases
+              remain accepted.
 
-          quotes: Quote mode.
+          quotes: Only when the caller requests a quote mode.
 
           quotes_of_tweet_id: Only quotes of this tweet ID.
 
-          replies: Reply mode.
+          replies: Only when the caller requests a reply mode.
 
-          retweets: Retweet mode.
+          retweets: Only when the caller requests a repost mode.
 
           retweets_of_tweet_id: Only retweets of this tweet ID.
 
@@ -3682,7 +3733,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_faves": min_faves,
+                        "min_likes": min_likes,
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -3743,12 +3794,11 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveVerifiedFollowersResponse:
-        """List verified followers of a user
+        """
+        Returns verified public profiles following the selected user.
 
         Args:
-          after: Legacy cursor alias.
-
-        Prefer cursor.
+          after: Legacy verified-follower cursor alias. Prefer cursor.
 
           bio_contains: Match any comma-separated or line-separated bio term, ignoring case.
 
@@ -3759,14 +3809,14 @@ class AsyncUsersResource(AsyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          limit: Legacy page-size alias outside explicit coverage mode. Coverage accepts 1-10000.
-              Prefer pageSize.
+          limit: Legacy verified-follower page-size alias. Coverage accepts 1-10000. Prefer
+              pageSize.
 
           location_contains: Match a location substring, ignoring case.
 
           max_followers: Maximum follower count. Missing counts pass this maximum.
 
-          max_following: Maximum following count.
+          max_following: Profiles may follow at most this many accounts.
 
           max_statuses: Maximum post count. maxPosts is also accepted.
 
@@ -3774,7 +3824,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           min_followers: Minimum follower count. Filtering happens before billing.
 
-          min_following: Minimum following count.
+          min_following: Profiles must follow at least this many accounts.
 
           min_statuses: Minimum post count. minPosts is also accepted.
 
@@ -3782,7 +3832,7 @@ class AsyncUsersResource(AsyncAPIResource):
               Coverage returns diagnostics once and rejects cursors.
 
           page_size: Maximum user profiles: automatic 300; standard 200. Sources return fewer
-              profiles. Continue with has_next_page.
+              profiles. Follow next_cursor while the response reports more pages.
 
           username_contains: Match a username substring, ignoring case.
 

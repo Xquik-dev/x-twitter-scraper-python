@@ -11,7 +11,7 @@ from typing_extensions import Literal
 import httpx
 
 from ..types import guest_wallet_topup_params, guest_wallet_create_params
-from .._types import Body, Query, Headers, NotGiven, omit, not_given
+from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from .._utils import maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -81,7 +81,11 @@ class GuestWalletsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"x-api-key": omit, "Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {
+            "x-api-key": omit,
+            "Idempotency-Key": idempotency_key,
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._post(
             "/guest-wallets",
             body=maybe_transform(
@@ -115,7 +119,8 @@ class GuestWalletsResource(SyncAPIResource):
 
         Use usable to decide whether paid reads can run. An active
         wallet can remain usable while a top-up is pending. A new wallet becomes usable
-        only after payment is verified. Send the guest key as Authorization: Bearer.
+        only after payment is verified. Send the guest key as Authorization: Bearer
+        xq\\__...
         """
         return self._get(
             "/guest-wallets/status",
@@ -158,7 +163,7 @@ class GuestWalletsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return self._post(
             "/guest-wallets/topups",
             body=maybe_transform(
@@ -231,7 +236,11 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"x-api-key": omit, "Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {
+            "x-api-key": omit,
+            "Idempotency-Key": idempotency_key,
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._post(
             "/guest-wallets",
             body=await async_maybe_transform(
@@ -265,7 +274,8 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
 
         Use usable to decide whether paid reads can run. An active
         wallet can remain usable while a top-up is pending. A new wallet becomes usable
-        only after payment is verified. Send the guest key as Authorization: Bearer.
+        only after payment is verified. Send the guest key as Authorization: Bearer
+        xq\\__...
         """
         return await self._get(
             "/guest-wallets/status",
@@ -308,7 +318,7 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
             "/guest-wallets/topups",
             body=await async_maybe_transform(

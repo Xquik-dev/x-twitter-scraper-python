@@ -64,7 +64,7 @@ class MediaResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download images and videos from tweets
+        Downloads images and videos attached to selected tweets.
 
         Args:
           tweet_id: Numeric tweet ID alias for tweetInput
@@ -114,7 +114,7 @@ class MediaResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaUploadResponse:
         """
-        Upload media
+        Uploads media and returns an identifier for later writes.
 
         Args:
           account: X account (@username or ID) uploading media from URL
@@ -129,7 +129,7 @@ class MediaResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -189,7 +189,7 @@ class AsyncMediaResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaDownloadResponse:
         """
-        Download images and videos from tweets
+        Downloads images and videos attached to selected tweets.
 
         Args:
           tweet_id: Numeric tweet ID alias for tweetInput
@@ -239,7 +239,7 @@ class AsyncMediaResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MediaUploadResponse:
         """
-        Upload media
+        Uploads media and returns an identifier for later writes.
 
         Args:
           account: X account (@username or ID) uploading media from URL
@@ -254,7 +254,7 @@ class AsyncMediaResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or {})}
+        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
         body = deepcopy_with_paths(
             {
                 "account": account,

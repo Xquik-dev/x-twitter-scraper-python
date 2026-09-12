@@ -56,10 +56,7 @@ class ExtractionRunParams(TypedDict, total=False):
     """Raw advanced search query appended as-is (tweet_search_extractor)"""
 
     any_words: Annotated[str, PropertyInfo(alias="anyWords")]
-    """Words or quoted phrases where any one can match.
-
-    Separate with spaces, commas, or lines. (tweet_search_extractor)
-    """
+    """Any matching term or phrase (tweet_search_extractor)."""
 
     bio_contains: Annotated[str, PropertyInfo(alias="bioContains")]
     """Bio terms separated by commas or lines."""
@@ -71,10 +68,10 @@ class ExtractionRunParams(TypedDict, total=False):
     """Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)"""
 
     card_name: Annotated[str, PropertyInfo(alias="cardName")]
-    """Match the Tweet card name."""
+    """Require Tweet cards whose name matches this value."""
 
     cashtags: str
-    """Cashtags separated by spaces, commas, or lines. (tweet_search_extractor)"""
+    """Matching cashtags (tweet_search_extractor)."""
 
     collection_strategy: Annotated[
         Literal["auto", "complete", "direct", "search", "thread"], PropertyInfo(alias="collectionStrategy")
@@ -97,22 +94,19 @@ class ExtractionRunParams(TypedDict, total=False):
     """Exclude replies from the source author."""
 
     exclude_source: Annotated[str, PropertyInfo(alias="excludeSource")]
-    """Exclude a source application."""
+    """Drop Tweets from this source application."""
 
     exclude_words: Annotated[str, PropertyInfo(alias="excludeWords")]
-    """Words or quoted phrases to exclude.
-
-    Separate with spaces, commas, or lines. (tweet_search_extractor)
-    """
+    """Excluded terms or phrases (tweet_search_extractor)."""
 
     from_user: Annotated[str, PropertyInfo(alias="fromUser")]
     """Filter by author username (tweet_search_extractor)"""
 
     geocode: str
-    """Match latitude, longitude, and radius."""
+    """Restrict Tweets by latitude, longitude, and radius."""
 
     hashtags: str
-    """Hashtags separated by spaces, commas, or lines. (tweet_search_extractor)"""
+    """Matching hashtags (tweet_search_extractor)."""
 
     has_location: Annotated[bool, PropertyInfo(alias="hasLocation")]
     """Require a profile location."""
@@ -136,7 +130,7 @@ class ExtractionRunParams(TypedDict, total=False):
     """Only replies to this tweet ID (tweet_search_extractor)"""
 
     language: str
-    """Language code filter (tweet_search_extractor)"""
+    """Tweet or Community search language."""
 
     list_id: Annotated[str, PropertyInfo(alias="listId")]
     """Search within a list ID (tweet_search_extractor)"""
@@ -154,7 +148,7 @@ class ExtractionRunParams(TypedDict, total=False):
     """Maximum following count for profile results."""
 
     max_id: Annotated[str, PropertyInfo(alias="maxId")]
-    """Return Tweets older than this Tweet ID."""
+    """Require Tweets older than this ID."""
 
     max_items_per_target: Annotated[int, PropertyInfo(alias="maxItemsPerTarget")]
     """Maximum results collected for each target."""
@@ -180,10 +174,10 @@ class ExtractionRunParams(TypedDict, total=False):
     media_type: Annotated[
         Literal["images", "videos", "gifs", "media", "links", "none"], PropertyInfo(alias="mediaType")
     ]
-    """Media type filter (tweet_search_extractor)"""
+    """Tweet or Community search media."""
 
     mentioning: str
-    """Filter tweets mentioning a username (tweet_search_extractor)"""
+    """Mentions this username (tweet_search_extractor)."""
 
     min_account_age_days: Annotated[int, PropertyInfo(alias="minAccountAgeDays")]
     """Minimum profile age in days."""
@@ -192,7 +186,7 @@ class ExtractionRunParams(TypedDict, total=False):
     """Minimum Tweet bookmark count."""
 
     min_faves: Annotated[int, PropertyInfo(alias="minFaves")]
-    """Minimum likes threshold (tweet_search_extractor)"""
+    """Tweet or Community search minimum likes."""
 
     min_followers: Annotated[int, PropertyInfo(alias="minFollowers")]
     """Minimum follower count for profile results."""
@@ -207,22 +201,22 @@ class ExtractionRunParams(TypedDict, total=False):
     """Minimum quote count threshold (tweet_search_extractor)"""
 
     min_replies: Annotated[int, PropertyInfo(alias="minReplies")]
-    """Minimum replies threshold (tweet_search_extractor)"""
+    """Tweet or Community search minimum replies."""
 
     min_retweets: Annotated[int, PropertyInfo(alias="minRetweets")]
-    """Minimum retweets threshold (tweet_search_extractor)"""
+    """Tweet or Community search minimum reposts."""
 
     min_views: Annotated[int, PropertyInfo(alias="minViews")]
-    """Minimum Tweet view count."""
+    """Tweet or Community search minimum views."""
 
     native_retweets: Annotated[bool, PropertyInfo(alias="nativeRetweets")]
-    """Only return native reposts."""
+    """Tweet or Community search native reposts."""
 
     near: str
-    """Match a place name."""
+    """Restrict Tweet search to this place name."""
 
     news: bool
-    """Only return news results."""
+    """Require news-classified Tweet results."""
 
     overlap_mode: Annotated[bool, PropertyInfo(alias="overlapMode")]
     """Shortcut for dedupeMode=merge."""
@@ -236,11 +230,11 @@ class ExtractionRunParams(TypedDict, total=False):
     point_radius: Annotated[str, PropertyInfo(alias="pointRadius")]
     """Geo point radius, e.g. -73.99 40.73 25mi (tweet_search_extractor)"""
 
-    query_type: Annotated[Literal["Latest", "Top", "Both"], PropertyInfo(alias="queryType")]
-    """Search ranking applied to every query."""
+    query_type: Annotated[Literal["Latest", "Top", "Both", "relevance"], PropertyInfo(alias="queryType")]
+    """Use Top for engagement. The relevance alias maps to Top."""
 
     quotes: Literal["include", "exclude", "only"]
-    """Quote mode (tweet_search_extractor)"""
+    """Choose whether tweet search includes, excludes, or isolates quotes."""
 
     quotes_of_tweet_id: Annotated[str, PropertyInfo(alias="quotesOfTweetId")]
     """Only quotes of this tweet ID (tweet_search_extractor)"""
@@ -249,22 +243,22 @@ class ExtractionRunParams(TypedDict, total=False):
     """Profile relations processed within one job."""
 
     replies: Literal["include", "exclude", "only"]
-    """Reply mode (tweet_search_extractor)"""
+    """Choose whether tweet search includes, excludes, or isolates replies."""
 
     results_limit: Annotated[int, PropertyInfo(alias="resultsLimit")]
-    """Maximum number of results to extract.
+    """Maximum unique results to emit.
 
-    When set, the extraction stops after reaching this limit.
+    Billing follows emitted results, not this upper bound.
     """
 
     retweets: Literal["include", "exclude", "only"]
-    """Retweet mode (tweet_search_extractor)"""
+    """Choose whether tweet search includes, excludes, or isolates reposts."""
 
     retweets_of_tweet_id: Annotated[str, PropertyInfo(alias="retweetsOfTweetId")]
     """Only retweets of this tweet ID (tweet_search_extractor)"""
 
     safe: bool
-    """Enable the safe-search filter."""
+    """Apply safe-search filtering to Tweet results."""
 
     scope: Literal["all", "direct", "nested"]
     """Reply depth scope."""
@@ -273,13 +267,13 @@ class ExtractionRunParams(TypedDict, total=False):
     """Search queries processed as one collection job."""
 
     search_query: Annotated[str, PropertyInfo(alias="searchQuery")]
-    """Required for tweet_search_extractor & community_search."""
+    """Required for tweet_search_extractor & community_search. Passed unchanged."""
 
     since_date: Annotated[Union[str, date], PropertyInfo(alias="sinceDate", format="iso8601")]
-    """Start date YYYY-MM-DD (tweet_search_extractor)"""
+    """Tweet or Community search start date."""
 
     since_id: Annotated[str, PropertyInfo(alias="sinceId")]
-    """Return Tweets newer than this Tweet ID."""
+    """Require Tweets newer than this ID."""
 
     since_time: Annotated[Union[Union[str, datetime], int], PropertyInfo(alias="sinceTime", format="iso8601")]
     """Reply start time as ISO 8601 or Unix seconds."""
@@ -288,7 +282,7 @@ class ExtractionRunParams(TypedDict, total=False):
     """Reply result order."""
 
     source: str
-    """Match the source application."""
+    """Require Tweets from this source application."""
 
     start_cursor: Annotated[str, PropertyInfo(alias="startCursor")]
     """Resume one reply target from this cursor."""
@@ -309,7 +303,11 @@ class ExtractionRunParams(TypedDict, total=False):
     """List IDs processed as one collection job."""
 
     targets: SequenceNotStr[Target]
-    """Mixed targets auto-routed within one job."""
+    """Mixed targets auto-routed within one job.
+
+    Use tweet, replies, quotes, thread, or profile_media kinds to collect attached
+    media.
+    """
 
     target_space_id: Annotated[str, PropertyInfo(alias="targetSpaceId")]
     """Required for space_explorer."""
@@ -322,13 +320,16 @@ class ExtractionRunParams(TypedDict, total=False):
     target_username: Annotated[str, PropertyInfo(alias="targetUsername")]
 
     target_usernames: Annotated[SequenceNotStr[str], PropertyInfo(alias="targetUsernames")]
-    """Usernames processed as one collection job."""
+    """Usernames processed concurrently in one job.
+
+    With tweet_search_extractor, each username collects posts.
+    """
 
     to_user: Annotated[str, PropertyInfo(alias="toUser")]
-    """Filter replies sent to a username (tweet_search_extractor)"""
+    """Replies to this username (tweet_search_extractor)."""
 
     until_date: Annotated[Union[str, date], PropertyInfo(alias="untilDate", format="iso8601")]
-    """End date YYYY-MM-DD (tweet_search_extractor)"""
+    """Tweet or Community search end date."""
 
     until_time: Annotated[Union[Union[str, datetime], int], PropertyInfo(alias="untilTime", format="iso8601")]
     """Reply end time as ISO 8601 or Unix seconds."""
@@ -340,16 +341,18 @@ class ExtractionRunParams(TypedDict, total=False):
     """Required username text."""
 
     verified_only: Annotated[bool, PropertyInfo(alias="verifiedOnly")]
-    """Only verified authors (tweet_search_extractor)"""
+    """Tweet or Community search verified authors."""
 
     verified_type: Annotated[str, PropertyInfo(alias="verifiedType")]
     """Exact profile verification type."""
 
     within: str
-    """Set the radius for the near filter."""
+    """Set the radius around the requested place."""
 
     within_time: Annotated[str, PropertyInfo(alias="withinTime")]
-    """Match Tweets inside a recent time window."""
+    """Restrict Tweets to this recent time window."""
+
+    idempotency_key: Annotated[str, PropertyInfo(alias="Idempotency-Key")]
 
 
 class RelationTarget(TypedDict, total=False):

@@ -59,12 +59,8 @@ NestedFormat = Literal["dots", "brackets"]
 # while adding support for `PathLike` instances
 ProxiesDict = Dict["str | URL", Union[None, str, URL, Proxy]]
 ProxiesTypes = Union[str, Proxy, ProxiesDict]
-if TYPE_CHECKING:
-    Base64FileInput = Union[IO[bytes], PathLike[str]]
-    FileContent = Union[IO[bytes], bytes, PathLike[str]]
-else:
-    Base64FileInput = Union[IO[bytes], PathLike]
-    FileContent = Union[IO[bytes], bytes, PathLike]  # PathLike is not subscriptable in Python 3.8.
+Base64FileInput = Union[IO[bytes], PathLike[str]]
+FileContent = Union[IO[bytes], bytes, PathLike[str]]
 
 
 # Used for sending raw binary data / streaming data in request bodies
@@ -128,6 +124,7 @@ class RequestOptions(TypedDict, total=False):
     extra_json: AnyMapping
     idempotency_key: str
     follow_redirects: bool
+    post_parser: PostParser
     security: SecurityOptions
 
 
@@ -249,7 +246,7 @@ class _GenericAlias(Protocol):
     __origin__: type[object]
 
 
-class HttpxSendArgs(TypedDict, total=False):
+class HttpxSendArgs(TypedDict, total=False, closed=True):
     auth: httpx.Auth
     follow_redirects: bool
 

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+set -euo pipefail
+cd "$(dirname "$0")/.."
+scope=(. ':!*.md' ':!*.lock' ':!.stats.yml' ':!LICENSE*' ':!LICENSES/**'
+  ':!src/x_twitter_scraper/resources/**' ':!src/x_twitter_scraper/types/**'
+  ':!src/x_twitter_scraper/_client.py' ':!tests/api_resources/**' ':!tests/test_client.py')
+[[ -z "$(git ls-files --others --exclude-standard)" ]] || { echo "Review new files and run git add -N first." >&2; exit 1; }
+git diff --numstat "${1:-HEAD}" -- "${scope[@]}"
+stats="$(LC_ALL=C git diff --shortstat --find-renames "${1:-HEAD}" -- "${scope[@]}")"
+added=0 removed=0
+[[ "$stats" =~ ([0-9]+)\ insertion ]] && added="${BASH_REMATCH[1]}"
+[[ "$stats" =~ ([0-9]+)\ deletion ]] && removed="${BASH_REMATCH[1]}"
+printf '%s\nHandwritten additions: %d; deletions: %d; net: %+d\n' "$stats" "$added" "$removed" "$((added-removed))"
+echo "SDK LOC changes are advisory; no reduction is required."

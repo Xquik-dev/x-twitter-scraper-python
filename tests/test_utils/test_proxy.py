@@ -52,3 +52,16 @@ def test_proxy_forwards_to_loaded_object() -> None:
     assert proxy.__class__ is dict
     assert proxy.__get_proxied__() == {"answer": 42}
     assert proxy.__as_proxied__() is proxy
+
+
+def test_repr_loads_once() -> None:
+    values = iter(["first", "second"])
+
+    class ChangingProxy(LazyProxy[str]):
+        @override
+        def __load__(self) -> str:
+            return next(values)
+
+    proxy = ChangingProxy()
+    assert repr(proxy) == "'first'"
+    assert repr(proxy) == "'second'"

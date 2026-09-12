@@ -33,7 +33,7 @@ class TweetGetFavoritersParams(TypedDict, total=False):
     """Maximum follower count. Missing counts pass this maximum."""
 
     max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
-    """Maximum following count."""
+    """Profiles may follow at most this many accounts."""
 
     max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
     """Maximum post count. maxPosts is also accepted."""
@@ -45,16 +45,16 @@ class TweetGetFavoritersParams(TypedDict, total=False):
     """Minimum follower count. Filtering happens before billing."""
 
     min_following: Annotated[int, PropertyInfo(alias="minFollowing")]
-    """Minimum following count."""
+    """Profiles must follow at least this many accounts."""
 
     min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
     """Minimum post count. minPosts is also accepted."""
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum user profiles requested from this page (20-200, default 200).
+    """Maximum user profiles requested from this page (1-200, default 200).
 
-    Source, filters, or credits can return fewer profiles. Keep requesting
-    next_cursor while has_next_page is true. Deprecated aliases remain accepted.
+    Source, filters, or credits can return fewer profiles. Follow next_cursor while
+    the response reports more pages. Deprecated aliases remain accepted.
     """
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]
