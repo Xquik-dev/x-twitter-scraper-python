@@ -59,7 +59,7 @@ conflicts = [
 fuzz = ["atheris==3.1.0; python_version >= '3.12' and sys_platform == 'linux' and platform_machine == 'x86_64'"]
 # Version pins are in uv.lock.
 dev = [
-    "coverage==7.16.0",
+    "coverage==7.16.1",
     "twine==7.0.0",
     "pyright==1.1.414",
     "mypy==2.3.1",
