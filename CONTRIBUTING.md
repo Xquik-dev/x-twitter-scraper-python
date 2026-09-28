@@ -119,8 +119,7 @@ Historical skipped tests remain baseline gaps, never release passes.
 Publishing requires the matching `v*` tag and membership in remote `main`.
 Preparation retains reproducible distributions under `dist/releases/<commit>`.
 The publisher checks metadata and reruns validation before uploading.
-Set `XQUIK_PYPI_KEYCHAIN_SERVICE` to an approved macOS Keychain item name.
-Alternatively, supply `UV_PUBLISH_TOKEN` through your authorized secret manager.
+Supply `UV_PUBLISH_TOKEN` through your authorized secret manager.
 Never place publishing tokens in commands, logs, or runtime environment files.
 Commands emit JSON completion status and preserve diagnostic errors.
 Retry the same publish command after partial uploads.

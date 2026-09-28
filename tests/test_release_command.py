@@ -21,7 +21,6 @@ case "$name" in
    *) exit 99;;
   esac;;
  bun) record "$2"; [ "$2:$RELEASE_CASE" != check:all:checks ];;
- security) [ "$*" = 'find-generic-password -s test-publisher -w' ] || exit 99; echo isolated-fixture-token;;
  uv)
   case "$1" in
    version) echo 0.12.0;;
@@ -33,7 +32,6 @@ case "$name" in
     if [ "$RELEASE_CASE" = extra ]; then echo other > "$1/unexpected.whl"; fi;;
    publish)
     [ "$2" = --publish-url ] && [ "$3" = https://upload.pypi.org/legacy/ ] && [ "$4" = --check-url ] && [ "$5" = https://pypi.org/simple/ ] && [ "$#" = 7 ] || exit 99
-    if [ "$RELEASE_CASE" = keychain ]; then [ "$UV_PUBLISH_TOKEN" = isolated-fixture-token ] || exit 99; fi
     record publish;;
    run)
     case " $* " in
@@ -49,25 +47,19 @@ esac
 """
 
 
-@pytest.mark.parametrize("case", ["success", "keychain", "checks", "tag", "ancestry", "extra", "registry"])
+@pytest.mark.parametrize("case", ["success", "checks", "tag", "ancestry", "extra", "registry"])
 def test_publish_sequence_stops_at_failed_guards(tmp_path: Path, case: str) -> None:
     scripts = tmp_path / "scripts"
     scripts.mkdir()
     runner = scripts / "release"
     runner.write_bytes((Path(__file__).parents[1] / "scripts/release").read_bytes())
     commands = "stub_command() {\n" + STUB + "\n}\n"
-    for name in ("git", "bun", "uv", "security"):
+    for name in ("git", "bun", "uv"):
         commands += f'{name}() {{ stub_command {name} "$@"; }}\nexport -f {name}\n'
     commands += 'export -f stub_command\nbash "$1" publish parent-coverage.json parent\n'
     events = tmp_path / "events"
-    environment = {
-        key: value
-        for key, value in os.environ.items()
-        if key not in ("UV_PUBLISH_TOKEN", "XQUIK_PYPI_KEYCHAIN_SERVICE")
-    }
+    environment = {key: value for key, value in os.environ.items() if key != "UV_PUBLISH_TOKEN"}
     environment.update(RELEASE_CASE=case, RELEASE_EVENTS=str(events))
-    if case == "keychain":
-        environment["XQUIK_PYPI_KEYCHAIN_SERVICE"] = "test-publisher"
     result = subprocess.run(
         ["bash", "-c", commands, "release-test", str(runner)],
         env=environment,
@@ -76,8 +68,7 @@ def test_publish_sequence_stops_at_failed_guards(tmp_path: Path, case: str) -> N
         check=False,
     )
     observed = events.read_text().splitlines()
-    assert "isolated-fixture-token" not in result.stdout + result.stderr
-    if case in ("success", "keychain"):
+    if case == "success":
         assert result.returncode == 0, result.stderr
         assert json.loads(result.stdout)["status"] == "completed"
         assert observed == ["check:all", "build", "artifacts", "metadata", "publish", "registry", "install"]
