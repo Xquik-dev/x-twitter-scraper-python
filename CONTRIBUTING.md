@@ -56,6 +56,8 @@ It runs these checks in order and stops at the first failure:
 9. CodeQL security-extended queries, when the CodeQL CLI is installed.
 
 A failure prints 1 line naming the check and the next step.
+With a clean tree and a pushed commit, it posts the result as the `xquik-local-checks` commit status.
+Pass `--no-status` to skip that status.
 Coverage compares against `HEAD^` by default.
 For a branch with several commits, pass its base: `bin/check-local origin/main`.
 SDK commits preserve full-source coverage; LOC changes remain advisory.

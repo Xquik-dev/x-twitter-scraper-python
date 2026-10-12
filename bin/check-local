@@ -3,28 +3,89 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # Runs every repository check in order and stops at the first failure.
-# Usage: bin/check-local [parent-revision]
+# Usage: bin/check-local [--no-status] [parent-revision]
 # Coverage compares against the parent revision, HEAD^ by default.
+# When the tree is clean and GitHub has HEAD, the result is posted to HEAD
+# as the xquik-local-checks commit status. --no-status skips posting.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
-if (($# > 1)); then
-  echo "check-local: pass at most 1 parent revision, such as origin/main." >&2
-  exit 2
-fi
-parent_revision="${1:-HEAD^}"
+repository="Xquik-dev/x-twitter-scraper-python"
+status_context="xquik-local-checks"
+
+post_commit_status=true
+parent_revision="HEAD^"
+parent_given=false
+for argument in "$@"; do
+  case "$argument" in
+    --no-status) post_commit_status=false ;;
+    -*)
+      echo "check-local: unknown option $argument. Use --no-status or a parent revision." >&2
+      exit 2
+      ;;
+    *)
+      if $parent_given; then
+        echo "check-local: pass at most 1 parent revision, such as origin/main." >&2
+        exit 2
+      fi
+      parent_revision="$argument"
+      parent_given=true
+      ;;
+  esac
+done
 if ! git rev-parse --quiet --verify "$parent_revision^{commit}" >/dev/null; then
   echo "check-local: $parent_revision is not a commit. Pass a revision such as origin/main." >&2
   exit 2
 fi
 
+status_commit=""
+if ! $post_commit_status; then
+  echo "==> Commit status not posted: --no-status was passed."
+elif ! command -v gh >/dev/null; then
+  echo "==> Commit status not posted: the GitHub CLI is not installed."
+elif [[ -n "$(git status --porcelain)" ]]; then
+  echo "==> Commit status not posted: the tree has uncommitted changes."
+elif ! gh api --silent "repos/$repository/commits/$(git rev-parse HEAD)" >/dev/null 2>&1; then
+  echo "==> Commit status not posted: GitHub does not have HEAD, or gh is signed out. Push first."
+else
+  status_commit="$(git rev-parse HEAD)"
+fi
+
+# Posts the commit status. A failed post prints a warning and keeps the check result.
+post_status() {
+  local state="$1" description="${2:0:139}"
+  gh api --silent "repos/$repository/statuses/$status_commit" \
+    -f state="$state" -f context="$status_context" -f description="$description" >/dev/null 2>&1 ||
+    echo "check-local: could not post the $state $status_context status. Run gh auth status." >&2
+}
+
 workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-check-local.XXXXXX")"
-trap 'rm -rf -- "${workspace:?}"' EXIT
+current_check="Setup"
+summary=""
+
+on_exit() {
+  local status=$?
+  if [[ -n "$status_commit" ]]; then
+    if ((status == 0)) && [[ -n "$summary" ]]; then
+      post_status success "$summary"
+    else
+      post_status failure "Failed: $current_check."
+    fi
+  fi
+  rm -rf -- "${workspace:?}"
+}
+trap on_exit EXIT
+
+if [[ -n "$status_commit" ]]; then
+  echo "==> Posting a pending $status_context status to ${status_commit:0:12}."
+  post_status pending "Running lint, licensing, build, tests, coverage & audit."
+fi
 
 # Runs 1 check. On failure, prints the check name and the next step, then exits.
 run_check() {
   local name="$1" next_step="$2"
   shift 2
+  current_check="$name"
   echo "==> $name"
   "$@" || {
     local status=$?
@@ -41,6 +102,10 @@ install_dependencies() {
 build_distributions() {
   SOURCE_DATE_EPOCH=946684800 uv build --out-dir "$workspace/dist" &&
     uv run --locked --all-extras twine check "$workspace"/dist/*
+}
+
+run_tests() {
+  env -u UV_PYTHON bash scripts/test 2>&1 | tee "$workspace/tests.log"
 }
 
 measure_parent_coverage() {
@@ -66,7 +131,8 @@ run_check "Reproducibility: build twice and compare bytes" \
 run_check "Build: distributions and package metadata" \
   "Fix the build or metadata errors above." build_distributions
 run_check "Tests: Python 3.10.21 and 3.14.7 with Pydantic 1 and 2" \
-  "Fix the failing tests above." env -u UV_PYTHON bash scripts/test
+  "Fix the failing tests above." run_tests
+test_summary="$(awk '/^=+ .*[0-9]+ passed/ { for (i = 1; i < NF; i++) if ($(i + 1) ~ /^passed/) { total += $i; runs++ } } END { if (runs) printf "%d passed in %d runs", total, runs }' "$workspace/tests.log")"
 run_check "Coverage: measure the parent revision $parent_revision" \
   "Pass a parent revision whose tests pass, such as origin/main." measure_parent_coverage
 run_check "Coverage: compare with the parent revision" \
@@ -78,9 +144,19 @@ codeql_bin="${XQUIK_CODEQL_BIN:-$HOME/.cache/xquik-codeql/2.27.0/codeql/codeql}"
 if [[ -x "$codeql_bin" ]]; then
   run_check "Static analysis: CodeQL security-extended queries" \
     "Fix the CodeQL findings above." env XQUIK_CODEQL_BIN="$codeql_bin" bash scripts/codeql-security
+  codeql_result="CodeQL passed"
 else
   echo "==> Static analysis skipped: install CodeQL CLI 2.27.0 as CONTRIBUTING.md describes."
+  codeql_result="CodeQL skipped"
 fi
 
 echo "==> Fuzzing runs separately: bash scripts/fuzz needs Linux x86_64 or XQUIK_FUZZ_HOST."
-echo "All local checks passed."
+current_check="Final tree check"
+if [[ -n "$status_commit" ]]; then
+  [[ "$(git rev-parse HEAD)" == "$status_commit" && -z "$(git status --porcelain)" ]] || {
+    echo "check-local: the tree changed during the checks. Commit or remove the changes, then rerun." >&2
+    exit 1
+  }
+fi
+summary="Lint, REUSE, build, tests (${test_summary:-all passed}), coverage & audit passed; $codeql_result."
+echo "All local checks passed: $summary"
