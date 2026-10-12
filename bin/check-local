@@ -96,7 +96,11 @@ run_check() {
 
 # Shell functions run without errexit inside run_check, so each one chains its commands with &&.
 install_dependencies() {
-  uv python install 3.10.21 3.14.7 && uv sync --locked --all-extras
+  local python_version
+  for python_version in 3.10.21 3.14.7; do
+    uv python find "$python_version" >/dev/null 2>&1 || uv python install "$python_version" || return
+  done
+  uv sync --locked --all-extras
 }
 
 build_distributions() {
