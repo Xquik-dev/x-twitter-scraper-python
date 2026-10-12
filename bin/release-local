@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Publishes the version in pyproject.toml to PyPI from a maintainer's Mac,
+# then pushes its v<version> tag and creates the GitHub release.
+# Usage: bin/release-local
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+repository="Xquik-dev/x-twitter-scraper-python"
+package="x-twitter-scraper"
+keychain_service="xquik-pypi-token"
+
+step() { echo "==> $1"; }
+fail() {
+  echo "release-local: $1" >&2
+  exit 1
+}
+
+step "Checking tools, GitHub sign-in, and the PyPI token in Keychain."
+for tool in git uv gh curl security; do
+  command -v "$tool" >/dev/null || fail "Install $tool, then rerun."
+done
+gh auth status >/dev/null 2>&1 || fail "Sign in with gh auth login, then rerun."
+security find-generic-password -s "$keychain_service" >/dev/null 2>&1 ||
+  fail "Keychain has no $keychain_service item. The owner must add the PyPI token as that service, then rerun."
+
+step "Checking for a clean tree on main that equals origin/main."
+[[ "$(git remote get-url origin)" == *"$repository"* ]] || fail "Point origin at $repository, then rerun."
+[[ -z "$(git status --porcelain)" ]] || fail "Commit or remove local changes, then rerun."
+[[ "$(git symbolic-ref --quiet --short HEAD || true)" == main ]] || fail "Switch to main, then rerun."
+git fetch --quiet origin main
+revision="$(git rev-parse HEAD)"
+[[ "$revision" == "$(git rev-parse origin/main)" ]] || fail "Make main equal to origin/main, then rerun."
+
+step "Reading the version from pyproject.toml."
+version="$(uv version --short)"
+tag="v$version"
+grep -Fqx "__version__ = \"$version\"  # x-release-please-version" src/x_twitter_scraper/_version.py ||
+  fail "Set __version__ in src/x_twitter_scraper/_version.py to $version, then rerun."
+notes="$(awk -v heading="## $version" '$0 == heading || index($0, heading " ") == 1 { found = 1; next } found && /^## / { exit } found { print }' CHANGELOG.md)"
+[[ "$notes" =~ [^[:space:]] ]] || fail "Add a ## $version section to CHANGELOG.md, then rerun."
+
+step "Checking that origin has no $tag tag."
+tag_status=0
+git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null || tag_status=$?
+case "$tag_status" in
+  0) fail "Tag $tag already exists on origin. Bump the version, then rerun." ;;
+  2) ;;
+  *) fail "Could not read tags from origin. Check GitHub access, then rerun." ;;
+esac
+if git rev-parse --quiet --verify "refs/tags/$tag" >/dev/null; then
+  fail "Local tag $tag is not on origin. Delete it with git tag -d $tag, then rerun."
+fi
+
+step "Running bin/check-local."
+bin/check-local
+[[ -z "$(git status --porcelain)" && "$(git rev-parse HEAD)" == "$revision" ]] ||
+  fail "The checks changed the tree. Review and commit the changes, then rerun."
+
+step "Auditing locked dependencies for known vulnerabilities."
+bash scripts/audit || fail "A locked dependency has a known vulnerability. Upgrade it in uv.lock, then rerun."
+
+artifacts="$PWD/dist/releases/$revision"
+files=("$artifacts/x_twitter_scraper-$version-py3-none-any.whl" "$artifacts/x_twitter_scraper-$version.tar.gz")
+step "Building the wheel and source archive in dist/releases/$revision."
+SOURCE_DATE_EPOCH=946684800 uv build --no-sources --out-dir "$artifacts"
+built=("$artifacts"/*)
+[[ "${#built[@]}" -eq 2 && -f "${files[0]}" && -f "${files[1]}" ]] ||
+  fail "dist/releases/$revision holds other files. Move them out, then rerun."
+
+step "Checking package metadata with twine."
+uv run --locked --all-extras twine check "${files[@]}"
+
+step "Checking whether PyPI already has $package $version."
+pypi_status="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 30 "https://pypi.org/pypi/$package/$version/json")" ||
+  fail "Could not reach PyPI. Check network access, then rerun."
+case "$pypi_status" in
+  200)
+    step "PyPI already has $package $version, so the upload is skipped."
+    ;;
+  404)
+    step "Uploading to PyPI with the token from Keychain service $keychain_service."
+    (
+      token="$(security find-generic-password -s "$keychain_service" -w 2>/dev/null)" ||
+        fail "Keychain has no $keychain_service item. The owner must add the PyPI token as that service, then rerun."
+      UV_PUBLISH_TOKEN="$token" uv publish \
+        --publish-url https://upload.pypi.org/legacy/ \
+        --check-url https://pypi.org/simple/ \
+        "${files[@]}"
+    )
+    ;;
+  *)
+    fail "PyPI returned HTTP $pypi_status. Retry later."
+    ;;
+esac
+
+step "Comparing PyPI files with the local build and installing $version from PyPI."
+for attempt in 1 2 3 4 5; do
+  if bash scripts/release verify; then
+    break
+  fi
+  ((attempt < 5)) || fail "PyPI files differ from this build or are not visible yet. Run bun run release:verify before tagging."
+  step "PyPI is not ready yet. Retrying in 30 seconds."
+  sleep 30
+done
+
+step "Creating annotated tag $tag at $revision and pushing it to origin."
+git tag -a "$tag" -m "Release $version" "$revision"
+git push origin "refs/tags/$tag"
+
+step "Creating GitHub release $tag from the CHANGELOG.md section."
+printf '%s\n' "$notes" | gh release create "$tag" --repo "$repository" --verify-tag --title "$tag" --notes-file - ||
+  fail "Tag $tag is on origin, but the GitHub release failed. Create it with gh release create $tag --verify-tag."
+
+echo "Released $package $version as $tag."

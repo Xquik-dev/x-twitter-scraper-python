@@ -29,4 +29,4 @@ uv run --project "$project" --locked coverage json -o "$evidence/report.json"
 uv run --project "$project" --locked python "$project/scripts/coverage_sources.py" attach "$evidence/report.json" "$evidence/sources.json"
 uv run --project "$project" --locked python "$project/scripts/coverage_sources.py" verify-parent "$evidence/report.json" "$revision"
 printf 'Historical skips remain baseline gaps, not release passes.\nParent coverage: %s/report.json\n' "$evidence"
-if [[ -n "${GITHUB_OUTPUT:-}" ]]; then printf 'report=%s/report.json\nrevision=%s\n' "$evidence" "$revision" >>"$GITHUB_OUTPUT"; fi
+if [[ -n "${COVERAGE_PARENT_OUTPUT:-}" ]]; then printf 'report=%s/report.json\nrevision=%s\n' "$evidence" "$revision" >>"$COVERAGE_PARENT_OUTPUT"; fi

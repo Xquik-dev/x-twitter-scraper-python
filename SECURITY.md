@@ -50,7 +50,7 @@ Relevant threats include:
 
 Security controls include redaction tests, CodeQL, and fuzzing.
 
-CI also verifies dependencies, licenses, coverage, and reproducible archives.
+`bin/check-local` also verifies dependencies, licenses, coverage, and reproducible archives.
 
 ## Response Process
 

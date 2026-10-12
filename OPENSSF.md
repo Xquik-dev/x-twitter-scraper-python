@@ -26,10 +26,10 @@ No OpenSSF-defined ineligibility applies.
 | Statement coverage | `./scripts/coverage` enforces 90% |
 | Branch coverage | `./scripts/coverage` enforces 80% |
 | Static analysis | Ruff, Pyright, Mypy, and CodeQL security-extended queries |
-| Dependency review | Dependabot and pinned `pip-audit` |
-| Licensing gate | Pinned REUSE action checks every repository file |
+| Dependency review | Pinned `pip-audit` in `bin/check-local` and `bin/release-local` |
+| Licensing gate | Pinned REUSE lint in `bin/check-local` checks every repository file |
 | Reproducibility | 2 wheels and source archives must have identical bytes |
-| CI | Pull requests and pushes run pinned, least-privilege workflows |
+| Local checks | `bin/check-local` runs every gate before review and release |
 | Two-factor authentication | The Xquik-dev organization requires 2FA |
 
 The current matrix covers 12,010 of 12,654 statements, or 94.91%.
@@ -58,16 +58,13 @@ Gold eligibility still requires review by a different human.
 
 ## Maintenance
 
-Run these evidence commands before releases:
+Run the evidence commands before releases:
 
 ```sh
-./scripts/lint
-./scripts/test
-./scripts/coverage
-./scripts/audit
-uvx --from reuse==6.2.0 reuse lint
-./scripts/check-reproducible
+bin/check-local
 ```
+
+It runs lint, tests, coverage, the dependency audit, REUSE lint, and reproducibility checks.
 
 Reassess the register before every major release.
 

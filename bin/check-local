@@ -1,0 +1,86 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Runs every repository check in order and stops at the first failure.
+# Usage: bin/check-local [parent-revision]
+# Coverage compares against the parent revision, HEAD^ by default.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+if (($# > 1)); then
+  echo "check-local: pass at most 1 parent revision, such as origin/main." >&2
+  exit 2
+fi
+parent_revision="${1:-HEAD^}"
+if ! git rev-parse --quiet --verify "$parent_revision^{commit}" >/dev/null; then
+  echo "check-local: $parent_revision is not a commit. Pass a revision such as origin/main." >&2
+  exit 2
+fi
+
+workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-check-local.XXXXXX")"
+trap 'rm -rf -- "${workspace:?}"' EXIT
+
+# Runs 1 check. On failure, prints the check name and the next step, then exits.
+run_check() {
+  local name="$1" next_step="$2"
+  shift 2
+  echo "==> $name"
+  "$@" || {
+    local status=$?
+    echo "check-local: $name failed. $next_step" >&2
+    exit "$status"
+  }
+}
+
+# Shell functions run without errexit inside run_check, so each one chains its commands with &&.
+install_dependencies() {
+  uv python install 3.10.21 3.14.7 && uv sync --locked --all-extras
+}
+
+build_distributions() {
+  SOURCE_DATE_EPOCH=946684800 uv build --out-dir "$workspace/dist" &&
+    uv run --locked --all-extras twine check "$workspace"/dist/*
+}
+
+measure_parent_coverage() {
+  COVERAGE_PARENT_OUTPUT="$workspace/parent-coverage" bash scripts/coverage-parent "$parent_revision"
+}
+
+enforce_coverage() {
+  local report revision
+  report="$(sed -n 's/^report=//p' "$workspace/parent-coverage")" &&
+    revision="$(sed -n 's/^revision=//p' "$workspace/parent-coverage")" &&
+    bash scripts/coverage "$report" "$revision"
+}
+
+run_check "Install Python 3.10.21, Python 3.14.7, and locked dependencies" \
+  "Install uv 0.12.13 and check network access, then rerun." install_dependencies
+run_check "Lint: Ruff, Pyright, Mypy, and package import" \
+  "Fix the findings above. bash scripts/lint --fix repairs Ruff findings." bash scripts/lint
+run_check "Licensing: REUSE lint" \
+  "Add the missing copyright and license data listed above." \
+  uv tool run --from reuse==6.2.0 reuse lint
+run_check "Reproducibility: build twice and compare bytes" \
+  "Fix the reproducibility error above, then rerun." bash scripts/check-reproducible
+run_check "Build: distributions and package metadata" \
+  "Fix the build or metadata errors above." build_distributions
+run_check "Tests: Python 3.10.21 and 3.14.7 with Pydantic 1 and 2" \
+  "Fix the failing tests above." env -u UV_PYTHON bash scripts/test
+run_check "Coverage: measure the parent revision $parent_revision" \
+  "Pass a parent revision whose tests pass, such as origin/main." measure_parent_coverage
+run_check "Coverage: compare with the parent revision" \
+  "Add tests for the uncovered lines reported above." enforce_coverage
+run_check "Dependency security: pip-audit of locked dependencies" \
+  "Upgrade the vulnerable dependencies above in uv.lock." bash scripts/audit
+
+codeql_bin="${XQUIK_CODEQL_BIN:-$HOME/.cache/xquik-codeql/2.27.0/codeql/codeql}"
+if [[ -x "$codeql_bin" ]]; then
+  run_check "Static analysis: CodeQL security-extended queries" \
+    "Fix the CodeQL findings above." env XQUIK_CODEQL_BIN="$codeql_bin" bash scripts/codeql-security
+else
+  echo "==> Static analysis skipped: install CodeQL CLI 2.27.0 as CONTRIBUTING.md describes."
+fi
+
+echo "==> Fuzzing runs separately: bash scripts/fuzz needs Linux x86_64 or XQUIK_FUZZ_HOST."
+echo "All local checks passed."
