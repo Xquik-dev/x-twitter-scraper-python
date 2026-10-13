@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+#
+# Runs every repository check in order and stops at the first failure.
+# Usage: bin/check-local [--no-status] [parent-revision]
+# Coverage compares against the parent revision, HEAD^ by default.
+# CodeQL is mandatory: install it with brew install --cask codeql.
+# When the tree is clean and GitHub has HEAD, the result is posted to HEAD
+# as the xquik-local-checks commit status, through the gh login of whoever
+# runs this script. On the release machine, that is the owner's gh login.
+# The status text lists only the checks that passed in this run.
+# --no-status skips posting.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+
+repository="Xquik-dev/x-twitter-scraper-python"
+status_context="xquik-local-checks"
+
+post_commit_status=true
+parent_revision="HEAD^"
+parent_given=false
+for argument in "$@"; do
+  case "$argument" in
+    --no-status) post_commit_status=false ;;
+    -*)
+      echo "check-local: unknown option $argument. Use --no-status or a parent revision." >&2
+      exit 2
+      ;;
+    *)
+      if $parent_given; then
+        echo "check-local: pass at most 1 parent revision, such as origin/main." >&2
+        exit 2
+      fi
+      parent_revision="$argument"
+      parent_given=true
+      ;;
+  esac
+done
+if ! git rev-parse --quiet --verify "$parent_revision^{commit}" >/dev/null; then
+  echo "check-local: $parent_revision is not a commit. Pass a revision such as origin/main." >&2
+  exit 2
+fi
+
+status_commit=""
+if ! $post_commit_status; then
+  echo "==> Commit status not posted: --no-status was passed."
+elif ! command -v gh >/dev/null; then
+  echo "==> Commit status not posted: the GitHub CLI is not installed."
+elif [[ -n "$(git status --porcelain)" ]]; then
+  echo "==> Commit status not posted: the tree has uncommitted changes."
+elif ! gh api --silent "repos/$repository/commits/$(git rev-parse HEAD)" >/dev/null 2>&1; then
+  echo "==> Commit status not posted: GitHub does not have HEAD, or gh is signed out. Push first."
+else
+  status_commit="$(git rev-parse HEAD)"
+fi
+
+# Posts the commit status. A failed post prints a warning and keeps the check result.
+post_status() {
+  local state="$1" description="${2:0:139}"
+  gh api --silent "repos/$repository/statuses/$status_commit" \
+    -f state="$state" -f context="$status_context" -f description="$description" >/dev/null 2>&1 ||
+    echo "check-local: could not post the $state $status_context status. Run gh auth status." >&2
+}
+
+workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-check-local.XXXXXX")"
+current_check="Setup"
+passed=()
+summary=""
+
+on_exit() {
+  local status=$?
+  if [[ -n "$status_commit" ]]; then
+    if ((status == 0)) && [[ -n "$summary" ]]; then
+      post_status success "Passed: $summary"
+    else
+      post_status failure "Failed: $current_check."
+    fi
+  fi
+  rm -rf -- "${workspace:?}"
+}
+trap on_exit EXIT
+
+if [[ -n "$status_commit" ]]; then
+  echo "==> Posting a pending $status_context status to ${status_commit:0:12}."
+  post_status pending "Running lint, licensing, build, tests, coverage, audit & CodeQL."
+fi
+
+# A missing or outdated CodeQL CLI fails here, before the slower checks run.
+current_check="CodeQL CLI"
+codeql_version="$(bash scripts/codeql-security --version)"
+
+# Runs 1 check and records its label for the status. On failure, prints the
+# check name and the next step, then exits. An empty label records nothing.
+run_check() {
+  local label="$1" name="$2" next_step="$3"
+  shift 3
+  current_check="$name"
+  echo "==> $name"
+  "$@" || {
+    local status=$?
+    echo "check-local: $name failed. $next_step" >&2
+    exit "$status"
+  }
+  [[ -z "$label" ]] || passed+=("$label")
+}
+
+# Shell functions run without errexit inside run_check, so each one chains its commands with &&.
+install_dependencies() {
+  local python_version
+  for python_version in 3.10.21 3.14.7; do
+    uv python find "$python_version" >/dev/null 2>&1 || uv python install "$python_version" || return
+  done
+  uv sync --locked --all-extras
+}
+
+build_distributions() {
+  SOURCE_DATE_EPOCH=946684800 uv build --out-dir "$workspace/dist" &&
+    uv run --locked --all-extras twine check "$workspace"/dist/*
+}
+
+run_tests() {
+  env -u UV_PYTHON bash scripts/test 2>&1 | tee "$workspace/tests.log"
+}
+
+measure_parent_coverage() {
+  COVERAGE_PARENT_OUTPUT="$workspace/parent-coverage" bash scripts/coverage-parent "$parent_revision"
+}
+
+enforce_coverage() {
+  local report revision
+  report="$(sed -n 's/^report=//p' "$workspace/parent-coverage")" &&
+    revision="$(sed -n 's/^revision=//p' "$workspace/parent-coverage")" &&
+    bash scripts/coverage "$report" "$revision"
+}
+
+run_check "" "Install Python 3.10.21, Python 3.14.7, and locked dependencies" \
+  "Install uv 0.12.13 and check network access, then rerun." install_dependencies
+run_check "lint & types" "Lint: Ruff, Pyright, Mypy, and package import" \
+  "Fix the findings above. bash scripts/lint --fix repairs Ruff findings." bash scripts/lint
+run_check "REUSE" "Licensing: REUSE lint" \
+  "Add the missing copyright and license data listed above." \
+  uv tool run --from reuse==6.2.0 reuse lint
+run_check "reproducible build" "Reproducibility: build twice and compare bytes" \
+  "Fix the reproducibility error above, then rerun." bash scripts/check-reproducible
+run_check "metadata" "Build: distributions and package metadata" \
+  "Fix the build or metadata errors above." build_distributions
+run_check "" "Tests: Python 3.10.21 and 3.14.7 with Pydantic 1 and 2" \
+  "Fix the failing tests above." run_tests
+test_summary="$(awk '/^=+ .*[0-9]+ passed/ { for (i = 1; i < NF; i++) if ($(i + 1) ~ /^passed/) { total += $i; runs++ } } END { if (runs) printf "%d passed in %d runs", total, runs }' "$workspace/tests.log")"
+passed+=("tests${test_summary:+ ($test_summary)}")
+run_check "" "Coverage: measure the parent revision $parent_revision" \
+  "Pass a parent revision whose tests pass, such as origin/main." measure_parent_coverage
+run_check "coverage" "Coverage: compare with the parent revision" \
+  "Add tests for the uncovered lines reported above." enforce_coverage
+run_check "audit" "Dependency security: pip-audit and audit-exceptions.json" \
+  "Upgrade the dependencies named above in uv.lock, or review audit-exceptions.json." bash scripts/audit
+run_check "CodeQL $codeql_version" "Static analysis: CodeQL $codeql_version security-extended queries" \
+  "Fix the CodeQL findings above, then rerun." bash scripts/codeql-security
+
+echo "==> Fuzzing runs separately: bash scripts/fuzz needs Linux x86_64 or XQUIK_FUZZ_HOST."
+current_check="Final tree check"
+if [[ -n "$status_commit" ]]; then
+  [[ "$(git rev-parse HEAD)" == "$status_commit" && -z "$(git status --porcelain)" ]] || {
+    echo "check-local: the tree changed during the checks. Commit or remove the changes, then rerun." >&2
+    exit 1
+  }
+fi
+printf -v joined '%s, ' "${passed[@]}"
+summary="${joined%, }."
+echo "All local checks passed: $summary"

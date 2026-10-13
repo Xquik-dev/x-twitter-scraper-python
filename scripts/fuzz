@@ -7,7 +7,7 @@ cd "$(dirname "$0")/.."
 if [[ -n "${XQUIK_FUZZ_HOST:-}" ]]; then
   [[ "$XQUIK_FUZZ_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9@._-]*$ ]] || { echo 'Invalid SSH host.' >&2; exit 2; }
   tar --exclude='.env*' --exclude='__pycache__' -czf - \
-    src pyproject.toml uv.lock README.md LICENSE scripts/fuzz scripts/audit .clusterfuzzlite/fuzz_querystring.py |
+    src pyproject.toml uv.lock README.md LICENSE scripts/fuzz scripts/audit scripts/verify_audit.py audit-exceptions.json .clusterfuzzlite/fuzz_querystring.py |
     ssh -- "$XQUIK_FUZZ_HOST" 'set -eu; umask 077; work=$(mktemp -d); echo "Remote fuzz source: $work" >&2; tar -xzf - -C "$work"; cd "$work"; unset XQUIK_FUZZ_HOST; bash scripts/fuzz'
   exit
 fi

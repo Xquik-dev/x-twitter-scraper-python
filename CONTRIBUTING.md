@@ -37,28 +37,59 @@ Place stable examples outside generated directories.
 
 Run focused tests while editing.
 
-Run every gate before requesting review.
+Run every check before requesting review.
+
+```sh
+bin/check-local
+```
+
+It runs these checks in order and stops at the first failure:
+
+1. Locked dependency install for Python 3.10.21 and 3.14.7.
+2. Ruff, Pyright, Mypy, and a package import.
+3. REUSE licensing lint.
+4. Reproducible wheel and source archive builds.
+5. Package metadata with twine.
+6. Tests on Python 3.10.21 and 3.14.7 with Pydantic 1 and 2.
+7. Coverage of the parent revision, then coverage of your change against it.
+8. A `pip-audit` scan of the locked dependencies, judged by the audit policy below.
+9. CodeQL security-extended queries. CodeQL is mandatory.
+
+A failure prints 1 line naming the check and the next step.
+With a clean tree and a pushed commit, it posts the result as the `xquik-local-checks` commit status.
+Pass `--no-status` to skip that status.
+Coverage compares against `HEAD^` by default.
+For a branch with several commits, pass its base: `bin/check-local origin/main`.
+SDK commits preserve full-source coverage; LOC changes remain advisory.
+
+The extended gate adds formatting, fuzzing, comply licensing, and a LOC report:
 
 ```sh
 bun run check:all /absolute/path/to/parent-coverage.json HEAD
-bun run build
 ```
 
 Measure parent coverage using `bash scripts/coverage --baseline` at the parent revision.
-The full check verifies that report against Git's source hashes.
-SDK commits preserve full-source coverage; LOC changes remain advisory.
+The extended gate verifies that report against Git's source hashes.
 
-Install CodeQL CLI 2.27.0 from its official GitHub release.
-Verify the archive against the release's SHA-256 checksum before extraction.
-Set `XQUIK_CODEQL_BIN` to its executable path.
-The default path is `~/.cache/xquik-codeql/2.27.0/codeql/codeql`.
-Install the pinned queries once:
+Install CodeQL CLI 2.27.0 or newer before running `bin/check-local`:
 
 ```sh
-"$XQUIK_CODEQL_BIN" pack download codeql/python-queries@1.8.10
+brew install --cask codeql
 ```
 
-Full checks also run a 180-second AddressSanitizer fuzz campaign.
+Set `XQUIK_CODEQL_BIN` to use another CodeQL executable.
+The analysis downloads the pinned `codeql/python-queries@1.8.10` pack when it is missing.
+
+The dependency audit checks every pin in `uv.lock`.
+That includes pins for other platforms and both Pydantic groups.
+It fails on any finding in a shipped runtime dependency.
+It also fails on any development finding that has a fix.
+An unfixable development finding passes only while `audit-exceptions.json` lists it.
+Each entry names the advisory `id`, the `package` path, a `reason`, and a `recheck` date.
+The reason is `build-time only` or `peer dependency provided by the host`.
+The recheck date is at most 30 days out, and the finding blocks again on that date.
+
+The extended gate and `bash scripts/fuzz` run a 180-second AddressSanitizer fuzz campaign.
 Use Linux x86_64 with uv 0.12.13 and a working systemd user service.
 From another platform, set `XQUIK_FUZZ_HOST` to your authorized Linux SSH runner.
 The command transfers SDK source and lockfiles into an isolated temporary directory.
@@ -66,7 +97,7 @@ The fuzz process cannot access the network or modify files outside its evidence 
 Logs, generated inputs, and failure artifacts remain at the printed evidence path.
 SDK validation has no time limit; all required checks must still pass.
 
-Each full check creates a fresh database and runs security-extended queries.
+Each CodeQL run creates a fresh database and runs security-extended queries.
 Findings, failed extraction, and incomplete analysis block release.
 Reports remain in the printed evidence directory.
 
@@ -99,35 +130,38 @@ Follow [SECURITY.md](SECURITY.md) for private reporting.
 
 ## Releases
 
-Publish an immutable `v*` release after its commit reaches `main`.
+Maintainers publish releases from a local Mac. GitHub Actions does not run for this repository.
 
-Try the publishing workflow at the release tag when Actions is available.
-If Actions fails, use the maintained local publisher without repeated retries.
-Local checks remain mandatory for either route.
+First merge a release commit into `main`.
+That commit sets the version in `pyproject.toml` and `src/x_twitter_scraper/_version.py`.
+It also adds a matching `CHANGELOG.md` section.
+Then check out `main` with a clean tree and run:
 
 ```sh
-bun run release:prepare /absolute/path/to/parent-coverage.json HEAD^
-bun run release:publish /absolute/path/to/parent-coverage.json HEAD^
-bun run release:verify
+bin/release-local
 ```
 
-Start from a clean, committed checkout with verified parent coverage.
-Run `bash scripts/coverage-parent HEAD^` to generate the parent report.
-It retains raw coverage, test output, and a detached parent checkout.
-Both revisions use the candidate's locked dependencies and Python versions.
-Historical skipped tests remain baseline gaps, never release passes.
-Publishing requires the matching `v*` tag and membership in remote `main`.
-Preparation retains reproducible distributions under `dist/releases/<commit>`.
-The publisher checks metadata and reruns validation before uploading.
-Set `XQUIK_PYPI_KEYCHAIN_SERVICE` to an approved macOS Keychain item name.
-Alternatively, supply `UV_PUBLISH_TOKEN` through your authorized secret manager.
-Never place publishing tokens in commands, logs, or runtime environment files.
-Commands emit JSON completion status and preserve diagnostic errors.
-Retry the same publish command after partial uploads.
-uv accepts existing identical files and rejects conflicting artifacts.
-Verification compares registry hashes, checks yanked status, and installs from PyPI.
+The script prints 1 line before each step:
 
-Verify registry metadata and install the published version before declaring release completion.
+1. It refuses a dirty tree, another branch, or a commit that differs from `origin/main`.
+2. It reads the version from `pyproject.toml` and refuses when tag `v<version>` exists on GitHub.
+3. It runs `bin/check-local`.
+4. It runs the dependency audit again and refuses when the audit policy blocks.
+5. It builds reproducible distributions under `dist/releases/<commit>` and checks their metadata.
+6. It skips the upload when PyPI already has the version, and says so.
+7. Otherwise, it uploads with `uv publish`.
+8. It compares the PyPI files with the local build and installs the release from PyPI.
+9. It pushes the annotated `v<version>` tag and creates the GitHub release from the changelog section.
+
+Preview a release with `bin/release-local --dry-run`.
+It runs every step except the upload, the tag, and the GitHub release.
+It also accepts a detached checkout of `origin/main`, so a preview can run in a separate worktree.
+
+The PyPI token lives in the macOS Keychain under service `xquik-pypi-token`.
+When that item is missing, the script stops and says to add it.
+The script reads the token only while `uv publish` runs.
+It never prints the token or writes it to a file.
+Run `bun run release:verify` to recheck a published release.
 
 [contribution-policy]: https://github.com/Xquik-dev/.github/blob/main/CONTRIBUTING.md
 [review-policy]: https://github.com/Xquik-dev/.github/blob/main/REVIEWING.md

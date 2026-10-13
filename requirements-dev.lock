@@ -61,5 +61,5 @@ tomli==2.4.1 ; python_full_version < '3.11'
 twine==7.0.0
 typing-extensions==4.16.0
 typing-inspection==0.4.3
-urllib3==2.7.0
+urllib3==2.8.0
 zipp==4.1.0
