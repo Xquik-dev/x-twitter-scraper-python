@@ -6,14 +6,14 @@ Follow the shared [Xquik contribution policy][contribution-policy].
 
 ## Set Up
 
-Install uv 0.13.0 from its official release, then run:
+Install uv 0.13.0 from its official release, then run these commands.
 
 ```sh
 ./scripts/bootstrap
 ```
 
 Validation uses Python 3.10.21 and 3.14.7 with locked dependencies.
-Install both runtimes before measuring parent coverage:
+Install both runtimes before measuring parent coverage.
 
 ```sh
 uv python install 3.10.21 3.14.7
@@ -43,7 +43,7 @@ Run every check before requesting review.
 bin/check-local
 ```
 
-It runs these checks in order and stops at the first failure:
+It runs these checks in order and stops at the first failure.
 
 1. Locked dependency install for Python 3.10.21 and 3.14.7.
 2. Ruff, Pyright, Mypy, and a package import.
@@ -59,10 +59,10 @@ A failure prints 1 line naming the check and the next step.
 With a clean tree and a pushed commit, it posts the result as the `xquik-local-checks` commit status.
 Pass `--no-status` to skip that status.
 Coverage compares against `HEAD^` by default.
-For a branch with several commits, pass its base: `bin/check-local origin/main`.
-SDK commits preserve full-source coverage; LOC changes remain advisory.
+For a branch with several commits, pass its base, as in `bin/check-local origin/main`.
+SDK commits preserve full-source coverage. LOC changes remain advisory.
 
-The extended gate adds formatting, fuzzing, comply licensing, and a LOC report:
+The extended gate adds formatting, fuzzing, comply licensing, and a LOC report.
 
 ```sh
 bun run check:all /absolute/path/to/parent-coverage.json HEAD
@@ -71,7 +71,7 @@ bun run check:all /absolute/path/to/parent-coverage.json HEAD
 Measure parent coverage using `bash scripts/coverage --baseline` at the parent revision.
 The extended gate verifies that report against Git's source hashes.
 
-Install CodeQL CLI 2.27.0 or newer before running `bin/check-local`:
+Install CodeQL CLI 2.27.0 or newer before running `bin/check-local`.
 
 ```sh
 brew install --cask codeql
@@ -95,7 +95,7 @@ From another platform, set `XQUIK_FUZZ_HOST` to your authorized Linux SSH runner
 The command transfers SDK source and lockfiles into an isolated temporary directory.
 The fuzz process cannot access the network or modify files outside its evidence directory.
 Logs, generated inputs, and failure artifacts remain at the printed evidence path.
-SDK validation has no time limit; all required checks must still pass.
+SDK validation has no time limit. All required checks must still pass.
 
 Each CodeQL run creates a fresh database and runs security-extended queries.
 Findings, failed extraction, and incomplete analysis block release.
@@ -109,7 +109,7 @@ This guard prevents tests from mutating remote services.
 
 ## Build From Source
 
-Build both public distributions:
+Build both public distributions.
 
 ```sh
 uv build
@@ -135,13 +135,13 @@ Maintainers publish releases from a local Mac. GitHub Actions does not run for t
 First merge a release commit into `main`.
 That commit sets the version in `pyproject.toml` and `src/x_twitter_scraper/_version.py`.
 It also adds a matching `CHANGELOG.md` section.
-Then check out `main` with a clean tree and run:
+Then check out `main` with a clean tree and run this command.
 
 ```sh
 bin/release-local
 ```
 
-The script prints 1 line before each step:
+The script prints 1 line before each step.
 
 1. It refuses a dirty tree, another branch, or a commit that differs from `origin/main`.
 2. It reads the version from `pyproject.toml` and refuses when tag `v<version>` exists on GitHub.

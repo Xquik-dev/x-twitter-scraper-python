@@ -19,7 +19,7 @@ from x_twitter_scraper.types import (
 
 # Account
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -29,7 +29,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /account">client.account.<a href="./src/x_twitter_scraper/resources/account.py">retrieve</a>() -> <a href="./src/x_twitter_scraper/types/account_retrieve_response.py">AccountRetrieveResponse</a></code>
 - <code title="put /account/x-identity">client.account.<a href="./src/x_twitter_scraper/resources/account.py">set_x_username</a>(\*\*<a href="src/x_twitter_scraper/types/account_set_x_username_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/account_set_x_username_response.py">AccountSetXUsernameResponse</a></code>
@@ -37,37 +37,37 @@ Methods:
 
 # Subscribe
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import SubscribeCreateResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /subscribe">client.subscribe.<a href="./src/x_twitter_scraper/resources/subscribe.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/subscribe_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/subscribe_create_response.py">SubscribeCreateResponse</a></code>
 
 # Compose
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import ComposeCreateResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /compose">client.compose.<a href="./src/x_twitter_scraper/resources/compose.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/compose_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/compose_create_response.py">ComposeCreateResponse</a></code>
 
 # Drafts
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import Draft, DraftDetail, DraftListResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /drafts">client.drafts.<a href="./src/x_twitter_scraper/resources/drafts.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/draft_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/draft_detail.py">DraftDetail</a></code>
 - <code title="get /drafts/{id}">client.drafts.<a href="./src/x_twitter_scraper/resources/drafts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/draft_detail.py">DraftDetail</a></code>
@@ -76,7 +76,7 @@ Methods:
 
 # Styles
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -88,7 +88,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /styles/{id}">client.styles.<a href="./src/x_twitter_scraper/resources/styles.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/style_profile.py">StyleProfile</a></code>
 - <code title="put /styles/{id}">client.styles.<a href="./src/x_twitter_scraper/resources/styles.py">update</a>(id, \*\*<a href="src/x_twitter_scraper/types/style_update_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/style_profile.py">StyleProfile</a></code>
@@ -100,19 +100,19 @@ Methods:
 
 # Radar
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import RadarItem, RadarRetrieveTrendingTopicsResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /radar">client.radar.<a href="./src/x_twitter_scraper/resources/radar.py">retrieve_trending_topics</a>(\*\*<a href="src/x_twitter_scraper/types/radar_retrieve_trending_topics_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/radar_retrieve_trending_topics_response.py">RadarRetrieveTrendingTopicsResponse</a></code>
 
 # Monitors
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -123,7 +123,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /monitors">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/monitor_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitor_create_response.py">MonitorCreateResponse</a></code>
 - <code title="get /monitors/{id}">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/monitor.py">Monitor</a></code>
@@ -133,7 +133,7 @@ Methods:
 
 ## Keywords
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.monitors import (
@@ -145,7 +145,7 @@ from x_twitter_scraper.types.monitors import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /monitors/keywords">client.monitors.keywords.<a href="./src/x_twitter_scraper/resources/monitors/keywords.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/monitors/keyword_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitors/keyword_create_response.py">KeywordCreateResponse</a></code>
 - <code title="get /monitors/keywords/{id}">client.monitors.keywords.<a href="./src/x_twitter_scraper/resources/monitors/keywords.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/monitors/keyword_retrieve_response.py">KeywordRetrieveResponse</a></code>
@@ -155,13 +155,13 @@ Methods:
 
 # Events
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import Event, EventDetail, EventListResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /events/{id}">client.events.<a href="./src/x_twitter_scraper/resources/events.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/event_detail.py">EventDetail</a></code>
 - <code title="get /events">client.events.<a href="./src/x_twitter_scraper/resources/events.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/event_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/event_list_response.py">EventListResponse</a></code>
@@ -169,7 +169,7 @@ Methods:
 
 # Extractions
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -182,7 +182,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /extractions/{id}">client.extractions.<a href="./src/x_twitter_scraper/resources/extractions.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/extraction_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/extraction_retrieve_response.py">ExtractionRetrieveResponse</a></code>
 - <code title="get /extractions">client.extractions.<a href="./src/x_twitter_scraper/resources/extractions.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/extraction_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/extraction_list_response.py">ExtractionListResponse</a></code>
@@ -193,7 +193,7 @@ Methods:
 
 # Draws
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -206,7 +206,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /draws/{id}">client.draws.<a href="./src/x_twitter_scraper/resources/draws.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/draw_retrieve_response.py">DrawRetrieveResponse</a></code>
 - <code title="get /draws">client.draws.<a href="./src/x_twitter_scraper/resources/draws.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/draw_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/draw_list_response.py">DrawListResponse</a></code>
@@ -215,7 +215,7 @@ Methods:
 
 # Webhooks
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -231,7 +231,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /webhooks">client.webhooks.<a href="./src/x_twitter_scraper/resources/webhooks.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/webhook_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/webhook_create_response.py">WebhookCreateResponse</a></code>
 - <code title="patch /webhooks/{id}">client.webhooks.<a href="./src/x_twitter_scraper/resources/webhooks.py">update</a>(id, \*\*<a href="src/x_twitter_scraper/types/webhook_update_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/webhook.py">Webhook</a></code>
@@ -244,7 +244,7 @@ Methods:
 
 # X
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -258,7 +258,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/search/autocomplete">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">autocomplete_search</a>(\*\*<a href="src/x_twitter_scraper/types/x_autocomplete_search_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_autocomplete_search_response.py">XAutocompleteSearchResponse</a></code>
 - <code title="get /x/articles/{tweetId}">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_article</a>(tweet_id, \*\*<a href="src/x_twitter_scraper/types/x_get_article_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_article_response.py">XGetArticleResponse</a></code>
@@ -271,19 +271,19 @@ Methods:
 
 ## WriteActions
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import WriteActionRetrieveResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/write-actions/{id}">client.x.write_actions.<a href="./src/x_twitter_scraper/resources/x/write_actions.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/write_action_retrieve_response.py">WriteActionRetrieveResponse</a></code>
 
 ## Analysis
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import (
@@ -296,7 +296,7 @@ from x_twitter_scraper.types.x import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/analysis/brand">client.x.analysis.<a href="./src/x_twitter_scraper/resources/x/analysis.py">brand</a>(\*\*<a href="src/x_twitter_scraper/types/x/analysis_brand_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/analysis_brand_response.py">AnalysisBrandResponse</a></code>
 - <code title="post /x/analysis/classify">client.x.analysis.<a href="./src/x_twitter_scraper/resources/x/analysis.py">classify</a>(\*\*<a href="src/x_twitter_scraper/types/x/analysis_classify_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/analysis_classify_response.py">AnalysisClassifyResponse</a></code>
@@ -307,7 +307,7 @@ Methods:
 
 ## Tweets
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import (
@@ -329,7 +329,7 @@ from x_twitter_scraper.types.x import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/tweets">client.x.tweets.<a href="./src/x_twitter_scraper/resources/x/tweets/tweets.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/x/tweet_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweet_create_response.py">TweetCreateResponse</a></code>
 - <code title="get /x/tweets/{id}">client.x.tweets.<a href="./src/x_twitter_scraper/resources/x/tweets/tweets.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweet_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweet_retrieve_response.py">TweetRetrieveResponse</a></code>
@@ -353,33 +353,33 @@ Methods:
 
 ### Like
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x.tweets import LikeCreateResponse, LikeDeleteResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/tweets/{id}/like">client.x.tweets.like.<a href="./src/x_twitter_scraper/resources/x/tweets/like.py">create</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweets/like_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweets/like_create_response.py">LikeCreateResponse</a></code>
 - <code title="delete /x/tweets/{id}/like">client.x.tweets.like.<a href="./src/x_twitter_scraper/resources/x/tweets/like.py">delete</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweets/like_delete_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweets/like_delete_response.py">LikeDeleteResponse</a></code>
 
 ### Retweet
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x.tweets import RetweetCreateResponse, RetweetDeleteResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/tweets/{id}/retweet">client.x.tweets.retweet.<a href="./src/x_twitter_scraper/resources/x/tweets/retweet.py">create</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweets/retweet_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweets/retweet_create_response.py">RetweetCreateResponse</a></code>
 - <code title="delete /x/tweets/{id}/retweet">client.x.tweets.retweet.<a href="./src/x_twitter_scraper/resources/x/tweets/retweet.py">delete</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweets/retweet_delete_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweets/retweet_delete_response.py">RetweetDeleteResponse</a></code>
 
 ## Users
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import (
@@ -399,7 +399,7 @@ from x_twitter_scraper.types.x import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/users/{id}">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/user_profile.py">UserProfile</a></code>
 - <code title="post /x/users/{id}/remove-follower">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">remove_follower</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_remove_follower_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_remove_follower_response.py">UserRemoveFollowerResponse</a></code>
@@ -430,38 +430,38 @@ Methods:
 
 ### Follow
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x.users import FollowCreateResponse, FollowDeleteAllResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/users/{id}/follow">client.x.users.follow.<a href="./src/x_twitter_scraper/resources/x/users/follow.py">create</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/users/follow_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/users/follow_create_response.py">FollowCreateResponse</a></code>
 - <code title="delete /x/users/{id}/follow">client.x.users.follow.<a href="./src/x_twitter_scraper/resources/x/users/follow.py">delete_all</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/users/follow_delete_all_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/users/follow_delete_all_response.py">FollowDeleteAllResponse</a></code>
 
 ## Followers
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import FollowerCheckResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/followers/check">client.x.followers.<a href="./src/x_twitter_scraper/resources/x/followers.py">check</a>(\*\*<a href="src/x_twitter_scraper/types/x/follower_check_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/follower_check_response.py">FollowerCheckResponse</a></code>
 
 ## Jobs
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import JobRetrieveResponse, JobListLocationsResponse, JobSearchResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/jobs/{id}">client.x.jobs.<a href="./src/x_twitter_scraper/resources/x/jobs.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/job_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/job_retrieve_response.py">JobRetrieveResponse</a></code>
 - <code title="get /x/jobs/locations">client.x.jobs.<a href="./src/x_twitter_scraper/resources/x/jobs.py">list_locations</a>(\*\*<a href="src/x_twitter_scraper/types/x/job_list_locations_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/job_list_locations_response.py">JobListLocationsResponse</a></code>
@@ -469,13 +469,13 @@ Methods:
 
 ## Dm
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import DmDeleteMessageResponse, DmRetrieveHistoryResponse, DmSendResponse
 ```
 
-Methods:
+Methods
 
 - <code title="delete /x/dm/{userId}/messages/{messageId}">client.x.dm.<a href="./src/x_twitter_scraper/resources/x/dm.py">delete_message</a>(message_id, \*, user_id, \*\*<a href="src/x_twitter_scraper/types/x/dm_delete_message_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/dm_delete_message_response.py">DmDeleteMessageResponse</a></code>
 - <code title="get /x/dm/{userId}/history">client.x.dm.<a href="./src/x_twitter_scraper/resources/x/dm.py">retrieve_history</a>(user_id, \*\*<a href="src/x_twitter_scraper/types/x/dm_retrieve_history_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/dm_retrieve_history_response.py">DmRetrieveHistoryResponse</a></code>
@@ -483,20 +483,20 @@ Methods:
 
 ## Media
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import MediaDownloadResponse, MediaUploadResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/media/download">client.x.media.<a href="./src/x_twitter_scraper/resources/x/media.py">download</a>(\*\*<a href="src/x_twitter_scraper/types/x/media_download_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/media_download_response.py">MediaDownloadResponse</a></code>
 - <code title="post /x/media">client.x.media.<a href="./src/x_twitter_scraper/resources/x/media.py">upload</a>(\*\*<a href="src/x_twitter_scraper/types/x/media_upload_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/media_upload_response.py">MediaUploadResponse</a></code>
 
 ## Profile
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import (
@@ -506,7 +506,7 @@ from x_twitter_scraper.types.x import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="patch /x/profile">client.x.profile.<a href="./src/x_twitter_scraper/resources/x/profile.py">update</a>(\*\*<a href="src/x_twitter_scraper/types/x/profile_update_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/profile_update_response.py">ProfileUpdateResponse</a></code>
 - <code title="patch /x/profile/avatar">client.x.profile.<a href="./src/x_twitter_scraper/resources/x/profile.py">update_avatar</a>(\*\*<a href="src/x_twitter_scraper/types/x/profile_update_avatar_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/profile_update_avatar_response.py">ProfileUpdateAvatarResponse</a></code>
@@ -514,7 +514,7 @@ Methods:
 
 ## Communities
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import (
@@ -526,7 +526,7 @@ from x_twitter_scraper.types.x import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/communities">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/x/community_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_create_response.py">CommunityCreateResponse</a></code>
 - <code title="delete /x/communities/{id}">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">delete</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/community_delete_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_delete_response.py">CommunityDeleteResponse</a></code>
@@ -542,33 +542,33 @@ Methods:
 
 ### Join
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x.communities import JoinCreateResponse, JoinDeleteAllResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/communities/{id}/join">client.x.communities.join.<a href="./src/x_twitter_scraper/resources/x/communities/join.py">create</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/communities/join_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/communities/join_create_response.py">JoinCreateResponse</a></code>
 - <code title="delete /x/communities/{id}/join">client.x.communities.join.<a href="./src/x_twitter_scraper/resources/x/communities/join.py">delete_all</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/communities/join_delete_all_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/communities/join_delete_all_response.py">JoinDeleteAllResponse</a></code>
 
 ### Tweets
 
-Methods:
+Methods
 
 - <code title="get /x/communities/tweets">client.x.communities.tweets.<a href="./src/x_twitter_scraper/resources/x/communities/tweets.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/x/communities/tweet_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/communities/{id}/tweets">client.x.communities.tweets.<a href="./src/x_twitter_scraper/resources/x/communities/tweets.py">list_by_community</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/communities/tweet_list_by_community_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 
 ### Media
 
-Methods:
+Methods
 
 - <code title="get /x/communities/{id}/media">client.x.communities.media.<a href="./src/x_twitter_scraper/resources/x/communities/media.py">list</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/communities/media_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 
 ## Accounts
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import (
@@ -582,7 +582,7 @@ from x_twitter_scraper.types.x import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/accounts">client.x.accounts.<a href="./src/x_twitter_scraper/resources/x/accounts.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/x/account_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/account_create_response.py">AccountCreateResponse</a></code>
 - <code title="get /x/accounts/{id}">client.x.accounts.<a href="./src/x_twitter_scraper/resources/x/accounts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/x_account_detail.py">XAccountDetail</a></code>
@@ -593,44 +593,44 @@ Methods:
 
 ## AccountConnectionChallenges
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import AccountConnectionChallengeSubmitResponse
 ```
 
-Methods:
+Methods
 
 - <code title="post /x/account-connection-challenges/{id}/submit">client.x.account_connection_challenges.<a href="./src/x_twitter_scraper/resources/x/account_connection_challenges.py">submit</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/account_connection_challenge_submit_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/account_connection_challenge_submit_response.py">AccountConnectionChallengeSubmitResponse</a></code>
 
 ## AccountConnectionAttempts
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import AccountConnectionAttemptRetrieveResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/account-connection-attempts/{id}">client.x.account_connection_attempts.<a href="./src/x_twitter_scraper/resources/x/account_connection_attempts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/account_connection_attempt_retrieve_response.py">AccountConnectionAttemptRetrieveResponse</a></code>
 
 ## Bookmarks
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import BookmarkRetrieveFoldersResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/bookmarks">client.x.bookmarks.<a href="./src/x_twitter_scraper/resources/x/bookmarks.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/x/bookmark_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/bookmarks/folders">client.x.bookmarks.<a href="./src/x_twitter_scraper/resources/x/bookmarks.py">retrieve_folders</a>(\*\*<a href="src/x_twitter_scraper/types/x/bookmark_retrieve_folders_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/bookmark_retrieve_folders_response.py">BookmarkRetrieveFoldersResponse</a></code>
 
 ## Lists
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import (
@@ -641,7 +641,7 @@ from x_twitter_scraper.types.x import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/lists/{id}">client.x.lists.<a href="./src/x_twitter_scraper/resources/x/lists.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/list_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/list_retrieve_response.py">ListRetrieveResponse</a></code>
 - <code title="get /x/lists/{id}/followers">client.x.lists.<a href="./src/x_twitter_scraper/resources/x/lists.py">retrieve_followers</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/list_retrieve_followers_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/list_retrieve_followers_response.py">ListRetrieveFollowersResponse</a></code>
@@ -651,25 +651,25 @@ Methods:
 
 ## Broadcasts
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import BroadcastRetrieveResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/broadcasts/{id}">client.x.broadcasts.<a href="./src/x_twitter_scraper/resources/x/broadcasts.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/broadcast_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/broadcast_retrieve_response.py">BroadcastRetrieveResponse</a></code>
 
 ## Spaces
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.x import SpaceRetrieveResponse, SpaceRetrieveReplayResponse, SpaceSearchResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /x/spaces/{id}">client.x.spaces.<a href="./src/x_twitter_scraper/resources/x/spaces.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/space_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/space_retrieve_response.py">SpaceRetrieveResponse</a></code>
 - <code title="get /x/spaces/{id}/replay">client.x.spaces.<a href="./src/x_twitter_scraper/resources/x/spaces.py">retrieve_replay</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/space_retrieve_replay_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/space_retrieve_replay_response.py">SpaceRetrieveReplayResponse</a></code>
@@ -677,13 +677,13 @@ Methods:
 
 # Trends
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import TrendListResponse
 ```
 
-Methods:
+Methods
 
 - <code title="get /trends">client.trends.<a href="./src/x_twitter_scraper/resources/trends.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/trend_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/trend_list_response.py">TrendListResponse</a></code>
 
@@ -691,13 +691,13 @@ Methods:
 
 ## Attachments
 
-Methods:
+Methods
 
 - <code title="get /support/attachments/{id}">client.support.attachments.<a href="./src/x_twitter_scraper/resources/support/attachments.py">download</a>(id) -> BinaryAPIResponse</code>
 
 ## Tickets
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types.support import (
@@ -709,7 +709,7 @@ from x_twitter_scraper.types.support import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /support/tickets">client.support.tickets.<a href="./src/x_twitter_scraper/resources/support/tickets.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/support/ticket_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/support/ticket_create_response.py">TicketCreateResponse</a></code>
 - <code title="get /support/tickets/{id}">client.support.tickets.<a href="./src/x_twitter_scraper/resources/support/tickets.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/support/ticket_retrieve_response.py">TicketRetrieveResponse</a></code>
@@ -719,7 +719,7 @@ Methods:
 
 # Credits
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -729,7 +729,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="get /credits/topup/redirect">client.credits.<a href="./src/x_twitter_scraper/resources/credits.py">redirect_topup_checkout</a>(\*\*<a href="src/x_twitter_scraper/types/credit_redirect_topup_checkout_params.py">params</a>) -> None</code>
 - <code title="get /credits">client.credits.<a href="./src/x_twitter_scraper/resources/credits.py">retrieve_balance</a>() -> <a href="./src/x_twitter_scraper/types/credit_retrieve_balance_response.py">CreditRetrieveBalanceResponse</a></code>
@@ -738,7 +738,7 @@ Methods:
 
 # GuestWallets
 
-Types:
+Types
 
 ```python
 from x_twitter_scraper.types import (
@@ -749,7 +749,7 @@ from x_twitter_scraper.types import (
 )
 ```
 
-Methods:
+Methods
 
 - <code title="post /guest-wallets">client.guest_wallets.<a href="./src/x_twitter_scraper/resources/guest_wallets.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/guest_wallet_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/guest_wallet_create_response.py">GuestWalletCreateResponse</a></code>
 - <code title="get /guest-wallets/status">client.guest_wallets.<a href="./src/x_twitter_scraper/resources/guest_wallets.py">retrieve_status</a>() -> <a href="./src/x_twitter_scraper/types/guest_wallet_retrieve_status_response.py">GuestWalletRetrieveStatusResponse</a></code>
