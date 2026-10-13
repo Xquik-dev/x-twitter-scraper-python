@@ -18,6 +18,14 @@ from .dm import (
     DmResourceWithStreamingResponse,
     AsyncDmResourceWithStreamingResponse,
 )
+from .jobs import (
+    JobsResource,
+    AsyncJobsResource,
+    JobsResourceWithRawResponse,
+    AsyncJobsResourceWithRawResponse,
+    JobsResourceWithStreamingResponse,
+    AsyncJobsResourceWithStreamingResponse,
+)
 from .lists import (
     ListsResource,
     AsyncListsResource,
@@ -34,7 +42,24 @@ from .media import (
     MediaResourceWithStreamingResponse,
     AsyncMediaResourceWithStreamingResponse,
 )
-from ...types import x_get_trends_params, x_get_home_timeline_params, x_get_notifications_params
+from .spaces import (
+    SpacesResource,
+    AsyncSpacesResource,
+    SpacesResourceWithRawResponse,
+    AsyncSpacesResourceWithRawResponse,
+    SpacesResourceWithStreamingResponse,
+    AsyncSpacesResourceWithStreamingResponse,
+)
+from ...types import (
+    x_get_trends_params,
+    x_get_article_params,
+    x_get_hashflags_params,
+    x_search_places_params,
+    x_get_home_timeline_params,
+    x_get_notifications_params,
+    x_autocomplete_search_params,
+    x_get_trend_locations_params,
+)
 from .profile import (
     ProfileResource,
     AsyncProfileResource,
@@ -53,6 +78,14 @@ from .accounts import (
     AccountsResourceWithStreamingResponse,
     AsyncAccountsResourceWithStreamingResponse,
 )
+from .analysis import (
+    AnalysisResource,
+    AsyncAnalysisResource,
+    AnalysisResourceWithRawResponse,
+    AsyncAnalysisResourceWithRawResponse,
+    AnalysisResourceWithStreamingResponse,
+    AsyncAnalysisResourceWithStreamingResponse,
+)
 from ..._compat import cached_property
 from .bookmarks import (
     BookmarksResource,
@@ -69,6 +102,14 @@ from .followers import (
     AsyncFollowersResourceWithRawResponse,
     FollowersResourceWithStreamingResponse,
     AsyncFollowersResourceWithStreamingResponse,
+)
+from .broadcasts import (
+    BroadcastsResource,
+    AsyncBroadcastsResource,
+    BroadcastsResourceWithRawResponse,
+    AsyncBroadcastsResourceWithRawResponse,
+    BroadcastsResourceWithStreamingResponse,
+    AsyncBroadcastsResourceWithStreamingResponse,
 )
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
@@ -129,7 +170,11 @@ from .account_connection_challenges import (
 )
 from ...types.x_get_article_response import XGetArticleResponse
 from ...types.shared.paginated_tweets import PaginatedTweets
+from ...types.x_get_hashflags_response import XGetHashflagsResponse
+from ...types.x_search_places_response import XSearchPlacesResponse
 from ...types.x_get_notifications_response import XGetNotificationsResponse
+from ...types.x_autocomplete_search_response import XAutocompleteSearchResponse
+from ...types.x_get_trend_locations_response import XGetTrendLocationsResponse
 
 __all__ = ["XResource", "AsyncXResource"]
 
@@ -139,6 +184,11 @@ class XResource(SyncAPIResource):
     def write_actions(self) -> WriteActionsResource:
         """X write actions (tweets, likes, follows, DMs)"""
         return WriteActionsResource(self._client)
+
+    @cached_property
+    def analysis(self) -> AnalysisResource:
+        """AI analysis of posts, at 2 credits per analyzed post"""
+        return AnalysisResource(self._client)
 
     @cached_property
     def tweets(self) -> TweetsResource:
@@ -152,6 +202,11 @@ class XResource(SyncAPIResource):
     def followers(self) -> FollowersResource:
         """Look up, search, and explore user profiles and relationships"""
         return FollowersResource(self._client)
+
+    @cached_property
+    def jobs(self) -> JobsResource:
+        """Public X job listings, search and details"""
+        return JobsResource(self._client)
 
     @cached_property
     def dm(self) -> DmResource:
@@ -192,8 +247,18 @@ class XResource(SyncAPIResource):
 
     @cached_property
     def lists(self) -> ListsResource:
-        """X List followers, members, and tweets"""
+        """X List search, details, followers, members, and tweets"""
         return ListsResource(self._client)
+
+    @cached_property
+    def broadcasts(self) -> BroadcastsResource:
+        """X live video details, watch counts, and broadcaster"""
+        return BroadcastsResource(self._client)
+
+    @cached_property
+    def spaces(self) -> SpacesResource:
+        """X Space details, host, and speakers"""
+        return SpacesResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> XResourceWithRawResponse:
@@ -214,10 +279,83 @@ class XResource(SyncAPIResource):
         """
         return XResourceWithStreamingResponse(self)
 
+    def autocomplete_search(
+        self,
+        *,
+        q: str,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        types: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XAutocompleteSearchResponse:
+        """
+        Returns the accounts, topics, hashtags & cashtags X suggests while someone types
+        a search. X may rank them differently per request. Costs 1 credit per
+        suggestion.
+
+        Args:
+          q: Text typed so far. Start with # for hashtags or $ for cashtags. A # query
+              returns hashtags & the accounts X suggests for it. Alias: query.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Most suggestions to return: 1 to 100, default 20. Accounts fill it first, then
+              topics, hashtags & cashtags. Credits can return fewer. Aliases: pageSize, count,
+              max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          types: Comma-separated suggestion types: users, topics, hashtags or cashtags. Omit for
+              all. With only hashtags or only cashtags, the query gets its # or $ when it
+              lacks one.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._get(
+            "/x/search/autocomplete",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "q": q,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                        "types": types,
+                    },
+                    x_autocomplete_search_params.XAutocompleteSearchParams,
+                ),
+            ),
+            cast_to=XAutocompleteSearchResponse,
+        )
+
     def get_article(
         self,
         tweet_id: str,
         *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -230,6 +368,16 @@ class XResource(SyncAPIResource):
         Returns article_not_found when the tweet is valid but is not an X Article.
 
         Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -243,9 +391,88 @@ class XResource(SyncAPIResource):
         return self._get(
             path_template("/x/articles/{tweet_id}", tweet_id=tweet_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    x_get_article_params.XGetArticleParams,
+                ),
             ),
             cast_to=XGetArticleResponse,
+        )
+
+    def get_hashflags(
+        self,
+        *,
+        active_only: bool | Omit = omit,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        q: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetHashflagsResponse:
+        """Returns X's hashflags, the custom emoji X shows after some hashtags.
+
+        Lists the
+        ones running now unless activeOnly is false. Each returned hashflag costs 1
+        credit.
+
+        Args:
+          active_only: Keeps hashflags that run now. Send false to add ended & upcoming ones.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Maximum hashflags to return. Omit it for every match. Credits can return fewer.
+              Aliases pageSize, count, max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          q: Text the hashtag contains, such as football. Case insensitive. A leading hash
+              sign is ignored. Alias query.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._get(
+            "/x/hashflags",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "active_only": active_only,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                        "q": q,
+                    },
+                    x_get_hashflags_params.XGetHashflagsParams,
+                ),
+            ),
+            cast_to=XGetHashflagsResponse,
         )
 
     def get_home_timeline(
@@ -261,10 +488,13 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Returns the home timeline for the connected X account.
+        Returns the home timeline of 1 of your connected X accounts, else 424
+        `account_required`. A cursor reads the next page from the same account. Results
+        exclude X ads.
 
         Args:
-          cursor: Pagination cursor for timeline
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
 
           seen_tweet_ids: Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
 
@@ -307,10 +537,11 @@ class XResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetNotificationsResponse:
         """
-        Returns notifications for the connected X account.
+        Returns your X account's notifications, else 424 `account_required`.
 
         Args:
-          cursor: Pagination cursor for notifications
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
 
           type: Notification type filter. Unrecognized values fall back to All.
 
@@ -340,10 +571,86 @@ class XResource(SyncAPIResource):
             cast_to=XGetNotificationsResponse,
         )
 
+    def get_trend_locations(
+        self,
+        *,
+        country: str | Omit = omit,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        place_type: Literal["country", "town", "worldwide", "unknown"] | Omit = omit,
+        q: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetTrendLocationsResponse:
+        """Returns the places X offers trends for.
+
+        Pass a location's woeid to /x/trends.
+        Each returned location costs 1 credit.
+
+        Args:
+          country: Country name or 2-letter code, such as Turkey or TR. Case insensitive. Returns
+              the country & its towns.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Maximum locations to return. Omit it for every match. Credits can return fewer.
+              Aliases pageSize, count, max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          place_type: Kind of place. Case insensitive. X labels a few towns unknown.
+
+          q: Text the location name contains, such as york. Case insensitive. Alias query.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._get(
+            "/x/trends/locations",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "country": country,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                        "place_type": place_type,
+                        "q": q,
+                    },
+                    x_get_trend_locations_params.XGetTrendLocationsParams,
+                ),
+            ),
+            cast_to=XGetTrendLocationsResponse,
+        )
+
     def get_trends(
         self,
         *,
         count: int | Omit = omit,
+        country: str | Omit = omit,
+        fields: str | Omit = omit,
+        location: str | Omit = omit,
+        omit: str | Omit = omit,
         woeid: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -352,13 +659,33 @@ class XResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
-        """
-        Returns current X trends for the requested region.
+        """Returns X's current trends for a place you choose.
+
+        Pick it by woeid, country or
+        location name. Without one, trends are worldwide. Each request costs 1 credit,
+        however many trends it returns.
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
 
-          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          country: Country to read trends for, by name or 2-letter code, such as Turkey or TR. Case
+              insensitive.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          location: Town or country to read trends for, by name, such as Istanbul. Case insensitive.
+              Add country when 2 towns share a name. /x/trends/locations lists every name.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey). Wins over
+              country & location.
 
           extra_headers: Send extra headers
 
@@ -378,6 +705,10 @@ class XResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "count": count,
+                        "country": country,
+                        "fields": fields,
+                        "location": location,
+                        "omit": omit,
                         "woeid": woeid,
                     },
                     x_get_trends_params.XGetTrendsParams,
@@ -386,12 +717,81 @@ class XResource(SyncAPIResource):
             cast_to=XGetTrendsResponse,
         )
 
+    def search_places(
+        self,
+        *,
+        q: str,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XSearchPlacesResponse:
+        """Finds places on X by name.
+
+        Pass a place's id as place to /x/tweets/search to
+        read posts tagged there. X ranks the places, so their order can differ between
+        requests. Each returned place costs 1 credit.
+
+        Args:
+          q: Place name to search for, such as istanbul. Alias query.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Maximum places to return. Omit it for every place X finds. Credits can return
+              fewer. Aliases pageSize, count, max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._get(
+            "/x/places/search",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "q": q,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                    },
+                    x_search_places_params.XSearchPlacesParams,
+                ),
+            ),
+            cast_to=XSearchPlacesResponse,
+        )
+
 
 class AsyncXResource(AsyncAPIResource):
     @cached_property
     def write_actions(self) -> AsyncWriteActionsResource:
         """X write actions (tweets, likes, follows, DMs)"""
         return AsyncWriteActionsResource(self._client)
+
+    @cached_property
+    def analysis(self) -> AsyncAnalysisResource:
+        """AI analysis of posts, at 2 credits per analyzed post"""
+        return AsyncAnalysisResource(self._client)
 
     @cached_property
     def tweets(self) -> AsyncTweetsResource:
@@ -405,6 +805,11 @@ class AsyncXResource(AsyncAPIResource):
     def followers(self) -> AsyncFollowersResource:
         """Look up, search, and explore user profiles and relationships"""
         return AsyncFollowersResource(self._client)
+
+    @cached_property
+    def jobs(self) -> AsyncJobsResource:
+        """Public X job listings, search and details"""
+        return AsyncJobsResource(self._client)
 
     @cached_property
     def dm(self) -> AsyncDmResource:
@@ -445,8 +850,18 @@ class AsyncXResource(AsyncAPIResource):
 
     @cached_property
     def lists(self) -> AsyncListsResource:
-        """X List followers, members, and tweets"""
+        """X List search, details, followers, members, and tweets"""
         return AsyncListsResource(self._client)
+
+    @cached_property
+    def broadcasts(self) -> AsyncBroadcastsResource:
+        """X live video details, watch counts, and broadcaster"""
+        return AsyncBroadcastsResource(self._client)
+
+    @cached_property
+    def spaces(self) -> AsyncSpacesResource:
+        """X Space details, host, and speakers"""
+        return AsyncSpacesResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> AsyncXResourceWithRawResponse:
@@ -467,10 +882,83 @@ class AsyncXResource(AsyncAPIResource):
         """
         return AsyncXResourceWithStreamingResponse(self)
 
+    async def autocomplete_search(
+        self,
+        *,
+        q: str,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        types: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XAutocompleteSearchResponse:
+        """
+        Returns the accounts, topics, hashtags & cashtags X suggests while someone types
+        a search. X may rank them differently per request. Costs 1 credit per
+        suggestion.
+
+        Args:
+          q: Text typed so far. Start with # for hashtags or $ for cashtags. A # query
+              returns hashtags & the accounts X suggests for it. Alias: query.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Most suggestions to return: 1 to 100, default 20. Accounts fill it first, then
+              topics, hashtags & cashtags. Credits can return fewer. Aliases: pageSize, count,
+              max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          types: Comma-separated suggestion types: users, topics, hashtags or cashtags. Omit for
+              all. With only hashtags or only cashtags, the query gets its # or $ when it
+              lacks one.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._get(
+            "/x/search/autocomplete",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "q": q,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                        "types": types,
+                    },
+                    x_autocomplete_search_params.XAutocompleteSearchParams,
+                ),
+            ),
+            cast_to=XAutocompleteSearchResponse,
+        )
+
     async def get_article(
         self,
         tweet_id: str,
         *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -483,6 +971,16 @@ class AsyncXResource(AsyncAPIResource):
         Returns article_not_found when the tweet is valid but is not an X Article.
 
         Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -496,9 +994,88 @@ class AsyncXResource(AsyncAPIResource):
         return await self._get(
             path_template("/x/articles/{tweet_id}", tweet_id=tweet_id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    x_get_article_params.XGetArticleParams,
+                ),
             ),
             cast_to=XGetArticleResponse,
+        )
+
+    async def get_hashflags(
+        self,
+        *,
+        active_only: bool | Omit = omit,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        q: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetHashflagsResponse:
+        """Returns X's hashflags, the custom emoji X shows after some hashtags.
+
+        Lists the
+        ones running now unless activeOnly is false. Each returned hashflag costs 1
+        credit.
+
+        Args:
+          active_only: Keeps hashflags that run now. Send false to add ended & upcoming ones.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Maximum hashflags to return. Omit it for every match. Credits can return fewer.
+              Aliases pageSize, count, max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          q: Text the hashtag contains, such as football. Case insensitive. A leading hash
+              sign is ignored. Alias query.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._get(
+            "/x/hashflags",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "active_only": active_only,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                        "q": q,
+                    },
+                    x_get_hashflags_params.XGetHashflagsParams,
+                ),
+            ),
+            cast_to=XGetHashflagsResponse,
         )
 
     async def get_home_timeline(
@@ -514,10 +1091,13 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
         """
-        Returns the home timeline for the connected X account.
+        Returns the home timeline of 1 of your connected X accounts, else 424
+        `account_required`. A cursor reads the next page from the same account. Results
+        exclude X ads.
 
         Args:
-          cursor: Pagination cursor for timeline
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
 
           seen_tweet_ids: Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
 
@@ -560,10 +1140,11 @@ class AsyncXResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetNotificationsResponse:
         """
-        Returns notifications for the connected X account.
+        Returns your X account's notifications, else 424 `account_required`.
 
         Args:
-          cursor: Pagination cursor for notifications
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
 
           type: Notification type filter. Unrecognized values fall back to All.
 
@@ -593,10 +1174,86 @@ class AsyncXResource(AsyncAPIResource):
             cast_to=XGetNotificationsResponse,
         )
 
+    async def get_trend_locations(
+        self,
+        *,
+        country: str | Omit = omit,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        place_type: Literal["country", "town", "worldwide", "unknown"] | Omit = omit,
+        q: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetTrendLocationsResponse:
+        """Returns the places X offers trends for.
+
+        Pass a location's woeid to /x/trends.
+        Each returned location costs 1 credit.
+
+        Args:
+          country: Country name or 2-letter code, such as Turkey or TR. Case insensitive. Returns
+              the country & its towns.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Maximum locations to return. Omit it for every match. Credits can return fewer.
+              Aliases pageSize, count, max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          place_type: Kind of place. Case insensitive. X labels a few towns unknown.
+
+          q: Text the location name contains, such as york. Case insensitive. Alias query.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._get(
+            "/x/trends/locations",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "country": country,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                        "place_type": place_type,
+                        "q": q,
+                    },
+                    x_get_trend_locations_params.XGetTrendLocationsParams,
+                ),
+            ),
+            cast_to=XGetTrendLocationsResponse,
+        )
+
     async def get_trends(
         self,
         *,
         count: int | Omit = omit,
+        country: str | Omit = omit,
+        fields: str | Omit = omit,
+        location: str | Omit = omit,
+        omit: str | Omit = omit,
         woeid: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -605,13 +1262,33 @@ class AsyncXResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> XGetTrendsResponse:
-        """
-        Returns current X trends for the requested region.
+        """Returns X's current trends for a place you choose.
+
+        Pick it by woeid, country or
+        location name. Without one, trends are worldwide. Each request costs 1 credit,
+        however many trends it returns.
 
         Args:
           count: Number of trending topics to return (1-50, default 30)
 
-          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          country: Country to read trends for, by name or 2-letter code, such as Turkey or TR. Case
+              insensitive.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          location: Town or country to read trends for, by name, such as Istanbul. Case insensitive.
+              Add country when 2 towns share a name. /x/trends/locations lists every name.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          woeid: Region WOEID (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey). Wins over
+              country & location.
 
           extra_headers: Send extra headers
 
@@ -631,6 +1308,10 @@ class AsyncXResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "count": count,
+                        "country": country,
+                        "fields": fields,
+                        "location": location,
+                        "omit": omit,
                         "woeid": woeid,
                     },
                     x_get_trends_params.XGetTrendsParams,
@@ -639,13 +1320,83 @@ class AsyncXResource(AsyncAPIResource):
             cast_to=XGetTrendsResponse,
         )
 
+    async def search_places(
+        self,
+        *,
+        q: str,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XSearchPlacesResponse:
+        """Finds places on X by name.
+
+        Pass a place's id as place to /x/tweets/search to
+        read posts tagged there. X ranks the places, so their order can differ between
+        requests. Each returned place costs 1 credit.
+
+        Args:
+          q: Place name to search for, such as istanbul. Alias query.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Maximum places to return. Omit it for every place X finds. Credits can return
+              fewer. Aliases pageSize, count, max_results, maxItems, max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._get(
+            "/x/places/search",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "q": q,
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                    },
+                    x_search_places_params.XSearchPlacesParams,
+                ),
+            ),
+            cast_to=XSearchPlacesResponse,
+        )
+
 
 class XResourceWithRawResponse:
     def __init__(self, x: XResource) -> None:
         self._x = x
 
+        self.autocomplete_search = to_raw_response_wrapper(
+            x.autocomplete_search,
+        )
         self.get_article = to_raw_response_wrapper(
             x.get_article,
+        )
+        self.get_hashflags = to_raw_response_wrapper(
+            x.get_hashflags,
         )
         self.get_home_timeline = to_raw_response_wrapper(
             x.get_home_timeline,
@@ -653,14 +1404,25 @@ class XResourceWithRawResponse:
         self.get_notifications = to_raw_response_wrapper(
             x.get_notifications,
         )
+        self.get_trend_locations = to_raw_response_wrapper(
+            x.get_trend_locations,
+        )
         self.get_trends = to_raw_response_wrapper(
             x.get_trends,
+        )
+        self.search_places = to_raw_response_wrapper(
+            x.search_places,
         )
 
     @cached_property
     def write_actions(self) -> WriteActionsResourceWithRawResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return WriteActionsResourceWithRawResponse(self._x.write_actions)
+
+    @cached_property
+    def analysis(self) -> AnalysisResourceWithRawResponse:
+        """AI analysis of posts, at 2 credits per analyzed post"""
+        return AnalysisResourceWithRawResponse(self._x.analysis)
 
     @cached_property
     def tweets(self) -> TweetsResourceWithRawResponse:
@@ -674,6 +1436,11 @@ class XResourceWithRawResponse:
     def followers(self) -> FollowersResourceWithRawResponse:
         """Look up, search, and explore user profiles and relationships"""
         return FollowersResourceWithRawResponse(self._x.followers)
+
+    @cached_property
+    def jobs(self) -> JobsResourceWithRawResponse:
+        """Public X job listings, search and details"""
+        return JobsResourceWithRawResponse(self._x.jobs)
 
     @cached_property
     def dm(self) -> DmResourceWithRawResponse:
@@ -714,16 +1481,32 @@ class XResourceWithRawResponse:
 
     @cached_property
     def lists(self) -> ListsResourceWithRawResponse:
-        """X List followers, members, and tweets"""
+        """X List search, details, followers, members, and tweets"""
         return ListsResourceWithRawResponse(self._x.lists)
+
+    @cached_property
+    def broadcasts(self) -> BroadcastsResourceWithRawResponse:
+        """X live video details, watch counts, and broadcaster"""
+        return BroadcastsResourceWithRawResponse(self._x.broadcasts)
+
+    @cached_property
+    def spaces(self) -> SpacesResourceWithRawResponse:
+        """X Space details, host, and speakers"""
+        return SpacesResourceWithRawResponse(self._x.spaces)
 
 
 class AsyncXResourceWithRawResponse:
     def __init__(self, x: AsyncXResource) -> None:
         self._x = x
 
+        self.autocomplete_search = async_to_raw_response_wrapper(
+            x.autocomplete_search,
+        )
         self.get_article = async_to_raw_response_wrapper(
             x.get_article,
+        )
+        self.get_hashflags = async_to_raw_response_wrapper(
+            x.get_hashflags,
         )
         self.get_home_timeline = async_to_raw_response_wrapper(
             x.get_home_timeline,
@@ -731,14 +1514,25 @@ class AsyncXResourceWithRawResponse:
         self.get_notifications = async_to_raw_response_wrapper(
             x.get_notifications,
         )
+        self.get_trend_locations = async_to_raw_response_wrapper(
+            x.get_trend_locations,
+        )
         self.get_trends = async_to_raw_response_wrapper(
             x.get_trends,
+        )
+        self.search_places = async_to_raw_response_wrapper(
+            x.search_places,
         )
 
     @cached_property
     def write_actions(self) -> AsyncWriteActionsResourceWithRawResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return AsyncWriteActionsResourceWithRawResponse(self._x.write_actions)
+
+    @cached_property
+    def analysis(self) -> AsyncAnalysisResourceWithRawResponse:
+        """AI analysis of posts, at 2 credits per analyzed post"""
+        return AsyncAnalysisResourceWithRawResponse(self._x.analysis)
 
     @cached_property
     def tweets(self) -> AsyncTweetsResourceWithRawResponse:
@@ -752,6 +1546,11 @@ class AsyncXResourceWithRawResponse:
     def followers(self) -> AsyncFollowersResourceWithRawResponse:
         """Look up, search, and explore user profiles and relationships"""
         return AsyncFollowersResourceWithRawResponse(self._x.followers)
+
+    @cached_property
+    def jobs(self) -> AsyncJobsResourceWithRawResponse:
+        """Public X job listings, search and details"""
+        return AsyncJobsResourceWithRawResponse(self._x.jobs)
 
     @cached_property
     def dm(self) -> AsyncDmResourceWithRawResponse:
@@ -792,16 +1591,32 @@ class AsyncXResourceWithRawResponse:
 
     @cached_property
     def lists(self) -> AsyncListsResourceWithRawResponse:
-        """X List followers, members, and tweets"""
+        """X List search, details, followers, members, and tweets"""
         return AsyncListsResourceWithRawResponse(self._x.lists)
+
+    @cached_property
+    def broadcasts(self) -> AsyncBroadcastsResourceWithRawResponse:
+        """X live video details, watch counts, and broadcaster"""
+        return AsyncBroadcastsResourceWithRawResponse(self._x.broadcasts)
+
+    @cached_property
+    def spaces(self) -> AsyncSpacesResourceWithRawResponse:
+        """X Space details, host, and speakers"""
+        return AsyncSpacesResourceWithRawResponse(self._x.spaces)
 
 
 class XResourceWithStreamingResponse:
     def __init__(self, x: XResource) -> None:
         self._x = x
 
+        self.autocomplete_search = to_streamed_response_wrapper(
+            x.autocomplete_search,
+        )
         self.get_article = to_streamed_response_wrapper(
             x.get_article,
+        )
+        self.get_hashflags = to_streamed_response_wrapper(
+            x.get_hashflags,
         )
         self.get_home_timeline = to_streamed_response_wrapper(
             x.get_home_timeline,
@@ -809,14 +1624,25 @@ class XResourceWithStreamingResponse:
         self.get_notifications = to_streamed_response_wrapper(
             x.get_notifications,
         )
+        self.get_trend_locations = to_streamed_response_wrapper(
+            x.get_trend_locations,
+        )
         self.get_trends = to_streamed_response_wrapper(
             x.get_trends,
+        )
+        self.search_places = to_streamed_response_wrapper(
+            x.search_places,
         )
 
     @cached_property
     def write_actions(self) -> WriteActionsResourceWithStreamingResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return WriteActionsResourceWithStreamingResponse(self._x.write_actions)
+
+    @cached_property
+    def analysis(self) -> AnalysisResourceWithStreamingResponse:
+        """AI analysis of posts, at 2 credits per analyzed post"""
+        return AnalysisResourceWithStreamingResponse(self._x.analysis)
 
     @cached_property
     def tweets(self) -> TweetsResourceWithStreamingResponse:
@@ -830,6 +1656,11 @@ class XResourceWithStreamingResponse:
     def followers(self) -> FollowersResourceWithStreamingResponse:
         """Look up, search, and explore user profiles and relationships"""
         return FollowersResourceWithStreamingResponse(self._x.followers)
+
+    @cached_property
+    def jobs(self) -> JobsResourceWithStreamingResponse:
+        """Public X job listings, search and details"""
+        return JobsResourceWithStreamingResponse(self._x.jobs)
 
     @cached_property
     def dm(self) -> DmResourceWithStreamingResponse:
@@ -870,16 +1701,32 @@ class XResourceWithStreamingResponse:
 
     @cached_property
     def lists(self) -> ListsResourceWithStreamingResponse:
-        """X List followers, members, and tweets"""
+        """X List search, details, followers, members, and tweets"""
         return ListsResourceWithStreamingResponse(self._x.lists)
+
+    @cached_property
+    def broadcasts(self) -> BroadcastsResourceWithStreamingResponse:
+        """X live video details, watch counts, and broadcaster"""
+        return BroadcastsResourceWithStreamingResponse(self._x.broadcasts)
+
+    @cached_property
+    def spaces(self) -> SpacesResourceWithStreamingResponse:
+        """X Space details, host, and speakers"""
+        return SpacesResourceWithStreamingResponse(self._x.spaces)
 
 
 class AsyncXResourceWithStreamingResponse:
     def __init__(self, x: AsyncXResource) -> None:
         self._x = x
 
+        self.autocomplete_search = async_to_streamed_response_wrapper(
+            x.autocomplete_search,
+        )
         self.get_article = async_to_streamed_response_wrapper(
             x.get_article,
+        )
+        self.get_hashflags = async_to_streamed_response_wrapper(
+            x.get_hashflags,
         )
         self.get_home_timeline = async_to_streamed_response_wrapper(
             x.get_home_timeline,
@@ -887,14 +1734,25 @@ class AsyncXResourceWithStreamingResponse:
         self.get_notifications = async_to_streamed_response_wrapper(
             x.get_notifications,
         )
+        self.get_trend_locations = async_to_streamed_response_wrapper(
+            x.get_trend_locations,
+        )
         self.get_trends = async_to_streamed_response_wrapper(
             x.get_trends,
+        )
+        self.search_places = async_to_streamed_response_wrapper(
+            x.search_places,
         )
 
     @cached_property
     def write_actions(self) -> AsyncWriteActionsResourceWithStreamingResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return AsyncWriteActionsResourceWithStreamingResponse(self._x.write_actions)
+
+    @cached_property
+    def analysis(self) -> AsyncAnalysisResourceWithStreamingResponse:
+        """AI analysis of posts, at 2 credits per analyzed post"""
+        return AsyncAnalysisResourceWithStreamingResponse(self._x.analysis)
 
     @cached_property
     def tweets(self) -> AsyncTweetsResourceWithStreamingResponse:
@@ -908,6 +1766,11 @@ class AsyncXResourceWithStreamingResponse:
     def followers(self) -> AsyncFollowersResourceWithStreamingResponse:
         """Look up, search, and explore user profiles and relationships"""
         return AsyncFollowersResourceWithStreamingResponse(self._x.followers)
+
+    @cached_property
+    def jobs(self) -> AsyncJobsResourceWithStreamingResponse:
+        """Public X job listings, search and details"""
+        return AsyncJobsResourceWithStreamingResponse(self._x.jobs)
 
     @cached_property
     def dm(self) -> AsyncDmResourceWithStreamingResponse:
@@ -948,5 +1811,15 @@ class AsyncXResourceWithStreamingResponse:
 
     @cached_property
     def lists(self) -> AsyncListsResourceWithStreamingResponse:
-        """X List followers, members, and tweets"""
+        """X List search, details, followers, members, and tweets"""
         return AsyncListsResourceWithStreamingResponse(self._x.lists)
+
+    @cached_property
+    def broadcasts(self) -> AsyncBroadcastsResourceWithStreamingResponse:
+        """X live video details, watch counts, and broadcaster"""
+        return AsyncBroadcastsResourceWithStreamingResponse(self._x.broadcasts)
+
+    @cached_property
+    def spaces(self) -> AsyncSpacesResourceWithStreamingResponse:
+        """X Space details, host, and speakers"""
+        return AsyncSpacesResourceWithStreamingResponse(self._x.spaces)

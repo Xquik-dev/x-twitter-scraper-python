@@ -1,9 +1,24 @@
 [project]
 name = "x_twitter_scraper"
-version = "0.12.0"
-description = "Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp."
+version = "0.13.0"
+description = "X API and Twitter API alternative for Python. Scrape Twitter with a typed Twitter scraper and tweet scraper. Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp."
 dynamic = ["readme"]
 license = "Apache-2.0"
+keywords = [
+  "x api",
+  "twitter api",
+  "twitter scraper",
+  "tweet scraper",
+  "scrape twitter",
+  "twitter api python",
+  "twitter scraper python",
+  "twitter python",
+  "x api python",
+  "twitter data api",
+  "twitter api alternative",
+  "twitter sdk",
+  "xquik",
+]
 authors = [
 { name = "X Twitter Scraper", email = "support@xquik.com" },
 ]
@@ -31,12 +46,13 @@ classifiers = [
   "Operating System :: MacOS",
   "Operating System :: POSIX :: Linux",
   "Operating System :: Microsoft :: Windows",
+  "Topic :: Internet :: WWW/HTTP",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "License :: OSI Approved :: Apache Software License"
 ]
 
 [project.urls]
-Homepage = "https://docs.xquik.com/sdks/python"
+Homepage = "https://docs.xquik.com"
 Documentation = "https://docs.xquik.com/sdks/python"
 Repository = "https://github.com/Xquik-dev/x-twitter-scraper-python"
 Issues = "https://github.com/Xquik-dev/x-twitter-scraper-python/issues"

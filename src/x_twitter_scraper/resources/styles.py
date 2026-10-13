@@ -10,8 +10,8 @@ from typing import Iterable
 
 import httpx
 
-from ..types import style_update_params, style_analyze_params, style_compare_params
-from .._types import Body, Omit, Query, Headers, NoneType, NotGiven, not_given
+from ..types import style_list_params, style_update_params, style_analyze_params, style_compare_params
+from .._types import Body, Omit, Query, Headers, NoneType, NotGiven, omit, not_given
 from .._utils import path_template, maybe_transform, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
@@ -89,8 +89,8 @@ class StylesResource(SyncAPIResource):
         self,
         id: str,
         *,
-        label: str,
         tweets: Iterable[style_update_params.Tweet],
+        label: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -102,9 +102,11 @@ class StylesResource(SyncAPIResource):
         Creates or replaces a style profile from supplied posts.
 
         Args:
-          label: Display label. Must match the path ID, ignoring case.
-
           tweets: Array of tweet objects
+
+          label: Optional display label of up to 50 characters. When sent, it must match the path
+              ID, ignoring case and a leading @. When it is left out, the path ID names the
+              style and must fit the same limit.
 
           extra_headers: Send extra headers
 
@@ -120,8 +122,8 @@ class StylesResource(SyncAPIResource):
             path_template("/styles/{id}", id=id),
             body=maybe_transform(
                 {
-                    "label": label,
                     "tweets": tweets,
+                    "label": label,
                 },
                 style_update_params.StyleUpdateParams,
             ),
@@ -134,6 +136,8 @@ class StylesResource(SyncAPIResource):
     def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -141,11 +145,38 @@ class StylesResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleListResponse:
-        """Returns cached writing style profiles for the account."""
+        """
+        Returns cached writing style profiles for the account.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/styles",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    style_list_params.StyleListParams,
+                ),
             ),
             cast_to=StyleListResponse,
         )
@@ -357,8 +388,8 @@ class AsyncStylesResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        label: str,
         tweets: Iterable[style_update_params.Tweet],
+        label: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -370,9 +401,11 @@ class AsyncStylesResource(AsyncAPIResource):
         Creates or replaces a style profile from supplied posts.
 
         Args:
-          label: Display label. Must match the path ID, ignoring case.
-
           tweets: Array of tweet objects
+
+          label: Optional display label of up to 50 characters. When sent, it must match the path
+              ID, ignoring case and a leading @. When it is left out, the path ID names the
+              style and must fit the same limit.
 
           extra_headers: Send extra headers
 
@@ -388,8 +421,8 @@ class AsyncStylesResource(AsyncAPIResource):
             path_template("/styles/{id}", id=id),
             body=await async_maybe_transform(
                 {
-                    "label": label,
                     "tweets": tweets,
+                    "label": label,
                 },
                 style_update_params.StyleUpdateParams,
             ),
@@ -402,6 +435,8 @@ class AsyncStylesResource(AsyncAPIResource):
     async def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -409,11 +444,38 @@ class AsyncStylesResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> StyleListResponse:
-        """Returns cached writing style profiles for the account."""
+        """
+        Returns cached writing style profiles for the account.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/styles",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    style_list_params.StyleListParams,
+                ),
             ),
             cast_to=StyleListResponse,
         )

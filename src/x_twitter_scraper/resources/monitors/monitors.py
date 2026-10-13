@@ -6,11 +6,11 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
 import httpx
 
-from ...types import monitor_create_params, monitor_update_params
+from ...types import monitor_list_params, monitor_create_params, monitor_update_params
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from .keywords import (
@@ -71,6 +71,7 @@ class MonitorsResource(SyncAPIResource):
         *,
         event_types: List[EventType],
         username: str,
+        name: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -78,17 +79,19 @@ class MonitorsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorCreateResponse:
-        """Creates an account monitor.
+        """Creates an account monitor, with no count limit.
 
-        Monitors are unlimited. Active monitors check every
-        1 second and cost 21 credits per hour. Events and webhook deliveries are
-        included. Creation requires available credits for the first hourly charge and
-        username lookup.
+        Active monitors check every
+        second for 30 credits an hour, events & webhook deliveries included. That hourly
+        price is a monitor's only charge. Creation needs the credits of the first hour.
 
         Args:
           event_types: Array of event types to subscribe to.
 
-          username: X username (without @)
+          username: X username to monitor, with or without @
+
+          name: Your label for the monitor. Its events carry it as monitorName. Whitespace is
+              normalized.
 
           extra_headers: Send extra headers
 
@@ -104,6 +107,7 @@ class MonitorsResource(SyncAPIResource):
                 {
                     "event_types": event_types,
                     "username": username,
+                    "name": name,
                 },
                 monitor_create_params.MonitorCreateParams,
             ),
@@ -152,6 +156,7 @@ class MonitorsResource(SyncAPIResource):
         *,
         event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
+        name: Optional[str] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -164,6 +169,8 @@ class MonitorsResource(SyncAPIResource):
 
         Args:
           event_types: Array of event types to subscribe to.
+
+          name: New label for the account monitor. Send null to remove the label.
 
           extra_headers: Send extra headers
 
@@ -181,6 +188,7 @@ class MonitorsResource(SyncAPIResource):
                 {
                     "event_types": event_types,
                     "is_active": is_active,
+                    "name": name,
                 },
                 monitor_update_params.MonitorUpdateParams,
             ),
@@ -193,6 +201,8 @@ class MonitorsResource(SyncAPIResource):
     def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -200,11 +210,38 @@ class MonitorsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorListResponse:
-        """Returns account monitors with their current operating states."""
+        """
+        Returns account monitors with their current operating states.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/monitors",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    monitor_list_params.MonitorListParams,
+                ),
             ),
             cast_to=MonitorListResponse,
         )
@@ -276,6 +313,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         *,
         event_types: List[EventType],
         username: str,
+        name: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -283,17 +321,19 @@ class AsyncMonitorsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorCreateResponse:
-        """Creates an account monitor.
+        """Creates an account monitor, with no count limit.
 
-        Monitors are unlimited. Active monitors check every
-        1 second and cost 21 credits per hour. Events and webhook deliveries are
-        included. Creation requires available credits for the first hourly charge and
-        username lookup.
+        Active monitors check every
+        second for 30 credits an hour, events & webhook deliveries included. That hourly
+        price is a monitor's only charge. Creation needs the credits of the first hour.
 
         Args:
           event_types: Array of event types to subscribe to.
 
-          username: X username (without @)
+          username: X username to monitor, with or without @
+
+          name: Your label for the monitor. Its events carry it as monitorName. Whitespace is
+              normalized.
 
           extra_headers: Send extra headers
 
@@ -309,6 +349,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
                 {
                     "event_types": event_types,
                     "username": username,
+                    "name": name,
                 },
                 monitor_create_params.MonitorCreateParams,
             ),
@@ -357,6 +398,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
         *,
         event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
+        name: Optional[str] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -369,6 +411,8 @@ class AsyncMonitorsResource(AsyncAPIResource):
 
         Args:
           event_types: Array of event types to subscribe to.
+
+          name: New label for the account monitor. Send null to remove the label.
 
           extra_headers: Send extra headers
 
@@ -386,6 +430,7 @@ class AsyncMonitorsResource(AsyncAPIResource):
                 {
                     "event_types": event_types,
                     "is_active": is_active,
+                    "name": name,
                 },
                 monitor_update_params.MonitorUpdateParams,
             ),
@@ -398,6 +443,8 @@ class AsyncMonitorsResource(AsyncAPIResource):
     async def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -405,11 +452,38 @@ class AsyncMonitorsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> MonitorListResponse:
-        """Returns account monitors with their current operating states."""
+        """
+        Returns account monitors with their current operating states.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/monitors",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    monitor_list_params.MonitorListParams,
+                ),
             ),
             cast_to=MonitorListResponse,
         )

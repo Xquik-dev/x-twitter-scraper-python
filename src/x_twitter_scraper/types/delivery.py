@@ -20,6 +20,7 @@ class Delivery(BaseModel):
     id: str
 
     attempts: int
+    """Whole number from 0."""
 
     created_at: datetime = FieldInfo(alias="createdAt")
 

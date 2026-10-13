@@ -11,7 +11,7 @@ import httpx
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import maybe_transform, async_maybe_transform
 from ..._compat import cached_property
-from ...types.x import bookmark_list_params
+from ...types.x import bookmark_list_params, bookmark_retrieve_folders_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
     to_raw_response_wrapper,
@@ -60,13 +60,16 @@ class BookmarksResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Returns bookmarks from the connected X account.
+        """Returns your X account's bookmarks, else 424 `account_required`.
+
+        A folder needs
+        X Premium, else 424 `bookmark_folders_unavailable`.
 
         Args:
-          cursor: Pagination cursor for bookmarks
+          cursor: Pagination cursor for bookmarks. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
 
-          folder_id: Optional bookmark folder ID
+          folder_id: Optional bookmark folder ID. Folders need X Premium.
 
           extra_headers: Send extra headers
 
@@ -97,6 +100,7 @@ class BookmarksResource(SyncAPIResource):
     def retrieve_folders(
         self,
         *,
+        cursor: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -104,11 +108,33 @@ class BookmarksResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BookmarkRetrieveFoldersResponse:
-        """Returns bookmark folders from the connected X account."""
+        """Returns your X account's bookmark folders, else 424 `account_required`.
+
+        Folders
+        need X Premium, else 424 `bookmark_folders_unavailable`.
+
+        Args:
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/x/bookmarks/folders",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {"cursor": cursor}, bookmark_retrieve_folders_params.BookmarkRetrieveFoldersParams
+                ),
             ),
             cast_to=BookmarkRetrieveFoldersResponse,
         )
@@ -148,13 +174,16 @@ class AsyncBookmarksResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Returns bookmarks from the connected X account.
+        """Returns your X account's bookmarks, else 424 `account_required`.
+
+        A folder needs
+        X Premium, else 424 `bookmark_folders_unavailable`.
 
         Args:
-          cursor: Pagination cursor for bookmarks
+          cursor: Pagination cursor for bookmarks. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
 
-          folder_id: Optional bookmark folder ID
+          folder_id: Optional bookmark folder ID. Folders need X Premium.
 
           extra_headers: Send extra headers
 
@@ -185,6 +214,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
     async def retrieve_folders(
         self,
         *,
+        cursor: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -192,11 +222,33 @@ class AsyncBookmarksResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BookmarkRetrieveFoldersResponse:
-        """Returns bookmark folders from the connected X account."""
+        """Returns your X account's bookmark folders, else 424 `account_required`.
+
+        Folders
+        need X Premium, else 424 `bookmark_folders_unavailable`.
+
+        Args:
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/x/bookmarks/folders",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {"cursor": cursor}, bookmark_retrieve_folders_params.BookmarkRetrieveFoldersParams
+                ),
             ),
             cast_to=BookmarkRetrieveFoldersResponse,
         )

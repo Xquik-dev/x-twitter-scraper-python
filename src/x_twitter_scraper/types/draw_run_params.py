@@ -26,6 +26,7 @@ class DrawRunParams(TypedDict, total=False):
     filter_min_followers: Annotated[int, PropertyInfo(alias="filterMinFollowers")]
 
     must_follow_username: Annotated[str, PropertyInfo(alias="mustFollowUsername")]
+    """X username entrants must follow, with or without @"""
 
     must_retweet: Annotated[bool, PropertyInfo(alias="mustRetweet")]
 
@@ -38,3 +39,5 @@ class DrawRunParams(TypedDict, total=False):
     unique_authors_only: Annotated[bool, PropertyInfo(alias="uniqueAuthorsOnly")]
 
     winner_count: Annotated[int, PropertyInfo(alias="winnerCount")]
+
+    idempotency_key: Annotated[str, PropertyInfo(alias="Idempotency-Key")]

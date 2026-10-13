@@ -10,7 +10,13 @@ from typing import List
 
 import httpx
 
-from ..types import webhook_create_params, webhook_update_params
+from ..types import (
+    webhook_list_params,
+    webhook_create_params,
+    webhook_update_params,
+    webhook_list_deliveries_params,
+    webhook_create_telegram_link_params,
+)
 from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from .._utils import path_template, maybe_transform, async_maybe_transform
 from .._compat import cached_property
@@ -30,6 +36,7 @@ from ..types.webhook_create_response import WebhookCreateResponse
 from ..types.webhook_resume_response import WebhookResumeResponse
 from ..types.webhook_deactivate_response import WebhookDeactivateResponse
 from ..types.webhook_list_deliveries_response import WebhookListDeliveriesResponse
+from ..types.webhook_create_telegram_link_response import WebhookCreateTelegramLinkResponse
 
 __all__ = ["WebhooksResource", "AsyncWebhooksResource"]
 
@@ -74,7 +81,9 @@ class WebhooksResource(SyncAPIResource):
         Args:
           event_types: Array of event types to subscribe to.
 
-          url: HTTPS URL
+          url: HTTPS URL. A Discord channel webhook URL gets each event as a Discord message, &
+              a Slack incoming webhook URL as a Slack message. To deliver to Telegram, use
+              POST /webhooks/telegram instead.
 
           extra_headers: Send extra headers
 
@@ -148,6 +157,8 @@ class WebhooksResource(SyncAPIResource):
     def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -155,13 +166,81 @@ class WebhooksResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListResponse:
-        """Returns configured webhook endpoints and delivery states."""
+        """
+        Returns configured webhook endpoints and delivery states.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/webhooks",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    webhook_list_params.WebhookListParams,
+                ),
             ),
             cast_to=WebhookListResponse,
+        )
+
+    def create_telegram_link(
+        self,
+        *,
+        event_types: List[EventType] | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> WebhookCreateTelegramLinkResponse:
+        """
+        Returns a t.me link to @XquikBot that connects a Telegram chat to the account's
+        monitor events. Opening it & pressing Start connects the chat, which then gets
+        each event as a message. The link works once, within 15 minutes. The chat
+        appears in the webhook list with the URL telegram:<chat ID>, with deliveries,
+        retries & resume as any webhook. In the chat, /stop pauses its alerts. It costs
+        no credits.
+
+        Args:
+          event_types: Array of event types to subscribe to.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._post(
+            "/webhooks/telegram",
+            body=maybe_transform(
+                {"event_types": event_types}, webhook_create_telegram_link_params.WebhookCreateTelegramLinkParams
+            ),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=WebhookCreateTelegramLinkResponse,
         )
 
     def deactivate(
@@ -201,6 +280,8 @@ class WebhooksResource(SyncAPIResource):
         self,
         id: str,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -209,9 +290,15 @@ class WebhooksResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListDeliveriesResponse:
         """
-        Returns recent delivery attempts and response outcomes.
+        Returns delivery attempts and response outcomes, newest first.
 
         Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum deliveries per page: 1 to 100, default 100. Pass nextCursor as cursor
+              for the next page.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -225,7 +312,17 @@ class WebhooksResource(SyncAPIResource):
         return self._get(
             path_template("/webhooks/{id}/deliveries", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    webhook_list_deliveries_params.WebhookListDeliveriesParams,
+                ),
             ),
             cast_to=WebhookListDeliveriesResponse,
         )
@@ -337,7 +434,9 @@ class AsyncWebhooksResource(AsyncAPIResource):
         Args:
           event_types: Array of event types to subscribe to.
 
-          url: HTTPS URL
+          url: HTTPS URL. A Discord channel webhook URL gets each event as a Discord message, &
+              a Slack incoming webhook URL as a Slack message. To deliver to Telegram, use
+              POST /webhooks/telegram instead.
 
           extra_headers: Send extra headers
 
@@ -411,6 +510,8 @@ class AsyncWebhooksResource(AsyncAPIResource):
     async def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -418,13 +519,81 @@ class AsyncWebhooksResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListResponse:
-        """Returns configured webhook endpoints and delivery states."""
+        """
+        Returns configured webhook endpoints and delivery states.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/webhooks",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    webhook_list_params.WebhookListParams,
+                ),
             ),
             cast_to=WebhookListResponse,
+        )
+
+    async def create_telegram_link(
+        self,
+        *,
+        event_types: List[EventType] | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> WebhookCreateTelegramLinkResponse:
+        """
+        Returns a t.me link to @XquikBot that connects a Telegram chat to the account's
+        monitor events. Opening it & pressing Start connects the chat, which then gets
+        each event as a message. The link works once, within 15 minutes. The chat
+        appears in the webhook list with the URL telegram:<chat ID>, with deliveries,
+        retries & resume as any webhook. In the chat, /stop pauses its alerts. It costs
+        no credits.
+
+        Args:
+          event_types: Array of event types to subscribe to.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._post(
+            "/webhooks/telegram",
+            body=await async_maybe_transform(
+                {"event_types": event_types}, webhook_create_telegram_link_params.WebhookCreateTelegramLinkParams
+            ),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=WebhookCreateTelegramLinkResponse,
         )
 
     async def deactivate(
@@ -464,6 +633,8 @@ class AsyncWebhooksResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -472,9 +643,15 @@ class AsyncWebhooksResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> WebhookListDeliveriesResponse:
         """
-        Returns recent delivery attempts and response outcomes.
+        Returns delivery attempts and response outcomes, newest first.
 
         Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum deliveries per page: 1 to 100, default 100. Pass nextCursor as cursor
+              for the next page.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -488,7 +665,17 @@ class AsyncWebhooksResource(AsyncAPIResource):
         return await self._get(
             path_template("/webhooks/{id}/deliveries", id=id),
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    webhook_list_deliveries_params.WebhookListDeliveriesParams,
+                ),
             ),
             cast_to=WebhookListDeliveriesResponse,
         )
@@ -573,6 +760,9 @@ class WebhooksResourceWithRawResponse:
         self.list = to_raw_response_wrapper(
             webhooks.list,
         )
+        self.create_telegram_link = to_raw_response_wrapper(
+            webhooks.create_telegram_link,
+        )
         self.deactivate = to_raw_response_wrapper(
             webhooks.deactivate,
         )
@@ -599,6 +789,9 @@ class AsyncWebhooksResourceWithRawResponse:
         )
         self.list = async_to_raw_response_wrapper(
             webhooks.list,
+        )
+        self.create_telegram_link = async_to_raw_response_wrapper(
+            webhooks.create_telegram_link,
         )
         self.deactivate = async_to_raw_response_wrapper(
             webhooks.deactivate,
@@ -627,6 +820,9 @@ class WebhooksResourceWithStreamingResponse:
         self.list = to_streamed_response_wrapper(
             webhooks.list,
         )
+        self.create_telegram_link = to_streamed_response_wrapper(
+            webhooks.create_telegram_link,
+        )
         self.deactivate = to_streamed_response_wrapper(
             webhooks.deactivate,
         )
@@ -653,6 +849,9 @@ class AsyncWebhooksResourceWithStreamingResponse:
         )
         self.list = async_to_streamed_response_wrapper(
             webhooks.list,
+        )
+        self.create_telegram_link = async_to_streamed_response_wrapper(
+            webhooks.create_telegram_link,
         )
         self.deactivate = async_to_streamed_response_wrapper(
             webhooks.deactivate,

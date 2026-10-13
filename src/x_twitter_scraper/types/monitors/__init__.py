@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from .keyword_list_params import KeywordListParams as KeywordListParams
 from .keyword_create_params import KeywordCreateParams as KeywordCreateParams
 from .keyword_list_response import KeywordListResponse as KeywordListResponse
 from .keyword_update_params import KeywordUpdateParams as KeywordUpdateParams

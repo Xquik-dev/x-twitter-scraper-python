@@ -15,7 +15,10 @@ __all__ = ["BookmarkListParams"]
 
 class BookmarkListParams(TypedDict, total=False):
     cursor: str
-    """Pagination cursor for bookmarks"""
+    """Pagination cursor for bookmarks.
+
+    Also read as next_cursor, next_token, pagination_token or continuation_token.
+    """
 
     folder_id: Annotated[str, PropertyInfo(alias="folderId")]
-    """Optional bookmark folder ID"""
+    """Optional bookmark folder ID. Folders need X Premium."""

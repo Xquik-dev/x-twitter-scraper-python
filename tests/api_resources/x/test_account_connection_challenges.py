@@ -27,7 +27,7 @@ class TestAccountConnectionChallenges:
     @parametrize
     def test_method_submit(self, client: XTwitterScraper) -> None:
         account_connection_challenge = client.x.account_connection_challenges.submit(
-            id="id",
+            id="xch_AbCdEfGhIjKlMnOp",
             email_code="<EMAIL_VERIFICATION_CODE>",
         )
         assert_matches_type(AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"])
@@ -36,7 +36,7 @@ class TestAccountConnectionChallenges:
     @parametrize
     def test_raw_response_submit(self, client: XTwitterScraper) -> None:
         response = client.x.account_connection_challenges.with_raw_response.submit(
-            id="id",
+            id="xch_AbCdEfGhIjKlMnOp",
             email_code="<EMAIL_VERIFICATION_CODE>",
         )
 
@@ -49,7 +49,7 @@ class TestAccountConnectionChallenges:
     @parametrize
     def test_streaming_response_submit(self, client: XTwitterScraper) -> None:
         with client.x.account_connection_challenges.with_streaming_response.submit(
-            id="id",
+            id="xch_AbCdEfGhIjKlMnOp",
             email_code="<EMAIL_VERIFICATION_CODE>",
         ) as response:
             assert not response.is_closed
@@ -81,7 +81,7 @@ class TestAsyncAccountConnectionChallenges:
     @parametrize
     async def test_method_submit(self, async_client: AsyncXTwitterScraper) -> None:
         account_connection_challenge = await async_client.x.account_connection_challenges.submit(
-            id="id",
+            id="xch_AbCdEfGhIjKlMnOp",
             email_code="<EMAIL_VERIFICATION_CODE>",
         )
         assert_matches_type(AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"])
@@ -90,7 +90,7 @@ class TestAsyncAccountConnectionChallenges:
     @parametrize
     async def test_raw_response_submit(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.account_connection_challenges.with_raw_response.submit(
-            id="id",
+            id="xch_AbCdEfGhIjKlMnOp",
             email_code="<EMAIL_VERIFICATION_CODE>",
         )
 
@@ -103,7 +103,7 @@ class TestAsyncAccountConnectionChallenges:
     @parametrize
     async def test_streaming_response_submit(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.account_connection_challenges.with_streaming_response.submit(
-            id="id",
+            id="xch_AbCdEfGhIjKlMnOp",
             email_code="<EMAIL_VERIFICATION_CODE>",
         ) as response:
             assert not response.is_closed

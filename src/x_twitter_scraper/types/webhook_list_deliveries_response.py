@@ -4,7 +4,9 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
+
+from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 from .delivery import Delivery
@@ -14,3 +16,7 @@ __all__ = ["WebhookListDeliveriesResponse"]
 
 class WebhookListDeliveriesResponse(BaseModel):
     deliveries: List[Delivery]
+
+    has_more: bool = FieldInfo(alias="hasMore")
+
+    next_cursor: Optional[str] = FieldInfo(alias="nextCursor", default=None)

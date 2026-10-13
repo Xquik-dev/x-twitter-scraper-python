@@ -21,3 +21,6 @@ class KeywordCreateParams(TypedDict, total=False):
 
     query: Required[str]
     """X search query to monitor. Whitespace is normalized."""
+
+    name: str
+    """Your own label for the keyword monitor. Its events carry it as monitorName."""

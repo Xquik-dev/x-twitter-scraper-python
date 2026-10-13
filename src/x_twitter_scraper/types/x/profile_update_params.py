@@ -20,12 +20,13 @@ class ProfileUpdateParams(TypedDict, total=False):
     idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]
 
     description: str
-    """Bio description"""
+    """Bio, up to 160 characters. An emoji counts as 2."""
 
     location: str
+    """Location, up to 30 characters. An emoji counts as 2."""
 
     name: str
-    """Display name"""
+    """Display name, 1 to 50 characters. An emoji counts as 2."""
 
     url: str
     """Website URL"""

@@ -1,7 +1,7 @@
 {
   "$schema": "https://context7.com/schema/context7.json",
   "projectTitle": "Xquik Python SDK",
-  "description": "Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp.",
+  "description": "X API and Twitter API alternative for Python. Scrape Twitter with a typed Twitter scraper and tweet scraper. Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp.",
   "branch": "main",
   "excludeFolders": [
     ".devcontainer",

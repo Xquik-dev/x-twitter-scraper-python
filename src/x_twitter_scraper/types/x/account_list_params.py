@@ -9,11 +9,14 @@ __all__ = ["AccountListParams"]
 
 class AccountListParams(TypedDict, total=False):
     cursor: str
-    """Previous nextCursor. Offset pagination is not supported."""
+    """Previous nextCursor.
+
+    The after alias also works. Offset pagination is not supported.
+    """
 
     limit: int
     """Maximum items per page: 1 to 100, default 50.
 
-    Credits can reduce paid results. The endpoint returns 402 insufficient_credits
-    when none are affordable.
+    Credits can reduce paid results. With none affordable, it returns 402
+    insufficient_credits.
     """

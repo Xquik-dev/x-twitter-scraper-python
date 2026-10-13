@@ -63,10 +63,13 @@ class DraftsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
-        """
-        Saves editable post text as an account draft.
+        """Stores a private Xquik draft.
+
+        It never publishes or creates native X drafts.
 
         Args:
+          text: Draft text, up to 25,000 characters. An emoji counts as 2.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -102,8 +105,9 @@ class DraftsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
-        """
-        Returns one saved draft owned by the authenticated account.
+        """Returns one private Xquik draft.
+
+        Native X drafts remain inaccessible.
 
         Args:
           extra_headers: Send extra headers
@@ -136,14 +140,15 @@ class DraftsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftListResponse:
-        """
-        Returns saved drafts owned by the authenticated account.
+        """Lists private Xquik drafts.
+
+        It cannot access native X drafts.
 
         Args:
-          after_cursor: Cursor for pagination
+          after_cursor: Cursor for pagination. The after alias also works.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -183,7 +188,7 @@ class DraftsResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Permanently removes one saved draft.
+        Deletes one Xquik draft, not native X drafts or published posts.
 
         Args:
           extra_headers: Send extra headers
@@ -241,10 +246,13 @@ class AsyncDraftsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
-        """
-        Saves editable post text as an account draft.
+        """Stores a private Xquik draft.
+
+        It never publishes or creates native X drafts.
 
         Args:
+          text: Draft text, up to 25,000 characters. An emoji counts as 2.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -280,8 +288,9 @@ class AsyncDraftsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftDetail:
-        """
-        Returns one saved draft owned by the authenticated account.
+        """Returns one private Xquik draft.
+
+        Native X drafts remain inaccessible.
 
         Args:
           extra_headers: Send extra headers
@@ -314,14 +323,15 @@ class AsyncDraftsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DraftListResponse:
-        """
-        Returns saved drafts owned by the authenticated account.
+        """Lists private Xquik drafts.
+
+        It cannot access native X drafts.
 
         Args:
-          after_cursor: Cursor for pagination
+          after_cursor: Cursor for pagination. The after alias also works.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -361,7 +371,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> None:
         """
-        Permanently removes one saved draft.
+        Deletes one Xquik draft, not native X drafts or published posts.
 
         Args:
           extra_headers: Send extra headers

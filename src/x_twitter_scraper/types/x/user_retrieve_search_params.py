@@ -20,8 +20,46 @@ class UserRetrieveSearchParams(TypedDict, total=False):
     bio_contains: Annotated[str, PropertyInfo(alias="bioContains")]
     """Match any comma-separated or line-separated bio term, ignoring case."""
 
+    blue_verified_only: Annotated[bool, PropertyInfo(alias="blueVerifiedOnly")]
+    """Only return profiles X marks as blue verified.
+
+    X marks many business & government accounts blue too. Use verifiedType for 1
+    badge type.
+    """
+
+    business_email_only: Annotated[bool, PropertyInfo(alias="businessEmailOnly")]
+    """Only return profiles that publish an email outside free webmail, such as Gmail."""
+
     cursor: str
-    """Pagination cursor for user search"""
+    """Pagination cursor for collection results.
+
+    Also read as next_cursor, next_token, pagination_token or continuation_token.
+    """
+
+    email_domains: Annotated[str, PropertyInfo(alias="emailDomains")]
+    """Only return profiles with an email at one of these domains.
+
+    Separate domains with commas. Subdomains match.
+    """
+
+    enrich_profiles: Annotated[bool, PropertyInfo(alias="enrichProfiles")]
+    """Add each row's full profile, as GET /x/users/{id} returns it.
+
+    Pages take several seconds longer.
+    """
+
+    fields: str
+    """Fields to keep in each row, comma-separated.
+
+    Use dots for nested fields, such as author.username. A list keeps the field in
+    each item. Case & underscores do not matter. A row that lacks a field leaves it
+    out. Cursors, counts & diagnostics always stay. An unknown name answers 400
+    unknown_field with the valid names, before any read. The price stays the same.
+    SDK row types then hold only the named fields.
+    """
+
+    has_email: Annotated[bool, PropertyInfo(alias="hasEmail")]
+    """Only return profiles that publish an email."""
 
     has_location: Annotated[bool, PropertyInfo(alias="hasLocation")]
     """Only return profiles with a location."""
@@ -53,11 +91,17 @@ class UserRetrieveSearchParams(TypedDict, total=False):
     min_statuses: Annotated[int, PropertyInfo(alias="minStatuses")]
     """Minimum post count. minPosts is also accepted."""
 
-    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum page items (1-100, default 20).
+    omit: str
+    """Fields to drop from each row, comma-separated.
 
-    Source, filters, or credits can reduce results. Follow next_cursor while the
-    response reports more pages. Deprecated limit and count aliases remain accepted.
+    It takes the same names as fields. With fields, it drops from the kept fields.
+    """
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Items per page (1-100, default 20).
+
+    Source, filters or credits can return fewer. Follow next_cursor for more pages.
+    Aliases: limit, count, max_results, maxItems, max_items & per_page.
     """
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]

@@ -30,6 +30,12 @@ class XAccountDetail(BaseModel):
 
     x_username: str = FieldInfo(alias="xUsername")
 
+    connected_at: Optional[datetime] = FieldInfo(alias="connectedAt", default=None)
+    """Last connection or reconnection time of this account.
+
+    Omitted before its first login.
+    """
+
     cookies_obtained_at: Optional[datetime] = FieldInfo(alias="cookiesObtainedAt", default=None)
 
     updated_at: Optional[datetime] = FieldInfo(alias="updatedAt", default=None)

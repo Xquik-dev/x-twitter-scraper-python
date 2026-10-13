@@ -18,18 +18,17 @@ class DrawRunResponse(BaseModel):
     id: str
 
     total_entries: int = FieldInfo(alias="totalEntries")
-    """Candidate entries inspected for this draw after the credit-derived cap.
-
-    This may be lower than the source tweet's full reply count.
+    """
+    Entries inspected after the credit cap, which can be fewer than the post's
+    replies.
     """
 
     tweet_id: str = FieldInfo(alias="tweetId")
 
     valid_entries: int = FieldInfo(alias="validEntries")
-    """Entries from the inspected candidate set that passed all filters.
+    """Inspected entries that passed every filter.
 
-    This is not necessarily every valid reply on the source tweet when credits cap
-    inspection.
+    A credit cap can leave valid replies uninspected.
     """
 
     winners: List[Winner]

@@ -13,6 +13,7 @@ __all__ = ["DraftCreateParams"]
 
 class DraftCreateParams(TypedDict, total=False):
     text: Required[str]
+    """Draft text, up to 25,000 characters. An emoji counts as 2."""
 
     goal: Literal["engagement", "followers", "authority", "conversation"]
 

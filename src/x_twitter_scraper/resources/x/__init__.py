@@ -20,6 +20,14 @@ from .dm import (
     DmResourceWithStreamingResponse,
     AsyncDmResourceWithStreamingResponse,
 )
+from .jobs import (
+    JobsResource,
+    AsyncJobsResource,
+    JobsResourceWithRawResponse,
+    AsyncJobsResourceWithRawResponse,
+    JobsResourceWithStreamingResponse,
+    AsyncJobsResourceWithStreamingResponse,
+)
 from .lists import (
     ListsResource,
     AsyncListsResource,
@@ -43,6 +51,14 @@ from .users import (
     AsyncUsersResourceWithRawResponse,
     UsersResourceWithStreamingResponse,
     AsyncUsersResourceWithStreamingResponse,
+)
+from .spaces import (
+    SpacesResource,
+    AsyncSpacesResource,
+    SpacesResourceWithRawResponse,
+    AsyncSpacesResourceWithRawResponse,
+    SpacesResourceWithStreamingResponse,
+    AsyncSpacesResourceWithStreamingResponse,
 )
 from .tweets import (
     TweetsResource,
@@ -68,6 +84,14 @@ from .accounts import (
     AccountsResourceWithStreamingResponse,
     AsyncAccountsResourceWithStreamingResponse,
 )
+from .analysis import (
+    AnalysisResource,
+    AsyncAnalysisResource,
+    AnalysisResourceWithRawResponse,
+    AsyncAnalysisResourceWithRawResponse,
+    AnalysisResourceWithStreamingResponse,
+    AsyncAnalysisResourceWithStreamingResponse,
+)
 from .bookmarks import (
     BookmarksResource,
     AsyncBookmarksResource,
@@ -83,6 +107,14 @@ from .followers import (
     AsyncFollowersResourceWithRawResponse,
     FollowersResourceWithStreamingResponse,
     AsyncFollowersResourceWithStreamingResponse,
+)
+from .broadcasts import (
+    BroadcastsResource,
+    AsyncBroadcastsResource,
+    BroadcastsResourceWithRawResponse,
+    AsyncBroadcastsResourceWithRawResponse,
+    BroadcastsResourceWithStreamingResponse,
+    AsyncBroadcastsResourceWithStreamingResponse,
 )
 from .communities import (
     CommunitiesResource,
@@ -124,6 +156,12 @@ __all__ = [
     "AsyncWriteActionsResourceWithRawResponse",
     "WriteActionsResourceWithStreamingResponse",
     "AsyncWriteActionsResourceWithStreamingResponse",
+    "AnalysisResource",
+    "AsyncAnalysisResource",
+    "AnalysisResourceWithRawResponse",
+    "AsyncAnalysisResourceWithRawResponse",
+    "AnalysisResourceWithStreamingResponse",
+    "AsyncAnalysisResourceWithStreamingResponse",
     "TweetsResource",
     "AsyncTweetsResource",
     "TweetsResourceWithRawResponse",
@@ -142,6 +180,12 @@ __all__ = [
     "AsyncFollowersResourceWithRawResponse",
     "FollowersResourceWithStreamingResponse",
     "AsyncFollowersResourceWithStreamingResponse",
+    "JobsResource",
+    "AsyncJobsResource",
+    "JobsResourceWithRawResponse",
+    "AsyncJobsResourceWithRawResponse",
+    "JobsResourceWithStreamingResponse",
+    "AsyncJobsResourceWithStreamingResponse",
     "DmResource",
     "AsyncDmResource",
     "DmResourceWithRawResponse",
@@ -196,6 +240,18 @@ __all__ = [
     "AsyncListsResourceWithRawResponse",
     "ListsResourceWithStreamingResponse",
     "AsyncListsResourceWithStreamingResponse",
+    "BroadcastsResource",
+    "AsyncBroadcastsResource",
+    "BroadcastsResourceWithRawResponse",
+    "AsyncBroadcastsResourceWithRawResponse",
+    "BroadcastsResourceWithStreamingResponse",
+    "AsyncBroadcastsResourceWithStreamingResponse",
+    "SpacesResource",
+    "AsyncSpacesResource",
+    "SpacesResourceWithRawResponse",
+    "AsyncSpacesResourceWithRawResponse",
+    "SpacesResourceWithStreamingResponse",
+    "AsyncSpacesResourceWithStreamingResponse",
     "XResource",
     "AsyncXResource",
     "XResourceWithRawResponse",

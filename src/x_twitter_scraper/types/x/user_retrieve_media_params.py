@@ -35,7 +35,10 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     """Conversation ID filter."""
 
     cursor: str
-    """Pagination cursor for media tweets"""
+    """Pagination cursor for collection results.
+
+    Also read as next_cursor, next_token, pagination_token or continuation_token.
+    """
 
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
     """Match this literal phrase, including any hyphens."""
@@ -45,6 +48,16 @@ class UserRetrieveMediaParams(TypedDict, total=False):
 
     exclude_words: Annotated[str, PropertyInfo(alias="excludeWords")]
     """Words or quoted phrases to exclude. Separate with spaces, commas, or lines."""
+
+    fields: str
+    """Fields to keep in each row, comma-separated.
+
+    Use dots for nested fields, such as author.username. A list keeps the field in
+    each item. Case & underscores do not matter. A row that lacks a field leaves it
+    out. Cursors, counts & diagnostics always stay. An unknown name answers 400
+    unknown_field with the valid names, before any read. The price stays the same.
+    SDK row types then hold only the named fields.
+    """
 
     from_user: Annotated[str, PropertyInfo(alias="fromUser")]
     """Filter by author username."""
@@ -62,10 +75,10 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     """Filter by language. Alias `lang` is accepted."""
 
     max_faves: Annotated[int, PropertyInfo(alias="maxFaves")]
-    """Maximum likes threshold. maxLikes is also accepted."""
+    """Maximum likes threshold. maxLikes & max_likes also work."""
 
     max_id: Annotated[str, PropertyInfo(alias="maxId")]
-    """Return Tweets older than this Tweet ID."""
+    """Return Tweets at or below this ID."""
 
     max_quotes: Annotated[int, PropertyInfo(alias="maxQuotes")]
     """Maximum quotes threshold."""
@@ -111,11 +124,17 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     news: bool
     """Only return news results."""
 
-    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum page items (1-100, default 20).
+    omit: str
+    """Fields to drop from each row, comma-separated.
 
-    Source, filters, or credits can reduce results. Follow next_cursor while the
-    response reports more pages. Deprecated limit and count aliases remain accepted.
+    It takes the same names as fields. With fields, it drops from the kept fields.
+    """
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Items per page (1-100, default 20).
+
+    Source, filters or credits can return fewer. Follow next_cursor for more pages.
+    Aliases: limit, count, max_results, maxItems, max_items & per_page.
     """
 
     quotes: Literal["include", "exclude", "only"]
@@ -125,7 +144,7 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     """Only quotes of this tweet ID."""
 
     replies: Literal["include", "exclude", "only"]
-    """Only when the caller requests a reply mode."""
+    """Reply mode. Exclude keeps own-thread replies."""
 
     retweets: Literal["include", "exclude", "only"]
     """Only when the caller requests a repost mode."""
@@ -137,10 +156,10 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     """Enable the safe-search filter."""
 
     since_date: Annotated[Union[str, date], PropertyInfo(alias="sinceDate", format="iso8601")]
-    """Start date in YYYY-MM-DD format."""
+    """Start date in YYYY-MM-DD format, as a UTC day."""
 
     since_id: Annotated[str, PropertyInfo(alias="sinceId")]
-    """Return Tweets newer than this Tweet ID."""
+    """Return Tweets whose IDs exceed this ID."""
 
     source: str
     """Match the source application."""
@@ -149,7 +168,7 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     """Filter replies sent to a username."""
 
     until_date: Annotated[Union[str, date], PropertyInfo(alias="untilDate", format="iso8601")]
-    """End date in YYYY-MM-DD format."""
+    """End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count."""
 
     url: str
     """URL substring or domain filter."""
@@ -161,4 +180,7 @@ class UserRetrieveMediaParams(TypedDict, total=False):
     """Set the radius for the near filter."""
 
     within_time: Annotated[str, PropertyInfo(alias="withinTime")]
-    """Match Tweets inside a recent time window."""
+    """Keeps Tweets from a recent window, such as 90m or 7d.
+
+    Use a whole number & s, m, h or d.
+    """

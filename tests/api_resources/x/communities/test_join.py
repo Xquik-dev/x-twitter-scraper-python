@@ -28,7 +28,7 @@ class TestJoin:
     @parametrize
     def test_method_create(self, client: XTwitterScraper) -> None:
         join = client.x.communities.join.create(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -38,7 +38,7 @@ class TestJoin:
     @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.x.communities.join.with_raw_response.create(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -52,7 +52,7 @@ class TestJoin:
     @parametrize
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.x.communities.join.with_streaming_response.create(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         ) as response:
@@ -78,7 +78,7 @@ class TestJoin:
     @parametrize
     def test_method_delete_all(self, client: XTwitterScraper) -> None:
         join = client.x.communities.join.delete_all(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -88,7 +88,7 @@ class TestJoin:
     @parametrize
     def test_raw_response_delete_all(self, client: XTwitterScraper) -> None:
         response = client.x.communities.join.with_raw_response.delete_all(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -102,7 +102,7 @@ class TestJoin:
     @parametrize
     def test_streaming_response_delete_all(self, client: XTwitterScraper) -> None:
         with client.x.communities.join.with_streaming_response.delete_all(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         ) as response:
@@ -134,7 +134,7 @@ class TestAsyncJoin:
     @parametrize
     async def test_method_create(self, async_client: AsyncXTwitterScraper) -> None:
         join = await async_client.x.communities.join.create(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -144,7 +144,7 @@ class TestAsyncJoin:
     @parametrize
     async def test_raw_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.join.with_raw_response.create(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -158,7 +158,7 @@ class TestAsyncJoin:
     @parametrize
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.join.with_streaming_response.create(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         ) as response:
@@ -184,7 +184,7 @@ class TestAsyncJoin:
     @parametrize
     async def test_method_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         join = await async_client.x.communities.join.delete_all(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -194,7 +194,7 @@ class TestAsyncJoin:
     @parametrize
     async def test_raw_response_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.join.with_raw_response.delete_all(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         )
@@ -208,7 +208,7 @@ class TestAsyncJoin:
     @parametrize
     async def test_streaming_response_delete_all(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.join.with_streaming_response.delete_all(
-            id="id",
+            id="1500000000000000000",
             account="@elonmusk",
             idempotency_key="Idempotency-Key",
         ) as response:

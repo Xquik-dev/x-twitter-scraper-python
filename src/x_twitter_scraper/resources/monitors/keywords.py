@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 
 import httpx
 
@@ -21,7 +21,7 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.monitors import keyword_create_params, keyword_update_params
+from ...types.monitors import keyword_list_params, keyword_create_params, keyword_update_params
 from ...types.shared.event_type import EventType
 from ...types.monitors.keyword_list_response import KeywordListResponse
 from ...types.monitors.keyword_create_response import KeywordCreateResponse
@@ -59,6 +59,7 @@ class KeywordsResource(SyncAPIResource):
         *,
         event_types: List[EventType],
         query: str,
+        name: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -66,16 +67,18 @@ class KeywordsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordCreateResponse:
-        """Creates a keyword monitor.
+        """Creates a keyword monitor, with no count limit.
 
-        Keyword monitors are unlimited. Active monitors check
-        every 1 second and cost 21 credits per hour. Events and webhook deliveries are
-        included. Creation requires available credits for the first hourly charge.
+        Active monitors check every
+        second for 30 credits an hour, events & webhook deliveries included. That hourly
+        price is a monitor's only charge. Creation needs the credits of the first hour.
 
         Args:
           event_types: Array of event types to subscribe to.
 
           query: X search query to monitor. Whitespace is normalized.
+
+          name: Your own label for the keyword monitor. Its events carry it as monitorName.
 
           extra_headers: Send extra headers
 
@@ -91,6 +94,7 @@ class KeywordsResource(SyncAPIResource):
                 {
                     "event_types": event_types,
                     "query": query,
+                    "name": name,
                 },
                 keyword_create_params.KeywordCreateParams,
             ),
@@ -139,6 +143,7 @@ class KeywordsResource(SyncAPIResource):
         *,
         event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
+        name: Optional[str] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -151,6 +156,8 @@ class KeywordsResource(SyncAPIResource):
 
         Args:
           event_types: Array of event types to subscribe to.
+
+          name: New label for the keyword monitor. Send null to remove it.
 
           extra_headers: Send extra headers
 
@@ -168,6 +175,7 @@ class KeywordsResource(SyncAPIResource):
                 {
                     "event_types": event_types,
                     "is_active": is_active,
+                    "name": name,
                 },
                 keyword_update_params.KeywordUpdateParams,
             ),
@@ -180,6 +188,8 @@ class KeywordsResource(SyncAPIResource):
     def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -187,11 +197,38 @@ class KeywordsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordListResponse:
-        """Returns keyword monitors with their current operating states."""
+        """
+        Returns keyword monitors with their current operating states.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/monitors/keywords",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    keyword_list_params.KeywordListParams,
+                ),
             ),
             cast_to=KeywordListResponse,
         )
@@ -258,6 +295,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         *,
         event_types: List[EventType],
         query: str,
+        name: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -265,16 +303,18 @@ class AsyncKeywordsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordCreateResponse:
-        """Creates a keyword monitor.
+        """Creates a keyword monitor, with no count limit.
 
-        Keyword monitors are unlimited. Active monitors check
-        every 1 second and cost 21 credits per hour. Events and webhook deliveries are
-        included. Creation requires available credits for the first hourly charge.
+        Active monitors check every
+        second for 30 credits an hour, events & webhook deliveries included. That hourly
+        price is a monitor's only charge. Creation needs the credits of the first hour.
 
         Args:
           event_types: Array of event types to subscribe to.
 
           query: X search query to monitor. Whitespace is normalized.
+
+          name: Your own label for the keyword monitor. Its events carry it as monitorName.
 
           extra_headers: Send extra headers
 
@@ -290,6 +330,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
                 {
                     "event_types": event_types,
                     "query": query,
+                    "name": name,
                 },
                 keyword_create_params.KeywordCreateParams,
             ),
@@ -338,6 +379,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
         *,
         event_types: List[EventType] | Omit = omit,
         is_active: bool | Omit = omit,
+        name: Optional[str] | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -350,6 +392,8 @@ class AsyncKeywordsResource(AsyncAPIResource):
 
         Args:
           event_types: Array of event types to subscribe to.
+
+          name: New label for the keyword monitor. Send null to remove it.
 
           extra_headers: Send extra headers
 
@@ -367,6 +411,7 @@ class AsyncKeywordsResource(AsyncAPIResource):
                 {
                     "event_types": event_types,
                     "is_active": is_active,
+                    "name": name,
                 },
                 keyword_update_params.KeywordUpdateParams,
             ),
@@ -379,6 +424,8 @@ class AsyncKeywordsResource(AsyncAPIResource):
     async def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -386,11 +433,38 @@ class AsyncKeywordsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> KeywordListResponse:
-        """Returns keyword monitors with their current operating states."""
+        """
+        Returns keyword monitors with their current operating states.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/monitors/keywords",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    keyword_list_params.KeywordListParams,
+                ),
             ),
             cast_to=KeywordListResponse,
         )

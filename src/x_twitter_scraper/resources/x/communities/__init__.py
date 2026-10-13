@@ -12,6 +12,14 @@ from .join import (
     JoinResourceWithStreamingResponse,
     AsyncJoinResourceWithStreamingResponse,
 )
+from .media import (
+    MediaResource,
+    AsyncMediaResource,
+    MediaResourceWithRawResponse,
+    AsyncMediaResourceWithRawResponse,
+    MediaResourceWithStreamingResponse,
+    AsyncMediaResourceWithStreamingResponse,
+)
 from .tweets import (
     TweetsResource,
     AsyncTweetsResource,
@@ -42,6 +50,12 @@ __all__ = [
     "AsyncTweetsResourceWithRawResponse",
     "TweetsResourceWithStreamingResponse",
     "AsyncTweetsResourceWithStreamingResponse",
+    "MediaResource",
+    "AsyncMediaResource",
+    "MediaResourceWithRawResponse",
+    "AsyncMediaResourceWithRawResponse",
+    "MediaResourceWithStreamingResponse",
+    "AsyncMediaResourceWithStreamingResponse",
     "CommunitiesResource",
     "AsyncCommunitiesResource",
     "CommunitiesResourceWithRawResponse",

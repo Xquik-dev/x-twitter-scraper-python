@@ -45,6 +45,7 @@ class NextAction(BaseModel):
     type: Literal["poll", "retry", "verify_result", "fix_request"]
 
     after_ms: Optional[int] = FieldInfo(alias="afterMs", default=None)
+    """Milliseconds to wait before you poll or retry."""
 
     requires_new_idempotency_key: Optional[bool] = FieldInfo(alias="requiresNewIdempotencyKey", default=None)
 
@@ -101,6 +102,7 @@ class JoinCreateResponse(BaseModel):
         "unfollow",
         "remove_follower",
         "send_dm",
+        "delete_dm",
         "upload_media",
         "update_profile",
         "update_avatar",
@@ -139,7 +141,7 @@ class JoinCreateResponse(BaseModel):
     """True only when a new attempt can reasonably succeed."""
 
     safe_to_retry: bool = FieldInfo(alias="safeToRetry")
-    """True only when no write was dispatched and a new idempotency key may be used."""
+    """True only when X did not get the write and a new idempotency key may be used."""
 
     send_dispatched: bool = FieldInfo(alias="sendDispatched")
 
@@ -186,6 +188,10 @@ class JoinCreateResponse(BaseModel):
     """
 
     idempotent: Optional[bool] = None
+    """
+    True when this answers a retry of an earlier request with the same
+    Idempotency-Key.
+    """
 
     media: Optional[Dict[str, builtins.object]] = None
     """Media count, kind, size, and billing details when used."""

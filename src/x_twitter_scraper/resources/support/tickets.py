@@ -23,7 +23,7 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.support import ticket_reply_params, ticket_create_params, ticket_update_params
+from ...types.support import ticket_list_params, ticket_reply_params, ticket_create_params, ticket_update_params
 from ...types.support.ticket_list_response import TicketListResponse
 from ...types.support.ticket_reply_response import TicketReplyResponse
 from ...types.support.ticket_create_response import TicketCreateResponse
@@ -182,6 +182,8 @@ class TicketsResource(SyncAPIResource):
     def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -189,11 +191,38 @@ class TicketsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketListResponse:
-        """Returns support tickets owned by the authenticated user."""
+        """
+        Returns support tickets owned by the authenticated user, latest activity first.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return self._get(
             "/support/tickets",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    ticket_list_params.TicketListParams,
+                ),
             ),
             cast_to=TicketListResponse,
         )
@@ -398,6 +427,8 @@ class AsyncTicketsResource(AsyncAPIResource):
     async def list(
         self,
         *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -405,11 +436,38 @@ class AsyncTicketsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TicketListResponse:
-        """Returns support tickets owned by the authenticated user."""
+        """
+        Returns support tickets owned by the authenticated user, latest activity first.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page: 1 to 200, default 200. Pass nextCursor as cursor for the
+              next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
         return await self._get(
             "/support/tickets",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    ticket_list_params.TicketListParams,
+                ),
             ),
             cast_to=TicketListResponse,
         )

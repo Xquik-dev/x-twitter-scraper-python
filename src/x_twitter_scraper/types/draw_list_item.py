@@ -25,9 +25,11 @@ class DrawListItem(BaseModel):
     status: str
 
     total_entries: int = FieldInfo(alias="totalEntries")
+    """Whole number from 0."""
 
     tweet_url: str = FieldInfo(alias="tweetUrl")
 
     valid_entries: int = FieldInfo(alias="validEntries")
+    """Whole number from 0."""
 
     drawn_at: Optional[datetime] = FieldInfo(alias="drawnAt", default=None)

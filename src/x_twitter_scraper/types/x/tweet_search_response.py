@@ -31,8 +31,10 @@ class TweetSearchCoverageResponseDiagnosticStrategy(BaseModel):
     """Result counts and stop reason for one Tweet search strategy."""
 
     duplicate_count: int = FieldInfo(alias="duplicateCount")
+    """Whole number from 0."""
 
     pages_fetched: int = FieldInfo(alias="pagesFetched")
+    """Whole number from 0."""
 
     query_type: Literal["Latest", "Top"] = FieldInfo(alias="queryType")
 
@@ -44,6 +46,7 @@ class TweetSearchCoverageResponseDiagnosticStrategy(BaseModel):
     strategy: int
 
     unique_added: int = FieldInfo(alias="uniqueAdded")
+    """Whole number from 0."""
 
     window: Optional[TweetSearchCoverageResponseDiagnosticStrategyWindow] = None
     """Non-overlapping time partition used by one strategy."""
@@ -53,19 +56,27 @@ class TweetSearchCoverageResponseDiagnostic(BaseModel):
     """Coverage evidence across parallel search strategies."""
 
     complete: bool
-    """True after all active strategies exhaust their sources."""
+    """True after all active strategies exhaust their sources.
+
+    An empty read of the whole search window also ends its time slices.
+    """
 
     cursor_failure_count: int = FieldInfo(alias="cursorFailureCount")
+    """Whole number from 0."""
 
     deadline_reached: bool = FieldInfo(alias="deadlineReached")
 
     duplicate_count: int = FieldInfo(alias="duplicateCount")
+    """Whole number from 0."""
 
     failed_strategy_count: int = FieldInfo(alias="failedStrategyCount")
+    """Whole number from 0."""
 
     malformed_count: int = FieldInfo(alias="malformedCount")
+    """Whole number from 0."""
 
     pages_fetched: int = FieldInfo(alias="pagesFetched")
+    """Whole number from 0."""
 
     partitioned: bool
     """Whether bounded time windows ran in parallel."""
@@ -78,6 +89,7 @@ class TweetSearchCoverageResponseDiagnostic(BaseModel):
     returned_tweets: int = FieldInfo(alias="returnedTweets")
 
     stalled_strategy_count: int = FieldInfo(alias="stalledStrategyCount")
+    """Whole number from 0."""
 
     strategies: List[TweetSearchCoverageResponseDiagnosticStrategy]
 

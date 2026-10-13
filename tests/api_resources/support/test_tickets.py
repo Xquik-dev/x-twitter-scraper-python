@@ -170,6 +170,15 @@ class TestTickets:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
+        ticket = client.support.tickets.list(
+            cursor="cursor",
+            limit=1,
+        )
+        assert_matches_type(TicketListResponse, ticket, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_list(self, client: XTwitterScraper) -> None:
         response = client.support.tickets.with_raw_response.list()
 
@@ -391,6 +400,15 @@ class TestAsyncTickets:
     @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         ticket = await async_client.support.tickets.list()
+        assert_matches_type(TicketListResponse, ticket, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        ticket = await async_client.support.tickets.list(
+            cursor="cursor",
+            limit=1,
+        )
         assert_matches_type(TicketListResponse, ticket, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

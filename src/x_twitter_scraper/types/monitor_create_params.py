@@ -20,4 +20,10 @@ class MonitorCreateParams(TypedDict, total=False):
     """Array of event types to subscribe to."""
 
     username: Required[str]
-    """X username (without @)"""
+    """X username to monitor, with or without @"""
+
+    name: str
+    """Your label for the monitor.
+
+    Its events carry it as monitorName. Whitespace is normalized.
+    """

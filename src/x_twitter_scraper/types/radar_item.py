@@ -43,10 +43,13 @@ class Metadata(BaseModel):
     content_url: Optional[str] = FieldInfo(alias="contentUrl", default=None)
 
     estimated_downvotes: Optional[int] = FieldInfo(alias="estimatedDownvotes", default=None)
+    """Whole number from 0."""
 
     estimated_upvotes: Optional[int] = FieldInfo(alias="estimatedUpvotes", default=None)
+    """Whole number from 0."""
 
     number_comments: Optional[int] = FieldInfo(alias="numberComments", default=None)
+    """Whole number from 0."""
 
     score: Optional[int] = None
 

@@ -4,7 +4,7 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 from pydantic import Field as FieldInfo
@@ -32,8 +32,16 @@ class Monitor(BaseModel):
 
     query: str
 
+    name: Optional[str] = None
+    """Customer-set label of the keyword monitor, when set."""
+
 
 class KeywordListResponse(BaseModel):
+    has_more: bool = FieldInfo(alias="hasMore")
+
     monitors: List[Monitor]
 
     total: int
+    """Keyword monitors on this page."""
+
+    next_cursor: Optional[str] = FieldInfo(alias="nextCursor", default=None)

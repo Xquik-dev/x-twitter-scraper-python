@@ -59,13 +59,19 @@ class ExtractionRunParams(TypedDict, total=False):
     """Any matching term or phrase (tweet_search_extractor)."""
 
     bio_contains: Annotated[str, PropertyInfo(alias="bioContains")]
-    """Bio terms separated by commas or lines."""
+    """Match any bio term, ignoring case. Separate terms with commas or lines."""
 
     blue_verified_only: Annotated[bool, PropertyInfo(alias="blueVerifiedOnly")]
-    """Return only Blue-verified Tweet authors."""
+    """Return only Blue-verified Tweet authors.
+
+    On a tool that returns users, return only profiles X marks as blue verified.
+    """
 
     bounding_box: Annotated[str, PropertyInfo(alias="boundingBox")]
     """Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)"""
+
+    business_email_only: Annotated[bool, PropertyInfo(alias="businessEmailOnly")]
+    """Require an email the profile publishes outside free webmail, such as Gmail."""
 
     card_name: Annotated[str, PropertyInfo(alias="cardName")]
     """Require Tweet cards whose name matches this value."""
@@ -87,6 +93,19 @@ class ExtractionRunParams(TypedDict, total=False):
     dedupe_mode: Annotated[Literal["none", "first", "merge"], PropertyInfo(alias="dedupeMode")]
     """Keep target duplicates, first rows, or merged overlap."""
 
+    email_domains: Annotated[str, PropertyInfo(alias="emailDomains")]
+    """Require an email at one of these domains.
+
+    Separate domains with commas. Subdomains match.
+    """
+
+    enrich_profiles: Annotated[bool, PropertyInfo(alias="enrichProfiles")]
+    """
+    Add each user's full profile to follower_explorer, following_explorer,
+    verified_follower_explorer, people_search & repost_extractor rows. Jobs take
+    longer.
+    """
+
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
     """Exact phrase to match (tweet_search_extractor)"""
 
@@ -94,7 +113,11 @@ class ExtractionRunParams(TypedDict, total=False):
     """Exclude replies from the source author."""
 
     exclude_source: Annotated[str, PropertyInfo(alias="excludeSource")]
-    """Drop Tweets from this source application."""
+    """
+    X search ignores excludeSource, so an extraction with it returns unfiltered
+    rows. Its answers carry `Deprecation` & `Sunset` headers. From 2027-01-15 an
+    extraction with it answers 424 `search_unavailable` & charges nothing.
+    """
 
     exclude_words: Annotated[str, PropertyInfo(alias="excludeWords")]
     """Excluded terms or phrases (tweet_search_extractor)."""
@@ -103,7 +126,13 @@ class ExtractionRunParams(TypedDict, total=False):
     """Filter by author username (tweet_search_extractor)"""
 
     geocode: str
-    """Restrict Tweets by latitude, longitude, and radius."""
+    """X search no longer supports geocode.
+
+    An extraction with it answers 424 `search_unavailable` & charges nothing.
+    """
+
+    has_email: Annotated[bool, PropertyInfo(alias="hasEmail")]
+    """Require an email the profile publishes."""
 
     hashtags: str
     """Matching hashtags (tweet_search_extractor)."""
@@ -148,7 +177,7 @@ class ExtractionRunParams(TypedDict, total=False):
     """Maximum following count for profile results."""
 
     max_id: Annotated[str, PropertyInfo(alias="maxId")]
-    """Require Tweets older than this ID."""
+    """Require Tweet IDs at or below this ID."""
 
     max_items_per_target: Annotated[int, PropertyInfo(alias="maxItemsPerTarget")]
     """Maximum results collected for each target."""
@@ -216,7 +245,10 @@ class ExtractionRunParams(TypedDict, total=False):
     """Restrict Tweet search to this place name."""
 
     news: bool
-    """Require news-classified Tweet results."""
+    """X search no longer supports filter:news.
+
+    An extraction with news true answers 424 `search_unavailable` & charges nothing.
+    """
 
     overlap_mode: Annotated[bool, PropertyInfo(alias="overlapMode")]
     """Shortcut for dedupeMode=merge."""
@@ -240,7 +272,10 @@ class ExtractionRunParams(TypedDict, total=False):
     """Only quotes of this tweet ID (tweet_search_extractor)"""
 
     relation_targets: Annotated[Iterable[RelationTarget], PropertyInfo(alias="relationTargets")]
-    """Profile relations processed within one job."""
+    """Profile relations processed within one job.
+
+    Protected profiles are skipped & the job ends with partial_failure.
+    """
 
     replies: Literal["include", "exclude", "only"]
     """Choose whether tweet search includes, excludes, or isolates replies."""
@@ -264,16 +299,25 @@ class ExtractionRunParams(TypedDict, total=False):
     """Reply depth scope."""
 
     search_queries: Annotated[SequenceNotStr[str], PropertyInfo(alias="searchQueries")]
-    """Search queries processed as one collection job."""
+    """Search queries processed as one collection job.
+
+    Each follows the rules of searchQuery, its structured fields & 512-character
+    limit included.
+    """
 
     search_query: Annotated[str, PropertyInfo(alias="searchQuery")]
-    """Required for tweet_search_extractor & community_search. Passed unchanged."""
+    """Required for tweet_search_extractor, people_search & community_search.
+
+    tweet_search_extractor adds the structured search fields, such as fromUser &
+    minFaves, to this query. X searches up to 512 characters. A longer tweet or
+    people search answers 400, counted with the added fields.
+    """
 
     since_date: Annotated[Union[str, date], PropertyInfo(alias="sinceDate", format="iso8601")]
     """Tweet or Community search start date."""
 
     since_id: Annotated[str, PropertyInfo(alias="sinceId")]
-    """Require Tweets newer than this ID."""
+    """Require Tweet IDs above this ID."""
 
     since_time: Annotated[Union[Union[str, datetime], int], PropertyInfo(alias="sinceTime", format="iso8601")]
     """Reply start time as ISO 8601 or Unix seconds."""
@@ -282,7 +326,10 @@ class ExtractionRunParams(TypedDict, total=False):
     """Reply result order."""
 
     source: str
-    """Require Tweets from this source application."""
+    """X search no longer supports source.
+
+    An extraction with it answers 424 `search_unavailable` & charges nothing.
+    """
 
     start_cursor: Annotated[str, PropertyInfo(alias="startCursor")]
     """Resume one reply target from this cursor."""
@@ -306,11 +353,15 @@ class ExtractionRunParams(TypedDict, total=False):
     """Mixed targets auto-routed within one job.
 
     Use tweet, replies, quotes, thread, or profile_media kinds to collect attached
-    media.
+    media. Protected profiles are skipped & the job ends with partial_failure.
     """
 
     target_space_id: Annotated[str, PropertyInfo(alias="targetSpaceId")]
-    """Required for space_explorer."""
+    """Required for space_explorer.
+
+    X names a Space's hosts & speakers without counts or bio, so Xquik reads each
+    one's profile. Rows carry it, & profile filters such as minFollowers check it.
+    """
 
     target_tweet_id: Annotated[str, PropertyInfo(alias="targetTweetId")]
 
@@ -322,7 +373,8 @@ class ExtractionRunParams(TypedDict, total=False):
     target_usernames: Annotated[SequenceNotStr[str], PropertyInfo(alias="targetUsernames")]
     """Usernames processed concurrently in one job.
 
-    With tweet_search_extractor, each username collects posts.
+    With tweet_search_extractor, each username collects posts. Post & media jobs
+    skip a protected profile & end with partial_failure.
     """
 
     to_user: Annotated[str, PropertyInfo(alias="toUser")]
@@ -347,7 +399,11 @@ class ExtractionRunParams(TypedDict, total=False):
     """Exact profile verification type."""
 
     within: str
-    """Set the radius around the requested place."""
+    """X search no longer supports within.
+
+    An extraction with it answers 424 `search_unavailable` & charges nothing. Use
+    near alone.
+    """
 
     within_time: Annotated[str, PropertyInfo(alias="withinTime")]
     """Restrict Tweets to this recent time window."""

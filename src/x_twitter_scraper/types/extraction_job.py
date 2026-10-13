@@ -52,6 +52,7 @@ class ExtractionJob(BaseModel):
     """Identifier for the extraction tool used to run a job."""
 
     total_results: int = FieldInfo(alias="totalResults")
+    """Whole number from 0."""
 
     completed_at: Optional[datetime] = FieldInfo(alias="completedAt", default=None)
 

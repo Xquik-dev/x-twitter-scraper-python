@@ -21,8 +21,8 @@ class TweetRetrieveResponse(BaseModel):
     """
 
     author: Optional[TweetAuthor] = None
-    """Tweet author profile.
+    """Author profile.
 
-    The lookup route always includes follower count and verification state. Other
-    profile fields appear when available.
+    Lookups always include follower count & verification. Other fields depend on
+    availability.
     """

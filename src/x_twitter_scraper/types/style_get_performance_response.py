@@ -18,9 +18,13 @@ class Tweet(BaseModel):
 
     text: str
 
+    bookmark_count: Optional[int] = FieldInfo(alias="bookmarkCount", default=None)
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     like_count: Optional[int] = FieldInfo(alias="likeCount", default=None)
+
+    quote_count: Optional[int] = FieldInfo(alias="quoteCount", default=None)
 
     reply_count: Optional[int] = FieldInfo(alias="replyCount", default=None)
 

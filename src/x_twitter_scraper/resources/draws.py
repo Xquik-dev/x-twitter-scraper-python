@@ -12,7 +12,7 @@ import httpx
 
 from ..types import draw_run_params, draw_list_params, draw_export_params
 from .._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
-from .._utils import path_template, maybe_transform, async_maybe_transform
+from .._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
 from .._response import (
@@ -108,10 +108,11 @@ class DrawsResource(SyncAPIResource):
         Returns giveaway draws owned by the authenticated account.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -205,6 +206,7 @@ class DrawsResource(SyncAPIResource):
         required_mentions: SequenceNotStr[str] | Omit = omit,
         unique_authors_only: bool | Omit = omit,
         winner_count: int | Omit = omit,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -212,11 +214,14 @@ class DrawsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRunResponse:
-        """
-        Checks credits, then draws winners from inspected replies and reposters.
-        Remaining credits cap inspected candidates.
+        """Checks credits, then draws winners from inspected replies & reposters.
+
+        Remaining
+        credits cap the candidates.
 
         Args:
+          must_follow_username: X username entrants must follow, with or without @
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -225,6 +230,10 @@ class DrawsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._post(
             "/draws",
             body=maybe_transform(
@@ -322,10 +331,11 @@ class AsyncDrawsResource(AsyncAPIResource):
         Returns giveaway draws owned by the authenticated account.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -419,6 +429,7 @@ class AsyncDrawsResource(AsyncAPIResource):
         required_mentions: SequenceNotStr[str] | Omit = omit,
         unique_authors_only: bool | Omit = omit,
         winner_count: int | Omit = omit,
+        idempotency_key: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -426,11 +437,14 @@ class AsyncDrawsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> DrawRunResponse:
-        """
-        Checks credits, then draws winners from inspected replies and reposters.
-        Remaining credits cap inspected candidates.
+        """Checks credits, then draws winners from inspected replies & reposters.
+
+        Remaining
+        credits cap the candidates.
 
         Args:
+          must_follow_username: X username entrants must follow, with or without @
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -439,6 +453,10 @@ class AsyncDrawsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
+        extra_headers = {
+            **strip_not_given({"Idempotency-Key": idempotency_key}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._post(
             "/draws",
             body=await async_maybe_transform(

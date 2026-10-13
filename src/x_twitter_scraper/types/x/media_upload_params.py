@@ -18,6 +18,9 @@ class MediaUploadParams(TypedDict, total=False):
     """X account (@username or ID) uploading media from URL"""
 
     url: Required[str]
-    """HTTPS URL to download and upload as media"""
+    """HTTPS URL to download and upload as media, up to 15 MB.
+
+    Another scheme gets 400 `invalid_media_url`.
+    """
 
     idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]

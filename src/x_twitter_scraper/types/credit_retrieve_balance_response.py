@@ -15,6 +15,13 @@ class CreditRetrieveBalanceResponse(BaseModel):
 
     auto_topup_enabled: bool
 
+    auto_topup_stopped: bool
+    """Whether declined charges stopped automatic top-up while it is enabled.
+
+    It stops after 3 declines in a row on one card. A paid top-up, a paid plan
+    renewal, or the next automatic top-up on a new card clears it.
+    """
+
     auto_topup_threshold: str
     """
     Credit balance threshold that triggers automatic top-up when enabled,

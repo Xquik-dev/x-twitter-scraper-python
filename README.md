@@ -1,16 +1,16 @@
-# Xquik Python SDK: Twitter Search, Followers & X Automation
+# X API & Twitter API Python SDK: Twitter scraper by Xquik
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
+Scrape Twitter from Python with this X API and Twitter API alternative.
+It is a typed Twitter scraper and tweet scraper for Python 3.10 and later.
 Use the Xquik Python SDK for Twitter search, timelines, profiles & followers.
 Manage media, webhooks & X automation through documented Xquik REST routes.
 
 [Python SDK Guide](https://docs.xquik.com/sdks/python) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
-
-[Stainless](https://www.stainless.com/) generates this SDK.
 
 ## Common Twitter & X Tasks
 

@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+import sys
+import socket
 from http import HTTPStatus
 from typing import Mapping, ClassVar, cast
 from threading import Thread
@@ -74,9 +76,20 @@ class MockAPIRequestHandler(BaseHTTPRequestHandler):
         del format, args
 
 
+class MockHTTPServer(ThreadingHTTPServer):
+    @override
+    def handle_error(
+        self, request: socket.socket | tuple[bytes, socket.socket], client_address: tuple[str, int]
+    ) -> None:
+        # Stream tests close responses early, so a client may drop a kept-alive connection.
+        if isinstance(sys.exc_info()[1], ConnectionError):
+            return
+        super().handle_error(request, client_address)
+
+
 class MockAPIServer:
     def __init__(self) -> None:
-        self._server = ThreadingHTTPServer(("127.0.0.1", 0), MockAPIRequestHandler)
+        self._server = MockHTTPServer(("127.0.0.1", 0), MockAPIRequestHandler)
         self._server.daemon_threads = True
         host, port = cast(tuple[str, int], self._server.server_address)
         self.base_url = f"http://{host}:{port}"

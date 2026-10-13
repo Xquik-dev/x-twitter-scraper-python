@@ -15,10 +15,18 @@ from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper._utils import parse_date
 from x_twitter_scraper.types.x import (
+    UserRetrieveLiveResponse,
+    UserTranslateBioResponse,
     UserRetrieveBatchResponse,
+    UserRetrieveListsResponse,
     UserRemoveFollowerResponse,
+    UserRetrieveInsightsResponse,
     UserRetrieveFollowersResponse,
     UserRetrieveFollowingResponse,
+    UserRetrieveBatchTweetsResponse,
+    UserRetrieveFollowerIdsResponse,
+    UserRetrieveFollowingIdsResponse,
+    UserRetrieveListMembershipsResponse,
     UserRetrieveVerifiedFollowersResponse,
 )
 from x_twitter_scraper.types.shared import UserProfile, PaginatedUsers, PaginatedTweets
@@ -33,7 +41,17 @@ class TestUsers:
     @parametrize
     def test_method_retrieve(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve(
-            "id",
+            id="id",
+        )
+        assert_matches_type(UserProfile, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
         )
         assert_matches_type(UserProfile, user, path=["response"])
 
@@ -41,7 +59,7 @@ class TestUsers:
     @parametrize
     def test_raw_response_retrieve(self, client: XTwitterScraper) -> None:
         response = client.x.users.with_raw_response.retrieve(
-            "id",
+            id="id",
         )
 
         assert response.is_closed is True
@@ -53,7 +71,7 @@ class TestUsers:
     @parametrize
     def test_streaming_response_retrieve(self, client: XTwitterScraper) -> None:
         with client.x.users.with_streaming_response.retrieve(
-            "id",
+            id="id",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -68,7 +86,7 @@ class TestUsers:
     def test_path_params_retrieve(self, client: XTwitterScraper) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.x.users.with_raw_response.retrieve(
-                "",
+                id="",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -123,30 +141,205 @@ class TestUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    def test_method_retrieve_batch(self, client: XTwitterScraper) -> None:
-        user = client.x.users.retrieve_batch(
-            ids="ids",
+    def test_method_retrieve_affiliates(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_affiliates(
+            id="id",
         )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_affiliates_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_affiliates(
+            id="id",
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            page_size=1,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_affiliates(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_affiliates(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_affiliates(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_affiliates(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(PaginatedUsers, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_affiliates(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_affiliates(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_articles(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_articles(
+            id="id",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_articles_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_articles(
+            id="id",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            conversation_id="conversationId",
+            cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
+            media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
+            min_likes=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            omit="entities,media",
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
+            url="url",
+            verified_only=True,
+            within_time="7d",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_articles(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_articles(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_articles(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_articles(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(PaginatedTweets, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_articles(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_articles(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_batch(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_batch()
         assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_method_retrieve_batch_with_all_params(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_batch(
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
             ids="ids",
+            location_contains="locationContains",
             max_followers=0,
+            max_following=0,
+            max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            username_contains="usernameContains",
+            usernames="nasa,@OpenAI,x.com/verge",
             verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_raw_response_retrieve_batch(self, client: XTwitterScraper) -> None:
-        response = client.x.users.with_raw_response.retrieve_batch(
-            ids="ids",
-        )
+        response = client.x.users.with_raw_response.retrieve_batch()
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -156,9 +349,7 @@ class TestUsers:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_streaming_response_retrieve_batch(self, client: XTwitterScraper) -> None:
-        with client.x.users.with_streaming_response.retrieve_batch(
-            ids="ids",
-        ) as response:
+        with client.x.users.with_streaming_response.retrieve_batch() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
@@ -166,6 +357,98 @@ class TestUsers:
             assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_batch_tweets(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_batch_tweets()
+        assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_batch_tweets_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_batch_tweets(
+            fields="id,text,author.username",
+            ids="ids",
+            omit="entities,media",
+            page_size=1,
+            usernames="nasa,@OpenAI,x.com/verge",
+        )
+        assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_batch_tweets(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_batch_tweets()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_batch_tweets(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_batch_tweets() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_follower_ids(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_follower_ids(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_follower_ids_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_follower_ids(
+            id="id",
+            cursor="cursor",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_follower_ids(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_follower_ids(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_follower_ids(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_follower_ids(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_follower_ids(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_follower_ids(
+                id="",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -182,19 +465,27 @@ class TestUsers:
             id="id",
             after="after",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             limit=1,
             location_contains="locationContains",
             max_followers=0,
             max_following=0,
+            max_scan=10000,
             max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
             min_following=0,
             min_statuses=0,
             mode="standard",
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -250,7 +541,12 @@ class TestUsers:
         user = client.x.users.retrieve_followers_you_know(
             id="id",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             location_contains="locationContains",
@@ -261,6 +557,7 @@ class TestUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -317,19 +614,27 @@ class TestUsers:
             id="id",
             after="after",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             limit=1,
             location_contains="locationContains",
             max_followers=0,
             max_following=0,
+            max_scan=10000,
             max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
             min_following=0,
             min_statuses=0,
             mode="standard",
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -373,6 +678,200 @@ class TestUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_retrieve_following_ids(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_following_ids(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_following_ids_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_following_ids(
+            id="id",
+            cursor="cursor",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_following_ids(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_following_ids(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_following_ids(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_following_ids(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_following_ids(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_following_ids(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_highlights(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_highlights(
+            id="id",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_highlights_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_highlights(
+            id="id",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            conversation_id="conversationId",
+            cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
+            media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
+            min_likes=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            omit="entities,media",
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
+            url="url",
+            verified_only=True,
+            within_time="7d",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_highlights(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_highlights(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_highlights(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_highlights(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(PaginatedTweets, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_highlights(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_highlights(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_insights(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_insights(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_insights_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_insights(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_insights(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_insights(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_insights(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_insights(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_insights(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_insights(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_method_retrieve_likes(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_likes(
             id="id",
@@ -393,6 +892,7 @@ class TestUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
@@ -414,6 +914,7 @@ class TestUsers:
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
@@ -429,7 +930,7 @@ class TestUsers:
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -469,6 +970,166 @@ class TestUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_retrieve_list_memberships(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_list_memberships(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_list_memberships_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_list_memberships(
+            id="id",
+            cursor="cursor",
+            fields="id,text,author.username",
+            omit="entities,media",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_list_memberships(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_list_memberships(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_list_memberships(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_list_memberships(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_list_memberships(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_list_memberships(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_lists(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_lists(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_lists_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_lists(
+            id="id",
+            cursor="cursor",
+            fields="id,text,author.username",
+            omit="entities,media",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_lists(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_lists(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_lists(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_lists(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_lists(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_lists(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_live(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_live(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_live_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_live(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_live(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_live(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_live(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_live(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_live(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_live(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_method_retrieve_media(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_media(
             id="id",
@@ -489,6 +1150,7 @@ class TestUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
@@ -510,6 +1172,7 @@ class TestUsers:
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
@@ -525,7 +1188,7 @@ class TestUsers:
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -585,6 +1248,7 @@ class TestUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
@@ -606,6 +1270,7 @@ class TestUsers:
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
@@ -623,7 +1288,7 @@ class TestUsers:
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -674,8 +1339,10 @@ class TestUsers:
     def test_method_retrieve_replies_with_all_params(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_replies(
             id="id",
+            advanced_query="advancedQuery",
             any_words="anyWords",
             blue_verified_only=True,
+            bounding_box="boundingBox",
             card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
@@ -683,12 +1350,15 @@ class TestUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             in_reply_to_tweet_id="inReplyToTweetId",
+            keywords="keywords",
             language="language",
+            list_id="listId",
             max_faves=0,
             max_id="maxId",
             max_quotes=0,
@@ -702,10 +1372,15 @@ class TestUsers:
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            mode="standard",
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
+            place="place",
+            place_country="placeCountry",
+            point_radius="pointRadius",
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
@@ -714,13 +1389,15 @@ class TestUsers:
             safe=True,
             since_date=parse_date("2019-12-27"),
             since_id="sinceId",
+            since_time="sinceTime",
             source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            until_time="untilTime",
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -772,7 +1449,13 @@ class TestUsers:
         user = client.x.users.retrieve_search(
             q="q",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             location_contains="locationContains",
@@ -783,6 +1466,7 @@ class TestUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -818,6 +1502,150 @@ class TestUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_retrieve_similar(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_similar(
+            id="id",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_similar_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_similar(
+            id="id",
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            page_size=1,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_similar(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_similar(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_similar(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_similar(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(PaginatedUsers, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_similar(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_similar(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_subscriptions(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_subscriptions(
+            id="id",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_subscriptions_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_subscriptions(
+            id="id",
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            page_size=1,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_subscriptions(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_subscriptions(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_subscriptions(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_subscriptions(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(PaginatedUsers, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_subscriptions(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_subscriptions(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_method_retrieve_tweets(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_tweets(
             id="id",
@@ -829,8 +1657,10 @@ class TestUsers:
     def test_method_retrieve_tweets_with_all_params(self, client: XTwitterScraper) -> None:
         user = client.x.users.retrieve_tweets(
             id="id",
+            advanced_query="advancedQuery",
             any_words="anyWords",
             blue_verified_only=True,
+            bounding_box="boundingBox",
             card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
@@ -838,13 +1668,16 @@ class TestUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             include_replies=True,
             in_reply_to_tweet_id="inReplyToTweetId",
+            keywords="keywords",
             language="language",
+            list_id="listId",
             max_faves=0,
             max_id="maxId",
             max_quotes=0,
@@ -858,10 +1691,15 @@ class TestUsers:
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            mode="standard",
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
+            place="place",
+            place_country="placeCountry",
+            point_radius="pointRadius",
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
@@ -870,13 +1708,15 @@ class TestUsers:
             safe=True,
             since_date=parse_date("2019-12-27"),
             since_id="sinceId",
+            since_time="sinceTime",
             source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            until_time="untilTime",
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -929,19 +1769,27 @@ class TestUsers:
             id="id",
             after="after",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             limit=1,
             location_contains="locationContains",
             max_followers=0,
             max_following=0,
+            max_scan=10000,
             max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
             min_following=0,
             min_statuses=0,
             mode="standard",
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -983,6 +1831,63 @@ class TestUsers:
                 id="",
             )
 
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_translate_bio(self, client: XTwitterScraper) -> None:
+        user = client.x.users.translate_bio(
+            id="id",
+            language="es",
+        )
+        assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_translate_bio_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.translate_bio(
+            id="id",
+            language="es",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_translate_bio(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.translate_bio(
+            id="id",
+            language="es",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_translate_bio(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.translate_bio(
+            id="id",
+            language="es",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_translate_bio(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.translate_bio(
+                id="",
+                language="es",
+            )
+
 
 class TestAsyncUsers:
     parametrize = pytest.mark.parametrize(
@@ -993,7 +1898,17 @@ class TestAsyncUsers:
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve(
-            "id",
+            id="id",
+        )
+        assert_matches_type(UserProfile, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
         )
         assert_matches_type(UserProfile, user, path=["response"])
 
@@ -1001,7 +1916,7 @@ class TestAsyncUsers:
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.users.with_raw_response.retrieve(
-            "id",
+            id="id",
         )
 
         assert response.is_closed is True
@@ -1013,7 +1928,7 @@ class TestAsyncUsers:
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.users.with_streaming_response.retrieve(
-            "id",
+            id="id",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -1028,7 +1943,7 @@ class TestAsyncUsers:
     async def test_path_params_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.users.with_raw_response.retrieve(
-                "",
+                id="",
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -1083,30 +1998,205 @@ class TestAsyncUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
-    async def test_method_retrieve_batch(self, async_client: AsyncXTwitterScraper) -> None:
-        user = await async_client.x.users.retrieve_batch(
-            ids="ids",
+    async def test_method_retrieve_affiliates(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_affiliates(
+            id="id",
         )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_affiliates_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_affiliates(
+            id="id",
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            page_size=1,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_affiliates(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_affiliates(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_affiliates(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_affiliates(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(PaginatedUsers, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_affiliates(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_affiliates(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_articles(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_articles(
+            id="id",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_articles_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_articles(
+            id="id",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            conversation_id="conversationId",
+            cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
+            media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
+            min_likes=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            omit="entities,media",
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
+            url="url",
+            verified_only=True,
+            within_time="7d",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_articles(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_articles(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_articles(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_articles(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(PaginatedTweets, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_articles(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_articles(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_batch(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_batch()
         assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_method_retrieve_batch_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_batch(
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
             ids="ids",
+            location_contains="locationContains",
             max_followers=0,
+            max_following=0,
+            max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            username_contains="usernameContains",
+            usernames="nasa,@OpenAI,x.com/verge",
             verified_only=True,
+            verified_type="verifiedType",
         )
         assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_raw_response_retrieve_batch(self, async_client: AsyncXTwitterScraper) -> None:
-        response = await async_client.x.users.with_raw_response.retrieve_batch(
-            ids="ids",
-        )
+        response = await async_client.x.users.with_raw_response.retrieve_batch()
 
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -1116,9 +2206,7 @@ class TestAsyncUsers:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_streaming_response_retrieve_batch(self, async_client: AsyncXTwitterScraper) -> None:
-        async with async_client.x.users.with_streaming_response.retrieve_batch(
-            ids="ids",
-        ) as response:
+        async with async_client.x.users.with_streaming_response.retrieve_batch() as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
@@ -1126,6 +2214,98 @@ class TestAsyncUsers:
             assert_matches_type(UserRetrieveBatchResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_batch_tweets(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_batch_tweets()
+        assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_batch_tweets_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_batch_tweets(
+            fields="id,text,author.username",
+            ids="ids",
+            omit="entities,media",
+            page_size=1,
+            usernames="nasa,@OpenAI,x.com/verge",
+        )
+        assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_batch_tweets(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_batch_tweets()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_batch_tweets(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_batch_tweets() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_follower_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_follower_ids(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_follower_ids_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_follower_ids(
+            id="id",
+            cursor="cursor",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_follower_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_follower_ids(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_follower_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_follower_ids(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveFollowerIdsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_follower_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_follower_ids(
+                id="",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -1142,19 +2322,27 @@ class TestAsyncUsers:
             id="id",
             after="after",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             limit=1,
             location_contains="locationContains",
             max_followers=0,
             max_following=0,
+            max_scan=10000,
             max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
             min_following=0,
             min_statuses=0,
             mode="standard",
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -1210,7 +2398,12 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_followers_you_know(
             id="id",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             location_contains="locationContains",
@@ -1221,6 +2414,7 @@ class TestAsyncUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -1277,19 +2471,27 @@ class TestAsyncUsers:
             id="id",
             after="after",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             limit=1,
             location_contains="locationContains",
             max_followers=0,
             max_following=0,
+            max_scan=10000,
             max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
             min_following=0,
             min_statuses=0,
             mode="standard",
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -1333,6 +2535,200 @@ class TestAsyncUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    async def test_method_retrieve_following_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_following_ids(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_following_ids_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_following_ids(
+            id="id",
+            cursor="cursor",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_following_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_following_ids(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_following_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_following_ids(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveFollowingIdsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_following_ids(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_following_ids(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_highlights(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_highlights(
+            id="id",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_highlights_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_highlights(
+            id="id",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            conversation_id="conversationId",
+            cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
+            language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
+            media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
+            min_likes=0,
+            min_quotes=0,
+            min_replies=0,
+            min_retweets=0,
+            min_views=0,
+            native_retweets=True,
+            omit="entities,media",
+            page_size=1,
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
+            since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
+            until_date=parse_date("2019-12-27"),
+            url="url",
+            verified_only=True,
+            within_time="7d",
+        )
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_highlights(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_highlights(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(PaginatedTweets, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_highlights(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_highlights(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(PaginatedTweets, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_highlights(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_highlights(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_insights(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_insights(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_insights_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_insights(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_insights(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_insights(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_insights(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_insights(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_insights(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_insights(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     async def test_method_retrieve_likes(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_likes(
             id="id",
@@ -1353,6 +2749,7 @@ class TestAsyncUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
@@ -1374,6 +2771,7 @@ class TestAsyncUsers:
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
@@ -1389,7 +2787,7 @@ class TestAsyncUsers:
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1429,6 +2827,166 @@ class TestAsyncUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    async def test_method_retrieve_list_memberships(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_list_memberships(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_list_memberships_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_list_memberships(
+            id="id",
+            cursor="cursor",
+            fields="id,text,author.username",
+            omit="entities,media",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_list_memberships(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_list_memberships(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_list_memberships(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_list_memberships(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveListMembershipsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_list_memberships(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_list_memberships(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_lists(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_lists(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_lists_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_lists(
+            id="id",
+            cursor="cursor",
+            fields="id,text,author.username",
+            omit="entities,media",
+            page_size=1,
+        )
+        assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_lists(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_lists(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_lists(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_lists(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveListsResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_lists(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_lists(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_live(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_live(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_live_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_live(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_live(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_live(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_live(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_live(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveLiveResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_live(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_live(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     async def test_method_retrieve_media(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_media(
             id="id",
@@ -1449,6 +3007,7 @@ class TestAsyncUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
@@ -1470,6 +3029,7 @@ class TestAsyncUsers:
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
@@ -1485,7 +3045,7 @@ class TestAsyncUsers:
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1545,6 +3105,7 @@ class TestAsyncUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
@@ -1566,6 +3127,7 @@ class TestAsyncUsers:
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
@@ -1583,7 +3145,7 @@ class TestAsyncUsers:
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1634,8 +3196,10 @@ class TestAsyncUsers:
     async def test_method_retrieve_replies_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_replies(
             id="id",
+            advanced_query="advancedQuery",
             any_words="anyWords",
             blue_verified_only=True,
+            bounding_box="boundingBox",
             card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
@@ -1643,12 +3207,15 @@ class TestAsyncUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             in_reply_to_tweet_id="inReplyToTweetId",
+            keywords="keywords",
             language="language",
+            list_id="listId",
             max_faves=0,
             max_id="maxId",
             max_quotes=0,
@@ -1662,10 +3229,15 @@ class TestAsyncUsers:
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            mode="standard",
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
+            place="place",
+            place_country="placeCountry",
+            point_radius="pointRadius",
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
@@ -1674,13 +3246,15 @@ class TestAsyncUsers:
             safe=True,
             since_date=parse_date("2019-12-27"),
             since_id="sinceId",
+            since_time="sinceTime",
             source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            until_time="untilTime",
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1732,7 +3306,13 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_search(
             q="q",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             location_contains="locationContains",
@@ -1743,6 +3323,7 @@ class TestAsyncUsers:
             min_followers=0,
             min_following=0,
             min_statuses=0,
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -1778,6 +3359,150 @@ class TestAsyncUsers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    async def test_method_retrieve_similar(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_similar(
+            id="id",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_similar_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_similar(
+            id="id",
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            page_size=1,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_similar(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_similar(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_similar(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_similar(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(PaginatedUsers, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_similar(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_similar(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_subscriptions(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_subscriptions(
+            id="id",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_subscriptions_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_subscriptions(
+            id="id",
+            bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
+            cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            fields="id,text,author.username",
+            has_email=True,
+            has_location=True,
+            has_website=True,
+            location_contains="locationContains",
+            max_followers=0,
+            max_following=0,
+            max_statuses=0,
+            min_account_age_days=0,
+            min_followers=0,
+            min_following=0,
+            min_statuses=0,
+            omit="entities,media",
+            page_size=1,
+            username_contains="usernameContains",
+            verified_only=True,
+            verified_type="verifiedType",
+        )
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_subscriptions(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_subscriptions(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(PaginatedUsers, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_subscriptions(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_subscriptions(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(PaginatedUsers, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_subscriptions(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_subscriptions(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     async def test_method_retrieve_tweets(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_tweets(
             id="id",
@@ -1789,8 +3514,10 @@ class TestAsyncUsers:
     async def test_method_retrieve_tweets_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         user = await async_client.x.users.retrieve_tweets(
             id="id",
+            advanced_query="advancedQuery",
             any_words="anyWords",
             blue_verified_only=True,
+            bounding_box="boundingBox",
             card_name="cardName",
             cashtags="cashtags",
             conversation_id="conversationId",
@@ -1798,13 +3525,16 @@ class TestAsyncUsers:
             exact_phrase="exactPhrase",
             exclude_source="excludeSource",
             exclude_words="excludeWords",
+            fields="id,text,author.username",
             from_user="fromUser",
             geocode="geocode",
             hashtags="hashtags",
             include_parent_tweet=True,
             include_replies=True,
             in_reply_to_tweet_id="inReplyToTweetId",
+            keywords="keywords",
             language="language",
+            list_id="listId",
             max_faves=0,
             max_id="maxId",
             max_quotes=0,
@@ -1818,10 +3548,15 @@ class TestAsyncUsers:
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            mode="standard",
             native_retweets=True,
             near="near",
             news=True,
+            omit="entities,media",
             page_size=1,
+            place="place",
+            place_country="placeCountry",
+            point_radius="pointRadius",
             quotes="include",
             quotes_of_tweet_id="quotesOfTweetId",
             replies="include",
@@ -1830,13 +3565,15 @@ class TestAsyncUsers:
             safe=True,
             since_date=parse_date("2019-12-27"),
             since_id="sinceId",
+            since_time="sinceTime",
             source="source",
             to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            until_time="untilTime",
             url="url",
             verified_only=True,
             within="within",
-            within_time="withinTime",
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, user, path=["response"])
 
@@ -1889,19 +3626,27 @@ class TestAsyncUsers:
             id="id",
             after="after",
             bio_contains="bioContains",
+            blue_verified_only=True,
+            business_email_only=True,
             cursor="cursor",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
+            fields="id,text,author.username",
+            has_email=True,
             has_location=True,
             has_website=True,
             limit=1,
             location_contains="locationContains",
             max_followers=0,
             max_following=0,
+            max_scan=10000,
             max_statuses=0,
             min_account_age_days=0,
             min_followers=0,
             min_following=0,
             min_statuses=0,
             mode="standard",
+            omit="entities,media",
             page_size=1,
             username_contains="usernameContains",
             verified_only=True,
@@ -1941,4 +3686,61 @@ class TestAsyncUsers:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.x.users.with_raw_response.retrieve_verified_followers(
                 id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_translate_bio(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.translate_bio(
+            id="id",
+            language="es",
+        )
+        assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_translate_bio_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.translate_bio(
+            id="id",
+            language="es",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_translate_bio(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.translate_bio(
+            id="id",
+            language="es",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_translate_bio(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.translate_bio(
+            id="id",
+            language="es",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserTranslateBioResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_translate_bio(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.translate_bio(
+                id="",
+                language="es",
             )

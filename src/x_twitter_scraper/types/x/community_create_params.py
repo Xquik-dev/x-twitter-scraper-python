@@ -18,7 +18,7 @@ class CommunityCreateParams(TypedDict, total=False):
     """X account (@username or ID) creating the community"""
 
     name: Required[str]
-    """Community name"""
+    """Community name, 1 to 100 characters, as X takes it"""
 
     idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]
 

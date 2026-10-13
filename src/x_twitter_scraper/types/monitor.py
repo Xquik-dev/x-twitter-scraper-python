@@ -35,8 +35,13 @@ class Monitor(BaseModel):
 
     x_user_id: str = FieldInfo(alias="xUserId")
 
+    name: Optional[str] = None
+    """Customer-set label of the account monitor, when set."""
+
     paused_at: Optional[datetime] = FieldInfo(alias="pausedAt", default=None)
     """When Xquik automatically paused this monitor."""
 
-    paused_reason: Optional[Literal["x_user_not_found"]] = FieldInfo(alias="pausedReason", default=None)
+    paused_reason: Optional[Literal["x_account_protected", "x_user_not_found"]] = FieldInfo(
+        alias="pausedReason", default=None
+    )
     """Why Xquik automatically paused this monitor."""

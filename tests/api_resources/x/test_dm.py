@@ -15,6 +15,7 @@ from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
     DmSendResponse,
+    DmDeleteMessageResponse,
     DmRetrieveHistoryResponse,
 )
 
@@ -23,6 +24,68 @@ base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
 class TestDm:
     parametrize = pytest.mark.parametrize("client", [False, True], indirect=True, ids=["loose", "strict"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_delete_message(self, client: XTwitterScraper) -> None:
+        dm = client.x.dm.delete_message(
+            message_id="1234567890",
+            user_id="userId",
+            account="account",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_delete_message(self, client: XTwitterScraper) -> None:
+        response = client.x.dm.with_raw_response.delete_message(
+            message_id="1234567890",
+            user_id="userId",
+            account="account",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        dm = response.parse()
+        assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_delete_message(self, client: XTwitterScraper) -> None:
+        with client.x.dm.with_streaming_response.delete_message(
+            message_id="1234567890",
+            user_id="userId",
+            account="account",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            dm = response.parse()
+            assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_delete_message(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
+            client.x.dm.with_raw_response.delete_message(
+                message_id="1234567890",
+                user_id="",
+                account="account",
+                idempotency_key="Idempotency-Key",
+            )
+
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_id` but received ''"):
+            client.x.dm.with_raw_response.delete_message(
+                message_id="",
+                user_id="userId",
+                account="account",
+                idempotency_key="Idempotency-Key",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -152,6 +215,68 @@ class TestAsyncDm:
     parametrize = pytest.mark.parametrize(
         "async_client", [False, True, {"http_client": "aiohttp"}], indirect=True, ids=["loose", "strict", "aiohttp"]
     )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_delete_message(self, async_client: AsyncXTwitterScraper) -> None:
+        dm = await async_client.x.dm.delete_message(
+            message_id="1234567890",
+            user_id="userId",
+            account="account",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_delete_message(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.dm.with_raw_response.delete_message(
+            message_id="1234567890",
+            user_id="userId",
+            account="account",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        dm = await response.parse()
+        assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_delete_message(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.dm.with_streaming_response.delete_message(
+            message_id="1234567890",
+            user_id="userId",
+            account="account",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            dm = await response.parse()
+            assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_delete_message(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `user_id` but received ''"):
+            await async_client.x.dm.with_raw_response.delete_message(
+                message_id="1234567890",
+                user_id="",
+                account="account",
+                idempotency_key="Idempotency-Key",
+            )
+
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `message_id` but received ''"):
+            await async_client.x.dm.with_raw_response.delete_message(
+                message_id="",
+                user_id="userId",
+                account="account",
+                idempotency_key="Idempotency-Key",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

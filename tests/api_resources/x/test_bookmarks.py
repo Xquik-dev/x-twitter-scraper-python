@@ -67,6 +67,14 @@ class TestBookmarks:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_retrieve_folders_with_all_params(self, client: XTwitterScraper) -> None:
+        bookmark = client.x.bookmarks.retrieve_folders(
+            cursor="cursor",
+        )
+        assert_matches_type(BookmarkRetrieveFoldersResponse, bookmark, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_retrieve_folders(self, client: XTwitterScraper) -> None:
         response = client.x.bookmarks.with_raw_response.retrieve_folders()
 
@@ -134,6 +142,14 @@ class TestAsyncBookmarks:
     @parametrize
     async def test_method_retrieve_folders(self, async_client: AsyncXTwitterScraper) -> None:
         bookmark = await async_client.x.bookmarks.retrieve_folders()
+        assert_matches_type(BookmarkRetrieveFoldersResponse, bookmark, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_folders_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        bookmark = await async_client.x.bookmarks.retrieve_folders(
+            cursor="cursor",
+        )
         assert_matches_type(BookmarkRetrieveFoldersResponse, bookmark, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
