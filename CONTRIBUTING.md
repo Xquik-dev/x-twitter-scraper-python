@@ -52,8 +52,8 @@ It runs these checks in order and stops at the first failure:
 5. Package metadata with twine.
 6. Tests on Python 3.10.21 and 3.14.7 with Pydantic 1 and 2.
 7. Coverage of the parent revision, then coverage of your change against it.
-8. A `pip-audit` scan of the locked dependencies.
-9. CodeQL security-extended queries, when the CodeQL CLI is installed.
+8. A `pip-audit` scan of the locked dependencies, judged by the audit policy below.
+9. CodeQL security-extended queries. CodeQL is mandatory.
 
 A failure prints 1 line naming the check and the next step.
 With a clean tree and a pushed commit, it posts the result as the `xquik-local-checks` commit status.
@@ -71,15 +71,23 @@ bun run check:all /absolute/path/to/parent-coverage.json HEAD
 Measure parent coverage using `bash scripts/coverage --baseline` at the parent revision.
 The extended gate verifies that report against Git's source hashes.
 
-Install CodeQL CLI 2.27.0 from its official GitHub release.
-Verify the archive against the release's SHA-256 checksum before extraction.
-Set `XQUIK_CODEQL_BIN` to its executable path.
-The default path is `~/.cache/xquik-codeql/2.27.0/codeql/codeql`.
-Install the pinned queries once:
+Install CodeQL CLI 2.27.0 or newer before running `bin/check-local`:
 
 ```sh
-"$XQUIK_CODEQL_BIN" pack download codeql/python-queries@1.8.10
+brew install --cask codeql
 ```
+
+Set `XQUIK_CODEQL_BIN` to use another CodeQL executable.
+The analysis downloads the pinned `codeql/python-queries@1.8.10` pack when it is missing.
+
+The dependency audit checks every pin in `uv.lock`.
+That includes pins for other platforms and both Pydantic groups.
+It fails on any finding in a shipped runtime dependency.
+It also fails on any development finding that has a fix.
+An unfixable development finding passes only while `audit-exceptions.json` lists it.
+Each entry names the advisory `id`, the `package` path, a `reason`, and a `recheck` date.
+The reason is `build-time only` or `peer dependency provided by the host`.
+The recheck date is at most 30 days out, and the finding blocks again on that date.
 
 The extended gate and `bash scripts/fuzz` run a 180-second AddressSanitizer fuzz campaign.
 Use Linux x86_64 with uv 0.12.13 and a working systemd user service.
@@ -138,7 +146,7 @@ The script prints 1 line before each step:
 1. It refuses a dirty tree, another branch, or a commit that differs from `origin/main`.
 2. It reads the version from `pyproject.toml` and refuses when tag `v<version>` exists on GitHub.
 3. It runs `bin/check-local`.
-4. It audits the locked dependencies with `pip-audit` and refuses on any known vulnerability.
+4. It runs the dependency audit again and refuses when the audit policy blocks.
 5. It builds reproducible distributions under `dist/releases/<commit>` and checks their metadata.
 6. It skips the upload when PyPI already has the version, and says so.
 7. Otherwise, it uploads with `uv publish`.

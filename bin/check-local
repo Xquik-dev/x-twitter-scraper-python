@@ -5,8 +5,12 @@
 # Runs every repository check in order and stops at the first failure.
 # Usage: bin/check-local [--no-status] [parent-revision]
 # Coverage compares against the parent revision, HEAD^ by default.
+# CodeQL is mandatory: install it with brew install --cask codeql.
 # When the tree is clean and GitHub has HEAD, the result is posted to HEAD
-# as the xquik-local-checks commit status. --no-status skips posting.
+# as the xquik-local-checks commit status, through the gh login of whoever
+# runs this script. On the release machine, that is the owner's gh login.
+# The status text lists only the checks that passed in this run.
+# --no-status skips posting.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -61,13 +65,14 @@ post_status() {
 
 workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-check-local.XXXXXX")"
 current_check="Setup"
+passed=()
 summary=""
 
 on_exit() {
   local status=$?
   if [[ -n "$status_commit" ]]; then
     if ((status == 0)) && [[ -n "$summary" ]]; then
-      post_status success "$summary"
+      post_status success "Passed: $summary"
     else
       post_status failure "Failed: $current_check."
     fi
@@ -78,13 +83,18 @@ trap on_exit EXIT
 
 if [[ -n "$status_commit" ]]; then
   echo "==> Posting a pending $status_context status to ${status_commit:0:12}."
-  post_status pending "Running lint, licensing, build, tests, coverage & audit."
+  post_status pending "Running lint, licensing, build, tests, coverage, audit & CodeQL."
 fi
 
-# Runs 1 check. On failure, prints the check name and the next step, then exits.
+# A missing or outdated CodeQL CLI fails here, before the slower checks run.
+current_check="CodeQL CLI"
+codeql_version="$(bash scripts/codeql-security --version)"
+
+# Runs 1 check and records its label for the status. On failure, prints the
+# check name and the next step, then exits. An empty label records nothing.
 run_check() {
-  local name="$1" next_step="$2"
-  shift 2
+  local label="$1" name="$2" next_step="$3"
+  shift 3
   current_check="$name"
   echo "==> $name"
   "$@" || {
@@ -92,6 +102,7 @@ run_check() {
     echo "check-local: $name failed. $next_step" >&2
     exit "$status"
   }
+  [[ -z "$label" ]] || passed+=("$label")
 }
 
 # Shell functions run without errexit inside run_check, so each one chains its commands with &&.
@@ -123,36 +134,29 @@ enforce_coverage() {
     bash scripts/coverage "$report" "$revision"
 }
 
-run_check "Install Python 3.10.21, Python 3.14.7, and locked dependencies" \
+run_check "" "Install Python 3.10.21, Python 3.14.7, and locked dependencies" \
   "Install uv 0.12.13 and check network access, then rerun." install_dependencies
-run_check "Lint: Ruff, Pyright, Mypy, and package import" \
+run_check "lint & types" "Lint: Ruff, Pyright, Mypy, and package import" \
   "Fix the findings above. bash scripts/lint --fix repairs Ruff findings." bash scripts/lint
-run_check "Licensing: REUSE lint" \
+run_check "REUSE" "Licensing: REUSE lint" \
   "Add the missing copyright and license data listed above." \
   uv tool run --from reuse==6.2.0 reuse lint
-run_check "Reproducibility: build twice and compare bytes" \
+run_check "reproducible build" "Reproducibility: build twice and compare bytes" \
   "Fix the reproducibility error above, then rerun." bash scripts/check-reproducible
-run_check "Build: distributions and package metadata" \
+run_check "metadata" "Build: distributions and package metadata" \
   "Fix the build or metadata errors above." build_distributions
-run_check "Tests: Python 3.10.21 and 3.14.7 with Pydantic 1 and 2" \
+run_check "" "Tests: Python 3.10.21 and 3.14.7 with Pydantic 1 and 2" \
   "Fix the failing tests above." run_tests
 test_summary="$(awk '/^=+ .*[0-9]+ passed/ { for (i = 1; i < NF; i++) if ($(i + 1) ~ /^passed/) { total += $i; runs++ } } END { if (runs) printf "%d passed in %d runs", total, runs }' "$workspace/tests.log")"
-run_check "Coverage: measure the parent revision $parent_revision" \
+passed+=("tests${test_summary:+ ($test_summary)}")
+run_check "" "Coverage: measure the parent revision $parent_revision" \
   "Pass a parent revision whose tests pass, such as origin/main." measure_parent_coverage
-run_check "Coverage: compare with the parent revision" \
+run_check "coverage" "Coverage: compare with the parent revision" \
   "Add tests for the uncovered lines reported above." enforce_coverage
-run_check "Dependency security: pip-audit of locked dependencies" \
-  "Upgrade the vulnerable dependencies above in uv.lock." bash scripts/audit
-
-codeql_bin="${XQUIK_CODEQL_BIN:-$HOME/.cache/xquik-codeql/2.27.0/codeql/codeql}"
-if [[ -x "$codeql_bin" ]]; then
-  run_check "Static analysis: CodeQL security-extended queries" \
-    "Fix the CodeQL findings above." env XQUIK_CODEQL_BIN="$codeql_bin" bash scripts/codeql-security
-  codeql_result="CodeQL passed"
-else
-  echo "==> Static analysis skipped: install CodeQL CLI 2.27.0 as CONTRIBUTING.md describes."
-  codeql_result="CodeQL skipped"
-fi
+run_check "audit" "Dependency security: pip-audit and audit-exceptions.json" \
+  "Upgrade the dependencies named above in uv.lock, or review audit-exceptions.json." bash scripts/audit
+run_check "CodeQL $codeql_version" "Static analysis: CodeQL $codeql_version security-extended queries" \
+  "Fix the CodeQL findings above, then rerun." bash scripts/codeql-security
 
 echo "==> Fuzzing runs separately: bash scripts/fuzz needs Linux x86_64 or XQUIK_FUZZ_HOST."
 current_check="Final tree check"
@@ -162,5 +166,6 @@ if [[ -n "$status_commit" ]]; then
     exit 1
   }
 fi
-summary="Lint, REUSE, build, tests (${test_summary:-all passed}), coverage & audit passed; $codeql_result."
+printf -v joined '%s, ' "${passed[@]}"
+summary="${joined%, }."
 echo "All local checks passed: $summary"

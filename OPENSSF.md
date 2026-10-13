@@ -26,7 +26,7 @@ No OpenSSF-defined ineligibility applies.
 | Statement coverage | `./scripts/coverage` enforces 90% |
 | Branch coverage | `./scripts/coverage` enforces 80% |
 | Static analysis | Ruff, Pyright, Mypy, and CodeQL security-extended queries |
-| Dependency review | Pinned `pip-audit` in `bin/check-local` and `bin/release-local` |
+| Dependency review | Pinned `pip-audit` with reviewed exceptions in `bin/check-local` and `bin/release-local` |
 | Licensing gate | Pinned REUSE lint in `bin/check-local` checks every repository file |
 | Reproducibility | 2 wheels and source archives must have identical bytes |
 | Local checks | `bin/check-local` runs every gate before review and release |

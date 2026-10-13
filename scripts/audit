@@ -4,27 +4,59 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# Fails on any finding in a shipped runtime dependency and on any fixable
+# development finding. An unfixable development finding passes only while
+# audit-exceptions.json lists it before its recheck date.
+
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
 
-audit_requirements="$(mktemp "${TMPDIR:-/tmp}/xquik-python-audit.XXXXXX")"
-trap 'rm -f -- "$audit_requirements"' EXIT
+audit_workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-audit.XXXXXX")"
+trap 'rm -rf -- "${audit_workspace:?}"' EXIT
 
-echo "==> Exporting locked third-party dependencies"
+echo "==> Exporting locked runtime dependencies"
 uv export \
   --quiet \
   --locked \
   --all-extras \
-  --group pydantic-v2 \
-  --group fuzz \
+  --no-dev \
   --no-emit-project \
   --format requirements-txt \
-  --output-file "$audit_requirements"
+  --output-file "$audit_workspace/runtime.txt"
 
-echo "==> Auditing locked third-party dependencies"
-uv tool run --from pip-audit==2.10.1 pip-audit \
-  --strict \
-  --disable-pip \
-  --require-hashes \
-  --requirement "$audit_requirements"
+# The 2 Pydantic groups conflict, so each one is exported and audited on its own.
+for pydantic_group in pydantic-v2 pydantic-v1; do
+  locked="$audit_workspace/$pydantic_group.txt"
+  echo "==> Exporting locked third-party dependencies with $pydantic_group"
+  uv export \
+    --quiet \
+    --locked \
+    --all-extras \
+    --group "$pydantic_group" \
+    --group fuzz \
+    --no-emit-project \
+    --format requirements-txt \
+    --output-file "$locked"
+
+  # pip-audit drops a pin whose environment marker does not match this machine.
+  # It reads a copy without markers, so it checks every locked pin.
+  sed -E 's/^([A-Za-z0-9][A-Za-z0-9._-]*==[^ ;]+) *;[^\\]*/\1 /' "$locked" >"$locked.pins"
+
+  echo "==> Auditing locked third-party dependencies with $pydantic_group"
+  # The policy below decides the result, so a nonzero pip-audit exit is not final here.
+  uv tool run --from pip-audit==2.10.1 pip-audit \
+    --strict \
+    --disable-pip \
+    --require-hashes \
+    --requirement "$locked.pins" \
+    --format json \
+    --output "$locked.json" || true
+
+  echo "==> Applying the audit policy and audit-exceptions.json"
+  uv run --no-project python scripts/verify_audit.py \
+    "$locked.json" \
+    "$locked" \
+    "$audit_workspace/runtime.txt" \
+    audit-exceptions.json
+done
