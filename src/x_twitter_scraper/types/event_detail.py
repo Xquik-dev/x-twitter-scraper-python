@@ -11,6 +11,7 @@ from typing_extensions import Literal, TypeAlias
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
+from .._dict_access import EventDetailDataDictAccess
 from .shared.event_type import EventType
 from .shared.tweet_media import TweetMedia
 from .shared.user_profile import UserProfile
@@ -1022,7 +1023,7 @@ class DataMonitorPostTombstone(BaseModel):
     """Visibility notice type."""
 
 
-class DataMonitorPost(BaseModel):
+class DataMonitorPost(EventDetailDataDictAccess):
     """Monitored post with public fields and retained legacy fields."""
 
     id: str
@@ -1241,7 +1242,7 @@ class DataMonitorPost(BaseModel):
     view_state: Optional[str] = FieldInfo(alias="viewState", default=None)
 
 
-class DataMonitorProfileChange(BaseModel):
+class DataMonitorProfileChange(EventDetailDataDictAccess):
     """Changed profile field with its previous and current values."""
 
     field: str
@@ -1259,7 +1260,7 @@ class DataMonitorProfileChange(BaseModel):
     """Profile text, flag, or pinned post IDs. Missing values are omitted."""
 
 
-class DataMonitorLegacyPost(BaseModel):
+class DataMonitorLegacyPost(EventDetailDataDictAccess):
     """Older stored posts remain readable. Fields can be missing or null."""
 
     id: Optional[str] = None

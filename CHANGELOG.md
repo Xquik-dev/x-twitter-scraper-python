@@ -27,8 +27,26 @@ This release adds 50 methods from the current API spec.
 - Doc comments use the current prices. An active monitor costs 30 credits per hour, or 720 per day.
 - `x.tweets.list` returns `TweetListResponse`, a `PaginatedTweets` subclass that adds `skipped`.
 - `Event.data` and `EventDetail.data` are typed post and profile change models instead of a plain dictionary.
-- Parameters and fields that the spec no longer lists stay available, so existing callers keep working.
+- Existing method calls keep working. Parameters and fields that the spec no longer lists stay available. On `Event.data` and `EventDetail.data`, `data["key"]`, `data.get("key")` and `"key" in data` still work.
 - New shared models: `Community`, `CommunityPage` and `CommunityTopic`.
+
+### Upgrading from 0.12
+
+`Event.data` and `EventDetail.data` were dictionaries in 0.12. In 0.13 they are models.
+Dict access with JSON key names still works in 0.13, but each call emits a `DeprecationWarning`.
+It goes away in a later minor version, so switch to attribute access or `to_dict()`.
+Other dict methods, such as `keys()` and `items()`, need `to_dict()` now.
+
+```python
+# 0.12
+event.data["likeCount"]
+event.data.get("likeCount")
+"likeCount" in event.data
+
+# 0.13
+event.data.like_count
+event.data.to_dict()["likeCount"]
+```
 
 ## 0.12.0 (2026-09-12)
 
