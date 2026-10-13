@@ -47,7 +47,7 @@ for tool in git uv gh curl security; do
 done
 gh auth status >/dev/null 2>&1 || fail "Sign in with gh auth login, then rerun."
 if $dry_run; then
-  step "Dry run: the PyPI token is not read from the Keychain."
+  step "This is a dry run, so the PyPI token is not read from the Keychain."
 else
   step "Checking the Keychain item named by PYPI_KEYCHAIN_SERVICE."
   [[ -n "$keychain_service" ]] ||
@@ -60,7 +60,7 @@ step "Checking for a clean tree on main that equals origin/main."
 [[ -z "$(git status --porcelain)" ]] || fail "Commit or remove local changes, then rerun."
 branch="$(git symbolic-ref --quiet --short HEAD || true)"
 if $dry_run && [[ -z "$branch" ]]; then
-  step "Dry run: HEAD is detached, so only its match with origin/main is checked."
+  step "This is a dry run on a detached HEAD, so only its match with origin/main is checked."
 else
   [[ "$branch" == main ]] || fail "Switch to main, then rerun."
 fi
@@ -118,7 +118,7 @@ case "$pypi_status" in
   404)
     if $dry_run; then
       on_pypi=false
-      step "Dry run: PyPI has no $package $version yet. The upload is skipped."
+      step "PyPI has no $package $version yet. The dry run skips the upload."
     else
       step "Uploading to PyPI with the token from the Keychain item named by PYPI_KEYCHAIN_SERVICE."
       (
@@ -146,11 +146,11 @@ if $on_pypi; then
     sleep 30
   done
 else
-  step "Dry run: the comparison with PyPI is skipped, because nothing was uploaded."
+  step "The dry run skips the comparison with PyPI, because nothing was uploaded."
 fi
 
 if $dry_run; then
-  step "Dry run: tag $tag and the GitHub release are skipped."
+  step "The dry run skips tag $tag and the GitHub release."
   echo "Dry run finished for $package $version. Nothing was uploaded, tagged, or released."
   exit 0
 fi
