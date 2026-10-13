@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.13.0 (2026-10-13)
+
+This release adds 50 methods from the current API spec.
+
+### New methods
+
+- `events`: `stream` reads monitor events as server-sent events.
+- `webhooks`: `create_telegram_link` returns a link that connects a Telegram chat.
+- `x`: `autocomplete_search`, `get_hashflags`, `get_trend_locations` and `search_places`.
+- `x.analysis`: `brand`, `classify`, `market_signals`, `news`, `sentiment` and `viral_score` analyze posts with AI.
+- `x.broadcasts`: `retrieve` reads a live broadcast.
+- `x.communities`: `find`, `list_popular`, `list_suggested`, `list_topics` and `search_members`.
+- `x.communities.media`: `list` reads media posted in a Community.
+- `x.dm`: `delete_message` deletes 1 DM from the account's side.
+- `x.jobs`: `list_locations`, `retrieve` and `search` read X job listings.
+- `x.lists`: `retrieve` reads a List, and `retrieve_search` finds Lists.
+- `x.spaces`: `retrieve`, `retrieve_replay` and `search` read Spaces.
+- `x.tweets`: `check_repost`, `embed`, `get_hidden_replies`, `get_insights`, `get_retweeter_ids`, `get_subtitles`, `list_top`, `resolve_links` and `translate`.
+- `x.users`: `retrieve_affiliates`, `retrieve_articles`, `retrieve_batch_tweets`, `retrieve_follower_ids`, `retrieve_following_ids`, `retrieve_highlights`, `retrieve_insights`, `retrieve_list_memberships`, `retrieve_lists`, `retrieve_live`, `retrieve_similar`, `retrieve_subscriptions` and `translate_bio`.
+
+### Changes
+
+- 72 existing methods match the current spec. New optional parameters include `fields`, `omit`, `cursor` and `limit`.
+- Monitors, keyword monitors and draws accept the current fields, such as `name` and `idempotency_key`.
+- Doc comments use the current prices. An active monitor costs 30 credits per hour, or 720 per day.
+- `x.tweets.list` returns `TweetListResponse`, a `PaginatedTweets` subclass that adds `skipped`.
+- `Event.data` and `EventDetail.data` are typed post and profile change models instead of a plain dictionary.
+- Parameters and fields that the spec no longer lists stay available, so existing callers keep working.
+- New shared models: `Community`, `CommunityPage` and `CommunityTopic`.
+
 ## 0.12.0 (2026-09-12)
 
 - Add optional retweet timestamps with nullable `retweeted_at` response fields.
