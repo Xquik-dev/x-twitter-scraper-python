@@ -11,9 +11,12 @@ repository-code: https://github.com/Xquik-dev/x-twitter-scraper-python
 license: Apache-2.0
 keywords:
   - Xquik
+  - X API
+  - Twitter API
+  - Twitter scraper
+  - tweet scraper
   - Python SDK
   - Twitter search
-  - Twitter API
   - X automation
   - webhooks
   - follower export
