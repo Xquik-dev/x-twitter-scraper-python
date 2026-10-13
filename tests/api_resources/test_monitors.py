@@ -37,6 +37,16 @@ class TestMonitors:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
+        monitor = client.monitors.create(
+            event_types=["tweet.new", "tweet.reply"],
+            username="elonmusk",
+            name="Launch watch",
+        )
+        assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.monitors.with_raw_response.create(
             event_types=["tweet.new", "tweet.reply"],
@@ -120,6 +130,7 @@ class TestMonitors:
             id="id",
             event_types=["tweet.new"],
             is_active=True,
+            name="Launch watch",
         )
         assert_matches_type(Monitor, monitor, path=["response"])
 
@@ -161,6 +172,15 @@ class TestMonitors:
     @parametrize
     def test_method_list(self, client: XTwitterScraper) -> None:
         monitor = client.monitors.list()
+        assert_matches_type(MonitorListResponse, monitor, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
+        monitor = client.monitors.list(
+            cursor="cursor",
+            limit=1,
+        )
         assert_matches_type(MonitorListResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -239,6 +259,16 @@ class TestAsyncMonitors:
         monitor = await async_client.monitors.create(
             event_types=["tweet.new", "tweet.reply"],
             username="elonmusk",
+        )
+        assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        monitor = await async_client.monitors.create(
+            event_types=["tweet.new", "tweet.reply"],
+            username="elonmusk",
+            name="Launch watch",
         )
         assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
 
@@ -327,6 +357,7 @@ class TestAsyncMonitors:
             id="id",
             event_types=["tweet.new"],
             is_active=True,
+            name="Launch watch",
         )
         assert_matches_type(Monitor, monitor, path=["response"])
 
@@ -368,6 +399,15 @@ class TestAsyncMonitors:
     @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         monitor = await async_client.monitors.list()
+        assert_matches_type(MonitorListResponse, monitor, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        monitor = await async_client.monitors.list(
+            cursor="cursor",
+            limit=1,
+        )
         assert_matches_type(MonitorListResponse, monitor, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

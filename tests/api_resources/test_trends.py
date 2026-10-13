@@ -32,7 +32,9 @@ class TestTrends:
     def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
         trend = client.trends.list(
             count=1,
-            woeid=0,
+            fields="id,text,author.username",
+            omit="entities,media",
+            woeid=1,
         )
         assert_matches_type(TrendListResponse, trend, path=["response"])
 
@@ -75,7 +77,9 @@ class TestAsyncTrends:
     async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         trend = await async_client.trends.list(
             count=1,
-            woeid=0,
+            fields="id,text,author.username",
+            omit="entities,media",
+            woeid=1,
         )
         assert_matches_type(TrendListResponse, trend, path=["response"])
 

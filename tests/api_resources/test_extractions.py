@@ -35,7 +35,7 @@ class TestExtractions:
     @parametrize
     def test_method_retrieve(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
         )
         assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
 
@@ -43,7 +43,7 @@ class TestExtractions:
     @parametrize
     def test_method_retrieve_with_all_params(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
             cursor="cursor",
             field_style="source",
             include_raw=True,
@@ -58,7 +58,7 @@ class TestExtractions:
     @parametrize
     def test_raw_response_retrieve(self, client: XTwitterScraper) -> None:
         response = client.extractions.with_raw_response.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
         )
 
         assert response.is_closed is True
@@ -70,7 +70,7 @@ class TestExtractions:
     @parametrize
     def test_streaming_response_retrieve(self, client: XTwitterScraper) -> None:
         with client.extractions.with_streaming_response.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -131,7 +131,7 @@ class TestExtractions:
     @parametrize
     def test_method_cancel(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.cancel(
-            "id",
+            "L3NjAbCdEfGh",
         )
         assert_matches_type(ExtractionCancelResponse, extraction, path=["response"])
 
@@ -139,7 +139,7 @@ class TestExtractions:
     @parametrize
     def test_raw_response_cancel(self, client: XTwitterScraper) -> None:
         response = client.extractions.with_raw_response.cancel(
-            "id",
+            "L3NjAbCdEfGh",
         )
 
         assert response.is_closed is True
@@ -151,7 +151,7 @@ class TestExtractions:
     @parametrize
     def test_streaming_response_cancel(self, client: XTwitterScraper) -> None:
         with client.extractions.with_streaming_response.cancel(
-            "id",
+            "L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -187,18 +187,22 @@ class TestExtractions:
             bio_contains="bioContains",
             blue_verified_only=True,
             bounding_box="boundingBox",
+            business_email_only=True,
             card_name="cardName",
             cashtags="cashtags",
             collection_strategy="auto",
             conversation_id="conversationId",
             dedupe_across_targets=True,
             dedupe_mode="none",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
             exact_phrase="exactPhrase",
             exclude_original_author=True,
             exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
             geocode="geocode",
+            has_email=True,
             hashtags="hashtags",
             has_location=True,
             has_media_only=True,
@@ -314,10 +318,10 @@ class TestExtractions:
     @parametrize
     def test_method_export_results(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
         )
-        assert extraction.http_request.url.path == "/extractions/id/export"
+        assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert extraction.json() == {"foo": "bar"}
         assert cast(Any, extraction.is_closed) is True
@@ -326,9 +330,12 @@ class TestExtractions:
     @parametrize
     def test_method_export_results_with_all_params(self, client: XTwitterScraper) -> None:
         extraction = client.extractions.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
+            business_email_only=True,
+            email_domains="acme.com,stanford.edu",
             has_description=True,
+            has_email=True,
             has_location=True,
             has_media=True,
             lang="lang",
@@ -347,7 +354,7 @@ class TestExtractions:
             until_date=parse_date("2019-12-27"),
             verified=True,
         )
-        assert extraction.http_request.url.path == "/extractions/id/export"
+        assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert extraction.json() == {"foo": "bar"}
         assert cast(Any, extraction.is_closed) is True
@@ -357,10 +364,10 @@ class TestExtractions:
     def test_raw_response_export_results(self, client: XTwitterScraper) -> None:
 
         extraction = client.extractions.with_raw_response.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
         )
-        assert extraction.http_request.url.path == "/extractions/id/export"
+        assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
 
         assert extraction.is_closed is True
         assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -370,10 +377,10 @@ class TestExtractions:
     @parametrize
     def test_streaming_response_export_results(self, client: XTwitterScraper) -> None:
         with client.extractions.with_streaming_response.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
         ) as extraction:
-            assert extraction.http_request.url.path == "/extractions/id/export"
+            assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
             assert not extraction.is_closed
             assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
 
@@ -410,18 +417,22 @@ class TestExtractions:
             bio_contains="bioContains",
             blue_verified_only=True,
             bounding_box="boundingBox",
+            business_email_only=True,
             card_name="cardName",
             cashtags="cashtags",
             collection_strategy="auto",
             conversation_id="conversationId",
             dedupe_across_targets=True,
             dedupe_mode="none",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
             exact_phrase="exactPhrase",
             exclude_original_author=True,
             exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
             geocode="geocode",
+            has_email=True,
             hashtags="hashtags",
             has_location=True,
             has_media_only=True,
@@ -545,7 +556,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
         )
         assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
 
@@ -553,7 +564,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_retrieve_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
             cursor="cursor",
             field_style="source",
             include_raw=True,
@@ -568,7 +579,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_raw_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.extractions.with_raw_response.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
         )
 
         assert response.is_closed is True
@@ -580,7 +591,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_streaming_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.extractions.with_streaming_response.retrieve(
-            id="id",
+            id="L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -641,7 +652,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_cancel(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.cancel(
-            "id",
+            "L3NjAbCdEfGh",
         )
         assert_matches_type(ExtractionCancelResponse, extraction, path=["response"])
 
@@ -649,7 +660,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_raw_response_cancel(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.extractions.with_raw_response.cancel(
-            "id",
+            "L3NjAbCdEfGh",
         )
 
         assert response.is_closed is True
@@ -661,7 +672,7 @@ class TestAsyncExtractions:
     @parametrize
     async def test_streaming_response_cancel(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.extractions.with_streaming_response.cancel(
-            "id",
+            "L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -697,18 +708,22 @@ class TestAsyncExtractions:
             bio_contains="bioContains",
             blue_verified_only=True,
             bounding_box="boundingBox",
+            business_email_only=True,
             card_name="cardName",
             cashtags="cashtags",
             collection_strategy="auto",
             conversation_id="conversationId",
             dedupe_across_targets=True,
             dedupe_mode="none",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
             exact_phrase="exactPhrase",
             exclude_original_author=True,
             exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
             geocode="geocode",
+            has_email=True,
             hashtags="hashtags",
             has_location=True,
             has_media_only=True,
@@ -824,10 +839,10 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_export_results(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
         )
-        assert extraction.http_request.url.path == "/extractions/id/export"
+        assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert await extraction.json() == {"foo": "bar"}
         assert cast(Any, extraction.is_closed) is True
@@ -836,9 +851,12 @@ class TestAsyncExtractions:
     @parametrize
     async def test_method_export_results_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         extraction = await async_client.extractions.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
+            business_email_only=True,
+            email_domains="acme.com,stanford.edu",
             has_description=True,
+            has_email=True,
             has_location=True,
             has_media=True,
             lang="lang",
@@ -857,7 +875,7 @@ class TestAsyncExtractions:
             until_date=parse_date("2019-12-27"),
             verified=True,
         )
-        assert extraction.http_request.url.path == "/extractions/id/export"
+        assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert await extraction.json() == {"foo": "bar"}
         assert cast(Any, extraction.is_closed) is True
@@ -867,10 +885,10 @@ class TestAsyncExtractions:
     async def test_raw_response_export_results(self, async_client: AsyncXTwitterScraper) -> None:
 
         extraction = await async_client.extractions.with_raw_response.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
         )
-        assert extraction.http_request.url.path == "/extractions/id/export"
+        assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
 
         assert extraction.is_closed is True
         assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -880,10 +898,10 @@ class TestAsyncExtractions:
     @parametrize
     async def test_streaming_response_export_results(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.extractions.with_streaming_response.export_results(
-            id="id",
+            id="L3NjAbCdEfGh",
             format="csv",
         ) as extraction:
-            assert extraction.http_request.url.path == "/extractions/id/export"
+            assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
             assert not extraction.is_closed
             assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
 
@@ -920,18 +938,22 @@ class TestAsyncExtractions:
             bio_contains="bioContains",
             blue_verified_only=True,
             bounding_box="boundingBox",
+            business_email_only=True,
             card_name="cardName",
             cashtags="cashtags",
             collection_strategy="auto",
             conversation_id="conversationId",
             dedupe_across_targets=True,
             dedupe_mode="none",
+            email_domains="acme.com,stanford.edu",
+            enrich_profiles=True,
             exact_phrase="exactPhrase",
             exclude_original_author=True,
             exclude_source="excludeSource",
             exclude_words="excludeWords",
             from_user="fromUser",
             geocode="geocode",
+            has_email=True,
             hashtags="hashtags",
             has_location=True,
             has_media_only=True,

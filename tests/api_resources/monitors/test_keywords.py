@@ -38,6 +38,16 @@ class TestKeywords:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_create_with_all_params(self, client: XTwitterScraper) -> None:
+        keyword = client.monitors.keywords.create(
+            event_types=["tweet.new"],
+            query='xquik OR "x api"',
+            name="Launch mentions",
+        )
+        assert_matches_type(KeywordCreateResponse, keyword, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_create(self, client: XTwitterScraper) -> None:
         response = client.monitors.keywords.with_raw_response.create(
             event_types=["tweet.new"],
@@ -121,6 +131,7 @@ class TestKeywords:
             id="id",
             event_types=["tweet.new"],
             is_active=True,
+            name="Launch mentions",
         )
         assert_matches_type(KeywordUpdateResponse, keyword, path=["response"])
 
@@ -162,6 +173,15 @@ class TestKeywords:
     @parametrize
     def test_method_list(self, client: XTwitterScraper) -> None:
         keyword = client.monitors.keywords.list()
+        assert_matches_type(KeywordListResponse, keyword, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
+        keyword = client.monitors.keywords.list(
+            cursor="cursor",
+            limit=1,
+        )
         assert_matches_type(KeywordListResponse, keyword, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -240,6 +260,16 @@ class TestAsyncKeywords:
         keyword = await async_client.monitors.keywords.create(
             event_types=["tweet.new"],
             query='xquik OR "x api"',
+        )
+        assert_matches_type(KeywordCreateResponse, keyword, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_create_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        keyword = await async_client.monitors.keywords.create(
+            event_types=["tweet.new"],
+            query='xquik OR "x api"',
+            name="Launch mentions",
         )
         assert_matches_type(KeywordCreateResponse, keyword, path=["response"])
 
@@ -328,6 +358,7 @@ class TestAsyncKeywords:
             id="id",
             event_types=["tweet.new"],
             is_active=True,
+            name="Launch mentions",
         )
         assert_matches_type(KeywordUpdateResponse, keyword, path=["response"])
 
@@ -369,6 +400,15 @@ class TestAsyncKeywords:
     @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         keyword = await async_client.monitors.keywords.list()
+        assert_matches_type(KeywordListResponse, keyword, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        keyword = await async_client.monitors.keywords.list(
+            cursor="cursor",
+            limit=1,
+        )
         assert_matches_type(KeywordListResponse, keyword, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

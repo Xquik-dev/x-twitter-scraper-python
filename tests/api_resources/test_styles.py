@@ -73,8 +73,17 @@ class TestStyles:
     def test_method_update(self, client: XTwitterScraper) -> None:
         style = client.styles.update(
             id="id",
+            tweets=[{"text": "Excited to share our latest research."}],
+        )
+        assert_matches_type(StyleProfile, style, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_update_with_all_params(self, client: XTwitterScraper) -> None:
+        style = client.styles.update(
+            id="id",
+            tweets=[{"text": "Excited to share our latest research."}],
             label="Professional Voice",
-            tweets=[{"text": "Excited to share our latest research findings."}],
         )
         assert_matches_type(StyleProfile, style, path=["response"])
 
@@ -83,8 +92,7 @@ class TestStyles:
     def test_raw_response_update(self, client: XTwitterScraper) -> None:
         response = client.styles.with_raw_response.update(
             id="id",
-            label="Professional Voice",
-            tweets=[{"text": "Excited to share our latest research findings."}],
+            tweets=[{"text": "Excited to share our latest research."}],
         )
 
         assert response.is_closed is True
@@ -97,8 +105,7 @@ class TestStyles:
     def test_streaming_response_update(self, client: XTwitterScraper) -> None:
         with client.styles.with_streaming_response.update(
             id="id",
-            label="Professional Voice",
-            tweets=[{"text": "Excited to share our latest research findings."}],
+            tweets=[{"text": "Excited to share our latest research."}],
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -114,14 +121,22 @@ class TestStyles:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             client.styles.with_raw_response.update(
                 id="",
-                label="Professional Voice",
-                tweets=[{"text": "Excited to share our latest research findings."}],
+                tweets=[{"text": "Excited to share our latest research."}],
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_method_list(self, client: XTwitterScraper) -> None:
         style = client.styles.list()
+        assert_matches_type(StyleListResponse, style, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
+        style = client.styles.list(
+            cursor="cursor",
+            limit=1,
+        )
         assert_matches_type(StyleListResponse, style, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
@@ -354,8 +369,17 @@ class TestAsyncStyles:
     async def test_method_update(self, async_client: AsyncXTwitterScraper) -> None:
         style = await async_client.styles.update(
             id="id",
+            tweets=[{"text": "Excited to share our latest research."}],
+        )
+        assert_matches_type(StyleProfile, style, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_update_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        style = await async_client.styles.update(
+            id="id",
+            tweets=[{"text": "Excited to share our latest research."}],
             label="Professional Voice",
-            tweets=[{"text": "Excited to share our latest research findings."}],
         )
         assert_matches_type(StyleProfile, style, path=["response"])
 
@@ -364,8 +388,7 @@ class TestAsyncStyles:
     async def test_raw_response_update(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.styles.with_raw_response.update(
             id="id",
-            label="Professional Voice",
-            tweets=[{"text": "Excited to share our latest research findings."}],
+            tweets=[{"text": "Excited to share our latest research."}],
         )
 
         assert response.is_closed is True
@@ -378,8 +401,7 @@ class TestAsyncStyles:
     async def test_streaming_response_update(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.styles.with_streaming_response.update(
             id="id",
-            label="Professional Voice",
-            tweets=[{"text": "Excited to share our latest research findings."}],
+            tweets=[{"text": "Excited to share our latest research."}],
         ) as response:
             assert not response.is_closed
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
@@ -395,14 +417,22 @@ class TestAsyncStyles:
         with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
             await async_client.styles.with_raw_response.update(
                 id="",
-                label="Professional Voice",
-                tweets=[{"text": "Excited to share our latest research findings."}],
+                tweets=[{"text": "Excited to share our latest research."}],
             )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         style = await async_client.styles.list()
+        assert_matches_type(StyleListResponse, style, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        style = await async_client.styles.list(
+            cursor="cursor",
+            limit=1,
+        )
         assert_matches_type(StyleListResponse, style, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")

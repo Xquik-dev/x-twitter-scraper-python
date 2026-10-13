@@ -194,6 +194,7 @@ class TestDraws:
             required_mentions=["@elonmusk"],
             unique_authors_only=True,
             winner_count=3,
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 
@@ -395,6 +396,7 @@ class TestAsyncDraws:
             required_mentions=["@elonmusk"],
             unique_authors_only=True,
             winner_count=3,
+            idempotency_key="Idempotency-Key",
         )
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 

@@ -32,6 +32,17 @@ class TestFollowers:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_check_with_all_params(self, client: XTwitterScraper) -> None:
+        follower = client.x.followers.check(
+            source="source",
+            target="target",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(FollowerCheckResponse, follower, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_raw_response_check(self, client: XTwitterScraper) -> None:
         response = client.x.followers.with_raw_response.check(
             source="source",
@@ -70,6 +81,17 @@ class TestAsyncFollowers:
         follower = await async_client.x.followers.check(
             source="source",
             target="target",
+        )
+        assert_matches_type(FollowerCheckResponse, follower, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_check_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        follower = await async_client.x.followers.check(
+            source="source",
+            target="target",
+            fields="id,text,author.username",
+            omit="entities,media",
         )
         assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 

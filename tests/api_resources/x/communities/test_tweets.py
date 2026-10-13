@@ -26,7 +26,6 @@ class TestTweets:
     @parametrize
     def test_method_list(self, client: XTwitterScraper) -> None:
         tweet = client.x.communities.tweets.list(
-            community_id="321669910225",
             q="q",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
@@ -35,20 +34,49 @@ class TestTweets:
     @parametrize
     def test_method_list_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.communities.tweets.list(
-            community_id="321669910225",
             q="q",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            community_id="1234567890",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
             min_likes=0,
+            min_quotes=0,
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            native_retweets=True,
+            omit="entities,media",
             page_size=1,
             query_type="Latest",
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            url="url",
             verified_only=True,
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -56,7 +84,6 @@ class TestTweets:
     @parametrize
     def test_raw_response_list(self, client: XTwitterScraper) -> None:
         response = client.x.communities.tweets.with_raw_response.list(
-            community_id="321669910225",
             q="q",
         )
 
@@ -69,7 +96,6 @@ class TestTweets:
     @parametrize
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.x.communities.tweets.with_streaming_response.list(
-            community_id="321669910225",
             q="q",
         ) as response:
             assert not response.is_closed
@@ -93,17 +119,47 @@ class TestTweets:
     def test_method_list_by_community_with_all_params(self, client: XTwitterScraper) -> None:
         tweet = client.x.communities.tweets.list_by_community(
             id="id",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
             min_likes=0,
+            min_quotes=0,
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            native_retweets=True,
+            omit="entities,media",
             page_size=1,
+            query_type="Latest",
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            url="url",
             verified_only=True,
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -151,7 +207,6 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_list(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.communities.tweets.list(
-            community_id="321669910225",
             q="q",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
@@ -160,20 +215,49 @@ class TestAsyncTweets:
     @parametrize
     async def test_method_list_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.communities.tweets.list(
-            community_id="321669910225",
             q="q",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            community_id="1234567890",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
             min_likes=0,
+            min_quotes=0,
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            native_retweets=True,
+            omit="entities,media",
             page_size=1,
             query_type="Latest",
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            url="url",
             verified_only=True,
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 
@@ -181,7 +265,6 @@ class TestAsyncTweets:
     @parametrize
     async def test_raw_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.x.communities.tweets.with_raw_response.list(
-            community_id="321669910225",
             q="q",
         )
 
@@ -194,7 +277,6 @@ class TestAsyncTweets:
     @parametrize
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.communities.tweets.with_streaming_response.list(
-            community_id="321669910225",
             q="q",
         ) as response:
             assert not response.is_closed
@@ -218,17 +300,47 @@ class TestAsyncTweets:
     async def test_method_list_by_community_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         tweet = await async_client.x.communities.tweets.list_by_community(
             id="id",
+            any_words="anyWords",
+            blue_verified_only=True,
+            cashtags="cashtags",
+            conversation_id="conversationId",
             cursor="cursor",
+            exact_phrase="exactPhrase",
+            exclude_words="excludeWords",
+            fields="id,text,author.username",
+            from_user="fromUser",
+            hashtags="hashtags",
+            in_reply_to_tweet_id="inReplyToTweetId",
             language="language",
+            max_faves=0,
+            max_id="maxId",
+            max_quotes=0,
+            max_replies=0,
+            max_retweets=0,
             media_type="images",
+            mentioning="mentioning",
+            min_bookmarks=0,
             min_likes=0,
+            min_quotes=0,
             min_replies=0,
             min_retweets=0,
             min_views=0,
+            native_retweets=True,
+            omit="entities,media",
             page_size=1,
+            query_type="Latest",
+            quotes="include",
+            quotes_of_tweet_id="quotesOfTweetId",
+            replies="include",
+            retweets="include",
+            retweets_of_tweet_id="retweetsOfTweetId",
             since_date=parse_date("2019-12-27"),
+            since_id="sinceId",
+            to_user="toUser",
             until_date=parse_date("2019-12-27"),
+            url="url",
             verified_only=True,
+            within_time="7d",
         )
         assert_matches_type(PaginatedTweets, tweet, path=["response"])
 

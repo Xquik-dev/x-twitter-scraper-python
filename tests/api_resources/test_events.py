@@ -103,6 +103,41 @@ class TestEvents:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_stream(self, client: XTwitterScraper) -> None:
+        event_stream = client.events.stream()
+        event_stream.response.close()
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_stream_with_all_params(self, client: XTwitterScraper) -> None:
+        event_stream = client.events.stream(
+            last_event_id="42",
+        )
+        event_stream.response.close()
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_stream(self, client: XTwitterScraper) -> None:
+        response = client.events.with_raw_response.stream()
+
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        stream = response.parse()
+        stream.close()
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_stream(self, client: XTwitterScraper) -> None:
+        with client.events.with_streaming_response.stream() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            stream = response.parse()
+            stream.close()
+
+        assert cast(Any, response.is_closed) is True
+
 
 class TestAsyncEvents:
     parametrize = pytest.mark.parametrize(
@@ -188,5 +223,40 @@ class TestAsyncEvents:
 
             event = await response.parse()
             assert_matches_type(EventListResponse, event, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_stream(self, async_client: AsyncXTwitterScraper) -> None:
+        event_stream = await async_client.events.stream()
+        await event_stream.response.aclose()
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_stream_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        event_stream = await async_client.events.stream(
+            last_event_id="42",
+        )
+        await event_stream.response.aclose()
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_stream(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.events.with_raw_response.stream()
+
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        stream = await response.parse()
+        await stream.close()
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_stream(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.events.with_streaming_response.stream() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            stream = await response.parse()
+            await stream.close()
 
         assert cast(Any, response.is_closed) is True
