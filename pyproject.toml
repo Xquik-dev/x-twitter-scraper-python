@@ -1,7 +1,7 @@
 [project]
 name = "x_twitter_scraper"
 version = "0.13.0"
-description = "X API and Twitter API alternative for Python. Scrape Twitter with a typed Twitter scraper and tweet scraper. Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp."
+description = "X API & Twitter API alternative for Python. Scrape Twitter with a typed Twitter scraper & tweet scraper. Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp."
 dynamic = ["readme"]
 license = "Apache-2.0"
 keywords = [
@@ -110,18 +110,24 @@ include = [
 packages = ["src/x_twitter_scraper"]
 
 [tool.hatch.build.targets.sdist]
-# Package non-hidden source, tests, docs, and metadata.
+# Package what builds and tests the SDK, with its license files.
 include = [
-  "/*.toml",
-  "/*.json",
-  "/*.lock",
-  "/*.md",
-  "/mypy.ini",
-  "/noxfile.py",
-  "bin/*",
+  "/pyproject.toml",
+  "/README.md",
+  "/CHANGELOG.md",
+  "/api.md",
+  "/REUSE.toml",
+  "/LICENSES",
   "examples/*",
   "src/*",
   "tests/*",
+]
+# These tests run the repository's maintainer scripts, which the archive leaves out.
+exclude = [
+  "tests/test_*_command.py",
+  "tests/test_*_verifier.py",
+  "tests/test_coverage_sources.py",
+  "tests/test_docs_formatter.py",
 ]
 
 [tool.hatch.metadata.hooks.fancy-pypi-readme]

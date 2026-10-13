@@ -44,13 +44,13 @@ fi
 
 status_commit=""
 if ! $post_commit_status; then
-  echo "==> Commit status not posted: --no-status was passed."
+  echo "==> Commit status not posted because --no-status was passed."
 elif ! command -v gh >/dev/null; then
-  echo "==> Commit status not posted: the GitHub CLI is not installed."
+  echo "==> Commit status not posted because the GitHub CLI is not installed."
 elif [[ -n "$(git status --porcelain)" ]]; then
-  echo "==> Commit status not posted: the tree has uncommitted changes."
+  echo "==> Commit status not posted because the tree has uncommitted changes."
 elif ! gh api --silent "repos/$repository/commits/$(git rev-parse HEAD)" >/dev/null 2>&1; then
-  echo "==> Commit status not posted: GitHub does not have HEAD, or gh is signed out. Push first."
+  echo "==> Commit status not posted because GitHub does not have HEAD, or gh is signed out. Push first."
 else
   status_commit="$(git rev-parse HEAD)"
 fi
@@ -72,9 +72,9 @@ on_exit() {
   local status=$?
   if [[ -n "$status_commit" ]]; then
     if ((status == 0)) && [[ -n "$summary" ]]; then
-      post_status success "Passed: $summary"
+      post_status success "Passed $summary"
     else
-      post_status failure "Failed: $current_check."
+      post_status failure "Failed at $current_check."
     fi
   fi
   rm -rf -- "${workspace:?}"
@@ -135,7 +135,7 @@ enforce_coverage() {
 }
 
 run_check "" "Install Python 3.10.21, Python 3.14.7, and locked dependencies" \
-  "Install uv 0.12.13 and check network access, then rerun." install_dependencies
+  "Install uv 0.13.0 and check network access, then rerun." install_dependencies
 run_check "lint & types" "Lint: Ruff, Pyright, Mypy, and package import" \
   "Fix the findings above. bash scripts/lint --fix repairs Ruff findings." bash scripts/lint
 run_check "REUSE" "Licensing: REUSE lint" \
@@ -158,7 +158,7 @@ run_check "audit" "Dependency security: pip-audit and audit-exceptions.json" \
 run_check "CodeQL $codeql_version" "Static analysis: CodeQL $codeql_version security-extended queries" \
   "Fix the CodeQL findings above, then rerun." bash scripts/codeql-security
 
-echo "==> Fuzzing runs separately: bash scripts/fuzz needs Linux x86_64 or XQUIK_FUZZ_HOST."
+echo "==> Fuzzing runs separately, because bash scripts/fuzz needs Linux x86_64 or XQUIK_FUZZ_HOST."
 current_check="Final tree check"
 if [[ -n "$status_commit" ]]; then
   [[ "$(git rev-parse HEAD)" == "$status_commit" && -z "$(git status --porcelain)" ]] || {
@@ -168,4 +168,4 @@ if [[ -n "$status_commit" ]]; then
 fi
 printf -v joined '%s, ' "${passed[@]}"
 summary="${joined%, }."
-echo "All local checks passed: $summary"
+echo "All local checks passed. They were $summary."

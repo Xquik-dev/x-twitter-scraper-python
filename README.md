@@ -1,14 +1,20 @@
-# X API & Twitter API Python SDK: Twitter scraper by Xquik
+# X API & Twitter API Python SDK by Xquik
 
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
 
-Scrape Twitter from Python with this X API and Twitter API alternative.
-It is a typed Twitter scraper and tweet scraper for Python 3.10 and later.
+Scrape Twitter from Python with this X API & Twitter API alternative.
+It is a typed Twitter scraper & tweet scraper for Python 3.10 & later.
 Use the Xquik Python SDK for Twitter search, timelines, profiles & followers.
 Manage media, webhooks & X automation through documented Xquik REST routes.
+
+Xquik is the world's fastest and cheapest X Twitter scraper service with the most complete X data.
+Xquik charges only for delivered, unique, filter-matching results and never pads rows.
+
+> Xquik is an independent third-party service. Not affiliated with X Corp.
+> "Twitter" and "X" are trademarks of X Corp.
 
 [Python SDK Guide](https://docs.xquik.com/sdks/python) | [API Map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP Guide](https://docs.xquik.com/mcp/overview)
 
@@ -34,11 +40,11 @@ Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authenti
 
 ## Package & Registry Trust
 
-- Package: [PyPI `x_twitter_scraper`](https://pypi.org/project/x_twitter_scraper/)
-- Source: [Xquik-dev/x-twitter-scraper-python](https://github.com/Xquik-dev/x-twitter-scraper-python)
-- License: Apache-2.0
-- Citation metadata: [CITATION.cff](CITATION.cff)
-- Security policy: [SECURITY.md](SECURITY.md)
+- [PyPI package `x_twitter_scraper`](https://pypi.org/project/x_twitter_scraper/)
+- [Source in Xquik-dev/x-twitter-scraper-python](https://github.com/Xquik-dev/x-twitter-scraper-python)
+- Apache-2.0 license
+- [Citation metadata in CITATION.cff](CITATION.cff)
+- [Security policy in SECURITY.md](SECURITY.md)
 
 ## Installation
 
@@ -69,7 +75,7 @@ Pass `api_key` directly or load `X_TWITTER_SCRAPER_API_KEY` with
 
 ## Async Usage
 
-Import `AsyncXTwitterScraper` and await each API call:
+Import `AsyncXTwitterScraper` and await each API call.
 
 ```python
 import os
@@ -95,13 +101,13 @@ Both clients expose the same resources and methods.
 
 ### With aiohttp
 
-The async client uses `httpx`. Install `aiohttp` for an alternative backend:
+The async client uses `httpx`. Install `aiohttp` for an alternative backend.
 
 ```sh
 pip install x_twitter_scraper[aiohttp]
 ```
 
-Select it with `http_client=DefaultAioHttpClient()`:
+Select it with `http_client=DefaultAioHttpClient()`.
 
 ```python
 import os
@@ -127,7 +133,7 @@ asyncio.run(main())
 ## Using Types
 
 Nested request parameters use [TypedDicts](https://docs.python.org/3/library/typing.html#typing.TypedDict).
-Responses use [Pydantic models](https://docs.pydantic.dev) with these helpers:
+Responses use [Pydantic models](https://docs.pydantic.dev) with these helpers.
 
 - Serialize to JSON with `model.to_json()`.
 - Convert to a dictionary with `model.to_dict()`.
@@ -180,7 +186,7 @@ except x_twitter_scraper.APIStatusError as e:
     print(e.response)
 ```
 
-The SDK uses these error classes:
+The SDK uses these error classes.
 
 | Status Code | Error Type                 |
 | ----------- | -------------------------- |
@@ -198,7 +204,7 @@ The SDK uses these error classes:
 The SDK retries connection errors and HTTP 408, 409, 429, and 5xx responses.
 It uses exponential backoff and attempts 2 retries by default.
 
-Set `max_retries` to change or disable retries:
+Set `max_retries` to change or disable retries.
 
 ```python
 from x_twitter_scraper import XTwitterScraper
@@ -218,7 +224,7 @@ client.with_options(max_retries=5).x.tweets.search(
 ### Timeouts
 
 Requests time out after 1 minute.
-Set a float or [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) through `timeout`:
+Set a float or [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) through `timeout`.
 
 ```python
 from x_twitter_scraper import XTwitterScraper
@@ -261,7 +267,7 @@ Use `debug` for request and response details.
 ### Distinguishing `None`, `null` & Missing Fields
 
 Both missing and explicit `null` response fields map to `None`.
-Check `.model_fields_set` to distinguish them:
+Check `.model_fields_set` to distinguish them.
 
 ```py
 if response.my_field is None:
@@ -273,7 +279,7 @@ if response.my_field is None:
 
 ### Accessing Raw Response Data
 
-Prefix a method with `.with_raw_response.` to access the raw response:
+Prefix a method with `.with_raw_response.` to access the raw response.
 
 ```py
 from x_twitter_scraper import XTwitterScraper
@@ -345,7 +351,7 @@ Use [`response.model_extra`](https://docs.pydantic.dev/latest/api/base_model/#py
 
 ### Configuring the HTTP Client
 
-Replace the [httpx client](https://www.python-httpx.org/api/#client) to configure:
+Replace the [httpx client](https://www.python-httpx.org/api/#client) to configure.
 
 - Support for [proxies](https://www.python-httpx.org/advanced/proxies/)
 - Custom [transports](https://www.python-httpx.org/advanced/transports/)
@@ -365,7 +371,7 @@ client = XTwitterScraper(
 )
 ```
 
-Use `with_options()` to replace it for one request:
+Use `with_options()` to replace it for one request.
 
 ```python
 client.with_options(http_client=DefaultHttpxClient(...))
@@ -388,7 +394,7 @@ with XTwitterScraper() as client:
 
 ## Versioning
 
-This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions:
+This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions.
 
 1. Static type changes that preserve runtime behavior.
 2. Changes to undocumented internals that remain technically public.
@@ -399,7 +405,7 @@ Open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-python/issues
 ### Determining the Installed Version
 
 If new features are missing, Python may still load an older package.
-Check the runtime version:
+Check the runtime version.
 
 ```py
 import x_twitter_scraper

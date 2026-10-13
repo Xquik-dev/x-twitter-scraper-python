@@ -6,7 +6,7 @@ Follow the shared [Xquik contribution policy][contribution-policy].
 
 ## Set Up
 
-Install uv 0.12.13 from its official release, then run:
+Install uv 0.13.0 from its official release, then run:
 
 ```sh
 ./scripts/bootstrap
@@ -90,7 +90,7 @@ The reason is `build-time only` or `peer dependency provided by the host`.
 The recheck date is at most 30 days out, and the finding blocks again on that date.
 
 The extended gate and `bash scripts/fuzz` run a 180-second AddressSanitizer fuzz campaign.
-Use Linux x86_64 with uv 0.12.13 and a working systemd user service.
+Use Linux x86_64 with uv 0.13.0 and a working systemd user service.
 From another platform, set `XQUIK_FUZZ_HOST` to your authorized Linux SSH runner.
 The command transfers SDK source and lockfiles into an isolated temporary directory.
 The fuzz process cannot access the network or modify files outside its evidence directory.
