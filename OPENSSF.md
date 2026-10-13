@@ -19,7 +19,7 @@ No OpenSSF-defined ineligibility applies.
 | Area | Evidence |
 | --- | --- |
 | License | Apache-2.0 and REUSE 3.3 metadata |
-| Contribution process | DCO sign-off and independent review rules |
+| Contribution process | DCO sign-off, and `bin/check-local` before every merge |
 | Governance | Public roles, decisions, releases, and continuity policy |
 | Security reporting | Private reporting, response targets, boundaries, and threat model |
 | Tests | Python 3.10 and 3.14 with Pydantic 1 and 2 |
