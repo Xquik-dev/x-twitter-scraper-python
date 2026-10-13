@@ -13,6 +13,7 @@ from pydantic import Field as FieldInfo
 from ..._models import BaseModel
 from .tweet_media import TweetMedia
 from .user_profile import UserProfile
+from ..._dict_access import TweetEntitiesDictAccess
 from .embedded_tweet import EmbeddedTweet
 from .content_disclosure import ContentDisclosure
 
@@ -427,7 +428,7 @@ class EntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class Entities(BaseModel):
+class Entities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[EntitiesHashtag]] = None
@@ -707,7 +708,7 @@ class NoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class NoteTweetEntities(BaseModel):
+class NoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[NoteTweetEntitiesHashtag]] = None

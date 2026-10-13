@@ -12,6 +12,7 @@ from pydantic import Field as FieldInfo
 from ..._models import BaseModel
 from .tweet_media import TweetMedia
 from .user_profile import UserProfile
+from ..._dict_access import TweetEntitiesDictAccess
 from .content_disclosure import ContentDisclosure
 
 __all__ = [
@@ -1016,7 +1017,7 @@ class EntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class Entities(BaseModel):
+class Entities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[EntitiesHashtag]] = None
@@ -1159,7 +1160,7 @@ class NoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class NoteTweetEntities(BaseModel):
+class NoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[NoteTweetEntitiesHashtag]] = None
@@ -1447,7 +1448,7 @@ class QuotedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetEntities(BaseModel):
+class QuotedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetEntitiesHashtag]] = None
@@ -1590,7 +1591,7 @@ class QuotedTweetNoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetNoteTweetEntities(BaseModel):
+class QuotedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetNoteTweetEntitiesHashtag]] = None
@@ -1878,7 +1879,7 @@ class QuotedTweetQuotedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetQuotedTweetEntities(BaseModel):
+class QuotedTweetQuotedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetQuotedTweetEntitiesHashtag]] = None
@@ -2021,7 +2022,7 @@ class QuotedTweetQuotedTweetNoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetQuotedTweetNoteTweetEntities(BaseModel):
+class QuotedTweetQuotedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetQuotedTweetNoteTweetEntitiesHashtag]] = None
@@ -2313,7 +2314,7 @@ class QuotedTweetQuotedTweetQuotedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetQuotedTweetQuotedTweetEntities(BaseModel):
+class QuotedTweetQuotedTweetQuotedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetQuotedTweetQuotedTweetEntitiesHashtag]] = None
@@ -2456,7 +2457,7 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntities(BaseModel):
+class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesHashtag]] = None
@@ -2989,7 +2990,7 @@ class QuotedTweetQuotedTweetRetweetedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetQuotedTweetRetweetedTweetEntities(BaseModel):
+class QuotedTweetQuotedTweetRetweetedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetQuotedTweetRetweetedTweetEntitiesHashtag]] = None
@@ -3132,7 +3133,7 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesUserMention(BaseModel
     name: Optional[str] = None
 
 
-class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntities(BaseModel):
+class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesHashtag]] = None
@@ -3884,7 +3885,7 @@ class QuotedTweetRetweetedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetRetweetedTweetEntities(BaseModel):
+class QuotedTweetRetweetedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetRetweetedTweetEntitiesHashtag]] = None
@@ -4027,7 +4028,7 @@ class QuotedTweetRetweetedTweetNoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetRetweetedTweetNoteTweetEntities(BaseModel):
+class QuotedTweetRetweetedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetRetweetedTweetNoteTweetEntitiesHashtag]] = None
@@ -4319,7 +4320,7 @@ class QuotedTweetRetweetedTweetQuotedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetRetweetedTweetQuotedTweetEntities(BaseModel):
+class QuotedTweetRetweetedTweetQuotedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetRetweetedTweetQuotedTweetEntitiesHashtag]] = None
@@ -4462,7 +4463,7 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesUserMention(BaseModel
     name: Optional[str] = None
 
 
-class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntities(BaseModel):
+class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesHashtag]] = None
@@ -4995,7 +4996,7 @@ class QuotedTweetRetweetedTweetRetweetedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class QuotedTweetRetweetedTweetRetweetedTweetEntities(BaseModel):
+class QuotedTweetRetweetedTweetRetweetedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetRetweetedTweetRetweetedTweetEntitiesHashtag]] = None
@@ -5138,7 +5139,7 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesUserMention(BaseMo
     name: Optional[str] = None
 
 
-class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntities(BaseModel):
+class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesHashtag]] = None
@@ -6109,7 +6110,7 @@ class RetweetedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetEntities(BaseModel):
+class RetweetedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetEntitiesHashtag]] = None
@@ -6252,7 +6253,7 @@ class RetweetedTweetNoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetNoteTweetEntities(BaseModel):
+class RetweetedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetNoteTweetEntitiesHashtag]] = None
@@ -6540,7 +6541,7 @@ class RetweetedTweetQuotedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetQuotedTweetEntities(BaseModel):
+class RetweetedTweetQuotedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetQuotedTweetEntitiesHashtag]] = None
@@ -6683,7 +6684,7 @@ class RetweetedTweetQuotedTweetNoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetQuotedTweetNoteTweetEntities(BaseModel):
+class RetweetedTweetQuotedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetQuotedTweetNoteTweetEntitiesHashtag]] = None
@@ -6975,7 +6976,7 @@ class RetweetedTweetQuotedTweetQuotedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetQuotedTweetQuotedTweetEntities(BaseModel):
+class RetweetedTweetQuotedTweetQuotedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetQuotedTweetQuotedTweetEntitiesHashtag]] = None
@@ -7118,7 +7119,7 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesUserMention(BaseModel
     name: Optional[str] = None
 
 
-class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntities(BaseModel):
+class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesHashtag]] = None
@@ -7651,7 +7652,7 @@ class RetweetedTweetQuotedTweetRetweetedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetQuotedTweetRetweetedTweetEntities(BaseModel):
+class RetweetedTweetQuotedTweetRetweetedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetQuotedTweetRetweetedTweetEntitiesHashtag]] = None
@@ -7794,7 +7795,7 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesUserMention(BaseMo
     name: Optional[str] = None
 
 
-class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntities(BaseModel):
+class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesHashtag]] = None
@@ -8548,7 +8549,7 @@ class RetweetedTweetRetweetedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetRetweetedTweetEntities(BaseModel):
+class RetweetedTweetRetweetedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetRetweetedTweetEntitiesHashtag]] = None
@@ -8691,7 +8692,7 @@ class RetweetedTweetRetweetedTweetNoteTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetRetweetedTweetNoteTweetEntities(BaseModel):
+class RetweetedTweetRetweetedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetRetweetedTweetNoteTweetEntitiesHashtag]] = None
@@ -8983,7 +8984,7 @@ class RetweetedTweetRetweetedTweetQuotedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetRetweetedTweetQuotedTweetEntities(BaseModel):
+class RetweetedTweetRetweetedTweetQuotedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetRetweetedTweetQuotedTweetEntitiesHashtag]] = None
@@ -9126,7 +9127,7 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesUserMention(BaseMo
     name: Optional[str] = None
 
 
-class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntities(BaseModel):
+class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesHashtag]] = None
@@ -9659,7 +9660,7 @@ class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesUserMention(BaseModel):
     name: Optional[str] = None
 
 
-class RetweetedTweetRetweetedTweetRetweetedTweetEntities(BaseModel):
+class RetweetedTweetRetweetedTweetRetweetedTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetRetweetedTweetRetweetedTweetEntitiesHashtag]] = None
@@ -9802,7 +9803,7 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesUserMention(Bas
     name: Optional[str] = None
 
 
-class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntities(BaseModel):
+class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntities(TweetEntitiesDictAccess):
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
     hashtags: Optional[List[RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesHashtag]] = None
