@@ -10,12 +10,12 @@ from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
-from .._models import BaseModel
+from .._dict_access import ExtractionJobDictAccess
 
 __all__ = ["ExtractionJob"]
 
 
-class ExtractionJob(BaseModel):
+class ExtractionJob(ExtractionJobDictAccess):
     """Extraction job tracking status, tool type, and result count."""
 
     id: str

@@ -89,8 +89,8 @@ def test_success_status_lists_the_checks_that_passed(tmp_path: Path) -> None:
     status, events, statuses, output = run_checks(tmp_path, "ready")
     assert status == 0, output
     assert events == CHECKS
-    assert statuses == [PENDING, f"success: Passed: {PASSED}"]
-    assert output[-1] == f"All local checks passed: {PASSED}"
+    assert statuses == [PENDING, f"success: Passed {PASSED}"]
+    assert output[-1] == f"All local checks passed. They were {PASSED}."
 
 
 @pytest.mark.parametrize(
@@ -107,14 +107,14 @@ def test_failed_check_posts_failure_and_stops(tmp_path: Path, case: str, ran: li
     status, events, statuses, _ = run_checks(tmp_path, case)
     assert status != 0
     assert events == ran
-    assert statuses == [PENDING, f"failure: Failed: {failed}."]
+    assert statuses == [PENDING, f"failure: Failed at {failed}."]
 
 
 def test_unusable_codeql_fails_before_any_check(tmp_path: Path) -> None:
     status, events, statuses, _ = run_checks(tmp_path, "no-codeql")
     assert status == 1
     assert events == []
-    assert statuses == [PENDING, "failure: Failed: CodeQL CLI."]
+    assert statuses == [PENDING, "failure: Failed at CodeQL CLI."]
 
 
 @pytest.mark.parametrize(
@@ -132,4 +132,4 @@ def test_status_is_posted_only_for_a_clean_pushed_commit(
     assert status == 0, output
     assert events == CHECKS
     assert statuses == []
-    assert output[0] == f"==> Commit status not posted: {reason}"
+    assert output[0] == f"==> Commit status not posted because {reason}"

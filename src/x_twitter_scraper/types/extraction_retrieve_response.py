@@ -10,13 +10,14 @@ from datetime import datetime
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
+from .._dict_access import ExtractionResultDictAccess
 from .extraction_job import ExtractionJob
 from .shared.tweet_media import TweetMedia
 
 __all__ = ["ExtractionRetrieveResponse", "Result"]
 
 
-class Result(BaseModel):
+class Result(ExtractionResultDictAccess):
     """Represents a public row across supported extraction modes."""
 
     id: str

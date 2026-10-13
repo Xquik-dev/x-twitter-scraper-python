@@ -3,22 +3,23 @@
 ## 0.13.0 (2026-10-13)
 
 This release adds 50 methods from the current API spec.
+It is the first release on PyPI after 0.11.2, because 0.12.0 was never uploaded there. It includes the 0.12.0 changes.
 
 ### New methods
 
-- `events`: `stream` reads monitor events as server-sent events.
-- `webhooks`: `create_telegram_link` returns a link that connects a Telegram chat.
-- `x`: `autocomplete_search`, `get_hashflags`, `get_trend_locations` and `search_places`.
-- `x.analysis`: `brand`, `classify`, `market_signals`, `news`, `sentiment` and `viral_score` analyze posts with AI.
-- `x.broadcasts`: `retrieve` reads a live broadcast.
-- `x.communities`: `find`, `list_popular`, `list_suggested`, `list_topics` and `search_members`.
-- `x.communities.media`: `list` reads media posted in a Community.
-- `x.dm`: `delete_message` deletes 1 DM from the account's side.
-- `x.jobs`: `list_locations`, `retrieve` and `search` read X job listings.
-- `x.lists`: `retrieve` reads a List, and `retrieve_search` finds Lists.
-- `x.spaces`: `retrieve`, `retrieve_replay` and `search` read Spaces.
-- `x.tweets`: `check_repost`, `embed`, `get_hidden_replies`, `get_insights`, `get_retweeter_ids`, `get_subtitles`, `list_top`, `resolve_links` and `translate`.
-- `x.users`: `retrieve_affiliates`, `retrieve_articles`, `retrieve_batch_tweets`, `retrieve_follower_ids`, `retrieve_following_ids`, `retrieve_highlights`, `retrieve_insights`, `retrieve_list_memberships`, `retrieve_lists`, `retrieve_live`, `retrieve_similar`, `retrieve_subscriptions` and `translate_bio`.
+- `events.stream` reads monitor events as server-sent events.
+- `webhooks.create_telegram_link` returns a link that connects a Telegram chat.
+- `x` gains `autocomplete_search`, `get_hashflags`, `get_trend_locations` and `search_places`.
+- `x.analysis` gains `brand`, `classify`, `market_signals`, `news`, `sentiment` and `viral_score`, which analyze posts with AI.
+- `x.broadcasts.retrieve` reads a live broadcast.
+- `x.communities` gains `find`, `list_popular`, `list_suggested`, `list_topics` and `search_members`.
+- `x.communities.media.list` reads media posted in a Community.
+- `x.dm.delete_message` deletes 1 DM from the account's side.
+- `x.jobs` gains `list_locations`, `retrieve` and `search`, which read X job listings.
+- `x.lists.retrieve` reads a List, and `x.lists.retrieve_search` finds Lists.
+- `x.spaces` gains `retrieve`, `retrieve_replay` and `search`, which read Spaces.
+- `x.tweets` gains `check_repost`, `embed`, `get_hidden_replies`, `get_insights`, `get_retweeter_ids`, `get_subtitles`, `list_top`, `resolve_links` and `translate`.
+- `x.users` gains `retrieve_affiliates`, `retrieve_articles`, `retrieve_batch_tweets`, `retrieve_follower_ids`, `retrieve_following_ids`, `retrieve_highlights`, `retrieve_insights`, `retrieve_list_memberships`, `retrieve_lists`, `retrieve_live`, `retrieve_similar`, `retrieve_subscriptions` and `translate_bio`.
 
 ### Changes
 
@@ -26,27 +27,50 @@ This release adds 50 methods from the current API spec.
 - Monitors, keyword monitors and draws accept the current fields, such as `name` and `idempotency_key`.
 - Doc comments use the current prices. An active monitor costs 30 credits per hour, or 720 per day.
 - `x.tweets.list` returns `TweetListResponse`, a `PaginatedTweets` subclass that adds `skipped`.
-- `Event.data` and `EventDetail.data` are typed post and profile change models instead of a plain dictionary.
-- Existing method calls keep working. Parameters and fields that the spec no longer lists stay available. On `Event.data` and `EventDetail.data`, `data["key"]`, `data.get("key")` and `"key" in data` still work.
-- New shared models: `Community`, `CommunityPage` and `CommunityTopic`.
+- 10 response fields that held plain dictionaries are typed models now. They are `Event.data`, `EventDetail.data`, the `job` and the `results` rows of `extractions.retrieve`, and the `entities` of tweets, their long-form notes and their quoted tweets.
+- Code written for 0.11.2 keeps working. Parameters and fields that the spec no longer lists stay available, and the next section covers the 2 deprecations.
+- The new shared models are `Community`, `CommunityPage` and `CommunityTopic`.
 
-### Upgrading from 0.12
+### Upgrading from 0.11 & 0.12
 
-`Event.data` and `EventDetail.data` were dictionaries in 0.12. In 0.13 they are models.
-Dict access with JSON key names still works in 0.13, but each call emits a `DeprecationWarning`.
-It returns the JSON values, so a timestamp stays a string such as `2026-09-11T20:24:45.000Z`.
-It goes away in a later minor version, so switch to attribute access or `to_dict()`.
-Other dict methods, such as `keys()` and `items()`, need `to_dict()` now.
+Code written for 0.11.2 runs on 0.13 without changes.
+2 older ways of calling the SDK now emit a `DeprecationWarning` and go away in a later minor version.
+
+The first is dict access on the values that were dictionaries in 0.11 & 0.12 and are models in 0.13.
+
+- `Event.data` and `EventDetail.data`
+- `extractions.retrieve(...).job` and each row of `extractions.retrieve(...).results`
+- `entities` on a tweet, on its long-form note and on its quoted tweet
+
+On these models `value["key"]`, `value.get("key")`, `"key" in value`, `value.keys()`, `value.values()` and `value.items()` still work with the JSON key names.
+They return the JSON values, so a timestamp stays a string such as `2026-09-11T20:24:45.000Z`.
+Keys come in the model's field order, which can differ from the order in the response.
+Iteration, `len()` and `dict(value)` need `to_dict()`.
+Switch to attribute access or `to_dict()`.
 
 ```python
-# 0.12
+# 0.11 & 0.12
 event.data["likeCount"]
-event.data.get("likeCount")
-"likeCount" in event.data
+row.get("xUsername")
+tweet.entities["urls"][0]["expanded_url"]
 
 # 0.13
 event.data.like_count
-event.data.to_dict()["likeCount"]
+row.x_username
+tweet.entities.urls[0].expanded_url
+row.to_dict()["xUsername"]
+```
+
+The second is the `min_faves` keyword, which `min_likes` replaces.
+`min_faves` still works on the 9 tweet and user methods that took it in 0.11, and it sends the same filter as `min_likes`.
+When a call passes both, `min_likes` wins.
+
+```python
+# 0.11
+client.x.tweets.search(q="xquik", min_faves=25)
+
+# 0.13
+client.x.tweets.search(q="xquik", min_likes=25)
 ```
 
 ## 0.12.0 (2026-09-12)

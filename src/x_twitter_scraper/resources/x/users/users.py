@@ -59,6 +59,7 @@ from ...._response import (
     async_to_streamed_response_wrapper,
 )
 from ...._base_client import make_request_options
+from ...._deprecated_keywords import min_likes_or_min_faves
 from ....types.shared.user_profile import UserProfile
 from ....types.shared.paginated_users import PaginatedUsers
 from ....types.shared.paginated_tweets import PaginatedTweets
@@ -1654,6 +1655,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -1744,6 +1746,8 @@ class UsersResource(SyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -1841,7 +1845,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -2092,6 +2096,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -2180,6 +2185,8 @@ class UsersResource(SyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -2277,7 +2284,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -2336,6 +2343,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -2426,6 +2434,8 @@ class UsersResource(SyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -2529,7 +2539,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -2595,6 +2605,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -2708,6 +2719,8 @@ class UsersResource(SyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -2827,7 +2840,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -3328,6 +3341,7 @@ class UsersResource(SyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -3446,6 +3460,8 @@ class UsersResource(SyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -3566,7 +3582,7 @@ class UsersResource(SyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -5416,6 +5432,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -5506,6 +5523,8 @@ class AsyncUsersResource(AsyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -5603,7 +5622,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -5854,6 +5873,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -5942,6 +5962,8 @@ class AsyncUsersResource(AsyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -6039,7 +6061,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -6098,6 +6120,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -6188,6 +6211,8 @@ class AsyncUsersResource(AsyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -6291,7 +6316,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -6357,6 +6382,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -6470,6 +6496,8 @@ class AsyncUsersResource(AsyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -6589,7 +6617,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
@@ -7090,6 +7118,7 @@ class AsyncUsersResource(AsyncAPIResource):
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
         mentioning: str | Omit = omit,
         min_bookmarks: int | Omit = omit,
+        min_faves: int | Omit = omit,
         min_likes: int | Omit = omit,
         min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
@@ -7208,6 +7237,8 @@ class AsyncUsersResource(AsyncAPIResource):
           mentioning: Filter tweets mentioning a username.
 
           min_bookmarks: Minimum bookmark count threshold.
+
+          min_faves: Deprecated name of min_likes. Use min_likes.
 
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
 
@@ -7328,7 +7359,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "media_type": media_type,
                         "mentioning": mentioning,
                         "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes,
+                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
                         "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,

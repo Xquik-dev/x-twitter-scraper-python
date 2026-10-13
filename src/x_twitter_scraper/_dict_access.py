@@ -7,12 +7,18 @@
 from __future__ import annotations
 
 import warnings
-from typing import ClassVar, cast
+from typing import ClassVar, KeysView, ItemsView, ValuesView, cast
 from datetime import datetime
 
 from ._models import BaseModel
 
-__all__ = ["EventDataDictAccess", "EventDetailDataDictAccess"]
+__all__ = [
+    "EventDataDictAccess",
+    "EventDetailDataDictAccess",
+    "ExtractionJobDictAccess",
+    "ExtractionResultDictAccess",
+    "TweetEntitiesDictAccess",
+]
 
 
 def _as_sent(value: object) -> object:
@@ -49,6 +55,15 @@ class _DeprecatedDictAccess(BaseModel):
     def __contains__(self, key: object) -> bool:
         return key in self._json_values()
 
+    def keys(self) -> KeysView[object]:
+        return self._json_values().keys()
+
+    def values(self) -> ValuesView[object]:
+        return self._json_values().values()
+
+    def items(self) -> ItemsView[object, object]:
+        return self._json_values().items()
+
 
 class EventDataDictAccess(_DeprecatedDictAccess):
     _dict_access_owner: ClassVar[str] = "Event.data"
@@ -56,3 +71,15 @@ class EventDataDictAccess(_DeprecatedDictAccess):
 
 class EventDetailDataDictAccess(_DeprecatedDictAccess):
     _dict_access_owner: ClassVar[str] = "EventDetail.data"
+
+
+class ExtractionJobDictAccess(_DeprecatedDictAccess):
+    _dict_access_owner: ClassVar[str] = "an extraction job"
+
+
+class ExtractionResultDictAccess(_DeprecatedDictAccess):
+    _dict_access_owner: ClassVar[str] = "an extraction result row"
+
+
+class TweetEntitiesDictAccess(_DeprecatedDictAccess):
+    _dict_access_owner: ClassVar[str] = "tweet entities"

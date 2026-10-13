@@ -61,13 +61,11 @@ def test_publish_sequence_stops_at_failed_guards(tmp_path: Path, case: str) -> N
     commands += 'export -f stub_command\nbash "$1" publish parent-coverage.json parent\n'
     events = tmp_path / "events"
     environment = {
-        key: value
-        for key, value in os.environ.items()
-        if key not in ("UV_PUBLISH_TOKEN", "XQUIK_PYPI_KEYCHAIN_SERVICE")
+        key: value for key, value in os.environ.items() if key not in ("UV_PUBLISH_TOKEN", "PYPI_KEYCHAIN_SERVICE")
     }
     environment.update(RELEASE_CASE=case, RELEASE_EVENTS=str(events))
     if case == "keychain":
-        environment["XQUIK_PYPI_KEYCHAIN_SERVICE"] = "test-publisher"
+        environment["PYPI_KEYCHAIN_SERVICE"] = "test-publisher"
     result = subprocess.run(
         ["bash", "-c", commands, "release-test", str(runner)],
         env=environment,
