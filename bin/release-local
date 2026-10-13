@@ -5,9 +5,11 @@
 # Publishes the version in pyproject.toml to PyPI from a maintainer's Mac,
 # then pushes its v<version> tag and creates the GitHub release.
 # Usage: bin/release-local [--dry-run]
+# PYPI_KEYCHAIN_SERVICE names the macOS Keychain item that holds the PyPI token.
 # --dry-run runs every step except the upload, the tag, and the GitHub release.
-# It also accepts a detached HEAD at origin/main, so a preview can run in a
-# separate worktree.
+# It never reads the Keychain, so it needs no PYPI_KEYCHAIN_SERVICE. It also
+# accepts a detached HEAD at origin/main, so a preview can run in a separate
+# worktree.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -24,7 +26,7 @@ done
 
 repository="Xquik-dev/x-twitter-scraper-python"
 package="x-twitter-scraper"
-keychain_service="xquik-pypi-token"
+keychain_service="${PYPI_KEYCHAIN_SERVICE:-}"
 
 step() { echo "==> $1"; }
 fail() {
@@ -32,13 +34,26 @@ fail() {
   exit 1
 }
 
-step "Checking tools, GitHub sign-in, and the PyPI token in Keychain."
+# Reads the PyPI token from the Keychain item named by PYPI_KEYCHAIN_SERVICE.
+# Messages never name the item, because release output gets pasted in public.
+read_token() {
+  security find-generic-password -s "$keychain_service" "$@" 2>/dev/null ||
+    fail "The Keychain has no item named by PYPI_KEYCHAIN_SERVICE. Add the PyPI token under that name, then run bin/release-local again."
+}
+
+step "Checking tools and the GitHub sign-in."
 for tool in git uv gh curl security; do
   command -v "$tool" >/dev/null || fail "Install $tool, then rerun."
 done
 gh auth status >/dev/null 2>&1 || fail "Sign in with gh auth login, then rerun."
-security find-generic-password -s "$keychain_service" >/dev/null 2>&1 ||
-  fail "Keychain has no $keychain_service item. The owner must add the PyPI token as that service, then rerun."
+if $dry_run; then
+  step "Dry run: the PyPI token is not read from the Keychain."
+else
+  step "Checking the Keychain item named by PYPI_KEYCHAIN_SERVICE."
+  [[ -n "$keychain_service" ]] ||
+    fail "PYPI_KEYCHAIN_SERVICE is unset. Set it to the Keychain item that holds the PyPI token, then run bin/release-local again."
+  read_token >/dev/null
+fi
 
 step "Checking for a clean tree on main that equals origin/main."
 [[ "$(git remote get-url origin)" == *"$repository"* ]] || fail "Point origin at $repository, then rerun."
@@ -105,10 +120,9 @@ case "$pypi_status" in
       on_pypi=false
       step "Dry run: PyPI has no $package $version yet. The upload is skipped."
     else
-      step "Uploading to PyPI with the token from Keychain service $keychain_service."
+      step "Uploading to PyPI with the token from the Keychain item named by PYPI_KEYCHAIN_SERVICE."
       (
-        token="$(security find-generic-password -s "$keychain_service" -w 2>/dev/null)" ||
-          fail "Keychain has no $keychain_service item. The owner must add the PyPI token as that service, then rerun."
+        token="$(read_token -w)"
         UV_PUBLISH_TOKEN="$token" uv publish \
           --publish-url https://upload.pypi.org/legacy/ \
           --check-url https://pypi.org/simple/ \

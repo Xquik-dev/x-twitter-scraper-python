@@ -155,12 +155,15 @@ The script prints 1 line before each step:
 
 Preview a release with `bin/release-local --dry-run`.
 It runs every step except the upload, the tag, and the GitHub release.
+It never reads the Keychain, so it needs no `PYPI_KEYCHAIN_SERVICE`.
 It also accepts a detached checkout of `origin/main`, so a preview can run in a separate worktree.
 
-The PyPI token lives in the macOS Keychain under service `xquik-pypi-token`.
-When that item is missing, the script stops and says to add it.
+The PyPI token lives in the macOS Keychain.
+Set `PYPI_KEYCHAIN_SERVICE` to the name of the Keychain item that holds it.
+Keep that name out of this repository.
+When the variable is unset or the item is missing, the script stops and says what to do.
 The script reads the token only while `uv publish` runs.
-It never prints the token or writes it to a file.
+It never prints the token or the item's name, and it writes neither to a file.
 Run `bun run release:verify` to recheck a published release.
 
 [contribution-policy]: https://github.com/Xquik-dev/.github/blob/main/CONTRIBUTING.md

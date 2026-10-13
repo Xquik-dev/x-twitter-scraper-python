@@ -59,7 +59,7 @@ curl() {
  printf '%s' "$RELEASE_PYPI"
 }
 security() {
- [ "$1 $2 $3" = "find-generic-password -s $RELEASE_TOKEN_SERVICE" ] || exit 99
+ [ -n "${PYPI_KEYCHAIN_SERVICE:-}" ] && [ "$1 $2 $3" = "find-generic-password -s $PYPI_KEYCHAIN_SERVICE" ] || exit 99
  [ "$RELEASE_CASE" != keychain ] || return 44
  [ "${4:-}" != -w ] || echo isolated-fixture-token
 }
@@ -72,7 +72,9 @@ RELEASED = ["tag v0.12.0 abc", "push refs/tags/v0.12.0", "release v0.12.0"]
 DRY_RUN_END = "Dry run finished for x-twitter-scraper 0.12.0. Nothing was uploaded, tagged, or released."
 
 
-def run_release(tmp_path: Path, arguments: list[str], case: str, pypi: str) -> tuple[int, list[str], str, str]:
+def run_release(
+    tmp_path: Path, arguments: list[str], case: str, pypi: str, service: str | None = "test-publisher"
+) -> tuple[int, list[str], str, str]:
     project = tmp_path / "project"
     for folder in ("bin", "scripts", "src/x_twitter_scraper"):
         (project / folder).mkdir(parents=True)
@@ -86,21 +88,19 @@ def run_release(tmp_path: Path, arguments: list[str], case: str, pypi: str) -> t
     events, notes = tmp_path / "events", tmp_path / "notes"
     events.touch()
     notes.touch()
+    environment = {key: value for key, value in os.environ.items() if key != "PYPI_KEYCHAIN_SERVICE"}
+    environment.update(RELEASE_CASE=case, RELEASE_PYPI=pypi, RELEASE_EVENTS=str(events), RELEASE_NOTES=str(notes))
+    if service is not None:
+        environment["PYPI_KEYCHAIN_SERVICE"] = service
     result = subprocess.run(
         ["bash", "-c", STUB, "release-local-test", str(runner), *arguments],
-        env={
-            **os.environ,
-            "RELEASE_CASE": case,
-            "RELEASE_PYPI": pypi,
-            "RELEASE_EVENTS": str(events),
-            "RELEASE_NOTES": str(notes),
-            "RELEASE_TOKEN_SERVICE": "xquik-pypi-token",
-        },
+        env=environment,
         capture_output=True,
         text=True,
         check=False,
     )
     assert "isolated-fixture-token" not in result.stdout + result.stderr
+    assert "test-publisher" not in result.stdout + result.stderr
     return result.returncode, events.read_text().splitlines(), result.stdout + result.stderr, notes.read_text()
 
 
@@ -120,8 +120,8 @@ def test_release_uploads_once_then_tags_and_releases(tmp_path: Path, pypi: str, 
     "case,pypi,events",
     [("ready", "404", CHECKED), ("ready", "200", [*CHECKED, "verify"]), ("detached", "404", CHECKED)],
 )
-def test_dry_run_uploads_tags_and_releases_nothing(tmp_path: Path, case: str, pypi: str, events: list[str]) -> None:
-    status, observed, output, notes = run_release(tmp_path, ["--dry-run"], case, pypi)
+def test_dry_run_needs_no_token_and_releases_nothing(tmp_path: Path, case: str, pypi: str, events: list[str]) -> None:
+    status, observed, output, notes = run_release(tmp_path, ["--dry-run"], case, pypi, service=None)
     assert status == 0, output
     assert observed == events
     assert notes == ""
@@ -137,12 +137,12 @@ def test_dry_run_uploads_tags_and_releases_nothing(tmp_path: Path, case: str, py
         (["--dry-run"], "behind", "404", 1, "release-local: Make main equal to origin/main, then rerun."),
         ([], "tagged", "404", 1, "release-local: Tag v0.12.0 already exists on origin. Bump the version, then rerun."),
         (
-            ["--dry-run"],
+            [],
             "keychain",
             "404",
             1,
-            "release-local: Keychain has no xquik-pypi-token item. "
-            "The owner must add the PyPI token as that service, then rerun.",
+            "release-local: The Keychain has no item named by PYPI_KEYCHAIN_SERVICE. "
+            "Add the PyPI token under that name, then run bin/release-local again.",
         ),
         ([], "ready", "503", 1, "release-local: PyPI returned HTTP 503. Retry later."),
         (["--publish"], "ready", "404", 2, "release-local: unknown option --publish. Use --dry-run or no option."),
@@ -155,4 +155,16 @@ def test_release_refuses_before_any_upload(
     assert observed_status == status
     assert output.splitlines()[-1] == message
     assert not {"publish", "verify", *RELEASED} & set(observed)
+    assert notes == ""
+
+
+@pytest.mark.parametrize("service", [None, ""])
+def test_release_stops_when_the_token_item_is_not_named(tmp_path: Path, service: str | None) -> None:
+    status, observed, output, notes = run_release(tmp_path, [], "ready", "404", service=service)
+    assert status == 1
+    assert output.splitlines()[-1] == (
+        "release-local: PYPI_KEYCHAIN_SERVICE is unset. "
+        "Set it to the Keychain item that holds the PyPI token, then run bin/release-local again."
+    )
+    assert observed == []
     assert notes == ""
