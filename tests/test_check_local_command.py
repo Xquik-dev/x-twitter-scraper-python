@@ -90,7 +90,7 @@ def test_success_status_lists_the_checks_that_passed(tmp_path: Path) -> None:
     assert status == 0, output
     assert events == CHECKS
     assert statuses == [PENDING, f"success: Passed {PASSED}"]
-    assert output[-1] == f"All local checks passed. They were {PASSED}."
+    assert output[-1] == f"All local checks passed. They were {PASSED}"
 
 
 @pytest.mark.parametrize(

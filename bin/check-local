@@ -168,4 +168,4 @@ if [[ -n "$status_commit" ]]; then
 fi
 printf -v joined '%s, ' "${passed[@]}"
 summary="${joined%, }."
-echo "All local checks passed. They were $summary."
+echo "All local checks passed. They were $summary"

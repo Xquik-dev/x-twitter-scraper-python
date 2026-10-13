@@ -37,6 +37,16 @@ def test_verified_artifacts(release: tuple[dict[str, Any], Path]) -> None:
         verify_files(report, directory, "0.12.0")
 
 
+def test_ignores_the_gitignore_that_uv_build_writes(release: tuple[dict[str, Any], Path]) -> None:
+    report, directory = release
+    # uv build writes this file into its output folder, next to the wheel and the source archive.
+    (directory / ".gitignore").write_text("*")
+    assert verify_files(report, directory, "0.12.0") is None
+    (directory / ".env").touch()
+    with pytest.raises(ValueError, match="exactly"):
+        verify_files(report, directory, "0.12.0")
+
+
 @pytest.mark.parametrize("report", [None, [], {}, {"info": {"version": "old"}}, {"info": {"version": "0.12.0"}}])
 def test_invalid_release_metadata(report: object, tmp_path: Path) -> None:
     with pytest.raises(ValueError):
