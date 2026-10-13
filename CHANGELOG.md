@@ -34,6 +34,7 @@ This release adds 50 methods from the current API spec.
 
 `Event.data` and `EventDetail.data` were dictionaries in 0.12. In 0.13 they are models.
 Dict access with JSON key names still works in 0.13, but each call emits a `DeprecationWarning`.
+It returns the JSON values, so a timestamp stays a string such as `2026-09-11T20:24:45.000Z`.
 It goes away in a later minor version, so switch to attribute access or `to_dict()`.
 Other dict methods, such as `keys()` and `items()`, need `to_dict()` now.
 

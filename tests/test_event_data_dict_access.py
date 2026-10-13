@@ -22,6 +22,10 @@ POST = json.loads(
       "quoteCount": 1,
       "viewCount": 1500,
       "bookmarkCount": 2,
+      "retweetedAt": "2026-09-11T20:24:45.000Z",
+      "cashtagAttachments": [
+        {"cashtag": "$XQK", "startTime": "2026-10-09T13:30:00.000Z", "endTime": "2026-10-09T20:00:00.123Z"}
+      ],
       "author": {"id": "44196397", "username": "xquik", "name": "Xquik"}
     }"""
 )
@@ -44,7 +48,9 @@ LEGACY_POST = json.loads(
 )
 
 DATA_CASES = [
-    pytest.param(POST, "DataMonitorPost", ["text", "likeCount", "author"], id="post"),
+    pytest.param(
+        POST, "DataMonitorPost", ["text", "likeCount", "author", "retweetedAt", "cashtagAttachments"], id="post"
+    ),
     pytest.param(PROFILE_CHANGE, "DataMonitorProfileChange", ["field", "userId", "current"], id="profile-change"),
     pytest.param(LEGACY_POST, "DataMonitorLegacyPost", ["text", "quoted_tweet", "legacyScore"], id="legacy-post"),
 ]

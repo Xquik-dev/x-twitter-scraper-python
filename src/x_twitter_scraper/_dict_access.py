@@ -7,35 +7,47 @@
 from __future__ import annotations
 
 import warnings
-from typing import ClassVar
+from typing import ClassVar, cast
+from datetime import datetime
 
 from ._models import BaseModel
 
 __all__ = ["EventDataDictAccess", "EventDetailDataDictAccess"]
 
 
+def _as_sent(value: object) -> object:
+    """Writes timestamps as the API sends them: milliseconds, and a Z suffix for UTC."""
+    if isinstance(value, datetime):
+        return value.isoformat(timespec="milliseconds").replace("+00:00", "Z")
+    if isinstance(value, dict):
+        return {key: _as_sent(item) for key, item in cast("dict[object, object]", value).items()}
+    if isinstance(value, list):
+        return [_as_sent(item) for item in cast("list[object]", value)]
+    return value
+
+
 class _DeprecatedDictAccess(BaseModel):
-    """Reads JSON keys through `to_dict()`, as the replaced dictionary did."""
+    """Reads JSON keys and values through `to_dict()`, as the replaced dictionary held them."""
 
     _dict_access_owner: ClassVar[str] = ""
 
-    def _dict_access_message(self) -> str:
-        return (
+    def _json_values(self) -> dict[object, object]:
+        warnings.warn(
             f"Dict access on {self._dict_access_owner} is deprecated & goes away in a later minor version. "
-            "Use attribute access or to_dict()."
+            "Use attribute access or to_dict().",
+            DeprecationWarning,
+            stacklevel=3,
         )
+        return cast("dict[object, object]", _as_sent(self.to_dict()))
 
     def __getitem__(self, key: str) -> object:
-        warnings.warn(self._dict_access_message(), DeprecationWarning, stacklevel=2)
-        return self.to_dict(mode="json")[key]
+        return self._json_values()[key]
 
     def get(self, key: str, default: object = None) -> object:
-        warnings.warn(self._dict_access_message(), DeprecationWarning, stacklevel=2)
-        return self.to_dict(mode="json").get(key, default)
+        return self._json_values().get(key, default)
 
     def __contains__(self, key: object) -> bool:
-        warnings.warn(self._dict_access_message(), DeprecationWarning, stacklevel=2)
-        return key in self.to_dict(mode="json")
+        return key in self._json_values()
 
 
 class EventDataDictAccess(_DeprecatedDictAccess):
