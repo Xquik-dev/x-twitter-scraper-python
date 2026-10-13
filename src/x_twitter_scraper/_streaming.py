@@ -63,6 +63,9 @@ class Stream(Generic[_T]):
 
         try:
             for sse in iterator:
+                # A comment-only keep-alive after an event ID dispatches an event without data.
+                if not sse.data:
+                    continue
                 yield process_data(data=sse.json(), cast_to=cast_to, response=response)
         finally:
             # Ensure the response is closed even if the consumer doesn't read all data
@@ -129,6 +132,9 @@ class AsyncStream(Generic[_T]):
 
         try:
             async for sse in iterator:
+                # A comment-only keep-alive after an event ID dispatches an event without data.
+                if not sse.data:
+                    continue
                 yield process_data(data=sse.json(), cast_to=cast_to, response=response)
         finally:
             # Ensure the response is closed even if the consumer doesn't read all data
