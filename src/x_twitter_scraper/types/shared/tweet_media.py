@@ -10,36 +10,57 @@ from typing_extensions import Literal
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
+from .user_profile import UserProfile
 
-__all__ = ["TweetMedia", "FaceRect", "FocusRect", "Sizes", "Tag", "VideoVariant"]
+__all__ = ["TweetMedia", "FaceRect", "FocusRect", "GrokImageAnnotation", "Sizes", "Tag", "VideoVariant"]
 
 
 class FaceRect(BaseModel):
     h: int
+    """Whole number from 0."""
 
     w: int
+    """Whole number from 0."""
 
     x: int
+    """Whole number from 0."""
 
     y: int
+    """Whole number from 0."""
 
 
 class FocusRect(BaseModel):
     h: int
+    """Whole number from 0."""
 
     w: int
+    """Whole number from 0."""
 
     x: int
+    """Whole number from 0."""
 
     y: int
+    """Whole number from 0."""
+
+
+class GrokImageAnnotation(BaseModel):
+    """Prompt a Grok image came from. Absent on other media & when X sends no prompt."""
+
+    prompt: Optional[str] = None
+    """Prompt the image came from."""
+
+    upsampled_prompt: Optional[str] = FieldInfo(alias="upsampledPrompt", default=None)
+    """Grok's longer rewrite of the prompt."""
 
 
 class Sizes(BaseModel):
     h: int
+    """Whole number from 0."""
 
     resize: str
 
     w: int
+    """Whole number from 0."""
 
 
 class Tag(BaseModel):
@@ -58,6 +79,7 @@ class VideoVariant(BaseModel):
     url: str
 
     bitrate: Optional[int] = None
+    """Whole number from 0."""
 
 
 class TweetMedia(BaseModel):
@@ -87,10 +109,13 @@ class TweetMedia(BaseModel):
     """Video width and height ratio."""
 
     availability_reason: Optional[str] = FieldInfo(alias="availabilityReason", default=None)
-    """Availability reason."""
+    """Why X made the media unavailable, such as `Dmcaed` after a copyright report.
+
+    Omitted on available media.
+    """
 
     availability_status: Optional[str] = FieldInfo(alias="availabilityStatus", default=None)
-    """Availability state."""
+    """Availability state, such as `Available` or `Unavailable`."""
 
     description: Optional[str] = None
     """Media description."""
@@ -116,6 +141,9 @@ class TweetMedia(BaseModel):
     graphic_violence: Optional[bool] = FieldInfo(alias="graphicViolence", default=None)
     """Graphic-violence warning."""
 
+    grok_image_annotation: Optional[GrokImageAnnotation] = FieldInfo(alias="grokImageAnnotation", default=None)
+    """Prompt a Grok image came from. Absent on other media & when X sends no prompt."""
+
     grok_post_id: Optional[str] = FieldInfo(alias="grokPostId", default=None)
     """Grok post ID associated with the media."""
 
@@ -138,6 +166,12 @@ class TweetMedia(BaseModel):
 
     source_status_id: Optional[str] = FieldInfo(alias="sourceStatusId", default=None)
     """Source tweet ID for copied media."""
+
+    source_user: Optional[UserProfile] = FieldInfo(alias="sourceUser", default=None)
+    """The account that first posted the media.
+
+    Some reads carry only its name, picture & badges.
+    """
 
     source_user_id: Optional[str] = FieldInfo(alias="sourceUserId", default=None)
     """Source profile ID for copied media."""

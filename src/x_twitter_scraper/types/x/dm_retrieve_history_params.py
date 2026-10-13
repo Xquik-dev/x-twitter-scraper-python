@@ -21,7 +21,10 @@ class DmRetrieveHistoryParams(TypedDict, total=False):
     """
 
     cursor: str
-    """Pagination cursor for DM history"""
+    """Pagination cursor for collection results.
+
+    Also read as next_cursor, next_token, pagination_token or continuation_token.
+    """
 
     max_id: Annotated[str, PropertyInfo(alias="maxId")]
     """Legacy pagination cursor (backward compat)"""

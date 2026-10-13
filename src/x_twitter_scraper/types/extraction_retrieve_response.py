@@ -26,11 +26,20 @@ class Result(BaseModel):
     x_user_id: str = FieldInfo(alias="xUserId")
 
     bookmark_count: Optional[int] = FieldInfo(alias="bookmarkCount", default=None)
+    """Whole number from 0."""
+
+    email: Optional[str] = None
+    """First email the account publishes on its profile, with outputPreset=flat.
+
+    Default nested output uses enrichmentData.user.email, beside
+    enrichmentData.user.contactInfo. Absent when the profile publishes none.
+    """
 
     enrichment_data: Optional[Dict[str, object]] = FieldInfo(alias="enrichmentData", default=None)
     """Public metadata whose fields are defined by X."""
 
     like_count: Optional[int] = FieldInfo(alias="likeCount", default=None)
+    """Whole number from 0."""
 
     media: Optional[List[TweetMedia]] = None
     """Attached media with outputPreset=flat.
@@ -39,10 +48,13 @@ class Result(BaseModel):
     """
 
     quote_count: Optional[int] = FieldInfo(alias="quoteCount", default=None)
+    """Whole number from 0."""
 
     reply_count: Optional[int] = FieldInfo(alias="replyCount", default=None)
+    """Whole number from 0."""
 
     retweet_count: Optional[int] = FieldInfo(alias="retweetCount", default=None)
+    """Whole number from 0."""
 
     tweet_created_at: Optional[datetime] = FieldInfo(alias="tweetCreatedAt", default=None)
 
@@ -53,10 +65,16 @@ class Result(BaseModel):
     tweet_url: Optional[str] = FieldInfo(alias="tweetUrl", default=None)
 
     view_count: Optional[int] = FieldInfo(alias="viewCount", default=None)
+    """Whole number from 0."""
 
     x_display_name: Optional[str] = FieldInfo(alias="xDisplayName", default=None)
 
     x_followers_count: Optional[int] = FieldInfo(alias="xFollowersCount", default=None)
+    """Followers of the account.
+
+    Absent when X sends no count, as for the hosts & speakers of a Space, and never
+    0 in its place.
+    """
 
     x_profile_image_url: Optional[str] = FieldInfo(alias="xProfileImageUrl", default=None)
 

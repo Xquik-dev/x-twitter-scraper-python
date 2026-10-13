@@ -4,7 +4,7 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 from pydantic import Field as FieldInfo
@@ -31,3 +31,6 @@ class KeywordCreateResponse(BaseModel):
     """Next hourly credit charge time for this keyword query monitor."""
 
     query: str
+
+    name: Optional[str] = None
+    """Customer-set label of the keyword monitor, when set."""

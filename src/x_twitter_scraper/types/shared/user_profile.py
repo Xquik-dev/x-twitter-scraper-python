@@ -16,9 +16,17 @@ __all__ = [
     "UserProfile",
     "AccountBasedIn",
     "AffiliatesHighlightedLabel",
+    "Birthdate",
+    "ContactInfo",
+    "ContactInfoEmail",
+    "ContactInfoLink",
+    "ContactInfoPhone",
     "HighlightsInfo",
     "IdentityVerification",
     "TipJar",
+    "UsernameChanges",
+    "VerificationReason",
+    "VerificationReasonEntity",
 ]
 
 
@@ -53,6 +61,71 @@ class AffiliatesHighlightedLabel(BaseModel):
     user_label_type: Optional[str] = FieldInfo(alias="userLabelType", default=None)
 
 
+class Birthdate(BaseModel):
+    """The parts of the birthday the account made public."""
+
+    day: Optional[int] = None
+
+    month: Optional[int] = None
+
+    year: Optional[int] = None
+
+
+class ContactInfoEmail(BaseModel):
+    domain: str
+    """The part after the @ sign."""
+
+    source: Literal["bio", "name", "location"]
+    """Profile field that holds the email."""
+
+    value: str
+    """The email address."""
+
+    written_as: Optional[str] = FieldInfo(alias="writtenAs", default=None)
+    """The account's own spelling, sent when it spelled the email out."""
+
+
+class ContactInfoLink(BaseModel):
+    network: str
+    """Site the link belongs to, such as `linkedin`, `github` or `telegram`.
+
+    Any other site is `website`.
+    """
+
+    source: Literal["url", "bio"]
+    """`url` for the website field, `bio` for a bio link."""
+
+    url: str
+    """The link, as X expands it."""
+
+
+class ContactInfoPhone(BaseModel):
+    source: Literal["bio", "name", "location", "url"]
+    """Profile field that holds the number."""
+
+    value: str
+    """The digits, with a leading + when the account wrote a country code."""
+
+    written_as: Optional[str] = FieldInfo(alias="writtenAs", default=None)
+    """The account's own spelling of the number."""
+
+
+class ContactInfo(BaseModel):
+    """Emails, phone numbers & links the account publishes on its own profile.
+
+    Omitted when it publishes none.
+    """
+
+    emails: Optional[List[ContactInfoEmail]] = None
+    """Emails in the bio, name or location, lowercased."""
+
+    links: Optional[List[ContactInfoLink]] = None
+    """The profile's website & the links in its bio."""
+
+    phones: Optional[List[ContactInfoPhone]] = None
+    """Phone numbers on the profile. Only a spelling that can be nothing else counts."""
+
+
 class HighlightsInfo(BaseModel):
     """Profile highlight availability and count metadata."""
 
@@ -62,13 +135,15 @@ class HighlightsInfo(BaseModel):
 
 
 class IdentityVerification(BaseModel):
-    """Identity verification metadata displayed by X."""
+    """Identity verification X shows on the profile & its About page."""
 
     description: Optional[str] = None
 
     is_identity_verified: Optional[bool] = FieldInfo(alias="isIdentityVerified", default=None)
+    """Whether the owner verified their ID with X."""
 
     verified_since_msec: Optional[str] = FieldInfo(alias="verifiedSinceMsec", default=None)
+    """When X verified the account, in milliseconds since 1970, as text."""
 
 
 class TipJar(BaseModel):
@@ -93,6 +168,37 @@ class TipJar(BaseModel):
     venmo_handle: Optional[str] = FieldInfo(alias="venmoHandle", default=None)
 
 
+class UsernameChanges(BaseModel):
+    """How often the account changed its username."""
+
+    count: int
+    """Whole number from 0."""
+
+    last_changed_at: Optional[datetime] = FieldInfo(alias="lastChangedAt", default=None)
+    """Time of the latest change, omitted when there is none."""
+
+
+class VerificationReasonEntity(BaseModel):
+    from_index: Optional[int] = FieldInfo(alias="fromIndex", default=None)
+    """Whole number from 0."""
+
+    to_index: Optional[int] = FieldInfo(alias="toIndex", default=None)
+    """Whole number from 0."""
+
+    url: Optional[str] = None
+
+    url_type: Optional[str] = FieldInfo(alias="urlType", default=None)
+
+
+class VerificationReason(BaseModel):
+    """X's text on why the profile is verified, with its links."""
+
+    entities: Optional[List[VerificationReasonEntity]] = None
+    """Links inside the text, by character range."""
+
+    text: Optional[str] = None
+
+
 class UserProfile(BaseModel):
     """Public X profile."""
 
@@ -109,36 +215,112 @@ class UserProfile(BaseModel):
     post location, or exact location.
     """
 
+    account_based_in_accurate: Optional[bool] = FieldInfo(alias="accountBasedInAccurate", default=None)
+    """False when X notes accountBasedIn may be inaccurate."""
+
+    account_based_in_unavailable: Optional[bool] = FieldInfo(alias="accountBasedInUnavailable", default=None)
+    """True when X withheld accountBasedIn from this read. Retry later."""
+
+    advertiser_account_service_levels: Optional[List[str]] = FieldInfo(
+        alias="advertiserAccountServiceLevels", default=None
+    )
+    """X Ads services the account uses, such as `analytics`, `media_studio` or `smb`.
+
+    Empty for an account without ads.
+    """
+
+    advertiser_account_type: Optional[str] = FieldInfo(alias="advertiserAccountType", default=None)
+    """The account's X Ads type.
+
+    `none` for an account without ads, or `promotable_user` for one that may run
+    them.
+    """
+
     affiliates_highlighted_label: Optional[AffiliatesHighlightedLabel] = FieldInfo(
         alias="affiliatesHighlightedLabel", default=None
     )
     """Organization affiliation label shown on an X profile."""
 
+    affiliate_username: Optional[str] = FieldInfo(alias="affiliateUsername", default=None)
+    """
+    Handle of the organization X shows the account is affiliated with, from its
+    About page.
+    """
+
     automated_by: Optional[str] = FieldInfo(alias="automatedBy", default=None)
 
+    birthdate: Optional[Birthdate] = None
+    """The parts of the birthday the account made public."""
+
     business_account_affiliates_count: Optional[int] = FieldInfo(alias="businessAccountAffiliatesCount", default=None)
+    """Whole number from 0."""
+
+    business_profile_state: Optional[str] = FieldInfo(alias="businessProfileState", default=None)
+    """Whether X treats the profile as a business profile. `none` or `enabled`."""
 
     community_role: Optional[str] = FieldInfo(alias="communityRole", default=None)
     """Community role when returned by community member reads"""
 
+    connected_via: Optional[str] = FieldInfo(alias="connectedVia", default=None)
+    """How the account first connected to X."""
+
+    connected_via_accurate: Optional[bool] = FieldInfo(alias="connectedViaAccurate", default=None)
+    """False when X notes that country may be inaccurate."""
+
+    contact_info: Optional[ContactInfo] = FieldInfo(alias="contactInfo", default=None)
+    """Emails, phone numbers & links the account publishes on its own profile.
+
+    Omitted when it publishes none.
+    """
+
     cover_picture: Optional[str] = FieldInfo(alias="coverPicture", default=None)
 
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
+    """Account creation time."""
 
     creator_subscriptions_count: Optional[int] = FieldInfo(alias="creatorSubscriptionsCount", default=None)
+    """Whole number from 0."""
+
+    default_profile: Optional[bool] = FieldInfo(alias="defaultProfile", default=None)
+    """Whether the profile keeps X's default theme."""
+
+    default_profile_image: Optional[bool] = FieldInfo(alias="defaultProfileImage", default=None)
+    """Whether the profile keeps X's default avatar."""
 
     description: Optional[str] = None
+
+    email: Optional[str] = None
+    """First email the account publishes on its profile, lowercased.
+
+    Omitted when it publishes none.
+    """
+
+    fast_followers_count: Optional[int] = FieldInfo(alias="fastFollowersCount", default=None)
+    """Followers X counts as fast followers."""
 
     favourites_count: Optional[int] = FieldInfo(alias="favouritesCount", default=None)
 
     followers: Optional[int] = None
+    """
+    Omitted when X sends no count, as for the account that first posted reused
+    media.
+    """
 
     following: Optional[int] = None
+
+    geo_enabled: Optional[bool] = FieldInfo(alias="geoEnabled", default=None)
+    """Whether the profile may add a location to posts."""
 
     grok_translated_bio: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedBio", default=None)
     """Public profile bio translation returned by X"""
 
     has_custom_timelines: Optional[bool] = FieldInfo(alias="hasCustomTimelines", default=None)
+
+    has_extended_profile: Optional[bool] = FieldInfo(alias="hasExtendedProfile", default=None)
+    """Whether the profile filled X's extended fields, such as a birth date.
+
+    True or false.
+    """
 
     has_graduated_access: Optional[bool] = FieldInfo(alias="hasGraduatedAccess", default=None)
 
@@ -150,7 +332,7 @@ class UserProfile(BaseModel):
     """Profile highlight availability and count metadata."""
 
     identity_verification: Optional[IdentityVerification] = FieldInfo(alias="identityVerification", default=None)
-    """Identity verification metadata displayed by X."""
+    """Identity verification X shows on the profile & its About page."""
 
     is_automated: Optional[bool] = FieldInfo(alias="isAutomated", default=None)
 
@@ -159,15 +341,24 @@ class UserProfile(BaseModel):
 
     is_profile_translatable: Optional[bool] = FieldInfo(alias="isProfileTranslatable", default=None)
 
+    is_translation_enabled: Optional[bool] = FieldInfo(alias="isTranslationEnabled", default=None)
+    """Whether the account turned on X's translation of its posts. True or false."""
+
     is_translator: Optional[bool] = FieldInfo(alias="isTranslator", default=None)
 
     is_verified: Optional[bool] = FieldInfo(alias="isVerified", default=None)
     """Whether X marks the profile as verified"""
 
+    listed_count: Optional[int] = FieldInfo(alias="listedCount", default=None)
+    """Public lists that include the profile."""
+
     location: Optional[str] = None
     """Account owner's public profile location text"""
 
     media_count: Optional[int] = FieldInfo(alias="mediaCount", default=None)
+
+    normal_followers_count: Optional[int] = FieldInfo(alias="normalFollowersCount", default=None)
+    """Followers minus fast followers."""
 
     parody_commentary_fan_label: Optional[str] = FieldInfo(alias="parodyCommentaryFanLabel", default=None)
 
@@ -208,6 +399,9 @@ class UserProfile(BaseModel):
 
     statuses_count: Optional[int] = FieldInfo(alias="statusesCount", default=None)
 
+    subscribers_count: Optional[int] = FieldInfo(alias="subscribersCount", default=None)
+    """Accounts subscribed to the profile's paid Subscriptions. 0 when it has none."""
+
     super_follow_eligible: Optional[bool] = FieldInfo(alias="superFollowEligible", default=None)
 
     super_follows_user_profile_active: Optional[bool] = FieldInfo(alias="superFollowsUserProfileActive", default=None)
@@ -221,6 +415,12 @@ class UserProfile(BaseModel):
     unavailable_reason: Optional[str] = FieldInfo(alias="unavailableReason", default=None)
 
     url: Optional[str] = None
+
+    username_changes: Optional[UsernameChanges] = FieldInfo(alias="usernameChanges", default=None)
+    """How often the account changed its username."""
+
+    verification_reason: Optional[VerificationReason] = FieldInfo(alias="verificationReason", default=None)
+    """X's text on why the profile is verified, with its links."""
 
     verified: Optional[bool] = None
 

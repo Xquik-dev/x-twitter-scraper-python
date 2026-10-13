@@ -15,7 +15,10 @@ __all__ = ["ExtractionRetrieveParams"]
 
 class ExtractionRetrieveParams(TypedDict, total=False):
     cursor: str
-    """Previous nextCursor. Offset pagination is not supported."""
+    """Previous nextCursor.
+
+    The after alias also works. Offset pagination is not supported.
+    """
 
     field_style: Annotated[Literal["source", "camelCase", "snake_case"], PropertyInfo(alias="fieldStyle")]
     """Preserve source keys or convert result field names."""

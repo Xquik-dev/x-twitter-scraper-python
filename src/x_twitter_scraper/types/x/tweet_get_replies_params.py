@@ -16,6 +16,9 @@ __all__ = ["TweetGetRepliesParams"]
 
 
 class TweetGetRepliesParams(TypedDict, total=False):
+    after: str
+    """Legacy cursor alias. Prefer cursor."""
+
     any_words: Annotated[str, PropertyInfo(alias="anyWords")]
     """Words or quoted phrases where any one can match.
 
@@ -37,8 +40,9 @@ class TweetGetRepliesParams(TypedDict, total=False):
     cursor: str
     """Cursor from the previous response.
 
-    Xquik cursors resume automatic coverage. Existing unprefixed cursors keep legacy
-    standard behavior.
+    Existing unprefixed cursors keep legacy standard behavior. Pages can be empty
+    before more rows; follow next_cursor. Also read as next_cursor, next_token,
+    pagination_token or continuation_token.
     """
 
     exact_phrase: Annotated[str, PropertyInfo(alias="exactPhrase")]
@@ -53,6 +57,16 @@ class TweetGetRepliesParams(TypedDict, total=False):
     exclude_words: Annotated[str, PropertyInfo(alias="excludeWords")]
     """Words or quoted phrases to exclude. Separate with spaces, commas, or lines."""
 
+    fields: str
+    """Fields to keep in each row, comma-separated.
+
+    Use dots for nested fields, such as author.username. A list keeps the field in
+    each item. Case & underscores do not matter. A row that lacks a field leaves it
+    out. Cursors, counts & diagnostics always stay. An unknown name answers 400
+    unknown_field with the valid names, before any read. The price stays the same.
+    SDK row types then hold only the named fields.
+    """
+
     from_user: Annotated[str, PropertyInfo(alias="fromUser")]
     """Filter by author username."""
 
@@ -65,6 +79,14 @@ class TweetGetRepliesParams(TypedDict, total=False):
     has_media_only: Annotated[bool, PropertyInfo(alias="hasMediaOnly")]
     """Only return replies containing media."""
 
+    include_hidden: Annotated[bool, PropertyInfo(alias="includeHidden")]
+    """Complete mode only.
+
+    Adds the replies the post's author hid, each with hiddenByAuthor true. They
+    count toward limit like any reply. A paged read answers 400. Get its hidden
+    replies from GET /x/tweets/{id}/hidden-replies.
+    """
+
     include_original_post: Annotated[bool, PropertyInfo(alias="includeOriginalPost")]
     """Include the source post and count it toward limit."""
 
@@ -75,20 +97,19 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Filter by language. Alias `lang` is accepted."""
 
     limit: int
-    """Complete mode defaults to 25,000 combined direct and nested replies.
-
-    Set a smaller or larger total with limit. Automatic pages accept 1-300. Standard
-    pages accept 1-100.
+    """
+    Complete mode defaults to 25,000 combined direct & nested replies; set another
+    total with limit. Automatic pages accept 1-300, standard pages 1-100.
     """
 
     max_depth: Annotated[int, PropertyInfo(alias="maxDepth")]
     """Maximum reply depth from the source post."""
 
     max_faves: Annotated[int, PropertyInfo(alias="maxFaves")]
-    """Maximum likes threshold. maxLikes is also accepted."""
+    """Maximum likes threshold. maxLikes & max_likes also work."""
 
     max_id: Annotated[str, PropertyInfo(alias="maxId")]
-    """Return Tweets older than this Tweet ID."""
+    """Return Tweets at or below this ID."""
 
     max_quotes: Annotated[int, PropertyInfo(alias="maxQuotes")]
     """Maximum quotes threshold."""
@@ -129,7 +150,7 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Override automatic coverage.
 
     Standard uses legacy pagination. Complete adds nested replies, diagnostics,
-    scope, depth, sorting, and original-post controls.
+    scope, depth, and original-post controls.
     """
 
     native_retweets: Annotated[bool, PropertyInfo(alias="nativeRetweets")]
@@ -141,11 +162,17 @@ class TweetGetRepliesParams(TypedDict, total=False):
     news: bool
     """Only return news results."""
 
-    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Automatic pages accept 1-300 Tweets.
+    omit: str
+    """Fields to drop from each row, comma-separated.
 
-    Standard pages keep 1-100. Default 20. Follow next_cursor while the response
-    reports more pages. Deprecated aliases remain accepted.
+    It takes the same names as fields. With fields, it drops from the kept fields.
+    """
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Automatic pages accept 1-300 Tweets, standard pages 1-100.
+
+    Default 20. Follow next_cursor for more pages. Aliases: limit, count,
+    max_results, maxItems, max_items & per_page.
     """
 
     quotes: Literal["include", "exclude", "only"]
@@ -155,7 +182,7 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Only quotes of this tweet ID."""
 
     replies: Literal["include", "exclude", "only"]
-    """Only when the caller requests a reply mode."""
+    """Reply mode. Exclude keeps own-thread replies."""
 
     retweets: Literal["include", "exclude", "only"]
     """Only when the caller requests a repost mode."""
@@ -170,16 +197,27 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Select all replies, direct replies, or nested replies."""
 
     since_date: Annotated[Union[str, date], PropertyInfo(alias="sinceDate", format="iso8601")]
-    """Start date in YYYY-MM-DD format."""
+    """Start date in YYYY-MM-DD format, as a UTC day."""
 
     since_id: Annotated[str, PropertyInfo(alias="sinceId")]
-    """Return Tweets newer than this Tweet ID."""
+    """Return Tweets whose IDs exceed this ID."""
 
     since_time: Annotated[str, PropertyInfo(alias="sinceTime")]
-    """Inclusive ISO bound for Tweet creation time."""
+    """Inclusive ISO bound for Tweet creation time, such as 2026-09-25T19:20:41Z.
+
+    Unix seconds also work. A time without an offset is UTC.
+    """
 
     sort: Literal["relevance", "latest", "oldest", "likes"]
-    """Sort the selected replies before applying limit."""
+    """Sorts the selected replies before limit applies.
+
+    Complete mode defaults to relevance. Automatic pages list the newest first
+    unless you set sort; standard pages ignore it. With likes, each page is sorted
+    by likes. A later page can hold a reply with more likes. The order is final on
+    the last page. Latest & oldest sort every row by date. They read the whole
+    thread first, for up to 20 s. An answer that stopped before every reply X shows
+    sets orderPartial.
+    """
 
     source: str
     """Match the source application."""
@@ -188,10 +226,13 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Filter replies sent to a username."""
 
     until_date: Annotated[Union[str, date], PropertyInfo(alias="untilDate", format="iso8601")]
-    """End date in YYYY-MM-DD format."""
+    """End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count."""
 
     until_time: Annotated[str, PropertyInfo(alias="untilTime")]
-    """Exclusive ISO bound for Tweet creation time."""
+    """Exclusive ISO bound for Tweet creation time.
+
+    Unix seconds also work. A time without an offset is UTC.
+    """
 
     url: str
     """URL substring or domain filter."""
@@ -203,4 +244,7 @@ class TweetGetRepliesParams(TypedDict, total=False):
     """Set the radius for the near filter."""
 
     within_time: Annotated[str, PropertyInfo(alias="withinTime")]
-    """Match Tweets inside a recent time window."""
+    """Keeps Tweets from a recent window, such as 90m or 7d.
+
+    Use a whole number & s, m, h or d.
+    """

@@ -22,4 +22,4 @@ class AccountCreateParams(TypedDict, total=False):
     """Authenticator App TOTP secret required for durable login"""
 
     username: Required[str]
-    """X username"""
+    """X username of the account to connect, with or without @"""

@@ -25,3 +25,4 @@ class PaginatedUsers(BaseModel):
     users: List[UserProfile]
 
     filtered_count: Optional[int] = None
+    """Whole number from 0."""

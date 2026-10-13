@@ -17,7 +17,7 @@ __all__ = ["ExtractionRunResponse", "ExtractionEstimate", "Accepted"]
 class ExtractionEstimate(BaseModel):
     """Free conservative cost estimate.
 
-    Post estimates use the supported cap without a live profile lookup. It never creates a job or charges.
+    Post estimates use the supported cap & refuse a protected profile. It never creates a job or charges.
     """
 
     allowed: bool
@@ -34,6 +34,7 @@ class ExtractionEstimate(BaseModel):
         "followers",
         "following",
         "collection",
+        "likeCount",
         "paginationCap",
         "quoteCount",
         "replyCount",

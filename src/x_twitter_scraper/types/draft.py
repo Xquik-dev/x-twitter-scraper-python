@@ -15,7 +15,7 @@ __all__ = ["Draft"]
 
 
 class Draft(BaseModel):
-    """Saved tweet draft with optional topic and goal."""
+    """Private Xquik draft with optional topic and goal."""
 
     id: str
 

@@ -16,4 +16,7 @@ class CreditTopupBalanceParams(TypedDict, total=False):
     """Amount to top up in US dollars. Minimum 10."""
 
     locale: str
-    """Optional checkout locale. Defaults to en."""
+    """Optional site language for Stripe's return page.
+
+    An unsupported 1 uses en, the default.
+    """

@@ -6,6 +6,7 @@
 
 from __future__ import annotations
 
+from .media_list_params import MediaListParams as MediaListParams
 from .tweet_list_params import TweetListParams as TweetListParams
 from .join_create_params import JoinCreateParams as JoinCreateParams
 from .join_create_response import JoinCreateResponse as JoinCreateResponse

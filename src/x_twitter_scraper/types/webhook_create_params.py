@@ -20,4 +20,9 @@ class WebhookCreateParams(TypedDict, total=False):
     """Array of event types to subscribe to."""
 
     url: Required[str]
-    """HTTPS URL"""
+    """HTTPS URL.
+
+    A Discord channel webhook URL gets each event as a Discord message, & a Slack
+    incoming webhook URL as a Slack message. To deliver to Telegram, use POST
+    /webhooks/telegram instead.
+    """

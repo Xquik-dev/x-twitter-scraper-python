@@ -32,4 +32,9 @@ EventType: TypeAlias = Literal[
     "profile.protected.changed",
     "profile.pinned_tweet.changed",
     "profile.unavailable.changed",
+    "tweet.deleted",
+    "broadcast.started",
+    "space.started",
+    "following.added",
+    "following.removed",
 ]

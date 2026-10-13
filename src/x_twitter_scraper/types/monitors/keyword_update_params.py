@@ -6,7 +6,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Optional
 from typing_extensions import Annotated, TypedDict
 
 from ..._utils import PropertyInfo
@@ -20,3 +20,6 @@ class KeywordUpdateParams(TypedDict, total=False):
     """Array of event types to subscribe to."""
 
     is_active: Annotated[bool, PropertyInfo(alias="isActive")]
+
+    name: Optional[str]
+    """New label for the keyword monitor. Send null to remove it."""

@@ -13,7 +13,10 @@ __all__ = ["RadarRetrieveTrendingTopicsParams"]
 
 class RadarRetrieveTrendingTopicsParams(TypedDict, total=False):
     after: str
-    """Cursor for pagination (from prior response nextCursor)."""
+    """Cursor for pagination, from the prior response's nextCursor.
+
+    A cursor the radar can't read gets 400 `invalid_input`.
+    """
 
     category: Literal["general", "tech", "dev", "science", "culture", "politics", "business", "entertainment"]
     """Filter by category."""

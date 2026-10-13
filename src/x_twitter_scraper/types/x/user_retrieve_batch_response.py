@@ -14,9 +14,15 @@ __all__ = ["UserRetrieveBatchResponse"]
 
 
 class UserRetrieveBatchResponse(BaseModel):
-    """Batch lookup preserves first-seen ID order and ignores duplicate IDs.
+    """Batch lookup preserves first-seen order and ignores duplicates.
 
-    unavailable_ids were processed without profiles. unprocessed_ids were credit-limited.
+    The ID lists name the requested IDs or usernames. A profile link is named by its username.
+    """
+
+    failed_ids: List[str]
+    """Processed IDs that failed to load, in first-seen request order.
+
+    They cost nothing. Retry them.
     """
 
     has_next_page: Literal[False]
@@ -35,7 +41,7 @@ class UserRetrieveBatchResponse(BaseModel):
     """Number of user profiles returned and charged."""
 
     unavailable_ids: List[str]
-    """Processed IDs with no returned profile, in first-seen request order."""
+    """Processed IDs with no profile on X, in first-seen request order."""
 
     unprocessed_ids: List[str]
     """Requested IDs skipped because available credits limited processing.

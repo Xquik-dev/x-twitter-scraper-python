@@ -15,17 +15,53 @@ __all__ = ["UserRetrieveFollowingParams"]
 
 class UserRetrieveFollowingParams(TypedDict, total=False):
     after: str
-    """Deprecated following cursor alias. Prefer cursor."""
+    """Legacy cursor alias. Prefer cursor."""
 
     bio_contains: Annotated[str, PropertyInfo(alias="bioContains")]
     """Match any comma-separated or line-separated bio term, ignoring case."""
 
+    blue_verified_only: Annotated[bool, PropertyInfo(alias="blueVerifiedOnly")]
+    """Only return profiles X marks as blue verified.
+
+    X marks many business & government accounts blue too. Use verifiedType for 1
+    badge type.
+    """
+
+    business_email_only: Annotated[bool, PropertyInfo(alias="businessEmailOnly")]
+    """Only return profiles that publish an email outside free webmail, such as Gmail."""
+
     cursor: str
     """Cursor from the previous response.
 
-    Xquik cursors resume automatic coverage. Existing unprefixed cursors keep legacy
-    standard behavior.
+    Existing unprefixed cursors keep legacy standard behavior. Pages can be empty
+    before more rows; follow next_cursor. Also read as next_cursor, next_token,
+    pagination_token or continuation_token.
     """
+
+    email_domains: Annotated[str, PropertyInfo(alias="emailDomains")]
+    """Only return profiles with an email at one of these domains.
+
+    Separate domains with commas. Subdomains match.
+    """
+
+    enrich_profiles: Annotated[bool, PropertyInfo(alias="enrichProfiles")]
+    """Add each row's full profile, as GET /x/users/{id} returns it.
+
+    Pages take several seconds longer.
+    """
+
+    fields: str
+    """Fields to keep in each row, comma-separated.
+
+    Use dots for nested fields, such as author.username. A list keeps the field in
+    each item. Case & underscores do not matter. A row that lacks a field leaves it
+    out. Cursors, counts & diagnostics always stay. An unknown name answers 400
+    unknown_field with the valid names, before any read. The price stays the same.
+    SDK row types then hold only the named fields.
+    """
+
+    has_email: Annotated[bool, PropertyInfo(alias="hasEmail")]
+    """Only return profiles that publish an email."""
 
     has_location: Annotated[bool, PropertyInfo(alias="hasLocation")]
     """Only return profiles with a location."""
@@ -34,7 +70,7 @@ class UserRetrieveFollowingParams(TypedDict, total=False):
     """Only return profiles with a website."""
 
     limit: int
-    """Legacy page-size alias outside explicit coverage mode.
+    """Legacy page-size alias outside coverage mode.
 
     Coverage accepts 1-10000. Prefer pageSize.
     """
@@ -47,6 +83,14 @@ class UserRetrieveFollowingParams(TypedDict, total=False):
 
     max_following: Annotated[int, PropertyInfo(alias="maxFollowing")]
     """Profiles may follow at most this many accounts."""
+
+    max_scan: Annotated[int, PropertyInfo(alias="maxScan")]
+    """Most profiles 1 request reads, kept or dropped by the filters.
+
+    A filter that keeps few profiles reads up to 65 s a request without it. The
+    request then answers the profiles it kept, the count it dropped & the cursor to
+    read on. Each request of a cursor may send its own value. Automatic mode only.
+    """
 
     max_statuses: Annotated[int, PropertyInfo(alias="maxStatuses")]
     """Maximum post count. maxPosts is also accepted."""
@@ -70,11 +114,17 @@ class UserRetrieveFollowingParams(TypedDict, total=False):
     cursors.
     """
 
-    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Maximum user profiles: automatic 300; standard 200.
+    omit: str
+    """Fields to drop from each row, comma-separated.
 
-    Sources return fewer profiles. Follow next_cursor while the response reports
-    more pages.
+    It takes the same names as fields. With fields, it drops from the kept fields.
+    """
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Up to 300 user profiles in automatic mode, 200 in standard.
+
+    Sources can return fewer. Follow next_cursor for more pages. Aliases: limit,
+    count, max_results, maxItems, max_items & per_page.
     """
 
     username_contains: Annotated[str, PropertyInfo(alias="usernameContains")]

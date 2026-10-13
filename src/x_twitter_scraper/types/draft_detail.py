@@ -14,6 +14,6 @@ __all__ = ["DraftDetail"]
 
 
 class DraftDetail(Draft):
-    """Full tweet draft including update timestamp."""
+    """Full private Xquik draft including update timestamp."""
 
     updated_at: datetime = FieldInfo(alias="updatedAt")

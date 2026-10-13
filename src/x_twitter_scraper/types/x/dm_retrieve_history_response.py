@@ -29,6 +29,7 @@ class Message(BaseModel):
     """
 
     text: Optional[str] = None
+    """Text as x.com shows it, with `&`, `<` & `>` decoded."""
 
 
 class DmRetrieveHistoryResponse(BaseModel):

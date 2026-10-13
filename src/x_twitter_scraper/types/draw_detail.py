@@ -19,11 +19,15 @@ class DrawDetail(DrawListItem):
     tweet_id: str = FieldInfo(alias="tweetId")
 
     tweet_like_count: int = FieldInfo(alias="tweetLikeCount")
+    """Whole number from 0."""
 
     tweet_quote_count: int = FieldInfo(alias="tweetQuoteCount")
+    """Whole number from 0."""
 
     tweet_reply_count: int = FieldInfo(alias="tweetReplyCount")
+    """Whole number from 0."""
 
     tweet_retweet_count: int = FieldInfo(alias="tweetRetweetCount")
+    """Whole number from 0."""
 
     tweet_text: str = FieldInfo(alias="tweetText")

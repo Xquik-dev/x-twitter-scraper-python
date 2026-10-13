@@ -4,7 +4,7 @@
 
 # File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
 
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -30,4 +30,8 @@ class Ticket(BaseModel):
 
 
 class TicketListResponse(BaseModel):
+    has_more: bool = FieldInfo(alias="hasMore")
+
     tickets: List[Ticket]
+
+    next_cursor: Optional[str] = FieldInfo(alias="nextCursor", default=None)

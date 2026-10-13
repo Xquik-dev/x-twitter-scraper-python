@@ -19,8 +19,22 @@ class ExtractionExportResultsParams(TypedDict, total=False):
     format: Required[Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"]]
     """Export file format"""
 
+    business_email_only: Annotated[bool, PropertyInfo(alias="businessEmailOnly")]
+    """
+    Require an email outside free webmail, such as Gmail, in the row's Email column.
+    """
+
+    email_domains: Annotated[str, PropertyInfo(alias="emailDomains")]
+    """Require the row's email at one of these domains.
+
+    Separate domains with commas. Subdomains match.
+    """
+
     has_description: Annotated[bool, PropertyInfo(alias="hasDescription")]
     """Require a non-empty description."""
+
+    has_email: Annotated[bool, PropertyInfo(alias="hasEmail")]
+    """Require an email in the row's Email column."""
 
     has_location: Annotated[bool, PropertyInfo(alias="hasLocation")]
     """Require a non-empty location."""
@@ -65,10 +79,18 @@ class ExtractionExportResultsParams(TypedDict, total=False):
     """Search exported result text."""
 
     since_date: Annotated[Union[str, date], PropertyInfo(alias="sinceDate", format="iso8601")]
-    """Include results on or after this date."""
+    """Include results on or after this date, from 00:00 UTC.
+
+    An ISO 8601 time starts at that instant. Results without a post date are left
+    out. An empty value sets no filter.
+    """
 
     until_date: Annotated[Union[str, date], PropertyInfo(alias="untilDate", format="iso8601")]
-    """Include results on or before this date."""
+    """Include results on or before this date, inclusive, through 23:59:59 UTC.
+
+    An ISO 8601 time ends at that instant. Results without a post date are left out.
+    An empty value sets no filter.
+    """
 
     verified: bool
     """Filter by verified status."""

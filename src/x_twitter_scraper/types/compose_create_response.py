@@ -73,6 +73,7 @@ class ComposePrepareResultSavedStyle(BaseModel):
     """A saved username style and analyzed post count."""
 
     tweet_count: int = FieldInfo(alias="tweetCount")
+    """Whole number from 0."""
 
     username: str
 

@@ -20,7 +20,7 @@ class Advertising(BaseModel):
 
 class AIGenerated(BaseModel):
     detection_source: Optional[str] = FieldInfo(alias="detectionSource", default=None)
-    """Source of the AI-generated media disclosure."""
+    """How X detected AI media. X omits it for self-declared posts."""
 
     has_ai_generated_media: Optional[bool] = FieldInfo(alias="hasAiGeneratedMedia", default=None)
     """True when X labels the tweet as containing AI-generated media."""

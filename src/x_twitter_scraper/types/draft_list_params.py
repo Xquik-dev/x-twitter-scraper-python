@@ -15,11 +15,11 @@ __all__ = ["DraftListParams"]
 
 class DraftListParams(TypedDict, total=False):
     after_cursor: Annotated[str, PropertyInfo(alias="afterCursor")]
-    """Cursor for pagination"""
+    """Cursor for pagination. The after alias also works."""
 
     limit: int
     """Maximum items per page: 1 to 100, default 50.
 
-    Credits can reduce paid results. The endpoint returns 402 insufficient_credits
-    when none are affordable.
+    Credits can reduce paid results. With none affordable, it returns 402
+    insufficient_credits.
     """
