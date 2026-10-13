@@ -153,6 +153,10 @@ The script prints 1 line before each step:
 8. It compares the PyPI files with the local build and installs the release from PyPI.
 9. It pushes the annotated `v<version>` tag and creates the GitHub release from the changelog section.
 
+Preview a release with `bin/release-local --dry-run`.
+It runs every step except the upload, the tag, and the GitHub release.
+It also accepts a detached checkout of `origin/main`, so a preview can run in a separate worktree.
+
 The PyPI token lives in the macOS Keychain under service `xquik-pypi-token`.
 When that item is missing, the script stops and says to add it.
 The script reads the token only while `uv publish` runs.

@@ -4,9 +4,23 @@
 #
 # Publishes the version in pyproject.toml to PyPI from a maintainer's Mac,
 # then pushes its v<version> tag and creates the GitHub release.
-# Usage: bin/release-local
+# Usage: bin/release-local [--dry-run]
+# --dry-run runs every step except the upload, the tag, and the GitHub release.
+# It also accepts a detached HEAD at origin/main, so a preview can run in a
+# separate worktree.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+
+dry_run=false
+for argument in "$@"; do
+  case "$argument" in
+    --dry-run) dry_run=true ;;
+    *)
+      echo "release-local: unknown option $argument. Use --dry-run or no option." >&2
+      exit 2
+      ;;
+  esac
+done
 
 repository="Xquik-dev/x-twitter-scraper-python"
 package="x-twitter-scraper"
@@ -29,7 +43,12 @@ security find-generic-password -s "$keychain_service" >/dev/null 2>&1 ||
 step "Checking for a clean tree on main that equals origin/main."
 [[ "$(git remote get-url origin)" == *"$repository"* ]] || fail "Point origin at $repository, then rerun."
 [[ -z "$(git status --porcelain)" ]] || fail "Commit or remove local changes, then rerun."
-[[ "$(git symbolic-ref --quiet --short HEAD || true)" == main ]] || fail "Switch to main, then rerun."
+branch="$(git symbolic-ref --quiet --short HEAD || true)"
+if $dry_run && [[ -z "$branch" ]]; then
+  step "Dry run: HEAD is detached, so only its match with origin/main is checked."
+else
+  [[ "$branch" == main ]] || fail "Switch to main, then rerun."
+fi
 git fetch --quiet origin main
 revision="$(git rev-parse HEAD)"
 [[ "$revision" == "$(git rev-parse origin/main)" ]] || fail "Make main equal to origin/main, then rerun."
@@ -59,8 +78,8 @@ bin/check-local
 [[ -z "$(git status --porcelain)" && "$(git rev-parse HEAD)" == "$revision" ]] ||
   fail "The checks changed the tree. Review and commit the changes, then rerun."
 
-step "Auditing locked dependencies for known vulnerabilities."
-bash scripts/audit || fail "A locked dependency has a known vulnerability. Upgrade it in uv.lock, then rerun."
+step "Auditing locked dependencies with the audit policy and audit-exceptions.json."
+bash scripts/audit || fail "The dependency audit blocked the release. Fix the findings above, then rerun."
 
 artifacts="$PWD/dist/releases/$revision"
 files=("$artifacts/x_twitter_scraper-$version-py3-none-any.whl" "$artifacts/x_twitter_scraper-$version.tar.gz")
@@ -76,35 +95,51 @@ uv run --locked --all-extras twine check "${files[@]}"
 step "Checking whether PyPI already has $package $version."
 pypi_status="$(curl --silent --output /dev/null --write-out '%{http_code}' --max-time 30 "https://pypi.org/pypi/$package/$version/json")" ||
   fail "Could not reach PyPI. Check network access, then rerun."
+on_pypi=true
 case "$pypi_status" in
   200)
     step "PyPI already has $package $version, so the upload is skipped."
     ;;
   404)
-    step "Uploading to PyPI with the token from Keychain service $keychain_service."
-    (
-      token="$(security find-generic-password -s "$keychain_service" -w 2>/dev/null)" ||
-        fail "Keychain has no $keychain_service item. The owner must add the PyPI token as that service, then rerun."
-      UV_PUBLISH_TOKEN="$token" uv publish \
-        --publish-url https://upload.pypi.org/legacy/ \
-        --check-url https://pypi.org/simple/ \
-        "${files[@]}"
-    )
+    if $dry_run; then
+      on_pypi=false
+      step "Dry run: PyPI has no $package $version yet. The upload is skipped."
+    else
+      step "Uploading to PyPI with the token from Keychain service $keychain_service."
+      (
+        token="$(security find-generic-password -s "$keychain_service" -w 2>/dev/null)" ||
+          fail "Keychain has no $keychain_service item. The owner must add the PyPI token as that service, then rerun."
+        UV_PUBLISH_TOKEN="$token" uv publish \
+          --publish-url https://upload.pypi.org/legacy/ \
+          --check-url https://pypi.org/simple/ \
+          "${files[@]}"
+      )
+    fi
     ;;
   *)
     fail "PyPI returned HTTP $pypi_status. Retry later."
     ;;
 esac
 
-step "Comparing PyPI files with the local build and installing $version from PyPI."
-for attempt in 1 2 3 4 5; do
-  if bash scripts/release verify; then
-    break
-  fi
-  ((attempt < 5)) || fail "PyPI files differ from this build or are not visible yet. Run bun run release:verify before tagging."
-  step "PyPI is not ready yet. Retrying in 30 seconds."
-  sleep 30
-done
+if $on_pypi; then
+  step "Comparing PyPI files with the local build and installing $version from PyPI."
+  for attempt in 1 2 3 4 5; do
+    if bash scripts/release verify; then
+      break
+    fi
+    ((attempt < 5)) || fail "PyPI files differ from this build or are not visible yet. Run bun run release:verify before tagging."
+    step "PyPI is not ready yet. Retrying in 30 seconds."
+    sleep 30
+  done
+else
+  step "Dry run: the comparison with PyPI is skipped, because nothing was uploaded."
+fi
+
+if $dry_run; then
+  step "Dry run: tag $tag and the GitHub release are skipped."
+  echo "Dry run finished for $package $version. Nothing was uploaded, tagged, or released."
+  exit 0
+fi
 
 step "Creating annotated tag $tag at $revision and pushing it to origin."
 git tag -a "$tag" -m "Release $version" "$revision"
