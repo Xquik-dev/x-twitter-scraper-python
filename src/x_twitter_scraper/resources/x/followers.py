@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import httpx
 
-from ..._types import Body, Query, Headers, NotGiven, not_given
+from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import follower_check_params
@@ -52,6 +52,8 @@ class FollowersResource(SyncAPIResource):
         *,
         source: str,
         target: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -60,12 +62,25 @@ class FollowersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> FollowerCheckResponse:
         """
-        Returns whether one public account follows another.
+        Returns whether one public account follows another, & the reverse, with each
+        account's username & user ID as X names them.
 
         Args:
-          source: Source username, @username, or X or Twitter profile URL
+          source: Source user ID, username, @username, or X or Twitter profile URL, such as
+              x.com/i/user/11348282. A number is a user ID.
 
-          target: Target username, @username, or X or Twitter profile URL
+          target: Target user ID, username, @username, or X or Twitter profile URL, such as
+              x.com/i/user/11348282. A number is a user ID.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
 
           extra_headers: Send extra headers
 
@@ -86,6 +101,8 @@ class FollowersResource(SyncAPIResource):
                     {
                         "source": source,
                         "target": target,
+                        "fields": fields,
+                        "omit": omit,
                     },
                     follower_check_params.FollowerCheckParams,
                 ),
@@ -121,6 +138,8 @@ class AsyncFollowersResource(AsyncAPIResource):
         *,
         source: str,
         target: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -129,12 +148,25 @@ class AsyncFollowersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> FollowerCheckResponse:
         """
-        Returns whether one public account follows another.
+        Returns whether one public account follows another, & the reverse, with each
+        account's username & user ID as X names them.
 
         Args:
-          source: Source username, @username, or X or Twitter profile URL
+          source: Source user ID, username, @username, or X or Twitter profile URL, such as
+              x.com/i/user/11348282. A number is a user ID.
 
-          target: Target username, @username, or X or Twitter profile URL
+          target: Target user ID, username, @username, or X or Twitter profile URL, such as
+              x.com/i/user/11348282. A number is a user ID.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
 
           extra_headers: Send extra headers
 
@@ -155,6 +187,8 @@ class AsyncFollowersResource(AsyncAPIResource):
                     {
                         "source": source,
                         "target": target,
+                        "fields": fields,
+                        "omit": omit,
                     },
                     follower_check_params.FollowerCheckParams,
                 ),

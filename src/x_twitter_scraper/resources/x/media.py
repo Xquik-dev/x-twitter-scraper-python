@@ -69,7 +69,8 @@ class MediaResource(SyncAPIResource):
         Args:
           tweet_id: Numeric tweet ID alias for tweetInput
 
-          tweet_ids: Array of tweet URLs or IDs (bulk, max 50 string items)
+          tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
+              `invalid_tweet_id`, which says which item.
 
           tweet_input: Tweet URL or ID (single tweet)
 
@@ -119,7 +120,8 @@ class MediaResource(SyncAPIResource):
         Args:
           account: X account (@username or ID) uploading media from URL
 
-          url: HTTPS URL to download and upload as media
+          url: HTTPS URL to download and upload as media, up to 15 MB. Another scheme gets 400
+              `invalid_media_url`.
 
           extra_headers: Send extra headers
 
@@ -194,7 +196,8 @@ class AsyncMediaResource(AsyncAPIResource):
         Args:
           tweet_id: Numeric tweet ID alias for tweetInput
 
-          tweet_ids: Array of tweet URLs or IDs (bulk, max 50 string items)
+          tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
+              `invalid_tweet_id`, which says which item.
 
           tweet_input: Tweet URL or ID (single tweet)
 
@@ -244,7 +247,8 @@ class AsyncMediaResource(AsyncAPIResource):
         Args:
           account: X account (@username or ID) uploading media from URL
 
-          url: HTTPS URL to download and upload as media
+          url: HTTPS URL to download and upload as media, up to 15 MB. Another scheme gets 400
+              `invalid_media_url`.
 
           extra_headers: Send extra headers
 

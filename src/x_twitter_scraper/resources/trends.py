@@ -51,6 +51,8 @@ class TrendsResource(SyncAPIResource):
         self,
         *,
         count: int | Omit = omit,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
         woeid: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -59,13 +61,26 @@ class TrendsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
-        """
-        Returns current regional trends through the compatibility route.
+        """Returns current regional trends through the compatibility route.
+
+        Each request
+        costs 1 credit, however many trends it returns.
 
         Args:
           count: Number of trending topics returned (1-50, default 30)
 
-          woeid: Region Yahoo WOEID code (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          woeid: The WOEID of any place X lists trends for (1=Worldwide, 23424977=US,
+              23424975=UK, 23424969=Turkey). List places with GET /x/trends/locations.
 
           extra_headers: Send extra headers
 
@@ -85,6 +100,8 @@ class TrendsResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "count": count,
+                        "fields": fields,
+                        "omit": omit,
                         "woeid": woeid,
                     },
                     trend_list_params.TrendListParams,
@@ -120,6 +137,8 @@ class AsyncTrendsResource(AsyncAPIResource):
         self,
         *,
         count: int | Omit = omit,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
         woeid: int | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
@@ -128,13 +147,26 @@ class AsyncTrendsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> TrendListResponse:
-        """
-        Returns current regional trends through the compatibility route.
+        """Returns current regional trends through the compatibility route.
+
+        Each request
+        costs 1 credit, however many trends it returns.
 
         Args:
           count: Number of trending topics returned (1-50, default 30)
 
-          woeid: Region Yahoo WOEID code (1=Worldwide, 23424977=US, 23424975=UK, 23424969=Turkey)
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          woeid: The WOEID of any place X lists trends for (1=Worldwide, 23424977=US,
+              23424975=UK, 23424969=Turkey). List places with GET /x/trends/locations.
 
           extra_headers: Send extra headers
 
@@ -154,6 +186,8 @@ class AsyncTrendsResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "count": count,
+                        "fields": fields,
+                        "omit": omit,
                         "woeid": woeid,
                     },
                     trend_list_params.TrendListParams,

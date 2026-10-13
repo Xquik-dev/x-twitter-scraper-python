@@ -74,9 +74,11 @@ class ProfileResource(SyncAPIResource):
         Args:
           account: X account (@username or ID) to update profile
 
-          description: Bio description
+          description: Bio, up to 160 characters. An emoji counts as 2.
 
-          name: Display name
+          location: Location, up to 30 characters. An emoji counts as 2.
+
+          name: Display name, 1 to 50 characters. An emoji counts as 2.
 
           url: Website URL
 
@@ -258,9 +260,11 @@ class AsyncProfileResource(AsyncAPIResource):
         Args:
           account: X account (@username or ID) to update profile
 
-          description: Bio description
+          description: Bio, up to 160 characters. An emoji counts as 2.
 
-          name: Display name
+          location: Location, up to 30 characters. An emoji counts as 2.
+
+          name: Display name, 1 to 50 characters. An emoji counts as 2.
 
           url: Website URL
 

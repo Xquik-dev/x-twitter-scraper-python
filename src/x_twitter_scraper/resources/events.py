@@ -10,7 +10,7 @@ import httpx
 
 from ..types import event_list_params
 from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from .._utils import path_template, maybe_transform, async_maybe_transform
+from .._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from .._compat import cached_property
 from .._resource import SyncAPIResource, AsyncAPIResource
 from .._response import (
@@ -19,6 +19,8 @@ from .._response import (
     async_to_raw_response_wrapper,
     async_to_streamed_response_wrapper,
 )
+from .._streaming import Stream, AsyncStream
+from ..types.event import Event
 from .._base_client import make_request_options
 from ..types.event_detail import EventDetail
 from ..types.shared.event_type import EventType
@@ -101,16 +103,17 @@ class EventsResource(SyncAPIResource):
         Returns monitor events with cursor pagination and filters.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           event_type: Filter events by type
 
-          keyword_monitor_id: Keyword monitor ID.
+          keyword_monitor_id: Keyword monitor ID. The keyword_monitor_id alias also works.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
-          monitor_id: Account monitor ID.
+          monitor_id: Account monitor ID. The monitor_id alias also works.
 
           extra_headers: Send extra headers
 
@@ -139,6 +142,49 @@ class EventsResource(SyncAPIResource):
                 ),
             ),
             cast_to=EventListResponse,
+        )
+
+    def stream(
+        self,
+        *,
+        last_event_id: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> Stream[Event]:
+        """
+        Streams the account's monitor events as server-sent events, each named by its
+        event type and numbered by its event ID. A reconnect that sends Last-Event-ID
+        first gets every event after that one from the last 30 days, then each new
+        event. A connection lasts up to 30 minutes and sends a comment every 15 seconds
+        while idle. Keep up to 5 streams open per account. Events and streams cost no
+        credits.
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        extra_headers = {"Accept": "text/event-stream", **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            **strip_not_given({"Last-Event-ID": last_event_id}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
+        return self._get(
+            "/events/stream",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=Event,
+            stream=True,
+            stream_cls=Stream[Event],
         )
 
 
@@ -216,16 +262,17 @@ class AsyncEventsResource(AsyncAPIResource):
         Returns monitor events with cursor pagination and filters.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           event_type: Filter events by type
 
-          keyword_monitor_id: Keyword monitor ID.
+          keyword_monitor_id: Keyword monitor ID. The keyword_monitor_id alias also works.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
-          monitor_id: Account monitor ID.
+          monitor_id: Account monitor ID. The monitor_id alias also works.
 
           extra_headers: Send extra headers
 
@@ -256,6 +303,49 @@ class AsyncEventsResource(AsyncAPIResource):
             cast_to=EventListResponse,
         )
 
+    async def stream(
+        self,
+        *,
+        last_event_id: str | Omit = omit,
+        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
+        # The extra values given here take precedence over values defined on the client or passed to this method.
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> AsyncStream[Event]:
+        """
+        Streams the account's monitor events as server-sent events, each named by its
+        event type and numbered by its event ID. A reconnect that sends Last-Event-ID
+        first gets every event after that one from the last 30 days, then each new
+        event. A connection lasts up to 30 minutes and sends a comment every 15 seconds
+        while idle. Keep up to 5 streams open per account. Events and streams cost no
+        credits.
+
+        Args:
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        extra_headers = {"Accept": "text/event-stream", **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            **strip_not_given({"Last-Event-ID": last_event_id}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
+        return await self._get(
+            "/events/stream",
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=Event,
+            stream=True,
+            stream_cls=AsyncStream[Event],
+        )
+
 
 class EventsResourceWithRawResponse:
     def __init__(self, events: EventsResource) -> None:
@@ -266,6 +356,9 @@ class EventsResourceWithRawResponse:
         )
         self.list = to_raw_response_wrapper(
             events.list,
+        )
+        self.stream = to_raw_response_wrapper(
+            events.stream,
         )
 
 
@@ -279,6 +372,9 @@ class AsyncEventsResourceWithRawResponse:
         self.list = async_to_raw_response_wrapper(
             events.list,
         )
+        self.stream = async_to_raw_response_wrapper(
+            events.stream,
+        )
 
 
 class EventsResourceWithStreamingResponse:
@@ -291,6 +387,9 @@ class EventsResourceWithStreamingResponse:
         self.list = to_streamed_response_wrapper(
             events.list,
         )
+        self.stream = to_streamed_response_wrapper(
+            events.stream,
+        )
 
 
 class AsyncEventsResourceWithStreamingResponse:
@@ -302,4 +401,7 @@ class AsyncEventsResourceWithStreamingResponse:
         )
         self.list = async_to_streamed_response_wrapper(
             events.list,
+        )
+        self.stream = async_to_streamed_response_wrapper(
+            events.stream,
         )

@@ -78,7 +78,7 @@ class AccountsResource(SyncAPIResource):
 
           totp_secret: Authenticator App TOTP secret required for durable login
 
-          username: X username
+          username: X username of the account to connect, with or without @
 
           extra_headers: Send extra headers
 
@@ -161,10 +161,11 @@ class AccountsResource(SyncAPIResource):
         accounts. Send limit or cursor for legacy pagination.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 
@@ -344,7 +345,7 @@ class AsyncAccountsResource(AsyncAPIResource):
 
           totp_secret: Authenticator App TOTP secret required for durable login
 
-          username: X username
+          username: X username of the account to connect, with or without @
 
           extra_headers: Send extra headers
 
@@ -427,10 +428,11 @@ class AsyncAccountsResource(AsyncAPIResource):
         accounts. Send limit or cursor for legacy pagination.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           extra_headers: Send extra headers
 

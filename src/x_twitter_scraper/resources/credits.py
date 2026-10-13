@@ -172,7 +172,8 @@ class CreditsResource(SyncAPIResource):
         Args:
           dollars: Amount to top up in US dollars. Minimum 10.
 
-          locale: Optional checkout locale. Defaults to en.
+          locale: Optional site language for Stripe's return page. An unsupported 1 uses en, the
+              default.
 
           extra_headers: Send extra headers
 
@@ -339,7 +340,8 @@ class AsyncCreditsResource(AsyncAPIResource):
         Args:
           dollars: Amount to top up in US dollars. Minimum 10.
 
-          locale: Optional checkout locale. Defaults to en.
+          locale: Optional site language for Stripe's return page. An unsupported 1 uses en, the
+              default.
 
           extra_headers: Send extra headers
 

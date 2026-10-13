@@ -92,7 +92,8 @@ class ExtractionsResource(SyncAPIResource):
         Follow nextCursor when hasMore is true.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           field_style: Preserve source keys or convert result field names.
 
@@ -183,10 +184,11 @@ class ExtractionsResource(SyncAPIResource):
         Returns extraction jobs with status and result counts.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           status: Filter by job status
 
@@ -286,18 +288,22 @@ class ExtractionsResource(SyncAPIResource):
         bio_contains: str | Omit = omit,
         blue_verified_only: bool | Omit = omit,
         bounding_box: str | Omit = omit,
+        business_email_only: bool | Omit = omit,
         card_name: str | Omit = omit,
         cashtags: str | Omit = omit,
         collection_strategy: Literal["auto", "complete", "direct", "search", "thread"] | Omit = omit,
         conversation_id: str | Omit = omit,
         dedupe_across_targets: bool | Omit = omit,
         dedupe_mode: Literal["none", "first", "merge"] | Omit = omit,
+        email_domains: str | Omit = omit,
+        enrich_profiles: bool | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_original_author: bool | Omit = omit,
         exclude_source: str | Omit = omit,
         exclude_words: str | Omit = omit,
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
+        has_email: bool | Omit = omit,
         hashtags: str | Omit = omit,
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
@@ -393,11 +399,14 @@ class ExtractionsResource(SyncAPIResource):
 
           any_words: Any matching term or phrase (tweet_search_extractor).
 
-          bio_contains: Bio terms separated by commas or lines.
+          bio_contains: Match any bio term, ignoring case. Separate terms with commas or lines.
 
-          blue_verified_only: Return only Blue-verified Tweet authors.
+          blue_verified_only: Return only Blue-verified Tweet authors. On a tool that returns users, return
+              only profiles X marks as blue verified.
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
+
+          business_email_only: Require an email the profile publishes outside free webmail, such as Gmail.
 
           card_name: Require Tweet cards whose name matches this value.
 
@@ -411,17 +420,29 @@ class ExtractionsResource(SyncAPIResource):
 
           dedupe_mode: Keep target duplicates, first rows, or merged overlap.
 
+          email_domains: Require an email at one of these domains. Separate domains with commas.
+              Subdomains match.
+
+          enrich_profiles: Add each user's full profile to follower_explorer, following_explorer,
+              verified_follower_explorer, people_search & repost_extractor rows. Jobs take
+              longer.
+
           exact_phrase: Exact phrase to match (tweet_search_extractor)
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Drop Tweets from this source application.
+          exclude_source: X search ignores excludeSource, so an extraction with it returns unfiltered
+              rows. Its answers carry `Deprecation` & `Sunset` headers. From 2027-01-15 an
+              extraction with it answers 424 `search_unavailable` & charges nothing.
 
           exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Restrict Tweets by latitude, longitude, and radius.
+          geocode: X search no longer supports geocode. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
+
+          has_email: Require an email the profile publishes.
 
           hashtags: Matching hashtags (tweet_search_extractor).
 
@@ -451,7 +472,7 @@ class ExtractionsResource(SyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Require Tweets older than this ID.
+          max_id: Require Tweet IDs at or below this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -495,7 +516,8 @@ class ExtractionsResource(SyncAPIResource):
 
           near: Restrict Tweet search to this place name.
 
-          news: Require news-classified Tweet results.
+          news: X search no longer supports filter:news. An extraction with news true answers
+              424 `search_unavailable` & charges nothing.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -511,7 +533,8 @@ class ExtractionsResource(SyncAPIResource):
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
-          relation_targets: Profile relations processed within one job.
+          relation_targets: Profile relations processed within one job. Protected profiles are skipped & the
+              job ends with partial_failure.
 
           replies: Choose whether tweet search includes, excludes, or isolates replies.
 
@@ -526,19 +549,24 @@ class ExtractionsResource(SyncAPIResource):
 
           scope: Reply depth scope.
 
-          search_queries: Search queries processed as one collection job.
+          search_queries: Search queries processed as one collection job. Each follows the rules of
+              searchQuery, its structured fields & 512-character limit included.
 
-          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
+          search_query: Required for tweet_search_extractor, people_search & community_search.
+              tweet_search_extractor adds the structured search fields, such as fromUser &
+              minFaves, to this query. X searches up to 512 characters. A longer tweet or
+              people search answers 400, counted with the added fields.
 
           since_date: Tweet or Community search start date.
 
-          since_id: Require Tweets newer than this ID.
+          since_id: Require Tweet IDs above this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Require Tweets from this source application.
+          source: X search no longer supports source. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -552,14 +580,18 @@ class ExtractionsResource(SyncAPIResource):
           target_list_ids: List IDs processed as one collection job.
 
           targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
-              profile_media kinds to collect attached media.
+              profile_media kinds to collect attached media. Protected profiles are skipped &
+              the job ends with partial_failure.
 
-          target_space_id: Required for space_explorer.
+          target_space_id: Required for space_explorer. X names a Space's hosts & speakers without counts
+              or bio, so Xquik reads each one's profile. Rows carry it, & profile filters such
+              as minFollowers check it.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
           target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
-              username collects posts.
+              username collects posts. Post & media jobs skip a protected profile & end with
+              partial_failure.
 
           to_user: Replies to this username (tweet_search_extractor).
 
@@ -575,7 +607,8 @@ class ExtractionsResource(SyncAPIResource):
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius around the requested place.
+          within: X search no longer supports within. An extraction with it answers 424
+              `search_unavailable` & charges nothing. Use near alone.
 
           within_time: Restrict Tweets to this recent time window.
 
@@ -597,18 +630,22 @@ class ExtractionsResource(SyncAPIResource):
                     "bio_contains": bio_contains,
                     "blue_verified_only": blue_verified_only,
                     "bounding_box": bounding_box,
+                    "business_email_only": business_email_only,
                     "card_name": card_name,
                     "cashtags": cashtags,
                     "collection_strategy": collection_strategy,
                     "conversation_id": conversation_id,
                     "dedupe_across_targets": dedupe_across_targets,
                     "dedupe_mode": dedupe_mode,
+                    "email_domains": email_domains,
+                    "enrich_profiles": enrich_profiles,
                     "exact_phrase": exact_phrase,
                     "exclude_original_author": exclude_original_author,
                     "exclude_source": exclude_source,
                     "exclude_words": exclude_words,
                     "from_user": from_user,
                     "geocode": geocode,
+                    "has_email": has_email,
                     "hashtags": hashtags,
                     "has_location": has_location,
                     "has_media_only": has_media_only,
@@ -701,7 +738,10 @@ class ExtractionsResource(SyncAPIResource):
         id: str,
         *,
         format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
+        business_email_only: bool | Omit = omit,
+        email_domains: str | Omit = omit,
         has_description: bool | Omit = omit,
+        has_email: bool | Omit = omit,
         has_location: bool | Omit = omit,
         has_media: bool | Omit = omit,
         lang: str | Omit = omit,
@@ -726,13 +766,23 @@ class ExtractionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> BinaryAPIResponse:
-        """
-        Downloads completed extraction results in the requested format.
+        """Downloads completed extraction results in the requested format.
+
+        JSON rows also
+        keep each result's nested `enrichmentData`, as `GET /extractions/{id}` returns
+        it.
 
         Args:
           format: Export file format
 
+          business_email_only: Require an email outside free webmail, such as Gmail, in the row's Email column.
+
+          email_domains: Require the row's email at one of these domains. Separate domains with commas.
+              Subdomains match.
+
           has_description: Require a non-empty description.
+
+          has_email: Require an email in the row's Email column.
 
           has_location: Require a non-empty location.
 
@@ -762,9 +812,13 @@ class ExtractionsResource(SyncAPIResource):
 
           search: Search exported result text.
 
-          since_date: Include results on or after this date.
+          since_date: Include results on or after this date, from 00:00 UTC. An ISO 8601 time starts
+              at that instant. Results without a post date are left out. An empty value sets
+              no filter.
 
-          until_date: Include results on or before this date.
+          until_date: Include results on or before this date, inclusive, through 23:59:59 UTC. An ISO
+              8601 time ends at that instant. Results without a post date are left out. An
+              empty value sets no filter.
 
           verified: Filter by verified status.
 
@@ -789,7 +843,10 @@ class ExtractionsResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "format": format,
+                        "business_email_only": business_email_only,
+                        "email_domains": email_domains,
                         "has_description": has_description,
+                        "has_email": has_email,
                         "has_location": has_location,
                         "has_media": has_media,
                         "lang": lang,
@@ -848,18 +905,22 @@ class ExtractionsResource(SyncAPIResource):
         bio_contains: str | Omit = omit,
         blue_verified_only: bool | Omit = omit,
         bounding_box: str | Omit = omit,
+        business_email_only: bool | Omit = omit,
         card_name: str | Omit = omit,
         cashtags: str | Omit = omit,
         collection_strategy: Literal["auto", "complete", "direct", "search", "thread"] | Omit = omit,
         conversation_id: str | Omit = omit,
         dedupe_across_targets: bool | Omit = omit,
         dedupe_mode: Literal["none", "first", "merge"] | Omit = omit,
+        email_domains: str | Omit = omit,
+        enrich_profiles: bool | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_original_author: bool | Omit = omit,
         exclude_source: str | Omit = omit,
         exclude_words: str | Omit = omit,
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
+        has_email: bool | Omit = omit,
         hashtags: str | Omit = omit,
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
@@ -960,11 +1021,14 @@ class ExtractionsResource(SyncAPIResource):
 
           any_words: Any matching term or phrase (tweet_search_extractor).
 
-          bio_contains: Bio terms separated by commas or lines.
+          bio_contains: Match any bio term, ignoring case. Separate terms with commas or lines.
 
-          blue_verified_only: Return only Blue-verified Tweet authors.
+          blue_verified_only: Return only Blue-verified Tweet authors. On a tool that returns users, return
+              only profiles X marks as blue verified.
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
+
+          business_email_only: Require an email the profile publishes outside free webmail, such as Gmail.
 
           card_name: Require Tweet cards whose name matches this value.
 
@@ -978,17 +1042,29 @@ class ExtractionsResource(SyncAPIResource):
 
           dedupe_mode: Keep target duplicates, first rows, or merged overlap.
 
+          email_domains: Require an email at one of these domains. Separate domains with commas.
+              Subdomains match.
+
+          enrich_profiles: Add each user's full profile to follower_explorer, following_explorer,
+              verified_follower_explorer, people_search & repost_extractor rows. Jobs take
+              longer.
+
           exact_phrase: Exact phrase to match (tweet_search_extractor)
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Drop Tweets from this source application.
+          exclude_source: X search ignores excludeSource, so an extraction with it returns unfiltered
+              rows. Its answers carry `Deprecation` & `Sunset` headers. From 2027-01-15 an
+              extraction with it answers 424 `search_unavailable` & charges nothing.
 
           exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Restrict Tweets by latitude, longitude, and radius.
+          geocode: X search no longer supports geocode. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
+
+          has_email: Require an email the profile publishes.
 
           hashtags: Matching hashtags (tweet_search_extractor).
 
@@ -1018,7 +1094,7 @@ class ExtractionsResource(SyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Require Tweets older than this ID.
+          max_id: Require Tweet IDs at or below this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -1062,7 +1138,8 @@ class ExtractionsResource(SyncAPIResource):
 
           near: Restrict Tweet search to this place name.
 
-          news: Require news-classified Tweet results.
+          news: X search no longer supports filter:news. An extraction with news true answers
+              424 `search_unavailable` & charges nothing.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -1078,7 +1155,8 @@ class ExtractionsResource(SyncAPIResource):
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
-          relation_targets: Profile relations processed within one job.
+          relation_targets: Profile relations processed within one job. Protected profiles are skipped & the
+              job ends with partial_failure.
 
           replies: Choose whether tweet search includes, excludes, or isolates replies.
 
@@ -1093,19 +1171,24 @@ class ExtractionsResource(SyncAPIResource):
 
           scope: Reply depth scope.
 
-          search_queries: Search queries processed as one collection job.
+          search_queries: Search queries processed as one collection job. Each follows the rules of
+              searchQuery, its structured fields & 512-character limit included.
 
-          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
+          search_query: Required for tweet_search_extractor, people_search & community_search.
+              tweet_search_extractor adds the structured search fields, such as fromUser &
+              minFaves, to this query. X searches up to 512 characters. A longer tweet or
+              people search answers 400, counted with the added fields.
 
           since_date: Tweet or Community search start date.
 
-          since_id: Require Tweets newer than this ID.
+          since_id: Require Tweet IDs above this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Require Tweets from this source application.
+          source: X search no longer supports source. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -1119,14 +1202,18 @@ class ExtractionsResource(SyncAPIResource):
           target_list_ids: List IDs processed as one collection job.
 
           targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
-              profile_media kinds to collect attached media.
+              profile_media kinds to collect attached media. Protected profiles are skipped &
+              the job ends with partial_failure.
 
-          target_space_id: Required for space_explorer.
+          target_space_id: Required for space_explorer. X names a Space's hosts & speakers without counts
+              or bio, so Xquik reads each one's profile. Rows carry it, & profile filters such
+              as minFollowers check it.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
           target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
-              username collects posts.
+              username collects posts. Post & media jobs skip a protected profile & end with
+              partial_failure.
 
           to_user: Replies to this username (tweet_search_extractor).
 
@@ -1142,7 +1229,8 @@ class ExtractionsResource(SyncAPIResource):
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius around the requested place.
+          within: X search no longer supports within. An extraction with it answers 424
+              `search_unavailable` & charges nothing. Use near alone.
 
           within_time: Restrict Tweets to this recent time window.
 
@@ -1170,18 +1258,22 @@ class ExtractionsResource(SyncAPIResource):
                         "bio_contains": bio_contains,
                         "blue_verified_only": blue_verified_only,
                         "bounding_box": bounding_box,
+                        "business_email_only": business_email_only,
                         "card_name": card_name,
                         "cashtags": cashtags,
                         "collection_strategy": collection_strategy,
                         "conversation_id": conversation_id,
                         "dedupe_across_targets": dedupe_across_targets,
                         "dedupe_mode": dedupe_mode,
+                        "email_domains": email_domains,
+                        "enrich_profiles": enrich_profiles,
                         "exact_phrase": exact_phrase,
                         "exclude_original_author": exclude_original_author,
                         "exclude_source": exclude_source,
                         "exclude_words": exclude_words,
                         "from_user": from_user,
                         "geocode": geocode,
+                        "has_email": has_email,
                         "hashtags": hashtags,
                         "has_location": has_location,
                         "has_media_only": has_media_only,
@@ -1322,7 +1414,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
         Follow nextCursor when hasMore is true.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           field_style: Preserve source keys or convert result field names.
 
@@ -1413,10 +1506,11 @@ class AsyncExtractionsResource(AsyncAPIResource):
         Returns extraction jobs with status and result counts.
 
         Args:
-          cursor: Previous nextCursor. Offset pagination is not supported.
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
 
           limit: Maximum items per page: 1 to 100, default 50. Credits can reduce paid results.
-              The endpoint returns 402 insufficient_credits when none are affordable.
+              With none affordable, it returns 402 insufficient_credits.
 
           status: Filter by job status
 
@@ -1516,18 +1610,22 @@ class AsyncExtractionsResource(AsyncAPIResource):
         bio_contains: str | Omit = omit,
         blue_verified_only: bool | Omit = omit,
         bounding_box: str | Omit = omit,
+        business_email_only: bool | Omit = omit,
         card_name: str | Omit = omit,
         cashtags: str | Omit = omit,
         collection_strategy: Literal["auto", "complete", "direct", "search", "thread"] | Omit = omit,
         conversation_id: str | Omit = omit,
         dedupe_across_targets: bool | Omit = omit,
         dedupe_mode: Literal["none", "first", "merge"] | Omit = omit,
+        email_domains: str | Omit = omit,
+        enrich_profiles: bool | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_original_author: bool | Omit = omit,
         exclude_source: str | Omit = omit,
         exclude_words: str | Omit = omit,
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
+        has_email: bool | Omit = omit,
         hashtags: str | Omit = omit,
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
@@ -1623,11 +1721,14 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           any_words: Any matching term or phrase (tweet_search_extractor).
 
-          bio_contains: Bio terms separated by commas or lines.
+          bio_contains: Match any bio term, ignoring case. Separate terms with commas or lines.
 
-          blue_verified_only: Return only Blue-verified Tweet authors.
+          blue_verified_only: Return only Blue-verified Tweet authors. On a tool that returns users, return
+              only profiles X marks as blue verified.
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
+
+          business_email_only: Require an email the profile publishes outside free webmail, such as Gmail.
 
           card_name: Require Tweet cards whose name matches this value.
 
@@ -1641,17 +1742,29 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           dedupe_mode: Keep target duplicates, first rows, or merged overlap.
 
+          email_domains: Require an email at one of these domains. Separate domains with commas.
+              Subdomains match.
+
+          enrich_profiles: Add each user's full profile to follower_explorer, following_explorer,
+              verified_follower_explorer, people_search & repost_extractor rows. Jobs take
+              longer.
+
           exact_phrase: Exact phrase to match (tweet_search_extractor)
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Drop Tweets from this source application.
+          exclude_source: X search ignores excludeSource, so an extraction with it returns unfiltered
+              rows. Its answers carry `Deprecation` & `Sunset` headers. From 2027-01-15 an
+              extraction with it answers 424 `search_unavailable` & charges nothing.
 
           exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Restrict Tweets by latitude, longitude, and radius.
+          geocode: X search no longer supports geocode. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
+
+          has_email: Require an email the profile publishes.
 
           hashtags: Matching hashtags (tweet_search_extractor).
 
@@ -1681,7 +1794,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Require Tweets older than this ID.
+          max_id: Require Tweet IDs at or below this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -1725,7 +1838,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           near: Restrict Tweet search to this place name.
 
-          news: Require news-classified Tweet results.
+          news: X search no longer supports filter:news. An extraction with news true answers
+              424 `search_unavailable` & charges nothing.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -1741,7 +1855,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
-          relation_targets: Profile relations processed within one job.
+          relation_targets: Profile relations processed within one job. Protected profiles are skipped & the
+              job ends with partial_failure.
 
           replies: Choose whether tweet search includes, excludes, or isolates replies.
 
@@ -1756,19 +1871,24 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           scope: Reply depth scope.
 
-          search_queries: Search queries processed as one collection job.
+          search_queries: Search queries processed as one collection job. Each follows the rules of
+              searchQuery, its structured fields & 512-character limit included.
 
-          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
+          search_query: Required for tweet_search_extractor, people_search & community_search.
+              tweet_search_extractor adds the structured search fields, such as fromUser &
+              minFaves, to this query. X searches up to 512 characters. A longer tweet or
+              people search answers 400, counted with the added fields.
 
           since_date: Tweet or Community search start date.
 
-          since_id: Require Tweets newer than this ID.
+          since_id: Require Tweet IDs above this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Require Tweets from this source application.
+          source: X search no longer supports source. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -1782,14 +1902,18 @@ class AsyncExtractionsResource(AsyncAPIResource):
           target_list_ids: List IDs processed as one collection job.
 
           targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
-              profile_media kinds to collect attached media.
+              profile_media kinds to collect attached media. Protected profiles are skipped &
+              the job ends with partial_failure.
 
-          target_space_id: Required for space_explorer.
+          target_space_id: Required for space_explorer. X names a Space's hosts & speakers without counts
+              or bio, so Xquik reads each one's profile. Rows carry it, & profile filters such
+              as minFollowers check it.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
           target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
-              username collects posts.
+              username collects posts. Post & media jobs skip a protected profile & end with
+              partial_failure.
 
           to_user: Replies to this username (tweet_search_extractor).
 
@@ -1805,7 +1929,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius around the requested place.
+          within: X search no longer supports within. An extraction with it answers 424
+              `search_unavailable` & charges nothing. Use near alone.
 
           within_time: Restrict Tweets to this recent time window.
 
@@ -1827,18 +1952,22 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     "bio_contains": bio_contains,
                     "blue_verified_only": blue_verified_only,
                     "bounding_box": bounding_box,
+                    "business_email_only": business_email_only,
                     "card_name": card_name,
                     "cashtags": cashtags,
                     "collection_strategy": collection_strategy,
                     "conversation_id": conversation_id,
                     "dedupe_across_targets": dedupe_across_targets,
                     "dedupe_mode": dedupe_mode,
+                    "email_domains": email_domains,
+                    "enrich_profiles": enrich_profiles,
                     "exact_phrase": exact_phrase,
                     "exclude_original_author": exclude_original_author,
                     "exclude_source": exclude_source,
                     "exclude_words": exclude_words,
                     "from_user": from_user,
                     "geocode": geocode,
+                    "has_email": has_email,
                     "hashtags": hashtags,
                     "has_location": has_location,
                     "has_media_only": has_media_only,
@@ -1931,7 +2060,10 @@ class AsyncExtractionsResource(AsyncAPIResource):
         id: str,
         *,
         format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
+        business_email_only: bool | Omit = omit,
+        email_domains: str | Omit = omit,
         has_description: bool | Omit = omit,
+        has_email: bool | Omit = omit,
         has_location: bool | Omit = omit,
         has_media: bool | Omit = omit,
         lang: str | Omit = omit,
@@ -1956,13 +2088,23 @@ class AsyncExtractionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AsyncBinaryAPIResponse:
-        """
-        Downloads completed extraction results in the requested format.
+        """Downloads completed extraction results in the requested format.
+
+        JSON rows also
+        keep each result's nested `enrichmentData`, as `GET /extractions/{id}` returns
+        it.
 
         Args:
           format: Export file format
 
+          business_email_only: Require an email outside free webmail, such as Gmail, in the row's Email column.
+
+          email_domains: Require the row's email at one of these domains. Separate domains with commas.
+              Subdomains match.
+
           has_description: Require a non-empty description.
+
+          has_email: Require an email in the row's Email column.
 
           has_location: Require a non-empty location.
 
@@ -1992,9 +2134,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           search: Search exported result text.
 
-          since_date: Include results on or after this date.
+          since_date: Include results on or after this date, from 00:00 UTC. An ISO 8601 time starts
+              at that instant. Results without a post date are left out. An empty value sets
+              no filter.
 
-          until_date: Include results on or before this date.
+          until_date: Include results on or before this date, inclusive, through 23:59:59 UTC. An ISO
+              8601 time ends at that instant. Results without a post date are left out. An
+              empty value sets no filter.
 
           verified: Filter by verified status.
 
@@ -2019,7 +2165,10 @@ class AsyncExtractionsResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "format": format,
+                        "business_email_only": business_email_only,
+                        "email_domains": email_domains,
                         "has_description": has_description,
+                        "has_email": has_email,
                         "has_location": has_location,
                         "has_media": has_media,
                         "lang": lang,
@@ -2078,18 +2227,22 @@ class AsyncExtractionsResource(AsyncAPIResource):
         bio_contains: str | Omit = omit,
         blue_verified_only: bool | Omit = omit,
         bounding_box: str | Omit = omit,
+        business_email_only: bool | Omit = omit,
         card_name: str | Omit = omit,
         cashtags: str | Omit = omit,
         collection_strategy: Literal["auto", "complete", "direct", "search", "thread"] | Omit = omit,
         conversation_id: str | Omit = omit,
         dedupe_across_targets: bool | Omit = omit,
         dedupe_mode: Literal["none", "first", "merge"] | Omit = omit,
+        email_domains: str | Omit = omit,
+        enrich_profiles: bool | Omit = omit,
         exact_phrase: str | Omit = omit,
         exclude_original_author: bool | Omit = omit,
         exclude_source: str | Omit = omit,
         exclude_words: str | Omit = omit,
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
+        has_email: bool | Omit = omit,
         hashtags: str | Omit = omit,
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
@@ -2190,11 +2343,14 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           any_words: Any matching term or phrase (tweet_search_extractor).
 
-          bio_contains: Bio terms separated by commas or lines.
+          bio_contains: Match any bio term, ignoring case. Separate terms with commas or lines.
 
-          blue_verified_only: Return only Blue-verified Tweet authors.
+          blue_verified_only: Return only Blue-verified Tweet authors. On a tool that returns users, return
+              only profiles X marks as blue verified.
 
           bounding_box: Geo bounding box, e.g. -74.1 40.6 -73.9 40.8 (tweet_search_extractor)
+
+          business_email_only: Require an email the profile publishes outside free webmail, such as Gmail.
 
           card_name: Require Tweet cards whose name matches this value.
 
@@ -2208,17 +2364,29 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           dedupe_mode: Keep target duplicates, first rows, or merged overlap.
 
+          email_domains: Require an email at one of these domains. Separate domains with commas.
+              Subdomains match.
+
+          enrich_profiles: Add each user's full profile to follower_explorer, following_explorer,
+              verified_follower_explorer, people_search & repost_extractor rows. Jobs take
+              longer.
+
           exact_phrase: Exact phrase to match (tweet_search_extractor)
 
           exclude_original_author: Exclude replies from the source author.
 
-          exclude_source: Drop Tweets from this source application.
+          exclude_source: X search ignores excludeSource, so an extraction with it returns unfiltered
+              rows. Its answers carry `Deprecation` & `Sunset` headers. From 2027-01-15 an
+              extraction with it answers 424 `search_unavailable` & charges nothing.
 
           exclude_words: Excluded terms or phrases (tweet_search_extractor).
 
           from_user: Filter by author username (tweet_search_extractor)
 
-          geocode: Restrict Tweets by latitude, longitude, and radius.
+          geocode: X search no longer supports geocode. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
+
+          has_email: Require an email the profile publishes.
 
           hashtags: Matching hashtags (tweet_search_extractor).
 
@@ -2248,7 +2416,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           max_following: Maximum following count for profile results.
 
-          max_id: Require Tweets older than this ID.
+          max_id: Require Tweet IDs at or below this ID.
 
           max_items_per_target: Maximum results collected for each target.
 
@@ -2292,7 +2460,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           near: Restrict Tweet search to this place name.
 
-          news: Require news-classified Tweet results.
+          news: X search no longer supports filter:news. An extraction with news true answers
+              424 `search_unavailable` & charges nothing.
 
           overlap_mode: Shortcut for dedupeMode=merge.
 
@@ -2308,7 +2477,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           quotes_of_tweet_id: Only quotes of this tweet ID (tweet_search_extractor)
 
-          relation_targets: Profile relations processed within one job.
+          relation_targets: Profile relations processed within one job. Protected profiles are skipped & the
+              job ends with partial_failure.
 
           replies: Choose whether tweet search includes, excludes, or isolates replies.
 
@@ -2323,19 +2493,24 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           scope: Reply depth scope.
 
-          search_queries: Search queries processed as one collection job.
+          search_queries: Search queries processed as one collection job. Each follows the rules of
+              searchQuery, its structured fields & 512-character limit included.
 
-          search_query: Required for tweet_search_extractor & community_search. Passed unchanged.
+          search_query: Required for tweet_search_extractor, people_search & community_search.
+              tweet_search_extractor adds the structured search fields, such as fromUser &
+              minFaves, to this query. X searches up to 512 characters. A longer tweet or
+              people search answers 400, counted with the added fields.
 
           since_date: Tweet or Community search start date.
 
-          since_id: Require Tweets newer than this ID.
+          since_id: Require Tweet IDs above this ID.
 
           since_time: Reply start time as ISO 8601 or Unix seconds.
 
           sort: Reply result order.
 
-          source: Require Tweets from this source application.
+          source: X search no longer supports source. An extraction with it answers 424
+              `search_unavailable` & charges nothing.
 
           start_cursor: Resume one reply target from this cursor.
 
@@ -2349,14 +2524,18 @@ class AsyncExtractionsResource(AsyncAPIResource):
           target_list_ids: List IDs processed as one collection job.
 
           targets: Mixed targets auto-routed within one job. Use tweet, replies, quotes, thread, or
-              profile_media kinds to collect attached media.
+              profile_media kinds to collect attached media. Protected profiles are skipped &
+              the job ends with partial_failure.
 
-          target_space_id: Required for space_explorer.
+          target_space_id: Required for space_explorer. X names a Space's hosts & speakers without counts
+              or bio, so Xquik reads each one's profile. Rows carry it, & profile filters such
+              as minFollowers check it.
 
           target_tweet_ids: Tweet IDs processed as one collection job.
 
           target_usernames: Usernames processed concurrently in one job. With tweet_search_extractor, each
-              username collects posts.
+              username collects posts. Post & media jobs skip a protected profile & end with
+              partial_failure.
 
           to_user: Replies to this username (tweet_search_extractor).
 
@@ -2372,7 +2551,8 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           verified_type: Exact profile verification type.
 
-          within: Set the radius around the requested place.
+          within: X search no longer supports within. An extraction with it answers 424
+              `search_unavailable` & charges nothing. Use near alone.
 
           within_time: Restrict Tweets to this recent time window.
 
@@ -2400,18 +2580,22 @@ class AsyncExtractionsResource(AsyncAPIResource):
                         "bio_contains": bio_contains,
                         "blue_verified_only": blue_verified_only,
                         "bounding_box": bounding_box,
+                        "business_email_only": business_email_only,
                         "card_name": card_name,
                         "cashtags": cashtags,
                         "collection_strategy": collection_strategy,
                         "conversation_id": conversation_id,
                         "dedupe_across_targets": dedupe_across_targets,
                         "dedupe_mode": dedupe_mode,
+                        "email_domains": email_domains,
+                        "enrich_profiles": enrich_profiles,
                         "exact_phrase": exact_phrase,
                         "exclude_original_author": exclude_original_author,
                         "exclude_source": exclude_source,
                         "exclude_words": exclude_words,
                         "from_user": from_user,
                         "geocode": geocode,
+                        "has_email": has_email,
                         "hashtags": hashtags,
                         "has_location": has_location,
                         "has_media_only": has_media_only,

@@ -30,7 +30,7 @@ __all__ = ["TweetsResource", "AsyncTweetsResource"]
 
 
 class TweetsResource(SyncAPIResource):
-    """X Community info, members, and tweets"""
+    """Find X Communities & read their info, members, posts & media"""
 
     @cached_property
     def with_raw_response(self) -> TweetsResourceWithRawResponse:
@@ -54,20 +54,49 @@ class TweetsResource(SyncAPIResource):
     def list(
         self,
         *,
-        community_id: str,
         q: str,
+        any_words: str | Omit = omit,
+        blue_verified_only: bool | Omit = omit,
+        cashtags: str | Omit = omit,
+        community_id: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        fields: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
+        max_faves: int | Omit = omit,
+        max_id: str | Omit = omit,
+        max_quotes: int | Omit = omit,
+        max_replies: int | Omit = omit,
+        max_retweets: int | Omit = omit,
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_bookmarks: int | Omit = omit,
         min_likes: int | Omit = omit,
+        min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
         min_views: int | Omit = omit,
+        native_retweets: bool | Omit = omit,
+        omit: str | Omit = omit,
         page_size: int | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         since_date: Union[str, date] | Omit = omit,
+        since_id: str | Omit = omit,
+        to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
         verified_only: bool | Omit = omit,
+        within_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -77,20 +106,65 @@ class TweetsResource(SyncAPIResource):
     ) -> PaginatedTweets:
         """One resumable page.
 
-        Requires a Community ID and query.
+        Add communityId to search 1 Community, or leave it out to
+        search every Community.
 
         Args:
-          community_id: Numeric ID of the community whose posts to search
-
           q: Search query
 
-          cursor: Pagination cursor for community search
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          blue_verified_only: Only return tweets from Blue-verified authors.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          community_id: Numeric ID of the Community whose posts to search. Leave it out to search posts
+              across every Community.
+
+          conversation_id: Conversation ID filter.
+
+          cursor: Pagination cursor for community search. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          exact_phrase: Match this literal phrase, including any hyphens.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
 
           language: Filter by language. Alias `lang` is accepted.
 
+          max_faves: Maximum likes threshold. maxLikes & max_likes also work.
+
+          max_id: Return Tweets at or below this ID.
+
+          max_quotes: Maximum quotes threshold.
+
+          max_replies: Maximum replies threshold.
+
+          max_retweets: Maximum retweets threshold.
+
           media_type: Filter media. Aliases: has_video, has_media.
 
+          mentioning: Filter tweets mentioning a username.
+
+          min_bookmarks: Minimum bookmark count threshold.
+
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_quotes: Minimum quote count threshold.
 
           min_replies: Minimum replies threshold.
 
@@ -98,17 +172,41 @@ class TweetsResource(SyncAPIResource):
 
           min_views: Minimum view count threshold.
 
-          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Follow next_cursor while the response reports more pages. Deprecated
-              limit and count aliases remain accepted.
+          native_retweets: Only return native reposts.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
+              Follow next_cursor for more pages. Aliases: limit, count, max_results, maxItems,
+              max_items & per_page.
 
           query_type: Sort order (Latest or Top)
 
-          since_date: Start date in YYYY-MM-DD format.
+          quotes: Only when the caller requests a quote mode.
 
-          until_date: End date in YYYY-MM-DD format.
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode. Exclude keeps own-thread replies.
+
+          retweets: Only when the caller requests a repost mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format, as a UTC day.
+
+          since_id: Return Tweets whose IDs exceed this ID.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
+
+          url: URL substring or domain filter.
 
           verified_only: Only return tweets from verified authors.
+
+          within_time: Keeps Tweets from a recent window, such as 90m or 7d. Use a whole number & s, m,
+              h or d.
 
           extra_headers: Send extra headers
 
@@ -127,20 +225,49 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
-                        "community_id": community_id,
                         "q": q,
+                        "any_words": any_words,
+                        "blue_verified_only": blue_verified_only,
+                        "cashtags": cashtags,
+                        "community_id": community_id,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "fields": fields,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
                         "language": language,
+                        "max_faves": max_faves,
+                        "max_id": max_id,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
                         "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_bookmarks": min_bookmarks,
                         "min_likes": min_likes,
+                        "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
                         "min_views": min_views,
+                        "native_retweets": native_retweets,
+                        "omit": omit,
                         "page_size": page_size,
                         "query_type": query_type,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
                         "since_date": since_date,
+                        "since_id": since_id,
+                        "to_user": to_user,
                         "until_date": until_date,
+                        "url": url,
                         "verified_only": verified_only,
+                        "within_time": within_time,
                     },
                     tweet_list_params.TweetListParams,
                 ),
@@ -152,17 +279,47 @@ class TweetsResource(SyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        blue_verified_only: bool | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        fields: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
+        max_faves: int | Omit = omit,
+        max_id: str | Omit = omit,
+        max_quotes: int | Omit = omit,
+        max_replies: int | Omit = omit,
+        max_retweets: int | Omit = omit,
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_bookmarks: int | Omit = omit,
         min_likes: int | Omit = omit,
+        min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
         min_views: int | Omit = omit,
+        native_retweets: bool | Omit = omit,
+        omit: str | Omit = omit,
         page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         since_date: Union[str, date] | Omit = omit,
+        since_id: str | Omit = omit,
+        to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
         verified_only: bool | Omit = omit,
+        within_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -170,17 +327,64 @@ class TweetsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Returns public tweets posted within one community.
+        """Returns public tweets posted within one community, newest first by default.
+
+        Send
+        queryType=Top for the posts X ranks highest. The first page opens with the tweet
+        the community pinned, flagged isPinned, as x.com shows it. Each tweet costs 1
+        credit.
 
         Args:
-          cursor: Pagination cursor for collection results.
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          blue_verified_only: Only return tweets from Blue-verified authors.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          exact_phrase: Match this literal phrase, including any hyphens.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
 
           language: Filter by language. Alias `lang` is accepted.
 
+          max_faves: Maximum likes threshold. maxLikes & max_likes also work.
+
+          max_id: Return Tweets at or below this ID.
+
+          max_quotes: Maximum quotes threshold.
+
+          max_replies: Maximum replies threshold.
+
+          max_retweets: Maximum retweets threshold.
+
           media_type: Filter media. Aliases: has_video, has_media.
 
+          mentioning: Filter tweets mentioning a username.
+
+          min_bookmarks: Minimum bookmark count threshold.
+
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_quotes: Minimum quote count threshold.
 
           min_replies: Minimum replies threshold.
 
@@ -188,15 +392,43 @@ class TweetsResource(SyncAPIResource):
 
           min_views: Minimum view count threshold.
 
-          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Follow next_cursor while the response reports more pages. Deprecated
-              limit and count aliases remain accepted.
+          native_retweets: Only return native reposts.
 
-          since_date: Start date in YYYY-MM-DD format.
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
 
-          until_date: End date in YYYY-MM-DD format.
+          page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
+              Follow next_cursor for more pages. Aliases: limit, count, max_results, maxItems,
+              max_items & per_page.
+
+          query_type: Latest for newest first, or Top for the posts X ranks highest. Any case. Aliases
+              ranking & sort, which also take Recency & Relevance. Send the same value with
+              each cursor.
+
+          quotes: Only when the caller requests a quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode. Exclude keeps own-thread replies.
+
+          retweets: Only when the caller requests a repost mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format, as a UTC day.
+
+          since_id: Return Tweets whose IDs exceed this ID.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
+
+          url: URL substring or domain filter.
 
           verified_only: Only return tweets from verified authors.
+
+          within_time: Keeps Tweets from a recent window, such as 90m or 7d. Use a whole number & s, m,
+              h or d.
 
           extra_headers: Send extra headers
 
@@ -217,17 +449,47 @@ class TweetsResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "any_words": any_words,
+                        "blue_verified_only": blue_verified_only,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "fields": fields,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
                         "language": language,
+                        "max_faves": max_faves,
+                        "max_id": max_id,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
                         "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_bookmarks": min_bookmarks,
                         "min_likes": min_likes,
+                        "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
                         "min_views": min_views,
+                        "native_retweets": native_retweets,
+                        "omit": omit,
                         "page_size": page_size,
+                        "query_type": query_type,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
                         "since_date": since_date,
+                        "since_id": since_id,
+                        "to_user": to_user,
                         "until_date": until_date,
+                        "url": url,
                         "verified_only": verified_only,
+                        "within_time": within_time,
                     },
                     tweet_list_by_community_params.TweetListByCommunityParams,
                 ),
@@ -237,7 +499,7 @@ class TweetsResource(SyncAPIResource):
 
 
 class AsyncTweetsResource(AsyncAPIResource):
-    """X Community info, members, and tweets"""
+    """Find X Communities & read their info, members, posts & media"""
 
     @cached_property
     def with_raw_response(self) -> AsyncTweetsResourceWithRawResponse:
@@ -261,20 +523,49 @@ class AsyncTweetsResource(AsyncAPIResource):
     async def list(
         self,
         *,
-        community_id: str,
         q: str,
+        any_words: str | Omit = omit,
+        blue_verified_only: bool | Omit = omit,
+        cashtags: str | Omit = omit,
+        community_id: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        fields: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
+        max_faves: int | Omit = omit,
+        max_id: str | Omit = omit,
+        max_quotes: int | Omit = omit,
+        max_replies: int | Omit = omit,
+        max_retweets: int | Omit = omit,
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_bookmarks: int | Omit = omit,
         min_likes: int | Omit = omit,
+        min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
         min_views: int | Omit = omit,
+        native_retweets: bool | Omit = omit,
+        omit: str | Omit = omit,
         page_size: int | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         since_date: Union[str, date] | Omit = omit,
+        since_id: str | Omit = omit,
+        to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
         verified_only: bool | Omit = omit,
+        within_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -284,20 +575,65 @@ class AsyncTweetsResource(AsyncAPIResource):
     ) -> PaginatedTweets:
         """One resumable page.
 
-        Requires a Community ID and query.
+        Add communityId to search 1 Community, or leave it out to
+        search every Community.
 
         Args:
-          community_id: Numeric ID of the community whose posts to search
-
           q: Search query
 
-          cursor: Pagination cursor for community search
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          blue_verified_only: Only return tweets from Blue-verified authors.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          community_id: Numeric ID of the Community whose posts to search. Leave it out to search posts
+              across every Community.
+
+          conversation_id: Conversation ID filter.
+
+          cursor: Pagination cursor for community search. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          exact_phrase: Match this literal phrase, including any hyphens.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
 
           language: Filter by language. Alias `lang` is accepted.
 
+          max_faves: Maximum likes threshold. maxLikes & max_likes also work.
+
+          max_id: Return Tweets at or below this ID.
+
+          max_quotes: Maximum quotes threshold.
+
+          max_replies: Maximum replies threshold.
+
+          max_retweets: Maximum retweets threshold.
+
           media_type: Filter media. Aliases: has_video, has_media.
 
+          mentioning: Filter tweets mentioning a username.
+
+          min_bookmarks: Minimum bookmark count threshold.
+
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_quotes: Minimum quote count threshold.
 
           min_replies: Minimum replies threshold.
 
@@ -305,17 +641,41 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_views: Minimum view count threshold.
 
-          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Follow next_cursor while the response reports more pages. Deprecated
-              limit and count aliases remain accepted.
+          native_retweets: Only return native reposts.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
+              Follow next_cursor for more pages. Aliases: limit, count, max_results, maxItems,
+              max_items & per_page.
 
           query_type: Sort order (Latest or Top)
 
-          since_date: Start date in YYYY-MM-DD format.
+          quotes: Only when the caller requests a quote mode.
 
-          until_date: End date in YYYY-MM-DD format.
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode. Exclude keeps own-thread replies.
+
+          retweets: Only when the caller requests a repost mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format, as a UTC day.
+
+          since_id: Return Tweets whose IDs exceed this ID.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
+
+          url: URL substring or domain filter.
 
           verified_only: Only return tweets from verified authors.
+
+          within_time: Keeps Tweets from a recent window, such as 90m or 7d. Use a whole number & s, m,
+              h or d.
 
           extra_headers: Send extra headers
 
@@ -334,20 +694,49 @@ class AsyncTweetsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
-                        "community_id": community_id,
                         "q": q,
+                        "any_words": any_words,
+                        "blue_verified_only": blue_verified_only,
+                        "cashtags": cashtags,
+                        "community_id": community_id,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "fields": fields,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
                         "language": language,
+                        "max_faves": max_faves,
+                        "max_id": max_id,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
                         "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_bookmarks": min_bookmarks,
                         "min_likes": min_likes,
+                        "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
                         "min_views": min_views,
+                        "native_retweets": native_retweets,
+                        "omit": omit,
                         "page_size": page_size,
                         "query_type": query_type,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
                         "since_date": since_date,
+                        "since_id": since_id,
+                        "to_user": to_user,
                         "until_date": until_date,
+                        "url": url,
                         "verified_only": verified_only,
+                        "within_time": within_time,
                     },
                     tweet_list_params.TweetListParams,
                 ),
@@ -359,17 +748,47 @@ class AsyncTweetsResource(AsyncAPIResource):
         self,
         id: str,
         *,
+        any_words: str | Omit = omit,
+        blue_verified_only: bool | Omit = omit,
+        cashtags: str | Omit = omit,
+        conversation_id: str | Omit = omit,
         cursor: str | Omit = omit,
+        exact_phrase: str | Omit = omit,
+        exclude_words: str | Omit = omit,
+        fields: str | Omit = omit,
+        from_user: str | Omit = omit,
+        hashtags: str | Omit = omit,
+        in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
+        max_faves: int | Omit = omit,
+        max_id: str | Omit = omit,
+        max_quotes: int | Omit = omit,
+        max_replies: int | Omit = omit,
+        max_retweets: int | Omit = omit,
         media_type: Literal["images", "videos", "gifs", "media", "links", "none"] | Omit = omit,
+        mentioning: str | Omit = omit,
+        min_bookmarks: int | Omit = omit,
         min_likes: int | Omit = omit,
+        min_quotes: int | Omit = omit,
         min_replies: int | Omit = omit,
         min_retweets: int | Omit = omit,
         min_views: int | Omit = omit,
+        native_retweets: bool | Omit = omit,
+        omit: str | Omit = omit,
         page_size: int | Omit = omit,
+        query_type: Literal["Latest", "Top"] | Omit = omit,
+        quotes: Literal["include", "exclude", "only"] | Omit = omit,
+        quotes_of_tweet_id: str | Omit = omit,
+        replies: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets: Literal["include", "exclude", "only"] | Omit = omit,
+        retweets_of_tweet_id: str | Omit = omit,
         since_date: Union[str, date] | Omit = omit,
+        since_id: str | Omit = omit,
+        to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
+        url: str | Omit = omit,
         verified_only: bool | Omit = omit,
+        within_time: str | Omit = omit,
         # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
         # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
@@ -377,17 +796,64 @@ class AsyncTweetsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> PaginatedTweets:
-        """
-        Returns public tweets posted within one community.
+        """Returns public tweets posted within one community, newest first by default.
+
+        Send
+        queryType=Top for the posts X ranks highest. The first page opens with the tweet
+        the community pinned, flagged isPinned, as x.com shows it. Each tweet costs 1
+        credit.
 
         Args:
-          cursor: Pagination cursor for collection results.
+          any_words: Words or quoted phrases where any one can match. Separate with spaces, commas,
+              or lines.
+
+          blue_verified_only: Only return tweets from Blue-verified authors.
+
+          cashtags: Cashtags separated by spaces, commas, or lines.
+
+          conversation_id: Conversation ID filter.
+
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          exact_phrase: Match this literal phrase, including any hyphens.
+
+          exclude_words: Words or quoted phrases to exclude. Separate with spaces, commas, or lines.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          from_user: Filter by author username.
+
+          hashtags: Hashtags separated by spaces, commas, or lines.
+
+          in_reply_to_tweet_id: Only replies to this tweet ID.
 
           language: Filter by language. Alias `lang` is accepted.
 
+          max_faves: Maximum likes threshold. maxLikes & max_likes also work.
+
+          max_id: Return Tweets at or below this ID.
+
+          max_quotes: Maximum quotes threshold.
+
+          max_replies: Maximum replies threshold.
+
+          max_retweets: Maximum retweets threshold.
+
           media_type: Filter media. Aliases: has_video, has_media.
 
+          mentioning: Filter tweets mentioning a username.
+
+          min_bookmarks: Minimum bookmark count threshold.
+
           min_likes: Minimum likes. Aliases: minFaves, min_likes, min_faves.
+
+          min_quotes: Minimum quote count threshold.
 
           min_replies: Minimum replies threshold.
 
@@ -395,15 +861,43 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           min_views: Minimum view count threshold.
 
-          page_size: Maximum page items (1-100, default 20). Source, filters, or credits can reduce
-              results. Follow next_cursor while the response reports more pages. Deprecated
-              limit and count aliases remain accepted.
+          native_retweets: Only return native reposts.
 
-          since_date: Start date in YYYY-MM-DD format.
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
 
-          until_date: End date in YYYY-MM-DD format.
+          page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
+              Follow next_cursor for more pages. Aliases: limit, count, max_results, maxItems,
+              max_items & per_page.
+
+          query_type: Latest for newest first, or Top for the posts X ranks highest. Any case. Aliases
+              ranking & sort, which also take Recency & Relevance. Send the same value with
+              each cursor.
+
+          quotes: Only when the caller requests a quote mode.
+
+          quotes_of_tweet_id: Only quotes of this tweet ID.
+
+          replies: Reply mode. Exclude keeps own-thread replies.
+
+          retweets: Only when the caller requests a repost mode.
+
+          retweets_of_tweet_id: Only retweets of this tweet ID.
+
+          since_date: Start date in YYYY-MM-DD format, as a UTC day.
+
+          since_id: Return Tweets whose IDs exceed this ID.
+
+          to_user: Filter replies sent to a username.
+
+          until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
+
+          url: URL substring or domain filter.
 
           verified_only: Only return tweets from verified authors.
+
+          within_time: Keeps Tweets from a recent window, such as 90m or 7d. Use a whole number & s, m,
+              h or d.
 
           extra_headers: Send extra headers
 
@@ -424,17 +918,47 @@ class AsyncTweetsResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "any_words": any_words,
+                        "blue_verified_only": blue_verified_only,
+                        "cashtags": cashtags,
+                        "conversation_id": conversation_id,
                         "cursor": cursor,
+                        "exact_phrase": exact_phrase,
+                        "exclude_words": exclude_words,
+                        "fields": fields,
+                        "from_user": from_user,
+                        "hashtags": hashtags,
+                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
                         "language": language,
+                        "max_faves": max_faves,
+                        "max_id": max_id,
+                        "max_quotes": max_quotes,
+                        "max_replies": max_replies,
+                        "max_retweets": max_retweets,
                         "media_type": media_type,
+                        "mentioning": mentioning,
+                        "min_bookmarks": min_bookmarks,
                         "min_likes": min_likes,
+                        "min_quotes": min_quotes,
                         "min_replies": min_replies,
                         "min_retweets": min_retweets,
                         "min_views": min_views,
+                        "native_retweets": native_retweets,
+                        "omit": omit,
                         "page_size": page_size,
+                        "query_type": query_type,
+                        "quotes": quotes,
+                        "quotes_of_tweet_id": quotes_of_tweet_id,
+                        "replies": replies,
+                        "retweets": retweets,
+                        "retweets_of_tweet_id": retweets_of_tweet_id,
                         "since_date": since_date,
+                        "since_id": since_id,
+                        "to_user": to_user,
                         "until_date": until_date,
+                        "url": url,
                         "verified_only": verified_only,
+                        "within_time": within_time,
                     },
                     tweet_list_by_community_params.TweetListByCommunityParams,
                 ),

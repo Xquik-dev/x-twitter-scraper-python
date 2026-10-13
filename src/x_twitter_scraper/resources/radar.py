@@ -71,7 +71,8 @@ class RadarResource(SyncAPIResource):
         Returns current topics and sources for writing research.
 
         Args:
-          after: Cursor for pagination (from prior response nextCursor).
+          after: Cursor for pagination, from the prior response's nextCursor. A cursor the radar
+              can't read gets 400 `invalid_input`.
 
           category: Filter by category.
 
@@ -159,7 +160,8 @@ class AsyncRadarResource(AsyncAPIResource):
         Returns current topics and sources for writing research.
 
         Args:
-          after: Cursor for pagination (from prior response nextCursor).
+          after: Cursor for pagination, from the prior response's nextCursor. A cursor the radar
+              can't read gets 400 `invalid_input`.
 
           category: Filter by category.
 
