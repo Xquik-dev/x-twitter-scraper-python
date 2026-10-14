@@ -71,7 +71,7 @@ revision="$(git rev-parse HEAD)"
 step "Reading the version from pyproject.toml."
 version="$(uv version --short)"
 tag="v$version"
-grep -Fqx "__version__ = \"$version\"  # x-release-please-version" src/x_twitter_scraper/_version.py ||
+grep -Fqx "__version__ = \"$version\"" src/x_twitter_scraper/_version.py ||
   fail "Set __version__ in src/x_twitter_scraper/_version.py to $version, then rerun."
 notes="$(awk -v heading="## $version" '$0 == heading || index($0, heading " ") == 1 { found = 1; next } found && /^## / { exit } found { print }' CHANGELOG.md)"
 [[ "$notes" =~ [^[:space:]] ]] || fail "Add a ## $version section to CHANGELOG.md, then rerun."

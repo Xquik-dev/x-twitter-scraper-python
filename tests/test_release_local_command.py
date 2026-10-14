@@ -83,7 +83,7 @@ def run_release(
     for name, event in (("bin/check-local", "checks"), ("scripts/audit", "audit"), ("scripts/release", '"$1"')):
         (project / name).write_text(f"#!/usr/bin/env bash\nprintf '%s\\n' {event} >> \"$RELEASE_EVENTS\"\n")
         (project / name).chmod(0o755)
-    (project / "src/x_twitter_scraper/_version.py").write_text('__version__ = "0.12.0"  # x-release-please-version\n')
+    (project / "src/x_twitter_scraper/_version.py").write_text('__version__ = "0.12.0"\n')
     (project / "CHANGELOG.md").write_text("# Changelog\n\n## 0.12.0 (2026-09-30)\n\n- Added.\n\n## 0.11.2\n\n- Old.\n")
     events, notes = tmp_path / "events", tmp_path / "notes"
     events.touch()
