@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""Keyword arguments that kept working under an older name."""
-
 from __future__ import annotations
 
 import warnings
@@ -14,7 +12,6 @@ __all__ = ["min_likes_or_min_faves"]
 
 
 def min_likes_or_min_faves(min_likes: int | Omit, min_faves: int | Omit) -> int | Omit:
-    """Returns the minimum like count to send. `min_faves` is the older name of `min_likes`."""
     if isinstance(min_faves, Omit):
         return min_likes
     warnings.warn(

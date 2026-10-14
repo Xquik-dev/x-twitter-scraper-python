@@ -2,11 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""
-Copied from https://github.com/pydantic/pydantic/blob/v1.10.22/tests/test_datetime_parse.py
-with modifications so it works without pydantic v1 imports.
-"""
-
 from typing import Type, Callable
 from datetime import date, datetime, timezone, timedelta
 
@@ -25,12 +20,12 @@ NUMERIC_CASES: list[tuple[str | bytes | int | float, datetime | Type[Exception]]
     ("1494012444", datetime(2017, 5, 5, 19, 27, 24, tzinfo=timezone.utc)),
     (1_494_012_444, datetime(2017, 5, 5, 19, 27, 24, tzinfo=timezone.utc)),
     (0, datetime(1970, 1, 1, 0, 0, 0, tzinfo=timezone.utc)),
-    (19_999_999_999, datetime(2603, 10, 11, 11, 33, 19, tzinfo=timezone.utc)),  # just before watershed
-    (20_000_000_001, datetime(1970, 8, 20, 11, 33, 20, 1000, tzinfo=timezone.utc)),  # just after watershed
-    (1_549_316_052, datetime(2019, 2, 4, 21, 34, 12, 0, tzinfo=timezone.utc)),  # nowish in s
-    (1_549_316_052_104, datetime(2019, 2, 4, 21, 34, 12, 104_000, tzinfo=timezone.utc)),  # nowish in ms
-    (1_549_316_052_104_324, datetime(2019, 2, 4, 21, 34, 12, 104_324, tzinfo=timezone.utc)),  # nowish in μs
-    (1_549_316_052_104_324_096, datetime(2019, 2, 4, 21, 34, 12, 104_324, tzinfo=timezone.utc)),  # nowish in ns
+    (19_999_999_999, datetime(2603, 10, 11, 11, 33, 19, tzinfo=timezone.utc)),
+    (20_000_000_001, datetime(1970, 8, 20, 11, 33, 20, 1000, tzinfo=timezone.utc)),
+    (1_549_316_052, datetime(2019, 2, 4, 21, 34, 12, 0, tzinfo=timezone.utc)),
+    (1_549_316_052_104, datetime(2019, 2, 4, 21, 34, 12, 104_000, tzinfo=timezone.utc)),
+    (1_549_316_052_104_324, datetime(2019, 2, 4, 21, 34, 12, 104_324, tzinfo=timezone.utc)),
+    (1_549_316_052_104_324_096, datetime(2019, 2, 4, 21, 34, 12, 104_324, tzinfo=timezone.utc)),
     ("infinity", datetime(9999, 12, 31, 23, 59, 59, 999999)),
     ("inf", datetime(9999, 12, 31, 23, 59, 59, 999999)),
     (float("inf"), datetime(9999, 12, 31, 23, 59, 59, 999999)),
@@ -41,14 +36,12 @@ NUMERIC_CASES: list[tuple[str | bytes | int | float, datetime | Type[Exception]]
 
 
 DATE_CASES = [(value, result.date() if isinstance(result, datetime) else result) for value, result in NUMERIC_CASES] + [
-    # Valid inputs
     (b"1494012444.883309", date(2017, 5, 5)),
     ("2012-04-23", date(2012, 4, 23)),
     (b"2012-04-23", date(2012, 4, 23)),
     ("2012-4-9", date(2012, 4, 9)),
     (date(2012, 4, 9), date(2012, 4, 9)),
     (datetime(2012, 4, 9, 12, 15), date(2012, 4, 9)),
-    # Invalid inputs
     ("x20120423", ValueError),
     ("2012-04-56", ValueError),
     ("infinity ", date(9999, 12, 31)),
@@ -58,10 +51,7 @@ DATE_CASES = [(value, result.date() if isinstance(result, datetime) else result)
 
 
 DATETIME_CASES = NUMERIC_CASES + [
-    # Valid inputs
-    # values in seconds
     (b"1494012444", datetime(2017, 5, 5, 19, 27, 24, tzinfo=timezone.utc)),
-    # values in ms
     ("1494012444000.883309", datetime(2017, 5, 5, 19, 27, 24, 883, tzinfo=timezone.utc)),
     ("-1494012444000.883309", datetime(1922, 8, 29, 4, 32, 35, 999117, tzinfo=timezone.utc)),
     (1_494_012_444_000, datetime(2017, 5, 5, 19, 27, 24, tzinfo=timezone.utc)),
@@ -74,7 +64,6 @@ DATETIME_CASES = NUMERIC_CASES + [
     ("2012-04-23T10:20:30.400-02", datetime(2012, 4, 23, 10, 20, 30, 400_000, create_tz(-120))),
     (b"2012-04-23T10:20:30.400-02", datetime(2012, 4, 23, 10, 20, 30, 400_000, create_tz(-120))),
     (datetime(2017, 5, 5), datetime(2017, 5, 5)),
-    # Invalid inputs
     ("x20120423091500", ValueError),
     ("2012-04-56T09:15:90", ValueError),
     ("2012-04-23T11:05:00-25:00", ValueError),

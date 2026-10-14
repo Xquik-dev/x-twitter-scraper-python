@@ -28,34 +28,7 @@ async def to_thread(
     )
 
 
-# inspired by `asyncer`, https://github.com/tiangolo/asyncer
 def asyncify(function: Callable[T_ParamSpec, T_Retval]) -> Callable[T_ParamSpec, Awaitable[T_Retval]]:
-    """
-    Take a blocking function and create an async one that receives the same
-    positional and keyword arguments.
-
-    Usage:
-
-    ```python
-    def blocking_func(arg1, arg2, kwarg1=None):
-        # blocking code
-        return result
-
-
-    result = asyncify(blocking_function)(arg1, arg2, kwarg1=value1)
-    ```
-
-    ## Arguments
-
-    `function`: a blocking regular callable (e.g. a function)
-
-    ## Return
-
-    An async function that takes the same positional and keyword arguments as the
-    original one, that when called runs the same original function in a thread worker
-    and returns the result.
-    """
-
     async def wrapper(*args: T_ParamSpec.args, **kwargs: T_ParamSpec.kwargs) -> T_Retval:
         return await to_thread(function, *args, **kwargs)
 

@@ -162,7 +162,6 @@ def test_nested_dictionary_model() -> None:
     assert isinstance(m.nested, dict)
     assert m.nested["hello"].foo == "bar"
 
-    # mismatched types
     m = NestedModel.construct(nested={"hello": False})
     assert cast(Any, m.nested["hello"]) is False
 
@@ -315,13 +314,11 @@ def test_union_of_lists() -> None:
     class Model(BaseModel):
         items: Union[List[LevelModel], List[NamedModel]]
 
-    # with one valid entry
     m = Model.construct(items=[{"name": "Robert"}])
     assert len(m.items) == 1
     assert isinstance(m.items[0], NamedModel)
     assert m.items[0].name == "Robert"
 
-    # with two entries pointing to different types
     m = Model.construct(items=[{"level": 1}, {"name": "Robert"}])
     assert len(m.items) == 2
     assert isinstance(m.items[0], LevelModel)
@@ -329,7 +326,6 @@ def test_union_of_lists() -> None:
     assert isinstance(m.items[1], LevelModel)
     assert cast(Any, m.items[1]).name == "Robert"
 
-    # with two entries pointing to *completely* different types
     m = Model.construct(items=[{"level": -1}, 156])
     assert len(m.items) == 2
     assert isinstance(m.items[0], LevelModel)
@@ -347,8 +343,6 @@ def test_dict_of_union() -> None:
     assert m.data["hello"].name == "there"
     assert isinstance(m.data["foo"], BasicModel)
     assert m.data["foo"].foo == "bar"
-
-    # TODO: test mismatched type
 
 
 def test_double_nested_union() -> None:
@@ -368,8 +362,6 @@ def test_double_nested_union() -> None:
     entry2 = m.data["foo"][1]
     assert isinstance(entry2, NamedModel)
     assert entry2.name == "Robert"
-
-    # TODO: test mismatched type
 
 
 def test_union_of_dict() -> None:
@@ -510,8 +502,6 @@ def test_compat_method_no_error_for_warnings() -> None:
 
 
 def test_type_compat() -> None:
-    # our model type can be assigned to Pydantic's model type
-
     def takes_pydantic(model: pydantic.BaseModel) -> None:  # noqa: ARG001
         ...
 
@@ -537,7 +527,6 @@ def test_annotated_types() -> None:
     "value, is_b, expected_data",
     [
         ({"type": "b", "data": "foo"}, True, "foo"),
-        # Pydantic v1 coerces the string field; v2 preserves the invalid input.
         ({"type": "a", "data": 100}, False, "100" if PYDANTIC_V1 else 100),
         ({"type": "c", "data": None, "new_thing": "bar"}, False, None),
     ],
@@ -641,8 +630,6 @@ def test_discriminated_unions_invalid_data_uses_cache() -> None:
     assert m.type == "b"
     assert m.data == "foo"  # type: ignore[comparison-overlap]
 
-    # if the discriminator details object stays the same between invocations then
-    # we hit the cache
     assert DISCRIMINATOR_CACHE.get(UnionType) is discriminator
 
 
@@ -698,7 +685,6 @@ def test_discriminated_union_case() -> None:
 
         data: Union[A, B]
 
-    # when constructing ModelA | ModelB, value data doesn't match ModelB exactly - missing `required`
     m = construct_type(
         value={"type": "modelB", "data": {"type": "a", "data": True}},
         type_=cast(Any, Annotated[Union[ModelA, ModelB], PropertyInfo(discriminator="type")]),
@@ -782,10 +768,8 @@ def test_extra_properties(inherited: bool) -> None:
     assert model.other == "foo"
 
 
-# NOTE: Workaround for Pydantic Iterable behavior.
-# Iterable fields are replaced with a ValidatorIterator and may be consumed
-# during serialization, which can cause subsequent dumps to return empty data.
-# See: https://github.com/pydantic/pydantic/issues/9541
+# Pydantic swaps Iterable fields for a one-shot iterator, so a second dump can come back empty.
+# https://github.com/pydantic/pydantic/issues/9541
 @pytest.mark.parametrize(
     "data, expected_validated",
     [
@@ -812,15 +796,11 @@ def test_iterable_construction(data: Iterable[int], expected_validated: Iterable
     assert m.data["items"] == expected_validated
     assert type(m.data["items"]) is type(expected_validated)
 
-    # Verify repeated dumps don't lose data (the original bug)
     assert m.model_dump()["data"]["items"] == list(expected_validated)
     assert m.model_dump()["data"]["items"] == list(expected_validated)
 
 
 def test_iterable_construction_str_falls_back_to_list() -> None:
-    # str is iterable (over chars), but str(list_of_chars) produces the list's repr
-    # rather than reconstructing a string from items. We special-case str to fall
-    # back to list instead of attempting reconstruction.
     class TypeWithIterable(TypedDict):
         items: EagerIterable[str]
 
@@ -829,7 +809,6 @@ def test_iterable_construction_str_falls_back_to_list() -> None:
 
     m = parse_obj(Model, {"data": {"items": "hello"}})
 
-    # falls back to list of chars rather than calling str(["h", "e", "l", "l", "o"])
     assert m.data["items"] == ["h", "e", "l", "l", "o"]
     assert m.model_dump()["data"]["items"] == ["h", "e", "l", "l", "o"]
 

@@ -9,8 +9,6 @@ from typing import cast
 from pathlib import Path
 from collections.abc import Mapping
 
-# CodeQL goes on after it fails to parse a file and scans only the code it
-# could parse. This diagnostic query of the suite names each such file.
 EXTRACTION_DIAGNOSTIC = "py/diagnostics/extraction-warnings"
 
 
@@ -45,8 +43,6 @@ def validate(report: object) -> None:
     run = runs[0]
     if run.get("results") != []:
         raise ValueError("CodeQL findings or incomplete analysis prevent release.")
-    # The report lists every diagnostic query that ran, so a suite without the
-    # extraction diagnostic cannot pass.
     scanner = _mapping(_mapping(run.get("tool")).get("driver"))
     if EXTRACTION_DIAGNOSTIC not in [query.get("id") for query in _objects(scanner.get("notifications"))]:
         raise ValueError(

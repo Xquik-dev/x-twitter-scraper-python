@@ -4,10 +4,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Fails on any finding in a shipped runtime dependency and on any fixable
-# development finding. An unfixable development finding passes only while
-# audit-exceptions.json lists it before its recheck date.
-
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
@@ -25,7 +21,6 @@ uv export \
   --format requirements-txt \
   --output-file "$audit_workspace/runtime.txt"
 
-# The 2 Pydantic groups conflict, so each one is exported and audited on its own.
 for pydantic_group in pydantic-v2 pydantic-v1; do
   locked="$audit_workspace/$pydantic_group.txt"
   echo "==> Exporting locked third-party dependencies with $pydantic_group"
@@ -39,12 +34,9 @@ for pydantic_group in pydantic-v2 pydantic-v1; do
     --format requirements-txt \
     --output-file "$locked"
 
-  # pip-audit drops a pin whose environment marker does not match this machine.
-  # It reads a copy without markers, so it checks every locked pin.
   sed -E 's/^([A-Za-z0-9][A-Za-z0-9._-]*==[^ ;]+) *;[^\\]*/\1 /' "$locked" >"$locked.pins"
 
   echo "==> Auditing locked third-party dependencies with $pydantic_group"
-  # The policy below decides the result, so a nonzero pip-audit exit is not final here.
   uv tool run --from pip-audit==2.10.1 pip-audit \
     --strict \
     --disable-pip \

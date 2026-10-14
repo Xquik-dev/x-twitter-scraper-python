@@ -50,11 +50,10 @@ def test_unusable_codeql_fails_with_the_next_step(tmp_path: Path, version: str |
     assert result.stdout == ""
 
 
-# Stands in for the CodeQL CLI at the pinned version. It builds no database, and its analysis
-# writes the report that the test names.
 FAKE_SCAN = """#!/usr/bin/env bash
 case "$1 $2" in
   "version --format=terse") echo 2.27.2 ;;
+  "pack install") ;;
   "database create") ;;
   "database analyze")
     for argument in "$@"; do
@@ -73,7 +72,6 @@ EXTRACTED: dict[str, object] = {
 
 
 def unread(file: str, line: int) -> list[dict[str, object]]:
-    """The 2 notifications CodeQL 2.27 writes for a file it could not parse. Neither has a level."""
     return [
         {
             "locations": [{"physicalLocation": {"artifactLocation": {"uri": file}, "region": {"startLine": line}}}],
@@ -89,7 +87,6 @@ def unread(file: str, line: int) -> list[dict[str, object]]:
 
 
 def report(notifications: list[dict[str, object]], diagnostics: list[str]) -> str:
-    """A report in the shape CodeQL 2.27 writes for a scan without findings."""
     return json.dumps(
         {
             "version": "2.1.0",

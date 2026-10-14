@@ -15,11 +15,7 @@ from ._types import IncEx
 
 _ModelT = TypeVar("_ModelT", bound=pydantic.BaseModel)
 
-# --------------- Pydantic v2, v3 compatibility ---------------
-
-# Pyright incorrectly reports some of our functions as overriding a method when they don't
 # pyright: reportIncompatibleMethodOverride=false
-
 PYDANTIC_V1 = pydantic.VERSION.startswith("1.")
 
 if PYDANTIC_V1 and not TYPE_CHECKING:
@@ -51,7 +47,6 @@ else:
     from pydantic import ConfigDict as ConfigDict
 
 
-# renamed methods / properties
 def parse_obj(model: type[_ModelT], value: object) -> _ModelT:
     if PYDANTIC_V1:
         return cast(_ModelT, model.parse_obj(value))  # pyright: ignore[reportDeprecated, reportUnnecessaryCast]
@@ -129,7 +124,6 @@ def model_dump(
             exclude=exclude,
             exclude_unset=exclude_unset,
             exclude_defaults=exclude_defaults,
-            # warnings are not supported in Pydantic v1
             warnings=True if PYDANTIC_V1 else warnings,
             **kwargs,
         )
@@ -145,7 +139,6 @@ def model_parse(model: type[_ModelT], data: Any) -> _ModelT:
     return parse_obj(model, data)
 
 
-# Pydantic v2 still needs a separate subclass to preserve method-resolution ordering.
 if PYDANTIC_V1 and not TYPE_CHECKING:
     import pydantic.generics
 

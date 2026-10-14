@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing import Any, cast
@@ -34,10 +32,9 @@ class ComposeResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> ComposeResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return ComposeResourceWithRawResponse(self)
 
@@ -58,8 +55,6 @@ class ComposeResource(SyncAPIResource):
         topic: str,
         goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
         style_username: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -98,8 +93,6 @@ class ComposeResource(SyncAPIResource):
         additional_context: str | Omit = omit,
         call_to_action: str | Omit = omit,
         media_type: Literal["photo", "video", "none"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -141,8 +134,6 @@ class ComposeResource(SyncAPIResource):
         step: Literal["score"],
         has_link: bool | Omit = omit,
         has_media: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -185,8 +176,6 @@ class ComposeResource(SyncAPIResource):
         draft: str | Omit = omit,
         has_link: bool | Omit = omit,
         has_media: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -215,9 +204,7 @@ class ComposeResource(SyncAPIResource):
                 options=make_request_options(
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
                 ),
-                cast_to=cast(
-                    Any, ComposeCreateResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ComposeCreateResponse),
             ),
         )
 
@@ -228,10 +215,9 @@ class AsyncComposeResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncComposeResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncComposeResourceWithRawResponse(self)
 
@@ -252,8 +238,6 @@ class AsyncComposeResource(AsyncAPIResource):
         topic: str,
         goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
         style_username: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -292,8 +276,6 @@ class AsyncComposeResource(AsyncAPIResource):
         additional_context: str | Omit = omit,
         call_to_action: str | Omit = omit,
         media_type: Literal["photo", "video", "none"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -335,8 +317,6 @@ class AsyncComposeResource(AsyncAPIResource):
         step: Literal["score"],
         has_link: bool | Omit = omit,
         has_media: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -379,8 +359,6 @@ class AsyncComposeResource(AsyncAPIResource):
         draft: str | Omit = omit,
         has_link: bool | Omit = omit,
         has_media: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -409,9 +387,7 @@ class AsyncComposeResource(AsyncAPIResource):
                 options=make_request_options(
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
                 ),
-                cast_to=cast(
-                    Any, ComposeCreateResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ComposeCreateResponse),
             ),
         )
 

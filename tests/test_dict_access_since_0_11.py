@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""Values that were plain dictionaries in 0.11 still read like dictionaries."""
-
 from __future__ import annotations
 
 import json
@@ -72,7 +70,6 @@ def message(owner: str) -> str:
 
 
 def assert_reads_like(value: Any, expected: Dict[str, Any], owner: str) -> None:
-    """Every read a 0.11 caller made on the dictionary returns what the dictionary held, and warns."""
     warning = message(owner)
     for key, item in expected.items():
         with pytest.warns(DeprecationWarning, match=warning) as record:
@@ -82,7 +79,6 @@ def assert_reads_like(value: Any, expected: Dict[str, Any], owner: str) -> None:
             assert value.get(key) == item
         with pytest.warns(DeprecationWarning, match=warning):
             assert key in value
-    # The keys come in the model's field order, which can differ from the order in the response.
     with pytest.warns(DeprecationWarning, match=warning) as record:
         assert sorted(value.keys()) == sorted(expected.keys())
     assert record[0].filename == __file__

@@ -15,7 +15,6 @@ if [[ "${1:-}" == "--check" ]]; then
 else
   uv run ruff format
   uv run ruff check --fix .
-  # Format again after Ruff removes imports.
   uv run ruff format
 fi
 

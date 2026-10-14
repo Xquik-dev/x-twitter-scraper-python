@@ -39,7 +39,6 @@ def test_verified_artifacts(release: tuple[dict[str, Any], Path]) -> None:
 
 def test_ignores_the_gitignore_that_uv_build_writes(release: tuple[dict[str, Any], Path]) -> None:
     report, directory = release
-    # uv build writes this file into its output folder, next to the wheel and the source archive.
     (directory / ".gitignore").write_text("*")
     assert verify_files(report, directory, "0.12.0") is None
     (directory / ".env").touch()

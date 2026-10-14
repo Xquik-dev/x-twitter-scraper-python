@@ -80,7 +80,6 @@ def with_notifications(*notifications: dict[str, object]) -> dict[str, Any]:
 
 
 def unread(file: str, line: int) -> dict[str, object]:
-    """The notification CodeQL 2.27 writes for a file it could not parse. It has no level."""
     return {
         "locations": [{"physicalLocation": {"artifactLocation": {"uri": file}, "region": {"startLine": line}}}],
         "message": {"text": f"Extraction failed in {file} with error Syntax Error"},

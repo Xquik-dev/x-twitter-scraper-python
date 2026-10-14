@@ -19,7 +19,6 @@ class Querystring:
     nested_format: NestedFormat = "brackets"
 
     def parse(self, query: str) -> Mapping[str, object]:
-        # Note: custom format syntax is not supported yet
         return parse_qs(query)
 
     def stringify(
@@ -84,7 +83,6 @@ class Querystring:
         return [pair for subkey, item in entries for pair in self._stringify_item(subkey, item, opts)]
 
     def _primitive_value_to_str(self, value: object) -> str:
-        # copied from httpx
         if value is True:
             return "true"
         elif value is False:

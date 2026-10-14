@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing import Mapping, cast
@@ -33,10 +31,9 @@ class MediaResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> MediaResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return MediaResourceWithRawResponse(self)
 
@@ -56,8 +53,6 @@ class MediaResource(SyncAPIResource):
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
         tweet_url: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -107,8 +102,6 @@ class MediaResource(SyncAPIResource):
         account: str,
         url: str,
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -141,9 +134,6 @@ class MediaResource(SyncAPIResource):
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
         if files:
-            # It should be noted that the actual Content-Type header that will be
-            # sent to the server will contain a `boundary` parameter, e.g.
-            # multipart/form-data; boundary=---abc--
             extra_headers["Content-Type"] = "multipart/form-data"
         return self._post(
             "/x/media",
@@ -160,10 +150,9 @@ class AsyncMediaResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncMediaResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncMediaResourceWithRawResponse(self)
 
@@ -183,8 +172,6 @@ class AsyncMediaResource(AsyncAPIResource):
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
         tweet_url: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -234,8 +221,6 @@ class AsyncMediaResource(AsyncAPIResource):
         account: str,
         url: str,
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -268,9 +253,6 @@ class AsyncMediaResource(AsyncAPIResource):
         )
         files = extract_files(cast(Mapping[str, object], body), paths=[["file"]])
         if files:
-            # It should be noted that the actual Content-Type header that will be
-            # sent to the server will contain a `boundary` parameter, e.g.
-            # multipart/form-data; boundary=---abc--
             extra_headers["Content-Type"] = "multipart/form-data"
         return await self._post(
             "/x/media",

@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing_extensions import Literal
@@ -35,10 +33,9 @@ class GuestWalletsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> GuestWalletsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return GuestWalletsResourceWithRawResponse(self)
 
@@ -57,8 +54,6 @@ class GuestWalletsResource(SyncAPIResource):
         amount_minor: int,
         currency: Literal["usd"],
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -108,8 +103,6 @@ class GuestWalletsResource(SyncAPIResource):
     def retrieve_status(
         self,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -140,8 +133,6 @@ class GuestWalletsResource(SyncAPIResource):
         amount_minor: int,
         currency: Literal["usd"],
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -190,10 +181,9 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncGuestWalletsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncGuestWalletsResourceWithRawResponse(self)
 
@@ -212,8 +202,6 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
         amount_minor: int,
         currency: Literal["usd"],
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -263,8 +251,6 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
     async def retrieve_status(
         self,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -295,8 +281,6 @@ class AsyncGuestWalletsResource(AsyncAPIResource):
         amount_minor: int,
         currency: Literal["usd"],
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

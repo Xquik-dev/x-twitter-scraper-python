@@ -127,7 +127,6 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
         @property
         @override
         def model_fields_set(self) -> set[str]:
-            # a forwards-compat shim for pydantic v2
             return self.__fields_set__  # type: ignore
 
         class Config(pydantic.BaseConfig):  # pyright: ignore[reportDeprecated]
@@ -147,13 +146,10 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
         exclude_none: bool = False,
         warnings: bool = True,
     ) -> dict[str, object]:
-        """Recursively generate a dictionary representation of the model, optionally specifying which fields to include or exclude.
+        """Recursively generate a dictionary representation of the model.
 
         By default, fields that were not set by the API will not be included,
         and keys will match the API response, *not* the property names from the model.
-
-        For example, if the API responds with `"fooBar": true` but we've defined a `foo_bar: bool` property,
-        the output will use the `"fooBar"` key (unless `use_api_names=False` is passed).
 
         Args:
             mode:
@@ -191,9 +187,6 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
         By default, fields that were not set by the API will not be included,
         and keys will match the API response, *not* the property names from the model.
 
-        For example, if the API responds with `"fooBar": true` but we've defined a `foo_bar: bool` property,
-        the output will use the `"fooBar"` key (unless `use_api_names=False` is passed).
-
         Args:
             indent: Indentation to use in the JSON output. If `None` is passed, the output will be compact. Defaults to `2`
             use_api_names: Whether to use the key that the API responded with or the property name. Defaults to `True`.
@@ -213,11 +206,8 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
 
     @override
     def __str__(self) -> str:
-        # mypy complains about an invalid self arg
         return f"{self.__repr_name__()}({self.__repr_str__(', ')})"  # type: ignore[misc]
 
-    # Override the 'construct' method in a way that supports recursive parsing without validation.
-    # Based on https://github.com/samuelcolvin/pydantic/issues/1168#issuecomment-817742836.
     @classmethod
     @override
     def construct(  # pyright: ignore[reportIncompatibleMethodOverride]
@@ -266,13 +256,10 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
         object.__setattr__(m, "__dict__", fields_values)
 
         if PYDANTIC_V1:
-            # init_private_attributes() does not exist in v2
             m._init_private_attributes()  # type: ignore
 
-            # copied from Pydantic v1's `construct()` method
             object.__setattr__(m, "__fields_set__", _fields_set)
         else:
-            # these properties are copied from Pydantic's `model_construct()` method
             object.__setattr__(m, "__pydantic_private__", None)
             object.__setattr__(m, "__pydantic_extra__", _extra)
             object.__setattr__(m, "__pydantic_fields_set__", _fields_set)
@@ -280,16 +267,9 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
         return m
 
     if not TYPE_CHECKING:
-        # type checkers incorrectly complain about this assignment
-        # because the type signatures are technically different
-        # although not in practice
         model_construct = construct
 
     if PYDANTIC_V1:
-        # we define aliases for some of the new pydantic v2 methods so
-        # that we can just document these methods without having to specify
-        # a specific pydantic version as some users may not know which
-        # pydantic version they are currently using
 
         @override
         def model_dump(
@@ -326,8 +306,6 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
                 exclude_defaults: Whether to exclude fields that are set to their default value.
                 exclude_none: Whether to exclude fields that have a value of `None`.
                 exclude_computed_fields: Whether to exclude computed fields.
-                    While this can be useful for round-tripping, it is usually recommended to use the dedicated
-                    `round_trip` parameter instead.
                 round_trip: If True, dumped values should be valid as input for non-idempotent types such as Json[T].
                 warnings: How to handle serialization errors. False/"none" ignores them, True/"warn" logs errors,
                     "error" raises a [`PydanticSerializationError`][pydantic_core.PydanticSerializationError].
@@ -436,11 +414,6 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
 
 
 class _EagerIterable(Generic[_T]):
-    """Consume iterators eagerly, validate items, and preserve reconstructible container types.
-
-    Serialization emits lists, so dumping and revalidating does not retain container types.
-    """
-
     @classmethod
     def __get_validators__(cls) -> Iterable[Callable[..., object]]:
         yield cls._validate_v1
@@ -484,7 +457,6 @@ class _EagerIterable(Generic[_T]):
     def _validate(v: Iterable[object], handler: Callable[[list[object]], list[object]]) -> Any:
         original_type: type[Any] = type(v)
 
-        # Normalize to list so list_schema can validate each item
         if is_list(v):
             items: list[object] = v
         else:
@@ -493,25 +465,19 @@ class _EagerIterable(Generic[_T]):
             except TypeError as e:
                 raise ValueError("Value is not iterable") from e
 
-        # Validate items against the inner schema
         validated: list[object] = handler(items)
 
-        # Reconstruct original container type
         if original_type is list:
             return validated
-        # str(list) produces the list's repr, not a string built from items,
-        # so skip reconstruction for str and its subclasses.
         if issubclass(original_type, str):
             return validated
         try:
             return original_type(validated)
         except (TypeError, ValueError):
-            # If the type cannot be reconstructed, just return the validated list
             return validated
 
     @staticmethod
     def _serialize(v: object, handler: Callable[[object], object]) -> object:
-        """Serialize validated containers, preserving other union branches."""
         if isinstance(v, str) or not is_iterable(v):
             from pydantic_core import PydanticSerializationUnexpectedValue
 
@@ -556,14 +522,12 @@ def _get_extra_fields_type(cls: type[pydantic.BaseModel]) -> object | None:
         if fields["type"] == "model-fields":
             extras = fields.get("extras_schema")
             if extras and "cls" in extras:
-                # mypy can't narrow the type
                 return extras["cls"]  # type: ignore[no-any-return]
 
     return None
 
 
 def is_basemodel(type_: type) -> bool:
-    """Returns whether or not the given type is either a `BaseModel` or a union of `BaseModel`"""
     if is_union(type_):
         for variant in get_args(type_):
             if is_basemodel(variant):
@@ -586,16 +550,6 @@ def build(
     *args: P.args,
     **kwargs: P.kwargs,
 ) -> _BaseModelT:
-    """Construct a BaseModel class without validation.
-
-    This is useful for cases where you need to instantiate a `BaseModel`
-    from an API response as this provides type-safe params which isn't supported
-    by helpers like `construct_type()`.
-
-    ```py
-    build(MyModel, my_field_a="foo", my_field_b=123)
-    ```
-    """
     if args:
         raise TypeError(
             "Received positional arguments which are not supported; Keyword arguments must be used instead",
@@ -605,32 +559,17 @@ def build(
 
 
 def construct_type_unchecked(*, value: object, type_: type[_T]) -> _T:
-    """Loose coercion to the expected type with construction of nested values.
-
-    Note: the returned value from this function is not guaranteed to match the
-    given type.
-    """
     return cast(_T, construct_type(value=value, type_=type_))
 
 
 def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]] = None) -> object:
-    """Loose coercion to the expected type with construction of nested values.
-
-    If the given value does not match the expected type then it is returned as-is.
-    """
-
-    # store a reference to the original type we were given before we extract any inner
-    # types so that we can properly resolve forward references in `TypeAliasType` annotations
     original_type = None
 
-    # we allow `object` as the input type because otherwise, passing things like
-    # `Literal['value']` will be reported as a type error by type checkers
     type_ = cast("type[object]", type_)
     if is_type_alias_type(type_):
         original_type = type_  # type: ignore[unreachable]
         type_ = type_.__value__  # type: ignore[unreachable]
 
-    # unwrap `Annotated[T, ...]` -> `T`
     if metadata is not None and len(metadata) > 0:
         meta: tuple[Any, ...] = tuple(metadata)
     elif is_annotated_type(type_):
@@ -639,8 +578,6 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
     else:
         meta = tuple()
 
-    # we need to use the origin class for any types that are subscripted generics
-    # e.g. Dict[str, object]
     origin = get_origin(type_) or type_
     args = get_args(type_)
 
@@ -651,20 +588,6 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
         except Exception:
             pass
 
-        # if the type is a discriminated union then we want to construct the right variant
-        # in the union, even if the data doesn't match exactly, otherwise we'd break code
-        # that relies on the constructed class types, e.g.
-        #
-        # class FooType:
-        #   kind: Literal['foo']
-        #   value: str
-        #
-        # class BarType:
-        #   kind: Literal['bar']
-        #   value: int
-        #
-        # without this block, if the data we get is something like `{'kind': 'bar', 'value': 'foo'}` then
-        # we'd end up constructing `FooType` when it should be `BarType`.
         discriminator = _build_discriminated_union_meta(union=type_, meta_annotations=meta)
         if discriminator and is_mapping(value):
             variant_value = value.get(discriminator.field_alias_from or discriminator.field_name)
@@ -673,7 +596,6 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
                 if variant_type:
                     return construct_type(type_=variant_type, value=value)
 
-        # if the data is not valid, use the first variant that doesn't fail while deserializing
         for variant in args:
             try:
                 return construct_type(value=value, type_=variant)
@@ -686,7 +608,7 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
         if not is_mapping(value):
             return value
 
-        _, items_type = get_args(type_) or (Any, Any)  # Dict[_, items_type]
+        _, items_type = get_args(type_) or (Any, Any)
         return {key: construct_type(value=item, type_=items_type) for key, item in value.items()}
 
     if (
@@ -707,7 +629,7 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
         if not is_list(value):
             return value
 
-        inner_type = args[0]  # List[inner_type]
+        inner_type = args[0]
         return [construct_type(value=entry, type_=inner_type) for entry in value]
 
     if origin == float:
@@ -744,32 +666,10 @@ DISCRIMINATOR_CACHE: weakref.WeakKeyDictionary[type, DiscriminatorDetails] = wea
 
 class DiscriminatorDetails:
     field_name: str
-    """The name of the discriminator field in the variant class, e.g.
-
-    ```py
-    class Foo(BaseModel):
-        type: Literal['foo']
-    ```
-
-    Will result in field_name='type'
-    """
 
     field_alias_from: str | None
-    """The name of the discriminator field in the API response, e.g.
-
-    ```py
-    class Foo(BaseModel):
-        type: Literal['foo'] = Field(alias='type_from_api')
-    ```
-
-    Will result in field_alias_from='type_from_api'
-    """
 
     mapping: dict[str, type]
-    """Mapping of discriminator value to variant type, e.g.
-
-    {'foo': FooVariant, 'bar': BarVariant}
-    """
 
     def __init__(
         self,
@@ -809,7 +709,6 @@ def _build_discriminated_union_meta(*, union: type, meta_annotations: tuple[Any,
                 if not field_info:
                     continue
 
-                # Note: if one variant defines an alias then they all should
                 discriminator_alias = field_info.alias
 
                 if (annotation := getattr(field_info, "annotation", None)) and is_literal_type(annotation):
@@ -821,7 +720,6 @@ def _build_discriminated_union_meta(*, union: type, meta_annotations: tuple[Any,
                 if not field:
                     continue
 
-                # Note: if one variant defines an alias then they all should
                 discriminator_alias = field.get("serialization_alias")
 
                 field_schema = field["schema"]
@@ -865,7 +763,6 @@ def _extract_field_schema_pv2(model: type[BaseModel], field_name: str) -> ModelF
 
 
 def validate_type(*, type_: type[_T], value: object) -> _T:
-    """Strict validation that the given value matches the expected type"""
     origin = get_origin(type_) or type_
     if inspect.isclass(origin) and issubclass(origin, pydantic.BaseModel):
         return cast(_T, parse_obj(cast("type[pydantic.BaseModel]", type_), value))
@@ -874,15 +771,9 @@ def validate_type(*, type_: type[_T], value: object) -> _T:
 
 
 def set_pydantic_config(typ: Any, config: pydantic.ConfigDict) -> None:
-    """Add a pydantic config for the given type.
-
-    Note: this is a no-op on Pydantic v1.
-    """
     setattr(typ, "__pydantic_config__", config)  # noqa: B010
 
 
-# our use of subclassing here causes weirdness for type checkers,
-# so we just pretend that we don't subclass
 if TYPE_CHECKING:
     GenericModel = BaseModel
 else:
@@ -904,19 +795,9 @@ if not PYDANTIC_V1:
     def _validate_non_model_type(*, type_: type[_T], value: object) -> _T:
         return TypeAdapter(type_).validate_python(value)
 
-elif not TYPE_CHECKING:  # TODO: condition is weird
+elif not TYPE_CHECKING:
 
     class RootModel(GenericModel, Generic[_T]):
-        """Used as a placeholder to easily convert runtime types to a Pydantic format
-        to provide validation.
-
-        For example:
-        ```py
-        validated = RootModel[int](__root__="5").__root__
-        # validated: 5
-        ```
-        """
-
         __root__: _T
 
     def _validate_non_model_type(*, type_: type[_T], value: object) -> _T:
@@ -958,8 +839,6 @@ class FinalRequestOptions(pydantic.BaseModel):
     }
 
     content: Union[bytes, bytearray, IO[bytes], Iterable[bytes], AsyncIterable[bytes], None] = None
-    # It should be noted that we cannot use `json` here as that would override
-    # a BaseModel method in an incompatible fashion.
     json_data: Union[Body, None] = None
     extra_json: Union[AnyMapping, None] = None
 
@@ -983,12 +862,6 @@ class FinalRequestOptions(pydantic.BaseModel):
             self.headers = {**self.headers}
             self.headers.pop(RAW_RESPONSE_HEADER)
 
-    # override the `construct` method so that we can run custom transformations.
-    # this is necessary as we don't want to do any actual runtime type checking
-    # (which means we can't use validators) but we do want to ensure that `NotGiven`
-    # values are not present
-    #
-    # type ignore required because we're adding explicit types to `**values`
     @classmethod
     @override
     def construct(  # type: ignore
@@ -996,16 +869,10 @@ class FinalRequestOptions(pydantic.BaseModel):
         _fields_set: set[str] | None = None,
         **values: Unpack[FinalRequestOptionsInput],
     ) -> FinalRequestOptions:
-        kwargs: dict[str, Any] = {
-            # we unconditionally call `strip_not_given` on any value
-            # as it will just ignore any non-mapping types
-            key: strip_not_given(value)
-            for key, value in values.items()
-        }
+        kwargs: dict[str, Any] = {key: strip_not_given(value) for key, value in values.items()}
         if PYDANTIC_V1:
             return cast(FinalRequestOptions, super().construct(_fields_set, **kwargs))  # pyright: ignore[reportDeprecated]
         return super().model_construct(_fields_set, **kwargs)
 
     if not TYPE_CHECKING:
-        # type checkers incorrectly complain about this assignment
         model_construct = construct

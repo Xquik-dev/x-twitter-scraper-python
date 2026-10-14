@@ -40,25 +40,11 @@ from ._typing import (
 _T = TypeVar("_T")
 
 
-# TODO: support for drilling globals() and locals()
-# TODO: ensure works correctly with forward references in all cases
-
-
 PropertyFormat = Literal["iso8601", "base64", "custom"]
 
 
 @dataclass(kw_only=True, eq=False)
 class PropertyInfo:
-    """Metadata class to be used in Annotated types to provide information about a given type.
-
-    For example:
-
-    class MyParams(TypedDict):
-        account_holder_name: Annotated[str, PropertyInfo(alias='accountHolderName')]
-
-    This means that {'account_holder_name': 'Robert'} will be transformed to {'accountHolderName': 'Robert'} before being sent to the API.
-    """
-
     alias: str | None = None
     format: PropertyFormat | None = None
     format_template: str | None = None
@@ -73,42 +59,21 @@ def maybe_transform(
     data: object,
     expected_type: object,
 ) -> Any | None:
-    """Wrapper over `transform()` that allows `None` to be passed.
-
-    See `transform()` for more details.
-    """
     if data is None:
         return None
     return transform(data, expected_type)
 
 
-# Wrapper over _transform_recursive providing fake types
 def transform(
     data: _T,
     expected_type: object,
 ) -> _T:
-    """Transform dictionaries based off of type information from the given type, for example:
-
-    ```py
-    class Params(TypedDict, total=False):
-        card_id: Required[Annotated[str, PropertyInfo(alias="cardID")]]
-
-
-    transformed = transform({"card_id": "<my card ID>"}, Params)
-    # {'cardID': '<my card ID>'}
-    ```
-
-    Any keys / data that does not have type information given will be included as is.
-
-    It should be noted that the transformations that this function does are not represented in the type system.
-    """
     transformed = _transform_recursive(data, annotation=cast(type, expected_type))
     return cast(_T, transformed)
 
 
 @lru_cache(maxsize=8096)
 def _get_property_info(type_: type) -> tuple[PropertyInfo, ...]:
-    """Read Annotated metadata, unwrapping Required[Annotated[T, ...]] when present."""
     if is_required_type(type_):
         type_ = cast(type, get_args(type_)[0])
     if not is_annotated_type(type_):
@@ -117,10 +82,6 @@ def _get_property_info(type_: type) -> tuple[PropertyInfo, ...]:
 
 
 def _maybe_transform_key(key: str, type_: type) -> str:
-    """Transform the given `data` based on the annotations provided in `type_`.
-
-    Note: this function only looks at `Annotated` types that contain `PropertyInfo` metadata.
-    """
     for info in _get_property_info(type_):
         if info.alias is not None:
             return info.alias
@@ -134,18 +95,6 @@ def _transform_recursive(
     annotation: type,
     inner_type: type | None = None,
 ) -> object:
-    """Transform the given data against the expected type.
-
-    Args:
-        annotation: The direct type annotation given to the particular piece of data.
-            This may or may not be wrapped in metadata types, e.g. `Required[T]`, `Annotated[T, ...]` etc
-
-        inner_type: If applicable, this is the "inside" type. This is useful in certain cases where the outside type
-            is a container type such as `List[T]`. In that case `inner_type` should be set to `T` so that each entry in
-            the list can be transformed using the metadata from the container type.
-
-            Defaults to the same value as the `annotation` argument.
-    """
     from .._compat import model_dump
 
     if inner_type is None:
@@ -161,24 +110,15 @@ def _transform_recursive(
         return {key: _transform_recursive(value, annotation=items_type) for key, value in data.items()}
 
     if (
-        # List[T]
         (is_list_type(stripped_type) and is_list(data))
-        # Iterable[T]
         or (is_iterable_type(stripped_type) and is_iterable(data) and not isinstance(data, str))
-        # Sequence[T]
         or (is_sequence_type(stripped_type) and is_sequence(data) and not isinstance(data, str))
     ):
-        # dicts are technically iterable, but it is an iterable on the keys of the dict and is not usually
-        # intended as an iterable, so we don't transform it.
         if isinstance(data, dict):
             return cast(object, data)
 
         inner_type = extract_type_arg(stripped_type, 0)
         if inner_type == float or inner_type == int:
-            # for some types there is no need to transform anything, so we can get a small
-            # perf boost from skipping that work.
-            #
-            # but we still need to convert to a list to ensure the data is json-serializable
             if is_list(data):
                 return data
             return list(data)
@@ -186,10 +126,6 @@ def _transform_recursive(
         return [_transform_recursive(d, annotation=annotation, inner_type=inner_type) for d in data]
 
     if is_union_type(stripped_type):
-        # For union types we run the transformation against all subtypes to ensure that everything is transformed.
-        #
-        # TODO: there may be edge cases where the same normalized field name will transform to two different names
-        # in different subtypes.
         for subtype in get_args(stripped_type):
             data = _transform_recursive(data, annotation=annotation, inner_type=subtype)
         return data
@@ -245,13 +181,10 @@ def _transform_typeddict(
     annotations = get_type_hints(expected_type, include_extras=True)
     for key, value in data.items():
         if not is_given(value):
-            # we don't need to include omitted values here as they'll
-            # be stripped out before the request is sent anyway
             continue
 
         type_ = annotations.get(key)
         if type_ is None:
-            # we do not have a type annotation for this field, leave it as is
             result[key] = value
         else:
             result[_maybe_transform_key(key, type_)] = _transform_recursive(value, annotation=type_)
@@ -262,10 +195,6 @@ async def async_maybe_transform(
     data: object,
     expected_type: object,
 ) -> Any | None:
-    """Wrapper over `async_transform()` that allows `None` to be passed.
-
-    See `async_transform()` for more details.
-    """
     if data is None:
         return None
     return await async_transform(data, expected_type)
@@ -275,21 +204,6 @@ async def async_transform(
     data: _T,
     expected_type: object,
 ) -> _T:
-    """Transform dictionaries based off of type information from the given type, for example:
-
-    ```py
-    class Params(TypedDict, total=False):
-        card_id: Required[Annotated[str, PropertyInfo(alias="cardID")]]
-
-
-    transformed = transform({"card_id": "<my card ID>"}, Params)
-    # {'cardID': '<my card ID>'}
-    ```
-
-    Any keys / data that does not have type information given will be included as is.
-
-    It should be noted that the transformations that this function does are not represented in the type system.
-    """
     transformed = await _async_transform_recursive(data, annotation=cast(type, expected_type))
     return cast(_T, transformed)
 
@@ -300,18 +214,6 @@ async def _async_transform_recursive(
     annotation: type,
     inner_type: type | None = None,
 ) -> object:
-    """Transform the given data against the expected type.
-
-    Args:
-        annotation: The direct type annotation given to the particular piece of data.
-            This may or may not be wrapped in metadata types, e.g. `Required[T]`, `Annotated[T, ...]` etc
-
-        inner_type: If applicable, this is the "inside" type. This is useful in certain cases where the outside type
-            is a container type such as `List[T]`. In that case `inner_type` should be set to `T` so that each entry in
-            the list can be transformed using the metadata from the container type.
-
-            Defaults to the same value as the `annotation` argument.
-    """
     from .._compat import model_dump
 
     if inner_type is None:
@@ -327,24 +229,15 @@ async def _async_transform_recursive(
         return {key: await _async_transform_recursive(value, annotation=items_type) for key, value in data.items()}
 
     if (
-        # List[T]
         (is_list_type(stripped_type) and is_list(data))
-        # Iterable[T]
         or (is_iterable_type(stripped_type) and is_iterable(data) and not isinstance(data, str))
-        # Sequence[T]
         or (is_sequence_type(stripped_type) and is_sequence(data) and not isinstance(data, str))
     ):
-        # dicts are technically iterable, but it is an iterable on the keys of the dict and is not usually
-        # intended as an iterable, so we don't transform it.
         if isinstance(data, dict):
             return cast(object, data)
 
         inner_type = extract_type_arg(stripped_type, 0)
         if inner_type == float or inner_type == int:
-            # for some types there is no need to transform anything, so we can get a small
-            # perf boost from skipping that work.
-            #
-            # but we still need to convert to a list to ensure the data is json-serializable
             if is_list(data):
                 return data
             return list(data)
@@ -352,10 +245,6 @@ async def _async_transform_recursive(
         return [await _async_transform_recursive(d, annotation=annotation, inner_type=inner_type) for d in data]
 
     if is_union_type(stripped_type):
-        # For union types we run the transformation against all subtypes to ensure that everything is transformed.
-        #
-        # TODO: there may be edge cases where the same normalized field name will transform to two different names
-        # in different subtypes.
         for subtype in get_args(stripped_type):
             data = await _async_transform_recursive(data, annotation=annotation, inner_type=subtype)
         return data
@@ -384,13 +273,10 @@ async def _async_transform_typeddict(
     annotations = get_type_hints(expected_type, include_extras=True)
     for key, value in data.items():
         if not is_given(value):
-            # we don't need to include omitted values here as they'll
-            # be stripped out before the request is sent anyway
             continue
 
         type_ = annotations.get(key)
         if type_ is None:
-            # we do not have a type annotation for this field, leave it as is
             result[key] = value
         else:
             result[_maybe_transform_key(key, type_)] = await _async_transform_recursive(value, annotation=type_)

@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 import gc
@@ -56,7 +54,6 @@ def _get_params(client: BaseClient[Any, Any]) -> dict[str, str]:
 
 
 def _collect_uncached_objects() -> None:
-    # Release interpreter lookup caches before measuring retained allocations.
     if sys.version_info >= (3, 13):
         sys._clear_internal_caches()
     else:
@@ -74,7 +71,6 @@ def _assert_request_copies_collected(client: XTwitterScraper | AsyncXTwitterScra
         references.append(weakref.ref(client_copy))
         references.append(weakref.ref(request))
 
-    # ensure that the machinery is warmed up before tracing starts.
     build_request(options)
     _collect_uncached_objects()
     tracemalloc.start(1000)
@@ -91,23 +87,16 @@ def _assert_request_copies_collected(client: XTwitterScraper | AsyncXTwitterScra
 
     def add_leak(leaks: list[tracemalloc.StatisticDiff], diff: tracemalloc.StatisticDiff) -> None:
         if diff.count_diff <= 0:
-            # Avoid false positives by considering only leaks (i.e. allocations that persist).
             return
         if diff.count_diff % ITERATIONS != 0:
-            # Keep the existing per-iteration allocation check.
             return
         for frame in diff.traceback:
             if any(
                 frame.filename.endswith(fragment)
                 for fragment in [
-                    # to_raw_response_wrapper leaks through the @functools.wraps() decorator.
-                    #
-                    # removing the decorator fixes the leak for reasons we don't understand.
                     "x_twitter_scraper/_legacy_response.py",
                     "x_twitter_scraper/_response.py",
-                    # pydantic.BaseModel.model_dump || pydantic.BaseModel.dict leak memory for some reason.
                     "x_twitter_scraper/_compat.py",
-                    # Standard library leaks we don't care about.
                     "/logging/__init__.py",
                 ]
             ):
@@ -133,8 +122,6 @@ def mirror_request_content(request: httpx.Request) -> httpx.Response:
     return httpx.Response(200, content=request.content)
 
 
-# note: we can't use the httpx.MockTransport class as it consumes the request
-#       body itself, which means we can't test that the body is read lazily
 class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
     def __init__(
         self,
@@ -227,7 +214,6 @@ class TestXTwitterScraper:
         assert client.bearer_token == "My Bearer Token"
 
     def test_copy_default_options(self, client: XTwitterScraper) -> None:
-        # options that have a default are overridden correctly
         copied = client.copy(max_retries=7)
         assert copied.max_retries == 7
         assert client.max_retries == 2
@@ -236,7 +222,6 @@ class TestXTwitterScraper:
         assert copied2.max_retries == 6
         assert copied.max_retries == 7
 
-        # timeout
         assert isinstance(client.timeout, httpx.Timeout)
         copied = client.copy(timeout=None)
         assert copied.timeout is None
@@ -252,22 +237,16 @@ class TestXTwitterScraper:
         )
         assert client.default_headers["X-Foo"] == "bar"
 
-        # does not override the already given value when not specified
         copied = client.copy()
         assert copied.default_headers["X-Foo"] == "bar"
 
-        # merges already given headers
         copied = client.copy(default_headers={"X-Bar": "stainless"})
         assert copied.default_headers["X-Foo"] == "bar"
         assert copied.default_headers["X-Bar"] == "stainless"
 
-        # uses new values for any already given headers
         copied = client.copy(default_headers={"X-Foo": "stainless"})
         assert copied.default_headers["X-Foo"] == "stainless"
 
-        # set_default_headers
-
-        # completely overrides already set values
         copied = client.copy(set_default_headers={})
         assert copied.default_headers.get("X-Foo") is None
 
@@ -291,23 +270,17 @@ class TestXTwitterScraper:
         )
         assert _get_params(client)["foo"] == "bar"
 
-        # does not override the already given value when not specified
         copied = client.copy()
         assert _get_params(copied)["foo"] == "bar"
 
-        # merges already given params
         copied = client.copy(default_query={"bar": "stainless"})
         params = _get_params(copied)
         assert params["foo"] == "bar"
         assert params["bar"] == "stainless"
 
-        # uses new values for any already given headers
         copied = client.copy(default_query={"foo": "stainless"})
         assert _get_params(copied)["foo"] == "stainless"
 
-        # set_default_query
-
-        # completely overrides already set values
         copied = client.copy(set_default_query={})
         assert _get_params(copied) == {}
 
@@ -316,7 +289,6 @@ class TestXTwitterScraper:
 
         with pytest.raises(
             ValueError,
-            # TODO: update
             match="`default_query` and `set_default_query` arguments are mutually exclusive",
         ):
             client.copy(set_default_query={}, default_query={"foo": "Bar"})
@@ -324,9 +296,7 @@ class TestXTwitterScraper:
         client.close()
 
     def test_copy_signature(self, client: XTwitterScraper) -> None:
-        # ensure the same parameters that can be passed to the client are defined in the `.copy()` method
         init_signature = inspect.signature(
-            # mypy doesn't like that we access the `__init__` property.
             client.__init__,  # type: ignore[misc]
         )
         copy_signature = inspect.signature(client.copy)
@@ -367,7 +337,6 @@ class TestXTwitterScraper:
         client.close()
 
     def test_http_client_timeout_option(self) -> None:
-        # custom timeout given to the httpx client should be used
         with httpx.Client(timeout=None) as http_client:
             client = XTwitterScraper(
                 base_url=base_url,
@@ -383,7 +352,6 @@ class TestXTwitterScraper:
 
             client.close()
 
-        # no timeout given to the httpx client should not use the httpx default
         with httpx.Client() as http_client:
             client = XTwitterScraper(
                 base_url=base_url,
@@ -399,7 +367,6 @@ class TestXTwitterScraper:
 
             client.close()
 
-        # explicitly passing the default timeout currently results in it being ignored
         with httpx.Client(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
             client = XTwitterScraper(
                 base_url=base_url,
@@ -411,7 +378,7 @@ class TestXTwitterScraper:
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == DEFAULT_TIMEOUT  # our default
+            assert timeout == DEFAULT_TIMEOUT
 
             client.close()
 
@@ -558,7 +525,6 @@ class TestXTwitterScraper:
         data = json.loads(request.content.decode("utf-8"))
         assert data == {"baz": False}
 
-        # `extra_json` takes priority over `json_data` when keys clash
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -580,7 +546,6 @@ class TestXTwitterScraper:
         )
         assert request.headers.get("X-Foo") == "Foo"
 
-        # `extra_headers` takes priority over `default_headers` when keys clash
         request = client.with_options(default_headers={"X-Bar": "true"})._build_request(
             FinalRequestOptions(
                 method="post",
@@ -605,7 +570,6 @@ class TestXTwitterScraper:
         params = dict(request.url.params)
         assert params == {"my_query_param": "Foo"}
 
-        # if both `query` and `extra_query` are given, they are merged
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -619,7 +583,6 @@ class TestXTwitterScraper:
         params = dict(request.url.params)
         assert params == {"bar": "1", "foo": "2"}
 
-        # `extra_query` takes priority over `query` when keys clash
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -748,8 +711,6 @@ class TestXTwitterScraper:
 
     @pytest.mark.respx(base_url=base_url)
     def test_union_response_different_types(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
-        """Union of objects with the same field name using a different type"""
-
         class Model1(BaseModel):
             foo: int
 
@@ -772,10 +733,6 @@ class TestXTwitterScraper:
     def test_non_application_json_content_type_for_json_data(
         self, respx_mock: MockRouter, client: XTwitterScraper
     ) -> None:
-        """
-        Response that sets Content-Type to something other than application/json but returns json data
-        """
-
         class Model(BaseModel):
             foo: int
 
@@ -988,7 +945,7 @@ class TestXTwitterScraper:
             [3, "", 0.5],
             [2, "", 0.5 * 2.0],
             [1, "", 0.5 * 4.0],
-            [-1100, "", 8],  # test large number potentially overflowing
+            [-1100, "", 8],
         ],
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
@@ -1097,9 +1054,7 @@ class TestXTwitterScraper:
         assert response.http_request.headers.get("x-stainless-retry-count") == "42"
 
     def test_proxy_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        # Test that the proxy environment variables are set correctly
         monkeypatch.setenv("HTTPS_PROXY", "https://example.org")
-        # Delete in case our environment has any proxy env vars set
         monkeypatch.delenv("HTTP_PROXY", raising=False)
         monkeypatch.delenv("ALL_PROXY", raising=False)
         monkeypatch.delenv("NO_PROXY", raising=False)
@@ -1116,7 +1071,6 @@ class TestXTwitterScraper:
 
     @pytest.mark.filterwarnings("ignore:.*deprecated.*:DeprecationWarning")
     def test_default_client_creation(self) -> None:
-        # Ensure that the client can be initialized without any exceptions
         DefaultHttpxClient(
             verify=True,
             cert=None,
@@ -1128,7 +1082,6 @@ class TestXTwitterScraper:
 
     @pytest.mark.respx(base_url=base_url)
     def test_follow_redirects(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
-        # Test that the default follow_redirects=True allows following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
         )
@@ -1140,7 +1093,6 @@ class TestXTwitterScraper:
 
     @pytest.mark.respx(base_url=base_url)
     def test_follow_redirects_disabled(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
-        # Test that follow_redirects=False prevents following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
         )
@@ -1186,7 +1138,6 @@ class TestAsyncXTwitterScraper:
         assert async_client.bearer_token == "My Bearer Token"
 
     def test_copy_default_options(self, async_client: AsyncXTwitterScraper) -> None:
-        # options that have a default are overridden correctly
         copied = async_client.copy(max_retries=7)
         assert copied.max_retries == 7
         assert async_client.max_retries == 2
@@ -1195,7 +1146,6 @@ class TestAsyncXTwitterScraper:
         assert copied2.max_retries == 6
         assert copied.max_retries == 7
 
-        # timeout
         assert isinstance(async_client.timeout, httpx.Timeout)
         copied = async_client.copy(timeout=None)
         assert copied.timeout is None
@@ -1211,22 +1161,16 @@ class TestAsyncXTwitterScraper:
         )
         assert client.default_headers["X-Foo"] == "bar"
 
-        # does not override the already given value when not specified
         copied = client.copy()
         assert copied.default_headers["X-Foo"] == "bar"
 
-        # merges already given headers
         copied = client.copy(default_headers={"X-Bar": "stainless"})
         assert copied.default_headers["X-Foo"] == "bar"
         assert copied.default_headers["X-Bar"] == "stainless"
 
-        # uses new values for any already given headers
         copied = client.copy(default_headers={"X-Foo": "stainless"})
         assert copied.default_headers["X-Foo"] == "stainless"
 
-        # set_default_headers
-
-        # completely overrides already set values
         copied = client.copy(set_default_headers={})
         assert copied.default_headers.get("X-Foo") is None
 
@@ -1250,23 +1194,17 @@ class TestAsyncXTwitterScraper:
         )
         assert _get_params(client)["foo"] == "bar"
 
-        # does not override the already given value when not specified
         copied = client.copy()
         assert _get_params(copied)["foo"] == "bar"
 
-        # merges already given params
         copied = client.copy(default_query={"bar": "stainless"})
         params = _get_params(copied)
         assert params["foo"] == "bar"
         assert params["bar"] == "stainless"
 
-        # uses new values for any already given headers
         copied = client.copy(default_query={"foo": "stainless"})
         assert _get_params(copied)["foo"] == "stainless"
 
-        # set_default_query
-
-        # completely overrides already set values
         copied = client.copy(set_default_query={})
         assert _get_params(copied) == {}
 
@@ -1275,7 +1213,6 @@ class TestAsyncXTwitterScraper:
 
         with pytest.raises(
             ValueError,
-            # TODO: update
             match="`default_query` and `set_default_query` arguments are mutually exclusive",
         ):
             client.copy(set_default_query={}, default_query={"foo": "Bar"})
@@ -1283,9 +1220,7 @@ class TestAsyncXTwitterScraper:
         await client.close()
 
     def test_copy_signature(self, async_client: AsyncXTwitterScraper) -> None:
-        # ensure the same parameters that can be passed to the client are defined in the `.copy()` method
         init_signature = inspect.signature(
-            # mypy doesn't like that we access the `__init__` property.
             async_client.__init__,  # type: ignore[misc]
         )
         copy_signature = inspect.signature(async_client.copy)
@@ -1328,7 +1263,6 @@ class TestAsyncXTwitterScraper:
         await client.close()
 
     async def test_http_client_timeout_option(self) -> None:
-        # custom timeout given to the httpx client should be used
         async with httpx.AsyncClient(timeout=None) as http_client:
             client = AsyncXTwitterScraper(
                 base_url=base_url,
@@ -1344,7 +1278,6 @@ class TestAsyncXTwitterScraper:
 
             await client.close()
 
-        # no timeout given to the httpx client should not use the httpx default
         async with httpx.AsyncClient() as http_client:
             client = AsyncXTwitterScraper(
                 base_url=base_url,
@@ -1360,7 +1293,6 @@ class TestAsyncXTwitterScraper:
 
             await client.close()
 
-        # explicitly passing the default timeout currently results in it being ignored
         async with httpx.AsyncClient(timeout=HTTPX_DEFAULT_TIMEOUT) as http_client:
             client = AsyncXTwitterScraper(
                 base_url=base_url,
@@ -1372,7 +1304,7 @@ class TestAsyncXTwitterScraper:
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
             timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == DEFAULT_TIMEOUT  # our default
+            assert timeout == DEFAULT_TIMEOUT
 
             await client.close()
 
@@ -1519,7 +1451,6 @@ class TestAsyncXTwitterScraper:
         data = json.loads(request.content.decode("utf-8"))
         assert data == {"baz": False}
 
-        # `extra_json` takes priority over `json_data` when keys clash
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1541,7 +1472,6 @@ class TestAsyncXTwitterScraper:
         )
         assert request.headers.get("X-Foo") == "Foo"
 
-        # `extra_headers` takes priority over `default_headers` when keys clash
         request = client.with_options(default_headers={"X-Bar": "true"})._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1566,7 +1496,6 @@ class TestAsyncXTwitterScraper:
         params = dict(request.url.params)
         assert params == {"my_query_param": "Foo"}
 
-        # if both `query` and `extra_query` are given, they are merged
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1580,7 +1509,6 @@ class TestAsyncXTwitterScraper:
         params = dict(request.url.params)
         assert params == {"bar": "1", "foo": "2"}
 
-        # `extra_query` takes priority over `query` when keys clash
         request = client._build_request(
             FinalRequestOptions(
                 method="post",
@@ -1711,8 +1639,6 @@ class TestAsyncXTwitterScraper:
     async def test_union_response_different_types(
         self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper
     ) -> None:
-        """Union of objects with the same field name using a different type"""
-
         class Model1(BaseModel):
             foo: int
 
@@ -1735,10 +1661,6 @@ class TestAsyncXTwitterScraper:
     async def test_non_application_json_content_type_for_json_data(
         self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper
     ) -> None:
-        """
-        Response that sets Content-Type to something other than application/json but returns json data
-        """
-
         class Model(BaseModel):
             foo: int
 
@@ -1954,7 +1876,7 @@ class TestAsyncXTwitterScraper:
             [3, "", 0.5],
             [2, "", 0.5 * 2.0],
             [1, "", 0.5 * 4.0],
-            [-1100, "", 8],  # test large number potentially overflowing
+            [-1100, "", 8],
         ],
     )
     @mock.patch("time.time", mock.MagicMock(return_value=1696004797))
@@ -2071,9 +1993,7 @@ class TestAsyncXTwitterScraper:
         assert isinstance(platform, (str, OtherPlatform))
 
     async def test_proxy_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        # Test that the proxy environment variables are set correctly
         monkeypatch.setenv("HTTPS_PROXY", "https://example.org")
-        # Delete in case our environment has any proxy env vars set
         monkeypatch.delenv("HTTP_PROXY", raising=False)
         monkeypatch.delenv("ALL_PROXY", raising=False)
         monkeypatch.delenv("NO_PROXY", raising=False)
@@ -2090,7 +2010,6 @@ class TestAsyncXTwitterScraper:
 
     @pytest.mark.filterwarnings("ignore:.*deprecated.*:DeprecationWarning")
     async def test_default_client_creation(self) -> None:
-        # Ensure that the client can be initialized without any exceptions
         DefaultAsyncHttpxClient(
             verify=True,
             cert=None,
@@ -2102,7 +2021,6 @@ class TestAsyncXTwitterScraper:
 
     @pytest.mark.respx(base_url=base_url)
     async def test_follow_redirects(self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper) -> None:
-        # Test that the default follow_redirects=True allows following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
         )
@@ -2114,7 +2032,6 @@ class TestAsyncXTwitterScraper:
 
     @pytest.mark.respx(base_url=base_url)
     async def test_follow_redirects_disabled(self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper) -> None:
-        # Test that follow_redirects=False prevents following redirects
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
         )

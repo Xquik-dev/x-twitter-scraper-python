@@ -81,7 +81,6 @@ class MockHTTPServer(ThreadingHTTPServer):
     def handle_error(
         self, request: socket.socket | tuple[bytes, socket.socket], client_address: tuple[str, int]
     ) -> None:
-        # Stream tests close responses early, so a client may drop a kept-alive connection.
         if isinstance(sys.exc_info()[1], ConnectionError):
             return
         super().handle_error(request, client_address)

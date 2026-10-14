@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 import os
@@ -41,16 +39,12 @@ else:
     base_url = configured_base_url
 
 
-# automatically add `pytest.mark.asyncio()` to all of our async tests
-# so we don't have to add that boilerplate everywhere
 def pytest_collection_modifyitems(items: list[pytest.Function]) -> None:
     pytest_asyncio_tests = (item for item in items if is_async_test(item))
     session_scope_marker = pytest.mark.asyncio(loop_scope="session")
     for async_test in pytest_asyncio_tests:
         async_test.add_marker(session_scope_marker, append=False)
 
-    # We skip tests that use both the aiohttp client and respx_mock as respx_mock
-    # doesn't support custom transports.
     for item in items:
         item.own_markers[:] = [
             marker
@@ -98,7 +92,6 @@ def client(request: FixtureRequest) -> Iterator[XTwitterScraper]:
 async def async_client(request: FixtureRequest) -> AsyncIterator[AsyncXTwitterScraper]:
     param = getattr(request, "param", True)
 
-    # defaults
     strict = True
     http_client: None | httpx.AsyncClient = None
 

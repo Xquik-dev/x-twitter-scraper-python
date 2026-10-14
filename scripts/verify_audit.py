@@ -1,13 +1,6 @@
 # SPDX-FileCopyrightText: 2026 Xquik contributors
 # SPDX-License-Identifier: Apache-2.0
 
-"""Apply the dependency audit policy to a pip-audit JSON report.
-
-A finding in a shipped runtime dependency always blocks. A development-only
-finding blocks when a fix exists, when audit-exceptions.json does not list it,
-and on or after the listed recheck date.
-"""
-
 from __future__ import annotations
 
 import re
@@ -51,7 +44,6 @@ def _strings(value: object, message: str) -> list[str]:
 
 
 def load_exceptions(document: object, today: date) -> dict[tuple[str, str], date]:
-    """Return the recheck date of each listed (advisory ID, package) pair."""
     entries = _list(
         _mapping(document, "audit-exceptions.json must be an object.").get("exceptions"),
         "audit-exceptions.json needs an exceptions list.",
@@ -81,7 +73,6 @@ def blocking_findings(
     listed: Mapping[tuple[str, str], date],
     today: date,
 ) -> list[str]:
-    """Return 1 line per finding that blocks, and print each allowed finding."""
     dependencies = _list(
         _mapping(report, "pip-audit returned no JSON object.").get("dependencies"),
         "The pip-audit report lacks its dependency list.",

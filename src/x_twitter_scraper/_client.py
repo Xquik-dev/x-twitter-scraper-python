@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 import os
@@ -88,7 +86,6 @@ __all__ = [
 
 
 class XTwitterScraper(SyncAPIClient):
-    # client options
     api_key: str | None
     bearer_token: str | None
 
@@ -102,18 +99,7 @@ class XTwitterScraper(SyncAPIClient):
         max_retries: int = DEFAULT_MAX_RETRIES,
         default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
-        # Configure a custom httpx client.
-        # We provide a `DefaultHttpxClient` class that you can pass to retain the default values we use for `limits`, `timeout` & `follow_redirects`.
-        # See the [httpx documentation](https://www.python-httpx.org/api/#client) for more details.
         http_client: httpx.Client | None = None,
-        # Enable or disable schema validation for data returned by the API.
-        # When enabled an error APIResponseValidationError is raised
-        # if the API responds with invalid data for the expected schema.
-        #
-        # This parameter may be removed or changed in the future.
-        # If you rely on this feature, please open a GitHub issue
-        # outlining your use-case to help us decide if it should be
-        # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
         """Construct a new synchronous XTwitterScraper client instance.
@@ -375,8 +361,6 @@ class XTwitterScraper(SyncAPIClient):
             **_extra_kwargs,
         )
 
-    # Alias for `copy` for nicer inline usage, e.g.
-    # client.with_options(timeout=10).foo.create(...)
     with_options = copy
 
     @override
@@ -414,7 +398,6 @@ class XTwitterScraper(SyncAPIClient):
 
 
 class AsyncXTwitterScraper(AsyncAPIClient):
-    # client options
     api_key: str | None
     bearer_token: str | None
 
@@ -428,18 +411,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         max_retries: int = DEFAULT_MAX_RETRIES,
         default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
-        # Configure a custom httpx client.
-        # We provide a `DefaultAsyncHttpxClient` class that you can pass to retain the default values we use for `limits`, `timeout` & `follow_redirects`.
-        # See the [httpx documentation](https://www.python-httpx.org/api/#asyncclient) for more details.
         http_client: httpx.AsyncClient | None = None,
-        # Enable or disable schema validation for data returned by the API.
-        # When enabled an error APIResponseValidationError is raised
-        # if the API responds with invalid data for the expected schema.
-        #
-        # This parameter may be removed or changed in the future.
-        # If you rely on this feature, please open a GitHub issue
-        # outlining your use-case to help us decide if it should be
-        # part of our public interface in the future.
         _strict_response_validation: bool = False,
     ) -> None:
         """Construct a new async AsyncXTwitterScraper client instance.
@@ -701,8 +673,6 @@ class AsyncXTwitterScraper(AsyncAPIClient):
             **_extra_kwargs,
         )
 
-    # Alias for `copy` for nicer inline usage, e.g.
-    # client.with_options(timeout=10).foo.create(...)
     with_options = copy
 
     @override

@@ -26,5 +26,4 @@ echo "==> Installing Python dependencies…"
 uv sync --locked --all-extras
 
 echo "==> Exporting Python dependencies…"
-# note: `--no-hashes` is required because of https://github.com/pypa/pip/issues/4995
 uv export --frozen --no-annotate --no-header --no-hashes -o requirements-dev.lock

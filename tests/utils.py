@@ -34,8 +34,6 @@ def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: li
     for name, field in get_model_fields(model).items():
         field_value = getattr(value, name)
         if PYDANTIC_V1:
-            # in v1 nullability was structured differently
-            # https://docs.pydantic.dev/2.0/migration/#required-optional-and-nullable-fields
             allow_none = getattr(field, "allow_none", False)
         else:
             allow_none = False
@@ -50,7 +48,6 @@ def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: li
     return True
 
 
-# Note: the `path` argument is only used to improve error messages when `--showlocals` is used
 def assert_matches_type(
     type_: Any,
     value: object,
@@ -61,7 +58,6 @@ def assert_matches_type(
     if is_type_alias_type(type_):
         type_ = type_.__value__
 
-    # unwrap `Annotated[T, ...]` -> `T`
     if is_annotated_type(type_):
         type_ = extract_type_arg(type_, 0)
 
@@ -86,7 +82,6 @@ def assert_matches_type(
     if origin in (str, int, bool, float, bytes, datetime, date):
         assert isinstance(value, origin)
     elif origin == object:
-        # nothing to do here, the expected type is unknown
         pass
     elif origin == Literal:
         assert any(type(value) is type(literal) and value == literal for literal in get_args(type_))
@@ -103,7 +98,6 @@ def assert_matches_type(
     elif is_union_type(type_):
         variants = get_args(type_)
 
-        # Check Optional[T] directly to keep its underlying validation error.
         if len(variants) == 2 and NoneType in variants:
             if value is None:
                 return

@@ -11,12 +11,6 @@ from ._proxy import LazyProxy
 
 
 class ResourcesProxy(LazyProxy[Any]):
-    """A proxy for the `x_twitter_scraper.resources` module.
-
-    This is used so that we can lazily import `x_twitter_scraper.resources` only when
-    needed *and* so that users can just import `x_twitter_scraper` and reference `x_twitter_scraper.resources`
-    """
-
     @override
     def __load__(self) -> Any:
         import importlib

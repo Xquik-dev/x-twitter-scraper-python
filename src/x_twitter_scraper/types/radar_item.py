@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from typing import TYPE_CHECKING, Dict, Optional
 from datetime import datetime
 from typing_extensions import Literal
@@ -63,13 +61,10 @@ class Metadata(BaseModel):
     upvote_ratio: Optional[float] = FieldInfo(alias="upvoteRatio", default=None)
 
     if TYPE_CHECKING:
-        # Some versions of Pydantic <2.8.0 have a bug and don’t allow assigning a
-        # value to this field, so for compatibility we avoid doing it at runtime.
+        # Pydantic <2.8 rejects a value on __pydantic_extra__ at runtime.
+        # https://github.com/pydantic/pydantic/pull/9659
         __pydantic_extra__: Dict[str, object] = FieldInfo(init=False)  # pyright: ignore[reportIncompatibleVariableOverride]
 
-        # Stub to indicate that arbitrary properties are accepted.
-        # To access properties that are not valid identifiers you can use `getattr`, e.g.
-        # `getattr(obj, '$type')`
         def __getattr__(self, attr: str) -> object: ...
     else:
         __pydantic_extra__: Dict[str, object]
