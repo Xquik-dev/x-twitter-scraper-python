@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.13.1 (2026-10-14)
+
+The API and its behavior are the same as in 0.13.0.
+
+### Documentation
+
+- The README uses sentence case headings, active voice and whole sentences. Its facts, links and legal lines stay the same.
+- The README samples have no comments. The text around each sample says what it shows.
+
 ## 0.13.0 (2026-10-13)
 
 This release adds 50 methods from the current API spec.
