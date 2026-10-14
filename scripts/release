@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export UV_PYTHON=3.14.7
+export UV_PYTHON=3.14.8
 trap 'status=$?; if ((status)); then printf "{\"status\":\"failed\",\"exitCode\":%d}\n" "$status"; fi' EXIT
 mode="${1:?Use prepare, publish, or verify.}"
 shift
@@ -13,6 +13,12 @@ version=$(uv version --short)
 artifacts="$PWD/dist/releases/$revision"
 files=("$artifacts/x_twitter_scraper-$version-py3-none-any.whl" "$artifacts/x_twitter_scraper-$version.tar.gz")
 [[ -z "$(git status --porcelain)" ]] || { echo 'Commit verified changes before preparing a release.' >&2; exit 1; }
+verify_publish_source() {
+  [[ "$(git rev-parse --verify "v$version^{commit}" 2>/dev/null)" == "$revision" ]] || { echo 'The version tag must identify this release commit.' >&2; return 1; }
+  git fetch origin main "refs/tags/v$version:refs/tags/v$version" >&2
+  git merge-base --is-ancestor "$revision" origin/main || { echo 'Merge the release into main first.' >&2; return 1; }
+}
+if [[ "$mode" == publish ]]; then verify_publish_source; fi
 if [[ "$mode" != verify ]]; then
   parent_coverage="${1:?Pass verified parent coverage JSON.}"
   parent_revision="${2:-HEAD^}"
@@ -25,9 +31,7 @@ if [[ "$mode" != verify ]]; then
 fi
 [[ "$(git rev-parse HEAD)" == "$revision" && -z "$(git status --porcelain)" ]] || { echo 'Sources changed during release preparation.' >&2; exit 1; }
 if [[ "$mode" == publish ]]; then
-  [[ "$(git rev-parse "v$version^{commit}")" == "$revision" ]] || { echo 'The version tag must identify this release commit.' >&2; exit 1; }
-  git fetch origin main "refs/tags/v$version:refs/tags/v$version" >&2
-  git merge-base --is-ancestor "$revision" origin/main || { echo 'Merge the release into main first.' >&2; exit 1; }
+  verify_publish_source
   uv publish --publish-url https://upload.pypi.org/legacy/ --check-url https://pypi.org/simple/ "${files[@]}" >&2
 fi
 if [[ "$mode" != prepare ]]; then

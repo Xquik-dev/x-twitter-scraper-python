@@ -42,6 +42,7 @@ def verify_coverage(report_path: Path) -> bool:
             raise ValueError(f"Coverage report field {covered_key!r} is outside its total. Regenerate coverage.")
         percent = covered * 100 / total
         print(f"{label} coverage: {covered}/{total} ({percent:.2f}%)")
+    _reject_exclusions(totals)
     return True
 
 
@@ -51,7 +52,12 @@ def _mapping(value: object, message: str = "requires an object") -> Mapping[str,
     return cast(Mapping[str, object], value)
 
 
-def coverage_metrics(report_path: Path) -> dict[str, Fraction]:
+def _reject_exclusions(totals: Mapping[str, object]) -> None:
+    if _integer(totals, "excluded_lines") != 0:
+        raise ValueError("Excluded lines prevent coverage validation. Regenerate coverage without exclusions.")
+
+
+def _coverage_counts(report_path: Path) -> dict[str, tuple[int, int]]:
     report = _mapping(json.loads(report_path.read_text(encoding="utf-8")))
     totals = _mapping(report.get("totals"))
     counts = {name: (_integer(totals, covered), _integer(totals, total)) for name, covered, total in METRICS}
@@ -74,12 +80,15 @@ def coverage_metrics(report_path: Path) -> dict[str, Fraction]:
     counts["Function"] = (covered_functions, total_functions)
     counts["Line"] = counts["Statement"]
     print(f"Function declarations without executable statements: {declarations}")
-    metrics: dict[str, Fraction] = {}
     for name, (covered, total) in counts.items():
         if total <= 0 or not 0 <= covered <= total:
             raise ValueError(f"Invalid {name} coverage counts. Regenerate coverage.")
-        metrics[name] = Fraction(covered * 100, total)
-    return metrics
+    _reject_exclusions(totals)
+    return counts
+
+
+def coverage_metrics(report_path: Path) -> dict[str, Fraction]:
+    return {name: Fraction(covered * 100, total) for name, (covered, total) in _coverage_counts(report_path).items()}
 
 
 def verify_non_regression(report_path: Path, parent_path: Path) -> bool:
@@ -92,12 +101,18 @@ def verify_non_regression(report_path: Path, parent_path: Path) -> bool:
     version = metadata[0].get("version")
     if not isinstance(version, str) or not version or version != metadata[1].get("version"):
         raise ValueError("Coverage provider versions differ or are missing. Regenerate both reports.")
-    current, parent = coverage_metrics(report_path), coverage_metrics(parent_path)
+    current, parent = _coverage_counts(report_path), _coverage_counts(parent_path)
     passed = True
-    for name, value in current.items():
-        required = parent[name]
-        print(f"{name}: {float(parent[name]):.4f}% -> {float(value):.4f}%; required {float(required):.4f}%")
-        passed = value >= required and passed
+    for name, (covered, total) in current.items():
+        parent_covered, parent_total = parent[name]
+        ratio = Fraction(covered, total)
+        parent_ratio = Fraction(parent_covered, parent_total)
+        uncovered, parent_uncovered = total - covered, parent_total - parent_covered
+        print(
+            f"{name}: {float(parent_ratio * 100):.4f}% -> {float(ratio * 100):.4f}%; "
+            f"uncovered {parent_uncovered} -> {uncovered}; preserve ratio or uncovered count"
+        )
+        passed = (ratio >= parent_ratio or uncovered <= parent_uncovered) and passed
     return passed
 
 

@@ -13,17 +13,19 @@ if [[ -n "${XQUIK_FUZZ_HOST:-}" ]]; then
 fi
 
 [[ "$(uname -s):$(uname -m)" == Linux:x86_64 ]] || { echo 'Use Linux x86_64 or set XQUIK_FUZZ_HOST to an authorized Linux SSH runner.' >&2; exit 1; }
-export PATH="$HOME/.local/bin:$PATH" UV_PYTHON=3.14.7
-[[ "$(uv --version)" == 'uv 0.12.13 '* ]] || { echo 'Install uv 0.12.13 on the fuzz runner.' >&2; exit 1; }
+export PATH="$HOME/.local/bin:$PATH" UV_PYTHON=3.14.8
+[[ "$(uv --version)" == 'uv 0.12.22 '* ]] || { echo 'Install uv 0.12.22 on the fuzz runner.' >&2; exit 1; }
 uv sync --locked --all-extras --group fuzz
 bash scripts/audit
 sanitizer=$(uv run --locked --no-sync python -c 'import atheris,pathlib; print(pathlib.Path(atheris.path()) / "asan_with_fuzzer.so")')
 [[ -f "$sanitizer" ]] || { echo 'Atheris AddressSanitizer runtime is missing.' >&2; exit 1; }
+allowed_cpus=$(uv run --locked --no-sync python -c 'import os; print(",".join(str(cpu) for cpu in sorted(os.sched_getaffinity(0))))')
 evidence=$(mktemp -d)
 mkdir "$evidence/corpus"
 echo "Fuzz evidence: $evidence"
 systemd-run --user --wait --pipe \
   -p PrivateNetwork=yes -p NoNewPrivileges=yes -p MemoryMax=3G -p CPUQuota=100% \
+  -p "AllowedCPUs=$allowed_cpus" -p "CPUAffinity=$allowed_cpus" \
   -p ProtectSystem=strict -p ProtectHome=read-only -p "ReadWritePaths=$evidence" \
   -p RuntimeMaxSec=240 -p "WorkingDirectory=$PWD" \
   /usr/bin/env "LD_PRELOAD=$sanitizer" ASAN_OPTIONS=detect_leaks=0:symbolize=1 \

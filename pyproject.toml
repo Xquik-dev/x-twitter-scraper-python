@@ -47,7 +47,7 @@ aiohttp = ["aiohttp>=3.14.1", "httpx_aiohttp>=0.1.9"]
 
 [tool.uv]
 managed = true
-required-version = ">=0.9"
+required-version = "==0.12.22"
 conflicts = [
     [
       { group = "pydantic-v1" },
@@ -59,14 +59,14 @@ conflicts = [
 fuzz = ["atheris==3.1.0; python_version >= '3.12' and sys_platform == 'linux' and platform_machine == 'x86_64'"]
 # Version pins are in uv.lock.
 dev = [
-    "coverage==7.16.0",
+    "coverage==7.16.2",
     "twine==7.0.0",
     "pyright==1.1.414",
     "mypy==2.3.1",
     "respx",
     "pytest",
     "pytest-asyncio",
-    "ruff==0.16.7",
+    "ruff==0.16.10",
     "time-machine",
     "dirty-equals>=0.6.0",
     "importlib-metadata>=6.7.0",
@@ -82,7 +82,7 @@ pydantic-v2 = [
 ]
 
 [build-system]
-requires = ["hatchling==1.32.0", "hatch-fancy-pypi-readme"]
+requires = ["hatchling==1.32.4", "hatch-fancy-pypi-readme"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build]
@@ -121,10 +121,8 @@ replacement = '[\1](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/m
 
 [tool.coverage.report]
 include_namespace_packages = true
-exclude_lines = [
-    '#\s*(pragma|PRAGMA)[:\s]?\s*(no|NO)\s*(cover|COVER)',
-    'if (typing\.)?TYPE_CHECKING:',
-]
+exclude_lines = []
+partial_branches = []
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

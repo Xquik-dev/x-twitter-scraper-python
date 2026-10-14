@@ -8,13 +8,21 @@ import sys
 import json
 import subprocess
 from pathlib import Path
+from fractions import Fraction
 
 import pytest
 
 from scripts.verify_coverage import verify_coverage, coverage_metrics, verify_non_regression
 
 
-def write_report(path: Path, *, lines: tuple[int, int], branches: tuple[int, int]) -> None:
+def write_report(
+    path: Path,
+    *,
+    lines: tuple[int, int],
+    branches: tuple[int, int],
+    functions: tuple[int, int] = (1, 1),
+    excluded_lines: int = 0,
+) -> None:
     path.write_text(
         json.dumps(
             {
@@ -24,9 +32,17 @@ def write_report(path: Path, *, lines: tuple[int, int], branches: tuple[int, int
                     "num_statements": lines[1],
                     "covered_branches": branches[0],
                     "num_branches": branches[1],
+                    "excluded_lines": excluded_lines,
                 },
                 "files": {
-                    "example.py": {"functions": {"example": {"summary": {"covered_lines": 1, "num_statements": 1}}}}
+                    "example.py": {
+                        "functions": {
+                            f"example_{index}": {
+                                "summary": {"covered_lines": int(index < functions[0]), "num_statements": 1}
+                            }
+                            for index in range(functions[1])
+                        }
+                    }
                 },
             }
         ),
@@ -96,13 +112,61 @@ def test_missing_and_uncovered_functions_cannot_pass(tmp_path: Path) -> None:
     parent, candidate = tmp_path / "parent.json", tmp_path / "candidate.json"
     write_report(parent, lines=(100, 100), branches=(100, 100))
     report = json.loads(parent.read_text())
-    report["files"]["example.py"]["functions"]["example"]["summary"]["covered_lines"] = 0
+    report["files"]["example.py"]["functions"]["example_0"]["summary"]["covered_lines"] = 0
     candidate.write_text(json.dumps(report))
     assert not verify_non_regression(candidate, parent)
     report["files"] = {}
     candidate.write_text(json.dumps(report))
     with pytest.raises(ValueError, match="lacks files"):
         coverage_metrics(candidate)
+
+
+def test_coverage_metrics_returns_exact_percentage_fractions(tmp_path: Path) -> None:
+    report = tmp_path / "coverage.json"
+    write_report(report, lines=(1, 3), branches=(2, 3), functions=(1, 2))
+    assert coverage_metrics(report) == {
+        "Statement": Fraction(100, 3),
+        "Branch": Fraction(200, 3),
+        "Function": Fraction(50, 1),
+        "Line": Fraction(100, 3),
+    }
+
+
+@pytest.mark.parametrize("metric", ["lines", "branches", "functions"])
+@pytest.mark.parametrize(
+    "counts, expected",
+    [((10, 20), True), ((3, 8), True), ((3, 7), True), ((2, 8), False)],
+    ids=["preserved_ratio", "same_uncovered", "fewer_uncovered", "regression"],
+)
+def test_non_regression_preserves_ratio_or_uncovered_count(
+    tmp_path: Path, metric: str, counts: tuple[int, int], expected: bool
+) -> None:
+    parent, candidate = tmp_path / "parent.json", tmp_path / "candidate.json"
+    write_report(
+        parent,
+        lines=(5, 10) if metric == "lines" else (100, 100),
+        branches=(5, 10) if metric == "branches" else (100, 100),
+        functions=(5, 10) if metric == "functions" else (1, 1),
+    )
+    write_report(
+        candidate,
+        lines=counts if metric == "lines" else (100, 100),
+        branches=counts if metric == "branches" else (100, 100),
+        functions=counts if metric == "functions" else (1, 1),
+    )
+    assert verify_non_regression(candidate, parent) is expected
+
+
+@pytest.mark.parametrize("boundary", ["report", "candidate_baseline", "parent_baseline"])
+def test_coverage_rejects_excluded_lines(tmp_path: Path, boundary: str) -> None:
+    parent, candidate = tmp_path / "parent.json", tmp_path / "candidate.json"
+    write_report(parent, lines=(100, 100), branches=(100, 100), excluded_lines=int(boundary == "parent_baseline"))
+    write_report(candidate, lines=(100, 100), branches=(100, 100), excluded_lines=int(boundary != "parent_baseline"))
+    with pytest.raises(ValueError, match="Excluded lines"):
+        if boundary == "report":
+            verify_coverage(candidate)
+        else:
+            verify_non_regression(candidate, parent)
 
 
 @pytest.mark.parametrize(

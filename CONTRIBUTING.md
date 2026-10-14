@@ -6,17 +6,17 @@ Follow the shared [Xquik contribution policy][contribution-policy].
 
 ## Set Up
 
-Install uv 0.12.13 from its official release, then run:
+Install uv 0.12.22 from its official release, then run:
 
 ```sh
 ./scripts/bootstrap
 ```
 
-Validation uses Python 3.10.21 and 3.14.7 with locked dependencies.
+Validation uses Python 3.10.22 and 3.14.8 with locked dependencies.
 Install both runtimes before measuring parent coverage:
 
 ```sh
-uv python install 3.10.21 3.14.7
+uv python install 3.10.22 3.14.8
 ```
 
 Without `uv`, install `requirements-dev.lock` inside an isolated environment.
@@ -48,18 +48,18 @@ Measure parent coverage using `bash scripts/coverage --baseline` at the parent r
 The full check verifies that report against Git's source hashes.
 SDK commits preserve full-source coverage; LOC changes remain advisory.
 
-Install CodeQL CLI 2.27.0 from its official GitHub release.
+Install CodeQL CLI 2.27.1 from its official GitHub release.
 Verify the archive against the release's SHA-256 checksum before extraction.
 Set `XQUIK_CODEQL_BIN` to its executable path.
-The default path is `~/.cache/xquik-codeql/2.27.0/codeql/codeql`.
+The default path is `~/.cache/xquik-codeql/2.27.1/codeql/codeql`.
 Install the pinned queries once:
 
 ```sh
-"$XQUIK_CODEQL_BIN" pack download codeql/python-queries@1.8.10
+"$XQUIK_CODEQL_BIN" pack download codeql/python-queries@1.8.11
 ```
 
 Full checks also run a 180-second AddressSanitizer fuzz campaign.
-Use Linux x86_64 with uv 0.12.13 and a working systemd user service.
+Use Linux x86_64 with uv 0.12.22 and a working systemd user service.
 From another platform, set `XQUIK_FUZZ_HOST` to your authorized Linux SSH runner.
 The command transfers SDK source and lockfiles into an isolated temporary directory.
 The fuzz process cannot access the network or modify files outside its evidence directory.
@@ -101,9 +101,8 @@ Follow [SECURITY.md](SECURITY.md) for private reporting.
 
 Publish an immutable `v*` release after its commit reaches `main`.
 
-Try the publishing workflow at the release tag when Actions is available.
-If Actions fails, use the maintained local publisher without repeated retries.
-Local checks remain mandatory for either route.
+Use the maintained local publisher.
+Run every required native check before publishing.
 
 ```sh
 bun run release:prepare /absolute/path/to/parent-coverage.json HEAD^
