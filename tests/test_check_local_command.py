@@ -97,7 +97,7 @@ def test_success_status_lists_the_checks_that_passed(tmp_path: Path) -> None:
     "case,ran,failed",
     [
         ("lint", CHECKS[:1], "Lint: Ruff, Pyright, Mypy, and package import"),
-        ("test", CHECKS[:4], "Tests: Python 3.10.21 and 3.14.7 with Pydantic 1 and 2"),
+        ("test", CHECKS[:4], "Tests: Python 3.10.22 and 3.14.8 with Pydantic 1 and 2"),
         ("audit", CHECKS[:7], "Dependency security: pip-audit and audit-exceptions.json"),
         ("codeql-security", CHECKS, "Static analysis: CodeQL 2.27.2 security-extended queries"),
         ("changed", CHECKS, "Final tree check"),

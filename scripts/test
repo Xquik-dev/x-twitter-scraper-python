@@ -9,8 +9,8 @@ set -e
 cd "$(dirname "$0")/.."
 export DEFER_PYDANTIC_BUILD=false
 
-PY_VERSION_MIN="3.10.21"
-PY_VERSION_MAX="3.14.7"
+PY_VERSION_MIN="3.10.22"
+PY_VERSION_MAX="3.14.8"
 
 function run_tests() {
     echo "==> Running tests with Pydantic v2"
