@@ -205,16 +205,15 @@ The SDK retries connection errors and HTTP 408, 409, 429, and 5xx responses.
 It uses exponential backoff and attempts 2 retries by default.
 
 Set `max_retries` to change or disable retries.
+Set it on the client, or on 1 request through `with_options`.
 
 ```python
 from x_twitter_scraper import XTwitterScraper
 
-# Set the client default.
 client = XTwitterScraper(
     max_retries=0,
 )
 
-# Override one request.
 client.with_options(max_retries=5).x.tweets.search(
     q="from:elonmusk",
     limit=10,
@@ -225,22 +224,19 @@ client.with_options(max_retries=5).x.tweets.search(
 
 Requests time out after 1 minute.
 Set a float or [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) through `timeout`.
+Set it on the client, or on 1 request through `with_options`.
 
 ```python
 from x_twitter_scraper import XTwitterScraper
 
-# Set the client default.
 client = XTwitterScraper(
-    # 20 seconds. The default is 1 minute.
     timeout=20.0,
 )
 
-# Set granular limits.
 client = XTwitterScraper(
     timeout=httpx.Timeout(60.0, read=5.0, write=10.0, connect=2.0),
 )
 
-# Override one request.
 client.with_options(timeout=5.0).x.tweets.search(
     q="from:elonmusk",
     limit=10,
