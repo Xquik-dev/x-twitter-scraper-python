@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing_extensions import Literal
@@ -263,10 +261,9 @@ class XResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> XResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return XResourceWithRawResponse(self)
 
@@ -287,8 +284,6 @@ class XResource(SyncAPIResource):
         limit: int | Omit = omit,
         omit: str | Omit = omit,
         types: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -356,8 +351,6 @@ class XResource(SyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -414,8 +407,6 @@ class XResource(SyncAPIResource):
         limit: int | Omit = omit,
         omit: str | Omit = omit,
         q: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -480,8 +471,6 @@ class XResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         seen_tweet_ids: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -529,8 +518,6 @@ class XResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         type: Literal["All", "Verified", "Mentions"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -580,8 +567,6 @@ class XResource(SyncAPIResource):
         omit: str | Omit = omit,
         place_type: Literal["country", "town", "worldwide", "unknown"] | Omit = omit,
         q: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -652,8 +637,6 @@ class XResource(SyncAPIResource):
         location: str | Omit = omit,
         omit: str | Omit = omit,
         woeid: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -724,8 +707,6 @@ class XResource(SyncAPIResource):
         fields: str | Omit = omit,
         limit: int | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -866,10 +847,9 @@ class AsyncXResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncXResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncXResourceWithRawResponse(self)
 
@@ -890,8 +870,6 @@ class AsyncXResource(AsyncAPIResource):
         limit: int | Omit = omit,
         omit: str | Omit = omit,
         types: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -959,8 +937,6 @@ class AsyncXResource(AsyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1017,8 +993,6 @@ class AsyncXResource(AsyncAPIResource):
         limit: int | Omit = omit,
         omit: str | Omit = omit,
         q: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1083,8 +1057,6 @@ class AsyncXResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         seen_tweet_ids: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1132,8 +1104,6 @@ class AsyncXResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         type: Literal["All", "Verified", "Mentions"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1183,8 +1153,6 @@ class AsyncXResource(AsyncAPIResource):
         omit: str | Omit = omit,
         place_type: Literal["country", "town", "worldwide", "unknown"] | Omit = omit,
         q: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1255,8 +1223,6 @@ class AsyncXResource(AsyncAPIResource):
         location: str | Omit = omit,
         omit: str | Omit = omit,
         woeid: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1327,8 +1293,6 @@ class AsyncXResource(AsyncAPIResource):
         fields: str | Omit = omit,
         limit: int | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

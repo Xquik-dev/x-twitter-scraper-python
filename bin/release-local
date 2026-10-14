@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 # SPDX-FileCopyrightText: 2026 Xquik contributors
 # SPDX-License-Identifier: Apache-2.0
-#
-# Publishes the version in pyproject.toml to PyPI from a maintainer's Mac,
-# then pushes its v<version> tag and creates the GitHub release.
-# Usage: bin/release-local [--dry-run]
-# PYPI_KEYCHAIN_SERVICE names the macOS Keychain item that holds the PyPI token.
-# --dry-run runs every step except the upload, the tag, and the GitHub release.
-# It never reads the Keychain, so it needs no PYPI_KEYCHAIN_SERVICE. It also
-# accepts a detached HEAD at origin/main, so a preview can run in a separate
-# worktree.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
@@ -34,8 +25,6 @@ fail() {
   exit 1
 }
 
-# Reads the PyPI token from the Keychain item named by PYPI_KEYCHAIN_SERVICE.
-# Messages never name the item, because release output gets pasted in public.
 read_token() {
   security find-generic-password -s "$keychain_service" "$@" 2>/dev/null ||
     fail "The Keychain has no item named by PYPI_KEYCHAIN_SERVICE. Add the PyPI token under that name, then run bin/release-local again."
@@ -71,7 +60,7 @@ revision="$(git rev-parse HEAD)"
 step "Reading the version from pyproject.toml."
 version="$(uv version --short)"
 tag="v$version"
-grep -Fqx "__version__ = \"$version\"  # x-release-please-version" src/x_twitter_scraper/_version.py ||
+grep -Fqx "__version__ = \"$version\"" src/x_twitter_scraper/_version.py ||
   fail "Set __version__ in src/x_twitter_scraper/_version.py to $version, then rerun."
 notes="$(awk -v heading="## $version" '$0 == heading || index($0, heading " ") == 1 { found = 1; next } found && /^## / { exit } found { print }' CHANGELOG.md)"
 [[ "$notes" =~ [^[:space:]] ]] || fail "Add a ## $version section to CHANGELOG.md, then rerun."

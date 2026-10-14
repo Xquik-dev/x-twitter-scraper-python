@@ -39,23 +39,11 @@ def flatten(t: Iterable[Iterable[_T]]) -> list[_T]:
 
 
 def extract_files(
-    # TODO: this needs to take Dict but variance issues.....
-    # create protocol type ?
     query: Mapping[str, object],
     *,
     paths: Sequence[Sequence[str]],
     array_format: ArrayFormat = "brackets",
 ) -> list[tuple[str, FileTypes]]:
-    """Recursively extract files from the given dictionary based on specified paths.
-
-    A path may look like this ['foo', 'files', '<array>', 'data'].
-
-    ``array_format`` controls how ``<array>`` segments contribute to the emitted
-    field name. Supported values: ``"brackets"`` (``foo[]``), ``"repeat"`` and
-    ``"comma"`` (``foo``), ``"indices"`` (``foo[0]``, ``foo[1]``).
-
-    Note: this mutates the given dictionary.
-    """
     files: list[tuple[str, FileTypes]] = []
     for path in paths:
         files.extend(_extract_items(query, path, index=0, flattened_key=None, array_format=array_format))
@@ -68,8 +56,6 @@ def _array_suffix(array_format: ArrayFormat, array_index: int) -> str:
     if array_format == "indices":
         return f"[{array_index}]"
     if array_format == "repeat" or array_format == "comma":
-        # Both repeat the bare field name for each file part; there is no
-        # meaningful way to comma-join binary parts.
         return ""
     raise NotImplementedError(
         f"Unknown array_format value: {array_format}, choose from {', '.join(get_args(ArrayFormat))}"
@@ -88,13 +74,10 @@ def _extract_items(
         key = path[index]
     except IndexError:
         if not is_given(obj):
-            # no value was provided - we can safely ignore
             return []
 
-        # cyclical import
         from .._files import assert_is_file_content
 
-        # We have exhausted the path, return the entry we found.
         assert flattened_key is not None
 
         if is_list(obj):
@@ -112,16 +95,11 @@ def _extract_items(
     index += 1
     if is_dict(obj):
         try:
-            # Remove the field if there are no more dict keys in the path,
-            # only "<array>" traversal markers or end.
             if all(p == "<array>" for p in path[index:]):
                 item = obj.pop(key)
             else:
                 item = obj[key]
         except KeyError:
-            # Key was not present in the dictionary, this is not indicative of an error
-            # as the given path may not point to a required field. We also do not want
-            # to enforce required fields as the API may differ from the spec in some cases.
             return []
         if flattened_key is None:
             flattened_key = key
@@ -151,22 +129,11 @@ def _extract_items(
             )
         ]
 
-    # Something unexpected was passed, just ignore it.
     return []
 
 
 def is_given(obj: _T | NotGiven | Omit) -> TypeGuard[_T]:
     return not isinstance(obj, NotGiven) and not isinstance(obj, Omit)
-
-
-# Type safe methods for narrowing types with TypeVars.
-# The default narrowing for isinstance(obj, dict) is dict[unknown, unknown],
-# however this cause Pyright to rightfully report errors. As we know we don't
-# care about the contained types we can safely use `object` in its place.
-#
-# There are two separate functions defined, `is_*` and `is_*_t` for different use cases.
-# `is_*` is for when you're dealing with an unknown input
-# `is_*_t` is for when you're narrowing a known union type to a specific subset
 
 
 def is_tuple(obj: object) -> TypeGuard[tuple[object, ...]]:
@@ -201,7 +168,6 @@ def is_iterable(obj: object) -> TypeGuard[Iterable[object]]:
     return isinstance(obj, Iterable)
 
 
-# copied from https://github.com/Rapptz/RoboDanny
 def human_join(seq: Sequence[str], *, delim: str = ", ", final: str = "or") -> str:
     if len(seq) < 2:
         return seq[0] if seq else ""
@@ -209,32 +175,10 @@ def human_join(seq: Sequence[str], *, delim: str = ", ", final: str = "or") -> s
 
 
 def quote(string: str) -> str:
-    """Add single quotation marks around the given string. Does *not* do any escaping."""
     return f"'{string}'"
 
 
 def required_args(*variants: Sequence[str]) -> Callable[[Callable[_P, _T]], Callable[_P, _T]]:
-    """Decorator to enforce a given set of arguments or variants of arguments are passed to the decorated function.
-
-    Useful for enforcing runtime validation of overloaded functions.
-
-    Example usage:
-    ```py
-    @overload
-    def foo(*, a: str) -> str: ...
-
-
-    @overload
-    def foo(*, b: bool) -> str: ...
-
-
-    # This enforces the same constraints that a static type checker would
-    # i.e. that either a or b must be passed to the function
-    @required_args(["a"], ["b"])
-    def foo(*, a: str | None = None, b: bool | None = None) -> str: ...
-    ```
-    """
-
     def inner(func: Callable[_P, _T]) -> Callable[_P, _T]:
         params = inspect.signature(func).parameters
         positional = [
@@ -264,7 +208,6 @@ def required_args(*variants: Sequence[str]) -> Callable[[Callable[_P, _T]], Call
                 else:
                     assert len(variants) > 0
 
-                    # TODO: this error message is not deterministic
                     missing = list(set(variants[0]) - given_params)
                     if len(missing) > 1:
                         msg = f"Missing required arguments: {human_join([quote(arg) for arg in missing])}"
@@ -295,7 +238,6 @@ def strip_not_given(obj: object) -> object: ...
 
 
 def strip_not_given(obj: object | None) -> object:
-    """Remove all top-level keys where their values are instances of `NotGiven`"""
     if obj is None:
         return None
 
@@ -336,12 +278,10 @@ def maybe_coerce_boolean(val: str | None) -> bool | None:
 
 
 def removeprefix(string: str, prefix: str) -> str:
-    """Remove a prefix from a string."""
     return string.removeprefix(prefix)
 
 
 def removesuffix(string: str, suffix: str) -> str:
-    """Remove a suffix from a string."""
     return string.removesuffix(suffix)
 
 
@@ -354,12 +294,10 @@ def file_from_path(path: str) -> FileTypes:
 def get_required_header(headers: HeadersLike, header: str) -> str:
     lower_header = header.lower()
     if is_mapping_t(headers):
-        # mypy doesn't understand the type narrowing here
         for k, v in headers.items():  # type: ignore
             if k.lower() == lower_header and isinstance(v, str):
                 return v
 
-    # to deal with the case where the header looks like Stainless-Event-Id
     intercaps_header = re.sub(r"([^\w])(\w)", lambda pat: pat.group(1) + pat.group(2).upper(), header.capitalize())
 
     for normalized_header in [header, lower_header, header.upper(), intercaps_header]:
@@ -378,9 +316,6 @@ def get_async_library() -> str:
 
 
 def lru_cache(*, maxsize: int | None = 128) -> Callable[[CallableT], CallableT]:
-    """A version of functools.lru_cache that retains the type signature
-    for the wrapped function arguments.
-    """
     wrapper = functools.lru_cache(  # noqa: TID251
         maxsize=maxsize,
     )
@@ -388,9 +323,6 @@ def lru_cache(*, maxsize: int | None = 128) -> Callable[[CallableT], CallableT]:
 
 
 def json_safe(data: object) -> object:
-    """Translates a mapping / sequence recursively in the same fashion
-    as `pydantic` v2's `model_dump(mode="json")`.
-    """
     if is_mapping(data):
         return {json_safe(key): json_safe(value) for key, value in data.items()}
 

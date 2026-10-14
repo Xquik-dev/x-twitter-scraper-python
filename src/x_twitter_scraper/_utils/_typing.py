@@ -36,7 +36,6 @@ def is_sequence_type(typ: type) -> bool:
 
 
 def is_iterable_type(typ: type) -> bool:
-    """If the given type is `typing.Iterable[T]`"""
     origin = get_origin(typ) or typ
     return origin == Iterable or origin == _c_abc.Iterable
 
@@ -59,21 +58,9 @@ if sys.version_info >= (3, 12):
 
 
 def is_type_alias_type(tp: Any, /) -> TypeIs[typing_extensions.TypeAliasType]:
-    """Return whether the provided argument is an instance of `TypeAliasType`.
-
-    ```python
-    type Int = int
-    is_type_alias_type(Int)
-    # > True
-    Str = TypeAliasType("Str", str)
-    is_type_alias_type(Str)
-    # > True
-    ```
-    """
     return isinstance(tp, _TYPE_ALIAS_TYPES)
 
 
-# Extracts T from Annotated[T, ...] or from Required[Annotated[T, ...]]
 @lru_cache(maxsize=8096)
 def strip_annotated_type(typ: type) -> type:
     if is_required_type(typ) or is_annotated_type(typ):
@@ -97,36 +84,10 @@ def extract_type_var_from_base(
     index: int,
     failure_message: str | None = None,
 ) -> type:
-    """Given a type like `Foo[T]`, returns the generic type variable `T`.
-
-    This also handles the case where a concrete subclass is given, e.g.
-    ```py
-    class MyResponse(Foo[bytes]):
-        ...
-
-    extract_type_var(MyResponse, bases=(Foo,), index=0) -> bytes
-    ```
-
-    And where a generic subclass is given:
-    ```py
-    _T = TypeVar('_T')
-    class MyResponse(Foo[_T]):
-        ...
-
-    extract_type_var(MyResponse[bytes], bases=(Foo,), index=0) -> bytes
-    ```
-    """
     cls = cast(object, get_origin(typ) or typ)
     if cls in generic_bases:  # pyright: ignore[reportUnnecessaryContains]
-        # we're given the class directly
         return extract_type_arg(typ, index)
 
-    # if a subclass is given
-    # ---
-    # this is needed as __orig_bases__ is not present in the typeshed stubs
-    # because it is intended to be for internal use only, however there does
-    # not seem to be a way to resolve generic TypeVars for inherited subclasses
-    # without using it.
     if hasattr(cls, "__orig_bases__"):
         target_base_class: Any | None = None
         for base in cast(InheritsGeneric, cls).__orig_bases__:
@@ -143,14 +104,6 @@ def extract_type_var_from_base(
 
         extracted = extract_type_arg(target_base_class, index)
         if is_typevar(extracted):
-            # If the extracted type argument is itself a type variable
-            # then that means the subclass itself is generic, so we have
-            # to resolve the type argument from the class itself, not
-            # the base class.
-            #
-            # Note: if there is more than 1 type argument, the subclass could
-            # change the ordering of the type arguments, this is not currently
-            # supported.
             return extract_type_arg(typ, index)
 
         return extracted

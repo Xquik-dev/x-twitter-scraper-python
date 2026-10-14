@@ -27,10 +27,7 @@ datetime_re = re.compile(f"{date_expr}[T ]{time_expr}")
 
 
 EPOCH = datetime(1970, 1, 1)
-# if greater than this, the number is in ms, if less than or equal it's in seconds
-# (in seconds this is 11th October 2603, in ms it's 20th August 1970)
 MS_WATERSHED = int(2e10)
-# slightly more than datetime.max in ns - (datetime.max - EPOCH).total_seconds() * 1e9
 MAX_NUMBER = int(3e20)
 
 
@@ -71,15 +68,6 @@ def _parse_timezone(value: Optional[str]) -> Optional[timezone]:
 
 
 def parse_datetime(value: Union[datetime, StrBytesIntFloat]) -> datetime:
-    """
-    Parse a datetime/int/float/string and return a datetime.datetime.
-
-    This function supports time zone offsets. When the input contains one,
-    the output uses a timezone with a fixed offset from UTC.
-
-    Raise ValueError if the input is well formatted but not a valid datetime.
-    Raise ValueError if the input isn't well formatted.
-    """
     if isinstance(value, datetime):
         return value
 
@@ -106,12 +94,6 @@ def parse_datetime(value: Union[datetime, StrBytesIntFloat]) -> datetime:
 
 
 def parse_date(value: Union[date, StrBytesIntFloat]) -> date:
-    """
-    Parse a date/int/float/string and return a datetime.date.
-
-    Raise ValueError if the input is well formatted but not a valid date.
-    Raise ValueError if the input isn't well formatted.
-    """
     if isinstance(value, date):
         if isinstance(value, datetime):
             return value.date()

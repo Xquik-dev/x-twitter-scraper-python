@@ -3,4 +3,4 @@
 # SPDX-License-Identifier: Apache-2.0
 
 __title__ = "x_twitter_scraper"
-__version__ = "0.13.1"  # x-release-please-version
+__version__ = "0.13.1"

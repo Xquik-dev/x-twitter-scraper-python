@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing_extensions import Literal
@@ -34,10 +32,9 @@ class DraftsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> DraftsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return DraftsResourceWithRawResponse(self)
 
@@ -56,8 +53,6 @@ class DraftsResource(SyncAPIResource):
         text: str,
         goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
         topic: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -98,8 +93,6 @@ class DraftsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -133,8 +126,6 @@ class DraftsResource(SyncAPIResource):
         *,
         after_cursor: str | Omit = omit,
         limit: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -180,8 +171,6 @@ class DraftsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -217,10 +206,9 @@ class AsyncDraftsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncDraftsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncDraftsResourceWithRawResponse(self)
 
@@ -239,8 +227,6 @@ class AsyncDraftsResource(AsyncAPIResource):
         text: str,
         goal: Literal["engagement", "followers", "authority", "conversation"] | Omit = omit,
         topic: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -281,8 +267,6 @@ class AsyncDraftsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -316,8 +300,6 @@ class AsyncDraftsResource(AsyncAPIResource):
         *,
         after_cursor: str | Omit = omit,
         limit: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -363,8 +345,6 @@ class AsyncDraftsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing_extensions import Literal
@@ -35,10 +33,9 @@ class AccountResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AccountResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AccountResourceWithRawResponse(self)
 
@@ -54,8 +51,6 @@ class AccountResource(SyncAPIResource):
     def retrieve(
         self,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -77,8 +72,6 @@ class AccountResource(SyncAPIResource):
         self,
         *,
         username: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -111,8 +104,6 @@ class AccountResource(SyncAPIResource):
         self,
         *,
         locale: Literal["en", "tr", "es"],
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -146,10 +137,9 @@ class AsyncAccountResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncAccountResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncAccountResourceWithRawResponse(self)
 
@@ -165,8 +155,6 @@ class AsyncAccountResource(AsyncAPIResource):
     async def retrieve(
         self,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -188,8 +176,6 @@ class AsyncAccountResource(AsyncAPIResource):
         self,
         *,
         username: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -224,8 +210,6 @@ class AsyncAccountResource(AsyncAPIResource):
         self,
         *,
         locale: Literal["en", "tr", "es"],
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

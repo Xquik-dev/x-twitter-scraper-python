@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from .tickets import (
@@ -42,10 +40,9 @@ class SupportResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> SupportResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return SupportResourceWithRawResponse(self)
 
@@ -73,10 +70,9 @@ class AsyncSupportResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncSupportResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncSupportResourceWithRawResponse(self)
 

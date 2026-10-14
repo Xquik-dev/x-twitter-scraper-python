@@ -9,7 +9,6 @@ set -e
 cd "$(dirname "$0")/.."
 export DEFER_PYDANTIC_BUILD=false
 
-# Test supported endpoints using current patch releases.
 PY_VERSION_MIN="3.10.21"
 PY_VERSION_MAX="3.14.7"
 
@@ -17,7 +16,6 @@ function run_tests() {
     echo "==> Running tests with Pydantic v2"
     uv run --isolated --all-extras pytest "$@"
 
-    # Pydantic v1 does not support the latest Python.
     python_executable="$(uv python find "$UV_PYTHON")"
     if "$python_executable" -c 'import sys; sys.exit(sys.version_info >= (3, 14))'; then
         echo "==> Running tests with Pydantic v1"
@@ -25,11 +23,9 @@ function run_tests() {
     fi
 }
 
-# Run one Python version when UV_PYTHON is set.
 if [[ -n "$UV_PYTHON" ]]; then
   run_tests "$@"
 else
-  # Otherwise, test minimum and maximum versions.
   echo "==> Running tests for Python $PY_VERSION_MIN"
   UV_PYTHON="$PY_VERSION_MIN" run_tests "$@"
 

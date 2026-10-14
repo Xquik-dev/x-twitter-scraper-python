@@ -13,7 +13,6 @@ from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 
 MESSAGE = r"min_faves is deprecated & goes away in a later minor version\. Use min_likes\."
 
-# Each method that took min_faves in 0.11, with its arguments and the path its request goes to.
 CALLS = [
     pytest.param("tweets", "search", {"q": "xquik"}, "/api/v1/x/tweets/search", id="search"),
     pytest.param("tweets", "get_quotes", {"id": "123"}, "/api/v1/x/tweets/123/quotes", id="quotes"),

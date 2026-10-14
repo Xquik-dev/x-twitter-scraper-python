@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-"""Deprecated dict access for models that replaced a plain dictionary field."""
-
 from __future__ import annotations
 
 import warnings
@@ -22,7 +20,6 @@ __all__ = [
 
 
 def _as_sent(value: object) -> object:
-    """Writes timestamps as the API sends them: milliseconds, and a Z suffix for UTC."""
     if isinstance(value, datetime):
         return value.isoformat(timespec="milliseconds").replace("+00:00", "Z")
     if isinstance(value, dict):
@@ -33,8 +30,6 @@ def _as_sent(value: object) -> object:
 
 
 class _DeprecatedDictAccess(BaseModel):
-    """Reads JSON keys and values through `to_dict()`, as the replaced dictionary held them."""
-
     _dict_access_owner: ClassVar[str] = ""
 
     def _json_values(self) -> dict[object, object]:

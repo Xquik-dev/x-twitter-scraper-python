@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing import Any, Union, cast
@@ -45,10 +43,9 @@ class ListsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> ListsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return ListsResourceWithRawResponse(self)
 
@@ -67,8 +64,6 @@ class ListsResource(SyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -148,8 +143,6 @@ class ListsResource(SyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -277,9 +270,7 @@ class ListsResource(SyncAPIResource):
                         list_retrieve_followers_params.ListRetrieveFollowersParams,
                     ),
                 ),
-                cast_to=cast(
-                    Any, ListRetrieveFollowersResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ListRetrieveFollowersResponse),
             ),
         )
 
@@ -312,8 +303,6 @@ class ListsResource(SyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -441,9 +430,7 @@ class ListsResource(SyncAPIResource):
                         list_retrieve_members_params.ListRetrieveMembersParams,
                     ),
                 ),
-                cast_to=cast(
-                    Any, ListRetrieveMembersResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ListRetrieveMembersResponse),
             ),
         )
 
@@ -455,8 +442,6 @@ class ListsResource(SyncAPIResource):
         fields: str | Omit = omit,
         omit: str | Omit = omit,
         page_size: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -580,8 +565,6 @@ class ListsResource(SyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -823,10 +806,9 @@ class AsyncListsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncListsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncListsResourceWithRawResponse(self)
 
@@ -845,8 +827,6 @@ class AsyncListsResource(AsyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -926,8 +906,6 @@ class AsyncListsResource(AsyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1055,9 +1033,7 @@ class AsyncListsResource(AsyncAPIResource):
                         list_retrieve_followers_params.ListRetrieveFollowersParams,
                     ),
                 ),
-                cast_to=cast(
-                    Any, ListRetrieveFollowersResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ListRetrieveFollowersResponse),
             ),
         )
 
@@ -1090,8 +1066,6 @@ class AsyncListsResource(AsyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1219,9 +1193,7 @@ class AsyncListsResource(AsyncAPIResource):
                         list_retrieve_members_params.ListRetrieveMembersParams,
                     ),
                 ),
-                cast_to=cast(
-                    Any, ListRetrieveMembersResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ListRetrieveMembersResponse),
             ),
         )
 
@@ -1233,8 +1205,6 @@ class AsyncListsResource(AsyncAPIResource):
         fields: str | Omit = omit,
         omit: str | Omit = omit,
         page_size: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1358,8 +1328,6 @@ class AsyncListsResource(AsyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

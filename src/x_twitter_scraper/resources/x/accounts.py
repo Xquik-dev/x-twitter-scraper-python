@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing import Any, cast
@@ -38,10 +36,9 @@ class AccountsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AccountsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AccountsResourceWithRawResponse(self)
 
@@ -61,8 +58,6 @@ class AccountsResource(SyncAPIResource):
         password: str,
         totp_secret: str,
         username: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -104,9 +99,7 @@ class AccountsResource(SyncAPIResource):
                 options=make_request_options(
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
                 ),
-                cast_to=cast(
-                    Any, AccountCreateResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, AccountCreateResponse),
             ),
         )
 
@@ -114,8 +107,6 @@ class AccountsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -148,8 +139,6 @@ class AccountsResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         limit: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -197,8 +186,6 @@ class AccountsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -229,8 +216,6 @@ class AccountsResource(SyncAPIResource):
     def bulk_retry(
         self,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -255,8 +240,6 @@ class AccountsResource(SyncAPIResource):
         password: str,
         email: str | Omit = omit,
         totp_secret: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -305,10 +288,9 @@ class AsyncAccountsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncAccountsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncAccountsResourceWithRawResponse(self)
 
@@ -328,8 +310,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         password: str,
         totp_secret: str,
         username: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -371,9 +351,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                 options=make_request_options(
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
                 ),
-                cast_to=cast(
-                    Any, AccountCreateResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, AccountCreateResponse),
             ),
         )
 
@@ -381,8 +359,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -415,8 +391,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         limit: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -464,8 +438,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -496,8 +468,6 @@ class AsyncAccountsResource(AsyncAPIResource):
     async def bulk_retry(
         self,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -522,8 +492,6 @@ class AsyncAccountsResource(AsyncAPIResource):
         password: str,
         email: str | Omit = omit,
         totp_secret: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

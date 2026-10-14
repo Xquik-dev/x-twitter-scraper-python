@@ -26,7 +26,6 @@ def verify_files(report: object, artifacts: Path, version: str) -> None:
         f"x_twitter_scraper-{version}-py3-none-any.whl",
         f"x_twitter_scraper-{version}.tar.gz",
     }
-    # uv build writes a .gitignore into its output folder. It is not a release file.
     local = {file.name: file for file in artifacts.iterdir() if file.is_file() and file.name != ".gitignore"}
     if set(local) != expected:
         raise ValueError("Expected exactly the release wheel and source archive.")

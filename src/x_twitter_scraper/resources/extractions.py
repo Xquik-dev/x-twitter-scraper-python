@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing import Any, Union, Iterable, cast
@@ -53,10 +51,9 @@ class ExtractionsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> ExtractionsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return ExtractionsResourceWithRawResponse(self)
 
@@ -80,8 +77,6 @@ class ExtractionsResource(SyncAPIResource):
         output_mode: Literal["compact", "full", "raw"] | Omit = omit,
         output_preset: Literal["nested", "flat"] | Omit = omit,
         wait: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -173,8 +168,6 @@ class ExtractionsResource(SyncAPIResource):
             "verified_follower_explorer",
         ]
         | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -226,8 +219,6 @@ class ExtractionsResource(SyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -382,8 +373,6 @@ class ExtractionsResource(SyncAPIResource):
         verified_type: str | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -759,8 +748,6 @@ class ExtractionsResource(SyncAPIResource):
         since_date: Union[str, date] | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         verified: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1000,8 +987,6 @@ class ExtractionsResource(SyncAPIResource):
         within: str | Omit = omit,
         within_time: str | Omit = omit,
         idempotency_key: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1362,9 +1347,7 @@ class ExtractionsResource(SyncAPIResource):
                     timeout=timeout,
                     query=maybe_transform({"dry_run": dry_run}, extraction_run_params.ExtractionRunParams),
                 ),
-                cast_to=cast(
-                    Any, ExtractionRunResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ExtractionRunResponse),
             ),
         )
 
@@ -1375,10 +1358,9 @@ class AsyncExtractionsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncExtractionsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncExtractionsResourceWithRawResponse(self)
 
@@ -1402,8 +1384,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
         output_mode: Literal["compact", "full", "raw"] | Omit = omit,
         output_preset: Literal["nested", "flat"] | Omit = omit,
         wait: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1495,8 +1475,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "verified_follower_explorer",
         ]
         | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1548,8 +1526,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1704,8 +1680,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
         verified_type: str | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2081,8 +2055,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
         since_date: Union[str, date] | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         verified: bool | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2322,8 +2294,6 @@ class AsyncExtractionsResource(AsyncAPIResource):
         within: str | Omit = omit,
         within_time: str | Omit = omit,
         idempotency_key: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2684,9 +2654,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     timeout=timeout,
                     query=await async_maybe_transform({"dry_run": dry_run}, extraction_run_params.ExtractionRunParams),
                 ),
-                cast_to=cast(
-                    Any, ExtractionRunResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, ExtractionRunResponse),
             ),
         )
 

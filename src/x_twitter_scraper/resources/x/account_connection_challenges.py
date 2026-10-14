@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing import Any, cast
@@ -33,10 +31,9 @@ class AccountConnectionChallengesResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AccountConnectionChallengesResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AccountConnectionChallengesResourceWithRawResponse(self)
 
@@ -54,8 +51,6 @@ class AccountConnectionChallengesResource(SyncAPIResource):
         id: str,
         *,
         email_code: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -88,9 +83,7 @@ class AccountConnectionChallengesResource(SyncAPIResource):
                 options=make_request_options(
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
                 ),
-                cast_to=cast(
-                    Any, AccountConnectionChallengeSubmitResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, AccountConnectionChallengeSubmitResponse),
             ),
         )
 
@@ -101,10 +94,9 @@ class AsyncAccountConnectionChallengesResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncAccountConnectionChallengesResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncAccountConnectionChallengesResourceWithRawResponse(self)
 
@@ -122,8 +114,6 @@ class AsyncAccountConnectionChallengesResource(AsyncAPIResource):
         id: str,
         *,
         email_code: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -156,9 +146,7 @@ class AsyncAccountConnectionChallengesResource(AsyncAPIResource):
                 options=make_request_options(
                     extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
                 ),
-                cast_to=cast(
-                    Any, AccountConnectionChallengeSubmitResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, AccountConnectionChallengeSubmitResponse),
             ),
         )
 

@@ -1,0 +1,6 @@
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+# SPDX-License-Identifier: Apache-2.0
+name: xquik/no-code-comments
+version: 0.0.0
+dependencies:
+  codeql/python-all: 7.2.5

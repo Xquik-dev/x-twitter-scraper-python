@@ -9,7 +9,6 @@ from typing import Any, Callable
 
 
 def function_has_argument(func: Callable[..., Any], arg_name: str) -> bool:
-    """Returns whether or not the given function has a specific parameter"""
     sig = inspect.signature(func)
     return arg_name in sig.parameters
 
@@ -20,8 +19,6 @@ def assert_signatures_in_sync(
     *,
     exclude_params: set[str] = set(),
 ) -> None:
-    """Ensure that the signature of the second function matches the first."""
-
     check_sig = inspect.signature(check_func)
     source_sig = inspect.signature(source_func)
 

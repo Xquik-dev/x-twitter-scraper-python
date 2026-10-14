@@ -133,11 +133,9 @@ class BaseAPIResponse(Generic[R]):
     def _parse(self, *, to: type[_T] | None = None) -> R | _T:
         cast_to = to if to is not None else self._cast_to
 
-        # unwrap `TypeAlias('Name', T)` -> `T`
         if is_type_alias_type(cast_to):
             cast_to = cast_to.__value__  # type: ignore[unreachable]
 
-        # unwrap `Annotated[T, ...]` -> `T`
         if cast_to and is_annotated_type(cast_to):
             cast_to = extract_type_arg(cast_to, 0)
 
@@ -194,11 +192,6 @@ class BaseAPIResponse(Generic[R]):
             raise RuntimeError("Unexpected state - cast_to is `APIResponse`")
 
         if inspect.isclass(origin) and issubclass(origin, httpx.Response):
-            # Because of the invariance of our ResponseT TypeVar, users can subclass httpx.Response
-            # and pass that class to our request functions. We cannot change the variance to be either
-            # covariant or contravariant as that makes our usage of ResponseT illegal. We could construct
-            # the response class ourselves but that is something that should be supported directly in httpx
-            # as it would be easy to incorrectly construct the Response object due to the multitude of arguments.
             if cast_to != httpx.Response:
                 raise ValueError(f"Subclasses of httpx.Response cannot be passed to `cast_to`")
             return cast(R, response)
@@ -225,8 +218,6 @@ class BaseAPIResponse(Generic[R]):
                 f"Unsupported type, expected {cast_to} to be a subclass of {BaseModel}, {dict}, {list}, {Union}, {NoneType}, {str} or {httpx.Response}."
             )
 
-        # split is required to handle cases where additional information is included
-        # in the response, e.g. application/json; charset=utf-8
         content_type, *_ = response.headers.get("content-type", "*").split(";")
         is_json = content_type.endswith("json")
         if is_json or is_basemodel(cast_to):
@@ -250,7 +241,6 @@ class BaseAPIResponse(Generic[R]):
                 body=response.text,
             )
 
-        # Preserve decoded text when a non-JSON response cannot be parsed.
         return cast(R, response.text)
 
 
@@ -281,7 +271,7 @@ class APIResponse(BaseAPIResponse[R]):
         print(obj.foo)
         ```
 
-        We support parsing:
+        Supported types:
           - `BaseModel`
           - `dict`
           - `list`
@@ -310,9 +300,6 @@ class APIResponse(BaseAPIResponse[R]):
         try:
             return self.http_response.read()
         except httpx.StreamConsumed as exc:
-            # The default error raised by httpx isn't very
-            # helpful in our case so we re-raise it with
-            # a different error message.
             raise StreamAlreadyConsumed() from exc
 
     def text(self) -> str:
@@ -382,7 +369,7 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
         print(obj.foo)
         ```
 
-        We support parsing:
+        Supported types:
           - `BaseModel`
           - `dict`
           - `list`
@@ -409,9 +396,6 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
         try:
             return await self.http_response.aread()
         except httpx.StreamConsumed as exc:
-            # the default error raised by httpx isn't very
-            # helpful in our case so we re-raise it with
-            # a different error message
             raise StreamAlreadyConsumed() from exc
 
     async def text(self) -> str:
@@ -455,12 +439,7 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
 
 
 class BinaryAPIResponse(APIResponse[bytes]):
-    """Subclass of APIResponse providing helpers for dealing with binary data.
-
-    Note: If you want to stream the response data instead of eagerly reading it
-    all at once then you should use `.with_streaming_response` when making
-    the API request, e.g. `.with_streaming_response.get_binary_response()`
-    """
+    """Subclass of APIResponse providing helpers for dealing with binary data."""
 
     def write_to_file(
         self,
@@ -469,10 +448,6 @@ class BinaryAPIResponse(APIResponse[bytes]):
         """Write the output to the given file.
 
         Accepts a filename or any path-like object, e.g. pathlib.Path
-
-        Note: if you want to stream the data to the file instead of writing
-        all at once then you should use `.with_streaming_response` when making
-        the API request, e.g. `.with_streaming_response.get_binary_response()`
         """
         with open(file, mode="wb") as f:
             for data in self.iter_bytes():
@@ -480,12 +455,7 @@ class BinaryAPIResponse(APIResponse[bytes]):
 
 
 class AsyncBinaryAPIResponse(AsyncAPIResponse[bytes]):
-    """Subclass of APIResponse providing helpers for dealing with binary data.
-
-    Note: If you want to stream the response data instead of eagerly reading it
-    all at once then you should use `.with_streaming_response` when making
-    the API request, e.g. `.with_streaming_response.get_binary_response()`
-    """
+    """Subclass of APIResponse providing helpers for dealing with binary data."""
 
     async def write_to_file(
         self,
@@ -494,10 +464,6 @@ class AsyncBinaryAPIResponse(AsyncAPIResponse[bytes]):
         """Write the output to the given file.
 
         Accepts a filename or any path-like object, e.g. pathlib.Path
-
-        Note: if you want to stream the data to the file instead of writing
-        all at once then you should use `.with_streaming_response` when making
-        the API request, e.g. `.with_streaming_response.get_binary_response()`
         """
         path = anyio.Path(file)
         async with await path.open(mode="wb") as f:
@@ -546,26 +512,6 @@ class MissingStreamClassError(TypeError):
 
 
 class StreamAlreadyConsumed(XTwitterScraperError):
-    """
-    Attempted to read or stream content, but the content has already
-    been streamed.
-
-    This can happen if you use a method like `.iter_lines()` and then attempt
-    to read th entire response body afterwards, e.g.
-
-    ```py
-    response = await client.post(...)
-    async for line in response.iter_lines():
-        ...  # do something with `line`
-
-    content = await response.read()
-    # ^ error
-    ```
-
-    If you want this behaviour you'll need to either manually accumulate the response
-    content or call `await response.read()` before iterating over the stream.
-    """
-
     def __init__(self) -> None:
         message = (
             "Attempted to read or stream some content, but the content has "
@@ -633,10 +579,6 @@ def _add_response_headers(kwargs: dict[str, Any], headers: Mapping[str, object])
 
 
 def to_streamed_response_wrapper(func: Callable[P, R]) -> Callable[P, ResponseContextManager[APIResponse[R]]]:
-    """Higher order function that takes one of our bound API methods and wraps it
-    to support streaming and returning the raw `APIResponse` object directly.
-    """
-
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> ResponseContextManager[APIResponse[R]]:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream"})
@@ -651,10 +593,6 @@ def to_streamed_response_wrapper(func: Callable[P, R]) -> Callable[P, ResponseCo
 def async_to_streamed_response_wrapper(
     func: Callable[P, Awaitable[R]],
 ) -> Callable[P, AsyncResponseContextManager[AsyncAPIResponse[R]]]:
-    """Higher order function that takes one of our bound API methods and wraps it
-    to support streaming and returning the raw `APIResponse` object directly.
-    """
-
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> AsyncResponseContextManager[AsyncAPIResponse[R]]:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream"})
@@ -670,12 +608,6 @@ def to_custom_streamed_response_wrapper(
     func: Callable[P, object],
     response_cls: type[_APIResponseT],
 ) -> Callable[P, ResponseContextManager[_APIResponseT]]:
-    """Higher order function that takes one of our bound API methods and an `APIResponse` class
-    and wraps the method to support streaming and returning the given response class directly.
-
-    Note: the given `response_cls` *must* be concrete, e.g. `class BinaryAPIResponse(APIResponse[bytes])`
-    """
-
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> ResponseContextManager[_APIResponseT]:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream", OVERRIDE_CAST_TO_HEADER: response_cls})
@@ -691,12 +623,6 @@ def async_to_custom_streamed_response_wrapper(
     func: Callable[P, Awaitable[object]],
     response_cls: type[_AsyncAPIResponseT],
 ) -> Callable[P, AsyncResponseContextManager[_AsyncAPIResponseT]]:
-    """Higher order function that takes one of our bound API methods and an `APIResponse` class
-    and wraps the method to support streaming and returning the given response class directly.
-
-    Note: the given `response_cls` *must* be concrete, e.g. `class BinaryAPIResponse(APIResponse[bytes])`
-    """
-
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> AsyncResponseContextManager[_AsyncAPIResponseT]:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "stream", OVERRIDE_CAST_TO_HEADER: response_cls})
@@ -709,10 +635,6 @@ def async_to_custom_streamed_response_wrapper(
 
 
 def to_raw_response_wrapper(func: Callable[P, R]) -> Callable[P, APIResponse[R]]:
-    """Higher order function that takes one of our bound API methods and wraps it
-    to support returning the raw `APIResponse` object directly.
-    """
-
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> APIResponse[R]:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw"})
@@ -723,10 +645,6 @@ def to_raw_response_wrapper(func: Callable[P, R]) -> Callable[P, APIResponse[R]]
 
 
 def async_to_raw_response_wrapper(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[AsyncAPIResponse[R]]]:
-    """Higher order function that takes one of our bound API methods and wraps it
-    to support returning the raw `APIResponse` object directly.
-    """
-
     @functools.wraps(func)
     async def wrapped(*args: P.args, **kwargs: P.kwargs) -> AsyncAPIResponse[R]:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw"})
@@ -740,12 +658,6 @@ def to_custom_raw_response_wrapper(
     func: Callable[P, object],
     response_cls: type[_APIResponseT],
 ) -> Callable[P, _APIResponseT]:
-    """Higher order function that takes one of our bound API methods and an `APIResponse` class
-    and wraps the method to support returning the given response class directly.
-
-    Note: the given `response_cls` *must* be concrete, e.g. `class BinaryAPIResponse(APIResponse[bytes])`
-    """
-
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> _APIResponseT:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw", OVERRIDE_CAST_TO_HEADER: response_cls})
@@ -759,12 +671,6 @@ def async_to_custom_raw_response_wrapper(
     func: Callable[P, Awaitable[object]],
     response_cls: type[_AsyncAPIResponseT],
 ) -> Callable[P, Awaitable[_AsyncAPIResponseT]]:
-    """Higher order function that takes one of our bound API methods and an `APIResponse` class
-    and wraps the method to support returning the given response class directly.
-
-    Note: the given `response_cls` *must* be concrete, e.g. `class BinaryAPIResponse(APIResponse[bytes])`
-    """
-
     @functools.wraps(func)
     def wrapped(*args: P.args, **kwargs: P.kwargs) -> Awaitable[_AsyncAPIResponseT]:
         _add_response_headers(kwargs, {RAW_RESPONSE_HEADER: "raw", OVERRIDE_CAST_TO_HEADER: response_cls})
@@ -775,16 +681,6 @@ def async_to_custom_raw_response_wrapper(
 
 
 def extract_response_type(typ: type[BaseAPIResponse[Any]]) -> type:
-    """Given a type like `APIResponse[T]`, returns the generic type variable `T`.
-
-    This also handles the case where a concrete subclass is given, e.g.
-    ```py
-    class MyResponse(APIResponse[bytes]):
-        ...
-
-    extract_response_type(MyResponse) -> bytes
-    ```
-    """
     return extract_type_var_from_base(
         typ,
         generic_bases=cast("tuple[type, ...]", (BaseAPIResponse, APIResponse, AsyncAPIResponse)),

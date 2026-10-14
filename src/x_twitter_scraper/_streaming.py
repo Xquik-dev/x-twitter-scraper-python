@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# Note: initially copied from https://github.com/florimondmanca/httpx-sse/blob/master/src/httpx_sse/_decoders.py
+# Initially copied from https://github.com/florimondmanca/httpx-sse/blob/master/src/httpx_sse/_decoders.py
 from __future__ import annotations
 
 import json
@@ -63,12 +63,10 @@ class Stream(Generic[_T]):
 
         try:
             for sse in iterator:
-                # A comment-only keep-alive after an event ID dispatches an event without data.
                 if not sse.data:
                     continue
                 yield process_data(data=sse.json(), cast_to=cast_to, response=response)
         finally:
-            # Ensure the response is closed even if the consumer doesn't read all data
             response.close()
 
     def __enter__(self) -> Self:
@@ -132,12 +130,10 @@ class AsyncStream(Generic[_T]):
 
         try:
             async for sse in iterator:
-                # A comment-only keep-alive after an event ID dispatches an event without data.
                 if not sse.data:
                     continue
                 yield process_data(data=sse.json(), cast_to=cast_to, response=response)
         finally:
-            # Ensure the response is closed even if the consumer doesn't read all data
             await response.aclose()
 
     async def __aenter__(self) -> Self:
@@ -214,9 +210,9 @@ class SSEDecoder:
         self._retry = None
 
     def iter_bytes(self, iterator: Iterator[bytes]) -> Iterator[ServerSentEvent]:
-        """Given an iterator that yields raw binary data, iterate over it & yield every event encountered"""
         for chunk in self._iter_chunks(iterator):
-            # Split before decoding so splitlines() only uses \r and \n
+            # bytes.splitlines breaks only on \r and \n, unlike str.splitlines.
+            # https://docs.python.org/3/library/stdtypes.html#str.splitlines
             for raw_line in chunk.splitlines():
                 line = raw_line.decode("utf-8")
                 sse = self.decode(line)
@@ -224,7 +220,6 @@ class SSEDecoder:
                     yield sse
 
     def _iter_chunks(self, iterator: Iterator[bytes]) -> Iterator[bytes]:
-        """Given an iterator that yields raw binary data, iterate over it and yield individual SSE chunks"""
         data = b""
         for chunk in iterator:
             for line in chunk.splitlines(keepends=True):
@@ -236,9 +231,9 @@ class SSEDecoder:
             yield data
 
     async def aiter_bytes(self, iterator: AsyncIterator[bytes]) -> AsyncIterator[ServerSentEvent]:
-        """Given an iterator that yields raw binary data, iterate over it & yield every event encountered"""
         async for chunk in self._aiter_chunks(iterator):
-            # Split before decoding so splitlines() only uses \r and \n
+            # bytes.splitlines breaks only on \r and \n, unlike str.splitlines.
+            # https://docs.python.org/3/library/stdtypes.html#str.splitlines
             for raw_line in chunk.splitlines():
                 line = raw_line.decode("utf-8")
                 sse = self.decode(line)
@@ -246,7 +241,6 @@ class SSEDecoder:
                     yield sse
 
     async def _aiter_chunks(self, iterator: AsyncIterator[bytes]) -> AsyncIterator[bytes]:
-        """Given an iterator that yields raw binary data, iterate over it and yield individual SSE chunks"""
         data = b""
         async for chunk in iterator:
             for line in chunk.splitlines(keepends=True):
@@ -259,7 +253,6 @@ class SSEDecoder:
 
     def decode(self, line: str) -> ServerSentEvent | None:
         # See: https://html.spec.whatwg.org/multipage/server-sent-events.html#event-stream-interpretation  # noqa: E501
-
         if not line:
             if not self._event and not self._data and not self._last_event_id and self._retry is None:
                 return None
@@ -271,7 +264,8 @@ class SSEDecoder:
                 retry=self._retry,
             )
 
-            # NOTE: as per the SSE spec, do not reset last_event_id.
+            # The SSE spec keeps the last event ID across dispatches.
+            # https://html.spec.whatwg.org/multipage/server-sent-events.html#dispatchMessage
             self._event = None
             self._data = []
             self._retry = None
@@ -301,24 +295,19 @@ class SSEDecoder:
             except (TypeError, ValueError):
                 pass
         else:
-            pass  # Field is ignored.
+            pass
 
         return None
 
 
 @runtime_checkable
 class SSEBytesDecoder(Protocol):
-    def iter_bytes(self, iterator: Iterator[bytes]) -> Iterator[ServerSentEvent]:
-        """Given an iterator that yields raw binary data, iterate over it & yield every event encountered"""
-        ...
+    def iter_bytes(self, iterator: Iterator[bytes]) -> Iterator[ServerSentEvent]: ...
 
-    def aiter_bytes(self, iterator: AsyncIterator[bytes]) -> AsyncIterator[ServerSentEvent]:
-        """Given an async iterator that yields raw binary data, iterate over it & yield every event encountered"""
-        ...
+    def aiter_bytes(self, iterator: AsyncIterator[bytes]) -> AsyncIterator[ServerSentEvent]: ...
 
 
 def is_stream_class_type(typ: type) -> TypeGuard[type[Stream[object]] | type[AsyncStream[object]]]:
-    """TypeGuard for determining whether or not the given type is a subclass of `Stream` / `AsyncStream`"""
     origin = get_origin(typ) or typ
     return inspect.isclass(origin) and issubclass(origin, (Stream, AsyncStream))
 
@@ -328,16 +317,6 @@ def extract_stream_chunk_type(
     *,
     failure_message: str | None = None,
 ) -> type:
-    """Given a type like `Stream[T]`, returns the generic type variable `T`.
-
-    This also handles the case where a concrete subclass is given, e.g.
-    ```py
-    class MyStream(Stream[bytes]):
-        ...
-
-    extract_stream_chunk_type(MyStream) -> bytes
-    ```
-    """
     from ._base_client import Stream, AsyncStream
 
     return extract_type_var_from_base(

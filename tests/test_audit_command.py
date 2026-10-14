@@ -21,7 +21,6 @@ PINS = {
     ),
     "pydantic-v1": "anyio==4.14.2 \\\n    --hash=sha256:aa\npydantic==1.10.26 \\\n    --hash=sha256:dd\n",
 }
-# Like pip-audit, this fake drops a pin whose environment marker it cannot match.
 FAKE_PIP_AUDIT = r"""import os, re, sys, json
 arguments = sys.argv[1:]
 if not {"--strict", "--disable-pip", "--require-hashes"} <= set(arguments):

@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-# File generated from our OpenAPI spec by Stainless. See CONTRIBUTING.md for details.
-
 from __future__ import annotations
 
 from typing import Any, Union, cast
@@ -94,10 +92,9 @@ class TweetsResource(SyncAPIResource):
     @cached_property
     def with_raw_response(self) -> TweetsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return TweetsResourceWithRawResponse(self)
 
@@ -120,8 +117,6 @@ class TweetsResource(SyncAPIResource):
         media: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -179,8 +174,6 @@ class TweetsResource(SyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -234,8 +227,6 @@ class TweetsResource(SyncAPIResource):
         ids: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -293,8 +284,6 @@ class TweetsResource(SyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -333,8 +322,6 @@ class TweetsResource(SyncAPIResource):
         user: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -398,8 +385,6 @@ class TweetsResource(SyncAPIResource):
         omit: str | Omit = omit,
         omit_script: bool | Omit = omit,
         theme: Literal["light", "dark"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -487,8 +472,6 @@ class TweetsResource(SyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -647,8 +630,6 @@ class TweetsResource(SyncAPIResource):
         url: str | Omit = omit,
         verified_only: bool | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -822,8 +803,6 @@ class TweetsResource(SyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -938,8 +917,6 @@ class TweetsResource(SyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1249,8 +1226,6 @@ class TweetsResource(SyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1500,8 +1475,6 @@ class TweetsResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         page_size: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1576,8 +1549,6 @@ class TweetsResource(SyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1706,8 +1677,6 @@ class TweetsResource(SyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1802,8 +1771,6 @@ class TweetsResource(SyncAPIResource):
         url: str | Omit = omit,
         verified_only: bool | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1985,8 +1952,6 @@ class TweetsResource(SyncAPIResource):
         omit: str | Omit = omit,
         page_size: int | Omit = omit,
         window: Literal["day", "week", "month"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2066,8 +2031,6 @@ class TweetsResource(SyncAPIResource):
         urls: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2185,8 +2148,6 @@ class TweetsResource(SyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2440,9 +2401,7 @@ class TweetsResource(SyncAPIResource):
                         tweet_search_params.TweetSearchParams,
                     ),
                 ),
-                cast_to=cast(
-                    Any, TweetSearchResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, TweetSearchResponse),
             ),
         )
 
@@ -2453,8 +2412,6 @@ class TweetsResource(SyncAPIResource):
         language: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2522,10 +2479,9 @@ class AsyncTweetsResource(AsyncAPIResource):
     @cached_property
     def with_raw_response(self) -> AsyncTweetsResourceWithRawResponse:
         """
-        This property can be used as a prefix for any HTTP method call to return
-        the raw response object instead of the parsed content.
+        Prefix for any HTTP method call that returns the raw response object instead of the parsed content.
 
-        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data-eg-headers
+        For more information, see https://www.github.com/Xquik-dev/x-twitter-scraper-python#accessing-raw-response-data
         """
         return AsyncTweetsResourceWithRawResponse(self)
 
@@ -2548,8 +2504,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         media: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2607,8 +2561,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2662,8 +2614,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         ids: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2721,8 +2671,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2761,8 +2709,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         user: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2826,8 +2772,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         omit: str | Omit = omit,
         omit_script: bool | Omit = omit,
         theme: Literal["light", "dark"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2915,8 +2859,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -3075,8 +3017,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         url: str | Omit = omit,
         verified_only: bool | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -3250,8 +3190,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -3366,8 +3304,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -3677,8 +3613,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -3928,8 +3862,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         page_size: int | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4004,8 +3936,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         username_contains: str | Omit = omit,
         verified_only: bool | Omit = omit,
         verified_type: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4134,8 +4064,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         *,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4230,8 +4158,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         url: str | Omit = omit,
         verified_only: bool | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4413,8 +4339,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         omit: str | Omit = omit,
         page_size: int | Omit = omit,
         window: Literal["day", "week", "month"] | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4494,8 +4418,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         urls: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4613,8 +4535,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         verified_only: bool | Omit = omit,
         within: str | Omit = omit,
         within_time: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4868,9 +4788,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                         tweet_search_params.TweetSearchParams,
                     ),
                 ),
-                cast_to=cast(
-                    Any, TweetSearchResponse
-                ),  # Union types cannot be passed in as arguments in the type system
+                cast_to=cast(Any, TweetSearchResponse),
             ),
         )
 
@@ -4881,8 +4799,6 @@ class AsyncTweetsResource(AsyncAPIResource):
         language: str,
         fields: str | Omit = omit,
         omit: str | Omit = omit,
-        # Use the following arguments if you need to pass additional parameters to the API that aren't available via kwargs.
-        # The extra values given here take precedence over values defined on the client or passed to this method.
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

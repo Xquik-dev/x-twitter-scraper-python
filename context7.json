@@ -13,7 +13,6 @@
   ],
   "excludeFiles": [
     ".python-version",
-    ".release-please-manifest.json",
     ".stats.yml",
     "Brewfile",
     "CHANGELOG.md",
@@ -22,7 +21,6 @@
     "CONTRIBUTING.md",
     "LICENSE",
     "SECURITY.md",
-    "release-please-config.json",
     "requirements-dev.lock",
     "uv.lock"
   ],

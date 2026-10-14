@@ -89,7 +89,6 @@ class TestOpenapiDumps:
             verified: bool = False
 
         if _compat.PYDANTIC_V1:
-            # to handle forward references in Pydantic v1
             User.update_forward_refs(**locals())  # type: ignore[reportDeprecated]
 
         address = Address(street="123 Main St")

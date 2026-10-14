@@ -333,13 +333,10 @@ class TypedDictBase64Input(TypedDict):
 @pytest.mark.asyncio
 @pytest.mark.parametrize("path", [SAMPLE_FILE_PATH, anyio.Path(SAMPLE_FILE_PATH)], ids=["pathlib", "anyio"])
 async def test_base64_file_input(use_async: bool, path: os.PathLike[str]) -> None:
-    # strings are left as-is
     assert await transform({"foo": "bar"}, TypedDictBase64Input, use_async) == {"foo": "bar"}
 
-    # Paths are automatically converted to base64.
     assert await transform({"foo": path}, TypedDictBase64Input, use_async) == {"foo": "SGVsbG8sIHdvcmxkIQo="}
 
-    # io instances are automatically converted to base64
     assert await transform({"foo": io.StringIO("Hello, world!")}, TypedDictBase64Input, use_async) == {
         "foo": "SGVsbG8sIHdvcmxkIQ=="
     }
@@ -351,11 +348,9 @@ async def test_base64_file_input(use_async: bool, path: os.PathLike[str]) -> Non
 @parametrize
 @pytest.mark.asyncio
 async def test_transform_skipping(use_async: bool) -> None:
-    # lists of ints are left as-is
     data = [1, 2, 3]
     assert await transform(data, List[int], use_async) is data
 
-    # iterables of ints are converted to a list
     iterator = iter([1, 2, 3])
     assert await transform(iterator, Iterable[int], use_async) == [1, 2, 3]
 
