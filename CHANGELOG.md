@@ -20,6 +20,7 @@ This release adds the response fields, event types and file uploads the SDK drop
 
 - `x.media.upload`, `x.profile.update_avatar` and `x.profile.update_banner` take `file` as well as `url`. `x.media.upload` also takes `is_long_video`. A file sends a multipart request.
 - `support.tickets.create` and `support.tickets.reply` take `attachments`, 1 to 4 files.
+- `content` is optional when you send `attachments`. A ticket or reply can carry files and no text.
 - The README upload sample passes the required `idempotency_key`.
 
 ### Compatibility
