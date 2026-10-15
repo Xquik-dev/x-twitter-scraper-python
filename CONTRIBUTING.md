@@ -46,14 +46,15 @@ bin/check-local
 It runs these checks in order and stops at the first failure.
 
 1. Locked dependency install for Python 3.10.22 and 3.14.8.
-2. Ruff, Pyright, Mypy, and a package import.
-3. REUSE licensing lint.
-4. Reproducible wheel and source archive builds.
-5. Package metadata with twine.
-6. Tests on Python 3.10.22 and 3.14.8 with Pydantic 1 and 2.
-7. Coverage of the parent revision, then coverage of your change against it.
-8. A `pip-audit` scan of the locked dependencies, judged by the audit policy below.
-9. CodeQL security-extended queries. CodeQL is mandatory.
+2. API coverage against the API spec, as [API coverage](#api-coverage) describes.
+3. Ruff, Pyright, Mypy, and a package import.
+4. REUSE licensing lint.
+5. Reproducible wheel and source archive builds.
+6. Package metadata with twine.
+7. Tests on Python 3.10.22 and 3.14.8 with Pydantic 1 and 2.
+8. Coverage of the parent revision, then coverage of your change against it.
+9. A `pip-audit` scan of the locked dependencies, judged by the audit policy below.
+10. CodeQL security-extended queries. CodeQL is mandatory.
 
 A failure prints 1 line naming the check and the next step.
 With a clean tree and a pushed commit, it posts the result as the `xquik-local-checks` commit status.
@@ -106,6 +107,44 @@ Add regression tests for every corrected defect.
 `TEST_API_BASE_URL` accepts literal loopback addresses only.
 
 This guard prevents tests from mutating remote services.
+
+## API coverage
+
+The first check after the dependency install fails when the SDK lags the API.
+It reads each operation of the API spec as its method and full path, such as `GET /api/v1/x/trends/history`.
+It reads the SDK's operations from the request calls in `src/x_twitter_scraper/resources`.
+Each SDK path gets the path of the client's default base URL in front, so `/x/trends` becomes `/api/v1/x/trends`.
+Path parameter names do not matter, so `{id}` matches `{tweetId}`.
+
+A failure prints 1 line per problem, then the next step.
+
+- An operation is in the API but not in the SDK. Add it to the SDK, or list it in `excluded-operations.json` with a reason.
+- `excluded-operations.json` lists an operation the API no longer has, or one the SDK already implements. Remove it from the file.
+- A resource file is not valid Python, or a request call in it has a path or `cast_to` the check cannot read. Fix that line. Write each request path as a string or a `path_template` call, and pass `cast_to`.
+
+Operations the SDK has and the API spec lacks pass.
+
+`excluded-operations.json` holds a list of groups.
+Each group has a non-empty `reason` and at least 1 operation.
+An operation appears at most once in the file.
+
+```json
+[
+  {
+    "reason": "Needs a dashboard sign-in cookie, which API keys and bearer tokens cannot use.",
+    "operations": ["GET /api/v1/api-keys", "POST /api/v1/api-keys"]
+  }
+]
+```
+
+The check reads the spec from https://xquik.com/openapi.json.
+Set `XQUIK_OPENAPI_SPEC` to a local file path or another URL to check against another copy.
+The spec must be JSON.
+The public copy leaves out `GET /api/v1/credits/topup/redirect`, which the SDK keeps as `credits.redirect_topup_checkout`.
+
+```sh
+XQUIK_OPENAPI_SPEC=/path/to/openapi.json uv run --locked python -m scripts.check_api_coverage
+```
 
 ## Build From Source
 

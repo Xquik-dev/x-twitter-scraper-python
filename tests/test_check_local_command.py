@@ -41,7 +41,12 @@ gh() {
 }
 uv() {
  case "$1 $2" in
-  'python find'|'sync --locked'|'build --out-dir'|'run --locked') :;;
+  'run --locked')
+   if [ "$3 $4 $5 $6" = '--all-extras python -m scripts.check_api_coverage' ]; then
+    printf 'api-coverage\n' >> "$CHECK_EVENTS"
+    [ "$CHECK_CASE" != api-coverage ]
+   fi;;
+  'python find'|'sync --locked'|'build --out-dir') :;;
   'tool run') [ "$3 $4 $5 $6" = '--from reuse==6.2.0 reuse lint' ] || exit 99; printf 'reuse\n' >> "$CHECK_EVENTS";;
   *) exit 99;;
  esac
@@ -50,10 +55,21 @@ export -f git gh uv
 runner=$1; shift
 bash "$runner" "$@"
 """
-CHECKS = ["lint", "reuse", "check-reproducible", "test", "coverage-parent", "coverage", "audit", "codeql-security"]
-PENDING = "pending: Running lint, licensing, build, tests, coverage, audit & CodeQL."
+CHECKS = [
+    "api-coverage",
+    "lint",
+    "reuse",
+    "check-reproducible",
+    "test",
+    "coverage-parent",
+    "coverage",
+    "audit",
+    "codeql-security",
+]
+PENDING = "pending: Running API coverage, lint, licensing, build, tests, coverage, audit & CodeQL."
 PASSED = (
-    "lint & types, REUSE, reproducible build, metadata, tests (6045 passed in 2 runs), coverage, audit, CodeQL 2.27.2."
+    "API coverage, lint & types, REUSE, reproducible build, metadata, tests (6045 passed in 2 runs), coverage, audit, "
+    "CodeQL 2.27.2."
 )
 
 
@@ -96,9 +112,10 @@ def test_success_status_lists_the_checks_that_passed(tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     "case,ran,failed",
     [
-        ("lint", CHECKS[:1], "Lint: Ruff, Pyright, Mypy, and package import"),
-        ("test", CHECKS[:4], "Tests: Python 3.10.22 and 3.14.8 with Pydantic 1 and 2"),
-        ("audit", CHECKS[:7], "Dependency security: pip-audit and audit-exceptions.json"),
+        ("api-coverage", CHECKS[:1], "API coverage: compare the SDK operations with the API spec"),
+        ("lint", CHECKS[:2], "Lint: Ruff, Pyright, Mypy, and package import"),
+        ("test", CHECKS[:5], "Tests: Python 3.10.22 and 3.14.8 with Pydantic 1 and 2"),
+        ("audit", CHECKS[:8], "Dependency security: pip-audit and audit-exceptions.json"),
         ("codeql-security", CHECKS, "Static analysis: CodeQL 2.27.2 security-extended queries"),
         ("changed", CHECKS, "Final tree check"),
     ],

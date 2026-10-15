@@ -72,7 +72,7 @@ trap on_exit EXIT
 
 if [[ -n "$status_commit" ]]; then
   echo "==> Posting a pending $status_context status to ${status_commit:0:12}."
-  post_status pending "Running lint, licensing, build, tests, coverage, audit & CodeQL."
+  post_status pending "Running API coverage, lint, licensing, build, tests, coverage, audit & CodeQL."
 fi
 
 current_check="CodeQL CLI"
@@ -121,6 +121,9 @@ enforce_coverage() {
 
 run_check "" "Install Python 3.10.22, Python 3.14.8, and locked dependencies" \
   "Install uv 0.13.1 or newer and check network access, then rerun." install_dependencies
+run_check "API coverage" "API coverage: compare the SDK operations with the API spec" \
+  "Follow the lines above. CONTRIBUTING.md explains each fix under API coverage." \
+  uv run --locked --all-extras python -m scripts.check_api_coverage
 run_check "lint & types" "Lint: Ruff, Pyright, Mypy, and package import" \
   "Fix the findings above. bash scripts/lint --fix repairs Ruff findings." bash scripts/lint
 run_check "REUSE" "Licensing: REUSE lint" \

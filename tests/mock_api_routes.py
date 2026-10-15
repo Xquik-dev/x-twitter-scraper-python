@@ -13,6 +13,7 @@ from pathlib import Path
 from dataclasses import dataclass
 
 from x_twitter_scraper import resources
+from tests.resource_requests import request_calls
 from x_twitter_scraper._models import BaseModel
 
 
@@ -45,16 +46,6 @@ def _cast_name(node: ast.expr) -> str:
     return node.id
 
 
-def _path_template(node: ast.expr) -> str:
-    match node:
-        case ast.Constant(value=str() as value):
-            return value
-        case ast.Call(func=ast.Name(id="path_template"), args=[ast.Constant(value=str() as value), *_]):
-            return value
-        case _:
-            raise ValueError(f"Unsupported path expression: {ast.unparse(node)}")
-
-
 def _route_pattern(template: str) -> re.Pattern[str]:
     parts = re.split(r"(\{[^{}]+\})", template)
     expression = "".join(r"[^/]+" if part.startswith("{") else re.escape(part) for part in parts)
@@ -82,31 +73,21 @@ def _response_type(module_name: str, name: str) -> ResponseType:
 def _build_routes() -> tuple[Route, ...]:
     route_types: dict[tuple[str, str], tuple[str, ResponseType]] = {}
     root = Path(resources.__file__).parent
-    for source_path in sorted(root.rglob("*.py")):
-        relative = source_path.relative_to(root.parent)
+    for call in request_calls(root):
+        relative = call.source.relative_to(root.parent)
         module_name = ".".join(("x_twitter_scraper", *relative.with_suffix("").parts))
-        syntax = ast.parse(source_path.read_text(encoding="utf-8"), filename=str(source_path))
-        for node in ast.walk(syntax):
-            if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
-                continue
-            method = node.func.attr.removeprefix("_").upper()
-            if method not in {"GET", "POST", "PUT", "PATCH", "DELETE"}:
-                continue
-            cast_node = next((keyword.value for keyword in node.keywords if keyword.arg == "cast_to"), None)
-            if cast_node is None or not node.args:
-                continue
-
-            template = _path_template(node.args[0])
-            name = _cast_name(cast_node)
-            response_type = _response_type(module_name, name)
-            key = (method, template)
-            previous = route_types.get(key)
-            if previous is not None and previous[0] != name:
-                binary_names = {"BinaryAPIResponse", "AsyncBinaryAPIResponse"}
-                if {previous[0], name} != binary_names:
-                    raise ValueError(f"Conflicting response types for {method} {template}: {previous[0]} and {name}")
-                continue
-            route_types[key] = (name, response_type)
+        name = _cast_name(call.cast_to)
+        response_type = _response_type(module_name, name)
+        key = (call.method, call.template)
+        previous = route_types.get(key)
+        if previous is not None and previous[0] != name:
+            binary_names = {"BinaryAPIResponse", "AsyncBinaryAPIResponse"}
+            if {previous[0], name} != binary_names:
+                raise ValueError(
+                    f"Conflicting response types for {call.method} {call.template}: {previous[0]} and {name}"
+                )
+            continue
+        route_types[key] = (name, response_type)
 
     return tuple(
         Route(
