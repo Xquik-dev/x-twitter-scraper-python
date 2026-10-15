@@ -345,6 +345,7 @@ class TestX:
     @parametrize
     def test_method_get_trends_with_all_params(self, client: XTwitterScraper) -> None:
         x = client.x.get_trends(
+            at="2026-10-13T14:00:00Z",
             count=1,
             country="country",
             fields="id,text,author.username",
@@ -788,6 +789,7 @@ class TestAsyncX:
     @parametrize
     async def test_method_get_trends_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
         x = await async_client.x.get_trends(
+            at="2026-10-13T14:00:00Z",
             count=1,
             country="country",
             fields="id,text,author.username",

@@ -4,7 +4,7 @@ title: Xquik Python SDK for Twitter Search & X Automation
 type: software
 authors:
   - name: Xquik
-version: 0.14.0
+version: 0.15.0
 date-released: 2026-10-15
 url: https://github.com/Xquik-dev/x-twitter-scraper-python
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-python

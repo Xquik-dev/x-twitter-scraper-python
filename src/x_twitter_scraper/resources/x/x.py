@@ -704,6 +704,7 @@ class XResource(SyncAPIResource):
     def get_trends(
         self,
         *,
+        at: str | Omit = omit,
         count: int | Omit = omit,
         country: str | Omit = omit,
         fields: str | Omit = omit,
@@ -718,10 +719,20 @@ class XResource(SyncAPIResource):
         """Returns X's current trends for a place you choose.
 
         Pick it by woeid, country or
-        location name. Without one, trends are worldwide. Each request costs 1 credit,
-        however many trends it returns.
+        location name. Without one, trends are worldwide. Add at to read what was
+        trending on Twitter at a past time, such as yesterday. Xquik keeps a Twitter
+        trends archive from 2026-10-13 02:20 UTC on, with 1 list per place every 5
+        minutes. Each request costs 1 credit, however many trends it returns.
 
         Args:
+          at: A past time, to read what was trending on Twitter then. Takes an ISO 8601 time,
+              a date such as 2026-10-13, or Unix seconds. A time without a zone reads as UTC.
+              It also takes a span back from now, as a number & s, m, h or d. So at=24h reads
+              what was trending on Twitter yesterday at this hour, on every run of a schedule.
+              The answer is the stored list nearest that time, with its own time in
+              capturedAt. History starts 2026-10-13 02:20 UTC. A time over 24 hours from every
+              stored list answers 400 at no charge.
+
           count: Number of trending topics to return (1-50, default 30)
 
           country: Country to read trends for, by name or 2-letter code, such as Turkey or TR. Case
@@ -760,6 +771,7 @@ class XResource(SyncAPIResource):
                 timeout=timeout,
                 query=maybe_transform(
                     {
+                        "at": at,
                         "count": count,
                         "country": country,
                         "fields": fields,
@@ -1458,6 +1470,7 @@ class AsyncXResource(AsyncAPIResource):
     async def get_trends(
         self,
         *,
+        at: str | Omit = omit,
         count: int | Omit = omit,
         country: str | Omit = omit,
         fields: str | Omit = omit,
@@ -1472,10 +1485,20 @@ class AsyncXResource(AsyncAPIResource):
         """Returns X's current trends for a place you choose.
 
         Pick it by woeid, country or
-        location name. Without one, trends are worldwide. Each request costs 1 credit,
-        however many trends it returns.
+        location name. Without one, trends are worldwide. Add at to read what was
+        trending on Twitter at a past time, such as yesterday. Xquik keeps a Twitter
+        trends archive from 2026-10-13 02:20 UTC on, with 1 list per place every 5
+        minutes. Each request costs 1 credit, however many trends it returns.
 
         Args:
+          at: A past time, to read what was trending on Twitter then. Takes an ISO 8601 time,
+              a date such as 2026-10-13, or Unix seconds. A time without a zone reads as UTC.
+              It also takes a span back from now, as a number & s, m, h or d. So at=24h reads
+              what was trending on Twitter yesterday at this hour, on every run of a schedule.
+              The answer is the stored list nearest that time, with its own time in
+              capturedAt. History starts 2026-10-13 02:20 UTC. A time over 24 hours from every
+              stored list answers 400 at no charge.
+
           count: Number of trending topics to return (1-50, default 30)
 
           country: Country to read trends for, by name or 2-letter code, such as Turkey or TR. Case
@@ -1514,6 +1537,7 @@ class AsyncXResource(AsyncAPIResource):
                 timeout=timeout,
                 query=await async_maybe_transform(
                     {
+                        "at": at,
                         "count": count,
                         "country": country,
                         "fields": fields,

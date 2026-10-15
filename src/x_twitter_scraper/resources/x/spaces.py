@@ -168,20 +168,23 @@ class SpacesResource(SyncAPIResource):
         fields: str | Omit = omit,
         omit: str | Omit = omit,
         page_size: int | Omit = omit,
-        query_type: Literal["Latest", "Top"] | Omit = omit,
+        query_type: Literal["Latest", "Top", "Live", "Upcoming"] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SpaceSearchResponse:
-        """
-        Returns the public Spaces that posts matching the query share, live, scheduled
-        or ended. Each page reads up to pageSize posts, 20 by default, and returns each
-        Space once. Costs 1 credit per Space.
+        """Returns public Spaces each once, as GET /x/spaces/{id} serves them.
+
+        Latest & Top
+        find the Spaces that matching posts share, live, scheduled or ended. Live &
+        Upcoming read X's own Spaces search, in X's order. It finds live or scheduled
+        Spaces by the words in their titles. Costs 1 credit per Space.
 
         Args:
-          q: Words, hashtags or X search operators, such as from:solana. The search adds
-              filter:spaces. Alias query.
+          q: Words, hashtags or X search operators, such as from:solana. Latest & Top add
+              filter:spaces. Live & Upcoming match title words only, without operators. Alias
+              query.
 
           cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
               pagination_token or continuation_token.
@@ -196,12 +199,15 @@ class SpacesResource(SyncAPIResource):
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
-          page_size: Posts a page reads, 20 at a time (1-100, default 20). Posts often share the same
-              Space, so a page returns fewer Spaces. Send 100 to read a search fastest.
-              Aliases: limit, count, max_results, maxItems, max_items & per_page.
+          page_size: For Latest & Top, the posts a page reads, 20 at a time (1-100, default 20).
+              Posts often share the same Space, so a page returns fewer Spaces. Send 100 to
+              read a search fastest. For Live & Upcoming, the most Spaces a page returns. Its
+              aliases are limit, count, max_results, maxItems, max_items & per_page.
 
-          query_type: Latest sorts by post time. Top ranks by engagement. Any case works. Aliases
-              result_type, sort_order, type, search_type, product, category & section.
+          query_type: Latest finds Spaces in the newest posts. Top finds them in the most engaging
+              posts. Live lists Spaces on air now. Upcoming lists scheduled ones, as X's
+              Spaces search does. Any case works. Aliases result_type, sort_order, type,
+              search_type, product, category & section.
 
           extra_headers: Send extra headers
 
@@ -375,20 +381,23 @@ class AsyncSpacesResource(AsyncAPIResource):
         fields: str | Omit = omit,
         omit: str | Omit = omit,
         page_size: int | Omit = omit,
-        query_type: Literal["Latest", "Top"] | Omit = omit,
+        query_type: Literal["Latest", "Top", "Live", "Upcoming"] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> SpaceSearchResponse:
-        """
-        Returns the public Spaces that posts matching the query share, live, scheduled
-        or ended. Each page reads up to pageSize posts, 20 by default, and returns each
-        Space once. Costs 1 credit per Space.
+        """Returns public Spaces each once, as GET /x/spaces/{id} serves them.
+
+        Latest & Top
+        find the Spaces that matching posts share, live, scheduled or ended. Live &
+        Upcoming read X's own Spaces search, in X's order. It finds live or scheduled
+        Spaces by the words in their titles. Costs 1 credit per Space.
 
         Args:
-          q: Words, hashtags or X search operators, such as from:solana. The search adds
-              filter:spaces. Alias query.
+          q: Words, hashtags or X search operators, such as from:solana. Latest & Top add
+              filter:spaces. Live & Upcoming match title words only, without operators. Alias
+              query.
 
           cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
               pagination_token or continuation_token.
@@ -403,12 +412,15 @@ class AsyncSpacesResource(AsyncAPIResource):
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
-          page_size: Posts a page reads, 20 at a time (1-100, default 20). Posts often share the same
-              Space, so a page returns fewer Spaces. Send 100 to read a search fastest.
-              Aliases: limit, count, max_results, maxItems, max_items & per_page.
+          page_size: For Latest & Top, the posts a page reads, 20 at a time (1-100, default 20).
+              Posts often share the same Space, so a page returns fewer Spaces. Send 100 to
+              read a search fastest. For Live & Upcoming, the most Spaces a page returns. Its
+              aliases are limit, count, max_results, maxItems, max_items & per_page.
 
-          query_type: Latest sorts by post time. Top ranks by engagement. Any case works. Aliases
-              result_type, sort_order, type, search_type, product, category & section.
+          query_type: Latest finds Spaces in the newest posts. Top finds them in the most engaging
+              posts. Live lists Spaces on air now. Upcoming lists scheduled ones, as X's
+              Spaces search does. Any case works. Aliases result_type, sort_order, type,
+              search_type, product, category & section.
 
           extra_headers: Send extra headers
 
