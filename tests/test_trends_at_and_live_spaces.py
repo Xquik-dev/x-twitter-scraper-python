@@ -4,18 +4,16 @@
 
 from __future__ import annotations
 
-from typing import Tuple, TypeVar, Callable, Awaitable, get_args, get_type_hints
+from typing import get_args, get_type_hints
 from datetime import datetime, timezone
 from typing_extensions import Literal
 
-import httpx
 import pytest
 
-from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
+from tests.utils import send_with_mock_transport
 from x_twitter_scraper.types import XGetTrendsParams
 from x_twitter_scraper.types.x import SpaceSearchParams
 
-T = TypeVar("T")
 QueryType = Literal["Latest", "Top", "Live", "Upcoming"]
 QUERY_TYPES: list[QueryType] = ["Latest", "Top", "Live", "Upcoming"]
 
@@ -67,42 +65,10 @@ SPACES = {
 }
 
 
-async def send(
-    sync_call: Callable[[XTwitterScraper], T],
-    async_call: Callable[[AsyncXTwitterScraper], Awaitable[T]],
-    payload: object,
-    asynchronous: bool,
-) -> Tuple[httpx.Request, T]:
-    requests: list[httpx.Request] = []
-
-    def respond(request: httpx.Request) -> httpx.Response:
-        requests.append(request)
-        return httpx.Response(200, json=payload)
-
-    transport = httpx.MockTransport(respond)
-    if asynchronous:
-        async with AsyncXTwitterScraper(
-            api_key="isolated-test",
-            http_client=httpx.AsyncClient(transport=transport),
-            _strict_response_validation=True,
-        ) as client:
-            result = await async_call(client)
-    else:
-        with XTwitterScraper(
-            api_key="isolated-test",
-            http_client=httpx.Client(transport=transport),
-            _strict_response_validation=True,
-        ) as sync_client:
-            result = sync_call(sync_client)
-    assert len(requests) == 1
-    assert requests[0].method == "GET"
-    return requests[0], result
-
-
 @pytest.mark.parametrize("asynchronous", [False, True])
 async def test_trends_at_a_past_time_read_the_stored_list_times(asynchronous: bool) -> None:
     arguments: XGetTrendsParams = {"at": "2026-10-13T14:00:00Z", "location": "Istanbul", "count": 30}
-    request, trends = await send(
+    request, trends = await send_with_mock_transport(
         lambda client: client.x.get_trends(**arguments),
         lambda client: client.x.get_trends(**arguments),
         TRENDS,
@@ -127,7 +93,7 @@ async def test_trends_at_a_past_time_read_the_stored_list_times(asynchronous: bo
 @pytest.mark.parametrize("asynchronous", [False, True])
 async def test_current_trends_leave_the_requested_time_out(asynchronous: bool) -> None:
     payload = {key: value for key, value in TRENDS.items() if key != "requestedAt"}
-    request, trends = await send(
+    request, trends = await send_with_mock_transport(
         lambda client: client.x.get_trends(),
         lambda client: client.x.get_trends(),
         payload,
@@ -143,7 +109,7 @@ async def test_current_trends_leave_the_requested_time_out(asynchronous: bool) -
 @pytest.mark.parametrize("query_type", QUERY_TYPES)
 async def test_spaces_search_sends_each_query_type(query_type: QueryType, asynchronous: bool) -> None:
     arguments: SpaceSearchParams = {"q": "solana", "page_size": 20, "query_type": query_type}
-    request, page = await send(
+    request, page = await send_with_mock_transport(
         lambda client: client.x.spaces.search(**arguments),
         lambda client: client.x.spaces.search(**arguments),
         SPACES,
@@ -152,11 +118,29 @@ async def test_spaces_search_sends_each_query_type(query_type: QueryType, asynch
 
     assert request.url.path == "/api/v1/x/spaces/search"
     assert dict(request.url.params) == {"q": "solana", "pageSize": "20", "queryType": query_type}
+    assert page.spaces[0].id == "1OGwblLjnQMKB"
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_spaces_search_reads_the_spec_example(asynchronous: bool) -> None:
+    _, page = await send_with_mock_transport(
+        lambda client: client.x.spaces.search(q="from:solana", query_type="Upcoming"),
+        lambda client: client.x.spaces.search(q="from:solana", query_type="Upcoming"),
+        SPACES,
+        asynchronous,
+    )
+
     space = page.spaces[0]
     assert (space.id, space.title, space.state) == ("1OGwblLjnQMKB", "Extending the Network to the Edge", "Ended")
     assert space.started_at == datetime(2026, 3, 11, 17, 0, 26, 227000, tzinfo=timezone.utc)
+    assert space.ended_at == datetime(2026, 3, 11, 17, 49, 29, 190000, tzinfo=timezone.utc)
     assert (space.total_live_listeners, space.total_replay_watched) == (841, 609)
-    assert space.admins[0].username == "solana"
+    assert (space.admins[0].id, space.admins[0].username, space.admins[0].name) == (
+        "951329744804392960",
+        "solana",
+        "Solana",
+    )
+    assert (space.speakers, space.listeners) == ([], [])
     assert (page.has_next_page, page.next_cursor) == (True, "DAACCgACGRElMJcAAA")
 
 

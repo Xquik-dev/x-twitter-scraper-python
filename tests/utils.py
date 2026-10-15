@@ -8,10 +8,13 @@ import os
 import inspect
 import traceback
 import contextlib
-from typing import Any, TypeVar, Generator, cast
+from typing import Any, Tuple, TypeVar, Callable, Awaitable, Generator, cast
 from datetime import date, datetime
 from typing_extensions import Literal, get_args, get_origin
 
+import httpx
+
+from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper._types import Omit, NoneType
 from x_twitter_scraper._utils import (
     is_dict,
@@ -28,6 +31,7 @@ from x_twitter_scraper._compat import PYDANTIC_V1, field_outer_type, get_model_f
 from x_twitter_scraper._models import BaseModel
 
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
+T = TypeVar("T")
 
 
 def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: list[str]) -> bool:
@@ -137,3 +141,35 @@ def update_env(**new_env: str | Omit) -> Generator[None, None, None]:
     finally:
         os.environ.clear()
         os.environ.update(old)
+
+
+async def send_with_mock_transport(
+    sync_call: Callable[[XTwitterScraper], T],
+    async_call: Callable[[AsyncXTwitterScraper], Awaitable[T]],
+    payload: object,
+    asynchronous: bool,
+) -> Tuple[httpx.Request, T]:
+    requests: list[httpx.Request] = []
+
+    def respond(request: httpx.Request) -> httpx.Response:
+        requests.append(request)
+        return httpx.Response(200, json=payload)
+
+    transport = httpx.MockTransport(respond)
+    if asynchronous:
+        async with AsyncXTwitterScraper(
+            api_key="isolated-test",
+            http_client=httpx.AsyncClient(transport=transport),
+            _strict_response_validation=True,
+        ) as client:
+            result = await async_call(client)
+    else:
+        with XTwitterScraper(
+            api_key="isolated-test",
+            http_client=httpx.Client(transport=transport),
+            _strict_response_validation=True,
+        ) as sync_client:
+            result = sync_call(sync_client)
+    assert len(requests) == 1
+    assert requests[0].method == "GET"
+    return requests[0], result
