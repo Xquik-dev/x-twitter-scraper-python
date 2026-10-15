@@ -21,6 +21,6 @@
       "patchURL": "https://raw.githubusercontent.com/Xquik-dev/xquik-docs/64d29260f8dc053a4bd78c8a91982a0a8085aba4/patches/comply-licensing.patch",
       "patchSha256": "6e71602a7b292e06be7b97ba75ad54935ba5c24c5ce543928032d0a3cfccb1c7"
     },
-    "rustVersion": "1.98.1"
+    "rustVersion": "1.99.0"
   }
 }

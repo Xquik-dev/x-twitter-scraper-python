@@ -78,7 +78,7 @@ brew install --cask codeql
 ```
 
 Set `XQUIK_CODEQL_BIN` to use another CodeQL executable.
-The analysis downloads the pinned `codeql/python-queries@1.8.10` pack when it is missing.
+The analysis downloads the pinned `codeql/python-queries@1.8.12` pack when it is missing.
 
 The dependency audit checks every pin in `uv.lock`.
 That includes pins for other platforms and both Pydantic groups.

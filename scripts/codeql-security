@@ -18,6 +18,6 @@ report=$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-codeql.XXXXXX")
 echo "CodeQL evidence: $report"
 "$codeql" pack install codeql/no-code-comments
 "$codeql" database create "$report/database" --language=python --build-mode=none --source-root="$PWD" --threads=2
-"$codeql" database analyze --download "$report/database" codeql/python-queries@1.8.10:codeql-suites/python-security-extended.qls codeql/no-code-comments --format=sarifv2.1.0 --output="$report/report.sarif" --threads=2
+"$codeql" database analyze --download "$report/database" codeql/python-queries@1.8.12:codeql-suites/python-security-extended.qls codeql/no-code-comments --format=sarifv2.1.0 --output="$report/report.sarif" --threads=2
 cat "$report/report.sarif"
 uv run --locked --all-extras python scripts/verify_codeql.py "$report/report.sarif"
