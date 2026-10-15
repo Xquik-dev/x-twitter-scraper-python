@@ -14,7 +14,6 @@ fi
 
 [[ "$(uname -s):$(uname -m)" == Linux:x86_64 ]] || { echo 'Use Linux x86_64 or set XQUIK_FUZZ_HOST to an authorized Linux SSH runner.' >&2; exit 1; }
 export PATH="$HOME/.local/bin:$PATH" UV_PYTHON=3.14.8
-[[ "$(uv --version)" == 'uv 0.13.0 '* ]] || { echo 'Install uv 0.13.0 on the fuzz runner.' >&2; exit 1; }
 uv sync --locked --all-extras --group fuzz
 bash scripts/audit
 sanitizer=$(uv run --locked --no-sync python -c 'import atheris,pathlib; print(pathlib.Path(atheris.path()) / "asan_with_fuzzer.so")')

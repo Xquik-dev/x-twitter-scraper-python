@@ -6,7 +6,7 @@ Follow the shared [Xquik contribution policy][contribution-policy].
 
 ## Set Up
 
-Install uv 0.13.0 from its official release, then run these commands.
+Install uv 0.13.1 or newer, then run these commands.
 
 ```sh
 ./scripts/bootstrap
@@ -71,7 +71,7 @@ bun run check:all /absolute/path/to/parent-coverage.json HEAD
 Measure parent coverage using `bash scripts/coverage --baseline` at the parent revision.
 The extended gate verifies that report against Git's source hashes.
 
-Install CodeQL CLI 2.27.0 or newer before running `bin/check-local`.
+Install CodeQL CLI 2.27.2 or newer before running `bin/check-local`.
 
 ```sh
 brew install --cask codeql
@@ -90,7 +90,7 @@ The reason is `build-time only` or `peer dependency provided by the host`.
 The recheck date is at most 30 days out, and the finding blocks again on that date.
 
 The extended gate and `bash scripts/fuzz` run a 180-second AddressSanitizer fuzz campaign.
-Use Linux x86_64 with uv 0.13.0 and a working systemd user service.
+Use Linux x86_64 with uv 0.13.1 or newer and a working systemd user service.
 From another platform, set `XQUIK_FUZZ_HOST` to your authorized Linux SSH runner.
 The command transfers SDK source and lockfiles into an isolated temporary directory.
 The fuzz process cannot access the network or modify files outside its evidence directory.
