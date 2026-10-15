@@ -1,0 +1,42 @@
+# SPDX-FileCopyrightText: 2026 Xquik contributors
+#
+# SPDX-License-Identifier: Apache-2.0
+
+from __future__ import annotations
+
+from typing_extensions import Annotated, TypedDict
+
+from ..._utils import PropertyInfo
+
+__all__ = ["CommunityNoteListContributorNotesParams"]
+
+
+class CommunityNoteListContributorNotesParams(TypedDict, total=False):
+    cursor: str
+    """Pagination cursor for collection results.
+
+    Also read as next_cursor, next_token, pagination_token or continuation_token.
+    """
+
+    fields: str
+    """Fields to keep in each row, comma-separated.
+
+    Use dots for nested fields, such as author.username. A list keeps the field in
+    each item. Case & underscores do not matter. A row that lacks a field leaves it
+    out. Cursors, counts & diagnostics always stay. An unknown name answers 400
+    unknown_field with the valid names, before any read. The price stays the same.
+    SDK row types then hold only the named fields.
+    """
+
+    omit: str
+    """Fields to drop from each row, comma-separated.
+
+    It takes the same names as fields. With fields, it drops from the kept fields.
+    """
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Notes per page (1-10, default 10).
+
+    A low credit balance can return fewer. Follow next_cursor for more pages. Also
+    read as limit, count, max_results, maxItems, max_items & per_page.
+    """

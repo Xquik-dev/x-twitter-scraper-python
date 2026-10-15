@@ -251,9 +251,11 @@ from x_twitter_scraper.types import (
     XAutocompleteSearchResponse,
     XGetArticleResponse,
     XGetHashflagsResponse,
+    XGetNewsStoryVersionsResponse,
     XGetNotificationsResponse,
     XGetTrendLocationsResponse,
     XGetTrendsResponse,
+    XGetTrendsHistoryResponse,
     XSearchPlacesResponse,
 )
 ```
@@ -264,9 +266,11 @@ Methods
 - <code title="get /x/articles/{tweetId}">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_article</a>(tweet_id, \*\*<a href="src/x_twitter_scraper/types/x_get_article_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_article_response.py">XGetArticleResponse</a></code>
 - <code title="get /x/hashflags">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_hashflags</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_hashflags_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_hashflags_response.py">XGetHashflagsResponse</a></code>
 - <code title="get /x/timeline">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_home_timeline</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_home_timeline_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/news/{id}/versions">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_news_story_versions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x_get_news_story_versions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_news_story_versions_response.py">XGetNewsStoryVersionsResponse</a></code>
 - <code title="get /x/notifications">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_notifications</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_notifications_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_notifications_response.py">XGetNotificationsResponse</a></code>
 - <code title="get /x/trends/locations">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_trend_locations</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_trend_locations_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_trend_locations_response.py">XGetTrendLocationsResponse</a></code>
 - <code title="get /x/trends">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_trends</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_trends_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_trends_response.py">XGetTrendsResponse</a></code>
+- <code title="get /x/trends/history">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">get_trends_history</a>(\*\*<a href="src/x_twitter_scraper/types/x_get_trends_history_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_get_trends_history_response.py">XGetTrendsHistoryResponse</a></code>
 - <code title="get /x/places/search">client.x.<a href="./src/x_twitter_scraper/resources/x/x.py">search_places</a>(\*\*<a href="src/x_twitter_scraper/types/x_search_places_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x_search_places_response.py">XSearchPlacesResponse</a></code>
 
 ## WriteActions
@@ -660,6 +664,24 @@ from x_twitter_scraper.types.x import BroadcastRetrieveResponse
 Methods
 
 - <code title="get /x/broadcasts/{id}">client.x.broadcasts.<a href="./src/x_twitter_scraper/resources/x/broadcasts.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/broadcast_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/broadcast_retrieve_response.py">BroadcastRetrieveResponse</a></code>
+
+## CommunityNotes
+
+Types
+
+```python
+from x_twitter_scraper.types.x import (
+    CommunityNoteListContributorDeletedNotesResponse,
+    CommunityNoteListContributorNotesResponse,
+    CommunityNoteRetrieveContributorResponse,
+)
+```
+
+Methods
+
+- <code title="get /x/community-notes/contributors/{alias}/deleted-notes">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">list_contributor_deleted_notes</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_list_contributor_deleted_notes_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_note_list_contributor_deleted_notes_response.py">CommunityNoteListContributorDeletedNotesResponse</a></code>
+- <code title="get /x/community-notes/contributors/{alias}/notes">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">list_contributor_notes</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_list_contributor_notes_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_note_list_contributor_notes_response.py">CommunityNoteListContributorNotesResponse</a></code>
+- <code title="get /x/community-notes/contributors/{alias}">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">retrieve_contributor</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_retrieve_contributor_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_note_retrieve_contributor_response.py">CommunityNoteRetrieveContributorResponse</a></code>
 
 ## Spaces
 

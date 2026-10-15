@@ -173,9 +173,27 @@ from .user_retrieve_verified_followers_response import (
 from .account_connection_challenge_submit_params import (
     AccountConnectionChallengeSubmitParams as AccountConnectionChallengeSubmitParams,
 )
+from .community_note_retrieve_contributor_params import (
+    CommunityNoteRetrieveContributorParams as CommunityNoteRetrieveContributorParams,
+)
 from .account_connection_attempt_retrieve_response import (
     AccountConnectionAttemptRetrieveResponse as AccountConnectionAttemptRetrieveResponse,
 )
 from .account_connection_challenge_submit_response import (
     AccountConnectionChallengeSubmitResponse as AccountConnectionChallengeSubmitResponse,
+)
+from .community_note_list_contributor_notes_params import (
+    CommunityNoteListContributorNotesParams as CommunityNoteListContributorNotesParams,
+)
+from .community_note_retrieve_contributor_response import (
+    CommunityNoteRetrieveContributorResponse as CommunityNoteRetrieveContributorResponse,
+)
+from .community_note_list_contributor_notes_response import (
+    CommunityNoteListContributorNotesResponse as CommunityNoteListContributorNotesResponse,
+)
+from .community_note_list_contributor_deleted_notes_params import (
+    CommunityNoteListContributorDeletedNotesParams as CommunityNoteListContributorDeletedNotesParams,
+)
+from .community_note_list_contributor_deleted_notes_response import (
+    CommunityNoteListContributorDeletedNotesResponse as CommunityNoteListContributorDeletedNotesResponse,
 )

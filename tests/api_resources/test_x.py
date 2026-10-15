@@ -17,8 +17,10 @@ from x_twitter_scraper.types import (
     XGetHashflagsResponse,
     XSearchPlacesResponse,
     XGetNotificationsResponse,
+    XGetTrendsHistoryResponse,
     XGetTrendLocationsResponse,
     XAutocompleteSearchResponse,
+    XGetNewsStoryVersionsResponse,
 )
 from x_twitter_scraper.types.shared import PaginatedTweets
 
@@ -205,6 +207,58 @@ class TestX:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_get_news_story_versions(self, client: XTwitterScraper) -> None:
+        x = client.x.get_news_story_versions(
+            id="id",
+        )
+        assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_get_news_story_versions_with_all_params(self, client: XTwitterScraper) -> None:
+        x = client.x.get_news_story_versions(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_get_news_story_versions(self, client: XTwitterScraper) -> None:
+        response = client.x.with_raw_response.get_news_story_versions(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        x = response.parse()
+        assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_get_news_story_versions(self, client: XTwitterScraper) -> None:
+        with client.x.with_streaming_response.get_news_story_versions(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            x = response.parse()
+            assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_get_news_story_versions(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.with_raw_response.get_news_story_versions(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_method_get_notifications(self, client: XTwitterScraper) -> None:
         x = client.x.get_notifications()
         assert_matches_type(XGetNotificationsResponse, x, path=["response"])
@@ -319,6 +373,52 @@ class TestX:
 
             x = response.parse()
             assert_matches_type(XGetTrendsResponse, x, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_get_trends_history(self, client: XTwitterScraper) -> None:
+        x = client.x.get_trends_history()
+        assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_get_trends_history_with_all_params(self, client: XTwitterScraper) -> None:
+        x = client.x.get_trends_history(
+            count=1,
+            country="country",
+            cursor="2026-10-14T00:00:00.000Z~1791979200000",
+            every="1h",
+            fields="id,text,author.username",
+            from_="2026-10-13",
+            limit=1,
+            location="location",
+            omit="entities,media",
+            to="2026-10-14",
+            woeid=1,
+        )
+        assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_get_trends_history(self, client: XTwitterScraper) -> None:
+        response = client.x.with_raw_response.get_trends_history()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        x = response.parse()
+        assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_get_trends_history(self, client: XTwitterScraper) -> None:
+        with client.x.with_streaming_response.get_trends_history() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            x = response.parse()
+            assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -550,6 +650,58 @@ class TestAsyncX:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    async def test_method_get_news_story_versions(self, async_client: AsyncXTwitterScraper) -> None:
+        x = await async_client.x.get_news_story_versions(
+            id="id",
+        )
+        assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_get_news_story_versions_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        x = await async_client.x.get_news_story_versions(
+            id="id",
+            fields="id,text,author.username",
+            omit="entities,media",
+        )
+        assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_get_news_story_versions(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.with_raw_response.get_news_story_versions(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        x = await response.parse()
+        assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_get_news_story_versions(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.with_streaming_response.get_news_story_versions(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            x = await response.parse()
+            assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_get_news_story_versions(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.with_raw_response.get_news_story_versions(
+                id="",
+            )
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     async def test_method_get_notifications(self, async_client: AsyncXTwitterScraper) -> None:
         x = await async_client.x.get_notifications()
         assert_matches_type(XGetNotificationsResponse, x, path=["response"])
@@ -664,6 +816,52 @@ class TestAsyncX:
 
             x = await response.parse()
             assert_matches_type(XGetTrendsResponse, x, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_get_trends_history(self, async_client: AsyncXTwitterScraper) -> None:
+        x = await async_client.x.get_trends_history()
+        assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_get_trends_history_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        x = await async_client.x.get_trends_history(
+            count=1,
+            country="country",
+            cursor="2026-10-14T00:00:00.000Z~1791979200000",
+            every="1h",
+            fields="id,text,author.username",
+            from_="2026-10-13",
+            limit=1,
+            location="location",
+            omit="entities,media",
+            to="2026-10-14",
+            woeid=1,
+        )
+        assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_get_trends_history(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.with_raw_response.get_trends_history()
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        x = await response.parse()
+        assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_get_trends_history(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.with_streaming_response.get_trends_history() as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            x = await response.parse()
+            assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
