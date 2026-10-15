@@ -11,7 +11,7 @@ import pytest
 
 from tests.utils import assert_matches_type
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper.types import DraftDetail, DraftListResponse
+from x_twitter_scraper.types import DraftDetail, DraftListResponse, DraftCreateResponse
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -25,7 +25,7 @@ class TestDrafts:
         draft = client.drafts.create(
             text="AI is the future of productivity",
         )
-        assert_matches_type(DraftDetail, draft, path=["response"])
+        assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -35,7 +35,7 @@ class TestDrafts:
             goal="engagement",
             topic="AI trends",
         )
-        assert_matches_type(DraftDetail, draft, path=["response"])
+        assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -47,7 +47,7 @@ class TestDrafts:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         draft = response.parse()
-        assert_matches_type(DraftDetail, draft, path=["response"])
+        assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -59,7 +59,7 @@ class TestDrafts:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             draft = response.parse()
-            assert_matches_type(DraftDetail, draft, path=["response"])
+            assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 
@@ -196,7 +196,7 @@ class TestAsyncDrafts:
         draft = await async_client.drafts.create(
             text="AI is the future of productivity",
         )
-        assert_matches_type(DraftDetail, draft, path=["response"])
+        assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -206,7 +206,7 @@ class TestAsyncDrafts:
             goal="engagement",
             topic="AI trends",
         )
-        assert_matches_type(DraftDetail, draft, path=["response"])
+        assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -218,7 +218,7 @@ class TestAsyncDrafts:
         assert response.is_closed is True
         assert response.http_request.headers.get("X-Stainless-Lang") == "python"
         draft = await response.parse()
-        assert_matches_type(DraftDetail, draft, path=["response"])
+        assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -230,7 +230,7 @@ class TestAsyncDrafts:
             assert response.http_request.headers.get("X-Stainless-Lang") == "python"
 
             draft = await response.parse()
-            assert_matches_type(DraftDetail, draft, path=["response"])
+            assert_matches_type(DraftCreateResponse, draft, path=["response"])
 
         assert cast(Any, response.is_closed) is True
 

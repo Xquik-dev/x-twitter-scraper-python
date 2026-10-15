@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.16.0 (2026-10-15)
+
+This release adds the response fields, event types and file uploads the SDK dropped. A field check against the API spec found them.
+
+### New fields and values
+
+- User profiles return `profile_picture_original` and `redirects_to_username`. Space participants, broadcasters, job accounts, article authors, Community member previews and search suggestions return `profile_picture_original`.
+- The links and accounts in tombstone and interstitial notices return `screen_name` and `text`.
+- `EventType` adds `follower.added`, `follower.removed`, `profile.followers.changed` and `profile.following.changed`. Monitors, keyword monitors, webhooks and events take and return them.
+- Event data gains the `DataMonitorFollow` variant for following and follower events, with `followed_at`, `followed_at_exact` and `reason`. Profile change data gains `change`, and its `previous` and `current` take counts.
+- Account monitors return `insufficient_credits` as a `paused_reason`. Keyword monitors return `paused_at` and `paused_reason`.
+- `account.update_locale`, `drafts.create` and `webhooks.create` return `ignored_fields`. `drafts.create` returns `DraftCreateResponse`, a `DraftDetail` subclass.
+- Follower, following, verified follower and List reads return `UserListPage`, a `PaginatedUsers` subclass with `scan_limit`.
+- `x.tweets.get_replies` returns `partial_before`.
+- Compose results read the new multiplier note "Source default. Production value can vary." and the old one.
+
+### File uploads
+
+- `x.media.upload`, `x.profile.update_avatar` and `x.profile.update_banner` take `file` instead of `url`. `x.media.upload` also takes `is_long_video`. A file sends a multipart request.
+- `support.tickets.create` and `support.tickets.reply` take `attachments`, 1 to 4 files.
+- The README upload sample passes the required `idempotency_key`.
+
+### Compatibility
+
+- Code written for 0.15.0 keeps working. No method, type, field or parameter is removed.
+- `url` and `content` are optional keyword arguments now, because `file` or `attachments` can replace them. A call with neither raises `TypeError`.
+- With Pydantic 1, `previous` and `current` of a count event read as strings, because Pydantic 1 tries `str` first.
+
 ## 0.15.0 (2026-10-15)
 
 2 existing methods gain the parameter, fields and query types the API spec added.

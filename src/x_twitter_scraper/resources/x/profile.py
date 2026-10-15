@@ -9,8 +9,8 @@ from typing import Mapping, cast
 import httpx
 
 from ..._files import deepcopy_with_paths
-from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from ..._utils import extract_files, maybe_transform, async_maybe_transform
+from ..._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
+from ..._utils import extract_files, required_args, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import profile_update_params, profile_update_avatar_params, profile_update_banner_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -104,12 +104,14 @@ class ProfileResource(SyncAPIResource):
             cast_to=ProfileUpdateResponse,
         )
 
+    @required_args(["account", "idempotency_key", "url"], ["account", "file", "idempotency_key"])
     def update_avatar(
         self,
         *,
         account: str,
-        url: str,
         idempotency_key: str,
+        file: FileTypes | Omit = omit,
+        url: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -119,9 +121,11 @@ class ProfileResource(SyncAPIResource):
         Replaces the avatar on a connected X profile.
 
         Args:
-          account: X account (@username or ID) receiving avatar from URL
+          account: X account (@username or ID) whose avatar to update
 
-          url: HTTPS URL to the avatar image to download
+          file: Avatar image (max 15 MiB). Send file or url.
+
+          url: HTTPS URL to the avatar image to download. Send url or file.
 
           extra_headers: Send extra headers
 
@@ -136,6 +140,7 @@ class ProfileResource(SyncAPIResource):
             {
                 "account": account,
                 "url": url,
+                "file": file,
             },
             [["file"]],
         )
@@ -152,12 +157,14 @@ class ProfileResource(SyncAPIResource):
             cast_to=ProfileUpdateAvatarResponse,
         )
 
+    @required_args(["account", "idempotency_key", "url"], ["account", "file", "idempotency_key"])
     def update_banner(
         self,
         *,
         account: str,
-        url: str,
         idempotency_key: str,
+        file: FileTypes | Omit = omit,
+        url: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -167,9 +174,11 @@ class ProfileResource(SyncAPIResource):
         Replaces the banner on a connected X profile.
 
         Args:
-          account: X account (@username or ID) receiving banner from URL
+          account: X account (@username or ID) whose banner to update
 
-          url: HTTPS URL to the banner image to download
+          file: Banner image (max 15 MiB). Send file or url.
+
+          url: HTTPS URL to the banner image to download. Send url or file.
 
           extra_headers: Send extra headers
 
@@ -184,6 +193,7 @@ class ProfileResource(SyncAPIResource):
             {
                 "account": account,
                 "url": url,
+                "file": file,
             },
             [["file"]],
         )
@@ -277,12 +287,14 @@ class AsyncProfileResource(AsyncAPIResource):
             cast_to=ProfileUpdateResponse,
         )
 
+    @required_args(["account", "idempotency_key", "url"], ["account", "file", "idempotency_key"])
     async def update_avatar(
         self,
         *,
         account: str,
-        url: str,
         idempotency_key: str,
+        file: FileTypes | Omit = omit,
+        url: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -292,9 +304,11 @@ class AsyncProfileResource(AsyncAPIResource):
         Replaces the avatar on a connected X profile.
 
         Args:
-          account: X account (@username or ID) receiving avatar from URL
+          account: X account (@username or ID) whose avatar to update
 
-          url: HTTPS URL to the avatar image to download
+          file: Avatar image (max 15 MiB). Send file or url.
+
+          url: HTTPS URL to the avatar image to download. Send url or file.
 
           extra_headers: Send extra headers
 
@@ -309,6 +323,7 @@ class AsyncProfileResource(AsyncAPIResource):
             {
                 "account": account,
                 "url": url,
+                "file": file,
             },
             [["file"]],
         )
@@ -325,12 +340,14 @@ class AsyncProfileResource(AsyncAPIResource):
             cast_to=ProfileUpdateAvatarResponse,
         )
 
+    @required_args(["account", "idempotency_key", "url"], ["account", "file", "idempotency_key"])
     async def update_banner(
         self,
         *,
         account: str,
-        url: str,
         idempotency_key: str,
+        file: FileTypes | Omit = omit,
+        url: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -340,9 +357,11 @@ class AsyncProfileResource(AsyncAPIResource):
         Replaces the banner on a connected X profile.
 
         Args:
-          account: X account (@username or ID) receiving banner from URL
+          account: X account (@username or ID) whose banner to update
 
-          url: HTTPS URL to the banner image to download
+          file: Banner image (max 15 MiB). Send file or url.
+
+          url: HTTPS URL to the banner image to download. Send url or file.
 
           extra_headers: Send extra headers
 
@@ -357,6 +376,7 @@ class AsyncProfileResource(AsyncAPIResource):
             {
                 "account": account,
                 "url": url,
+                "file": file,
             },
             [["file"]],
         )

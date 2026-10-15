@@ -64,12 +64,12 @@ Methods
 Types
 
 ```python
-from x_twitter_scraper.types import Draft, DraftDetail, DraftListResponse
+from x_twitter_scraper.types import Draft, DraftDetail, DraftCreateResponse, DraftListResponse
 ```
 
 Methods
 
-- <code title="post /drafts">client.drafts.<a href="./src/x_twitter_scraper/resources/drafts.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/draft_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/draft_detail.py">DraftDetail</a></code>
+- <code title="post /drafts">client.drafts.<a href="./src/x_twitter_scraper/resources/drafts.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/draft_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/draft_create_response.py">DraftCreateResponse</a></code>
 - <code title="get /drafts/{id}">client.drafts.<a href="./src/x_twitter_scraper/resources/drafts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/draft_detail.py">DraftDetail</a></code>
 - <code title="get /drafts">client.drafts.<a href="./src/x_twitter_scraper/resources/drafts.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/draft_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/draft_list_response.py">DraftListResponse</a></code>
 - <code title="delete /drafts/{id}">client.drafts.<a href="./src/x_twitter_scraper/resources/drafts.py">delete</a>(id) -> None</code>

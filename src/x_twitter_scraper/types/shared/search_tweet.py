@@ -464,6 +464,10 @@ class Geo(BaseModel):
 
 
 class InterstitialTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -910,6 +914,10 @@ class TextHighlight(BaseModel):
 
 
 class TombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None

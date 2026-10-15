@@ -185,6 +185,7 @@ client = XTwitterScraper()
 client.x.media.upload(
     account="@elonmusk",
     file=Path("/path/to/file"),
+    idempotency_key="upload-2026-10-15",
 )
 ```
 

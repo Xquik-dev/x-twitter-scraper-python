@@ -148,6 +148,7 @@ async def send_with_mock_transport(
     async_call: Callable[[AsyncXTwitterScraper], Awaitable[T]],
     payload: object,
     asynchronous: bool,
+    method: str = "GET",
 ) -> Tuple[httpx.Request, T]:
     requests: list[httpx.Request] = []
 
@@ -171,5 +172,5 @@ async def send_with_mock_transport(
         ) as sync_client:
             result = sync_call(sync_client)
     assert len(requests) == 1
-    assert requests[0].method == "GET"
+    assert requests[0].method == method
     return requests[0], result

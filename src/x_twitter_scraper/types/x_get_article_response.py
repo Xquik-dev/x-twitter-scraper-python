@@ -184,6 +184,9 @@ class Author(BaseModel):
 
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The same profile picture at full size."""
+
     protected: Optional[bool] = None
 
     statuses_count: Optional[int] = FieldInfo(alias="statusesCount", default=None)

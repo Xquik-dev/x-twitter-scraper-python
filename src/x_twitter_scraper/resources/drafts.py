@@ -22,6 +22,7 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.draft_detail import DraftDetail
 from ..types.draft_list_response import DraftListResponse
+from ..types.draft_create_response import DraftCreateResponse
 
 __all__ = ["DraftsResource", "AsyncDraftsResource"]
 
@@ -57,7 +58,7 @@ class DraftsResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> DraftDetail:
+    ) -> DraftCreateResponse:
         """Stores a private Xquik draft.
 
         It never publishes or creates native X drafts.
@@ -86,7 +87,7 @@ class DraftsResource(SyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=DraftDetail,
+            cast_to=DraftCreateResponse,
         )
 
     def retrieve(
@@ -231,7 +232,7 @@ class AsyncDraftsResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> DraftDetail:
+    ) -> DraftCreateResponse:
         """Stores a private Xquik draft.
 
         It never publishes or creates native X drafts.
@@ -260,7 +261,7 @@ class AsyncDraftsResource(AsyncAPIResource):
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
-            cast_to=DraftDetail,
+            cast_to=DraftCreateResponse,
         )
 
     async def retrieve(

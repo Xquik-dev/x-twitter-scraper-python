@@ -115,6 +115,46 @@ class TestProfile:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    def test_method_update_avatar_with_file(self, client: XTwitterScraper) -> None:
+        profile = client.x.profile.update_avatar(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_update_avatar_with_file(self, client: XTwitterScraper) -> None:
+        response = client.x.profile.with_raw_response.update_avatar(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        profile = response.parse()
+        assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_update_avatar_with_file(self, client: XTwitterScraper) -> None:
+        with client.x.profile.with_streaming_response.update_avatar(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            profile = response.parse()
+            assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     def test_method_update_banner(self, client: XTwitterScraper) -> None:
         profile = client.x.profile.update_banner(
             account="@elonmusk",
@@ -143,6 +183,46 @@ class TestProfile:
         with client.x.profile.with_streaming_response.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            profile = response.parse()
+            assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_update_banner_with_file(self, client: XTwitterScraper) -> None:
+        profile = client.x.profile.update_banner(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_update_banner_with_file(self, client: XTwitterScraper) -> None:
+        response = client.x.profile.with_raw_response.update_banner(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        profile = response.parse()
+        assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_update_banner_with_file(self, client: XTwitterScraper) -> None:
+        with client.x.profile.with_streaming_response.update_banner(
+            account="@elonmusk",
+            file=b"raw file contents",
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
@@ -251,6 +331,46 @@ class TestAsyncProfile:
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
+    async def test_method_update_avatar_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        profile = await async_client.x.profile.update_avatar(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_update_avatar_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.profile.with_raw_response.update_avatar(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        profile = await response.parse()
+        assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_update_avatar_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.profile.with_streaming_response.update_avatar(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            profile = await response.parse()
+            assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
     async def test_method_update_banner(self, async_client: AsyncXTwitterScraper) -> None:
         profile = await async_client.x.profile.update_banner(
             account="@elonmusk",
@@ -279,6 +399,46 @@ class TestAsyncProfile:
         async with async_client.x.profile.with_streaming_response.update_banner(
             account="@elonmusk",
             url="https://example.com/banner.png",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            profile = await response.parse()
+            assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_update_banner_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        profile = await async_client.x.profile.update_banner(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_update_banner_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.profile.with_raw_response.update_banner(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        profile = await response.parse()
+        assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_update_banner_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.profile.with_streaming_response.update_banner(
+            account="@elonmusk",
+            file=b"raw file contents",
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed

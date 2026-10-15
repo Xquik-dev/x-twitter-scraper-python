@@ -36,6 +36,9 @@ class JobAccount(BaseModel):
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
     """Avatar URL of the account that posted the job."""
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The job account's avatar at full size."""
+
     username: Optional[str] = None
     """Handle without @."""
 
