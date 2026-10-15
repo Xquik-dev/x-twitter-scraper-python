@@ -9,9 +9,7 @@ The SDK now covers 180 of the 186 spec operations. The other 6 search the Xquik 
 
 - `x.get_trends_history` reads the trends X showed for a place over a range of time. It takes `from_` for the API's `from` parameter, because `from` is a Python keyword.
 - `x.get_news_story_versions` reads each version X wrote of a news story, oldest first.
-- `x.community_notes` is a new resource. `retrieve_contributor` reads a Community Notes contributor's note and rating counts.
-- `x.community_notes.list_contributor_notes` lists the notes a contributor wrote, each with its post.
-- `x.community_notes.list_contributor_deleted_notes` lists the notes a contributor deleted.
+- `x.community_notes` is a new resource with `retrieve_contributor`, `list_contributor_notes` and `list_contributor_deleted_notes`. They read a Community Notes contributor's note and rating counts, the notes they wrote with their posts, and the notes they deleted.
 
 ### Compatibility
 
