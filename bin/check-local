@@ -2,6 +2,10 @@
 # SPDX-FileCopyrightText: 2026 Xquik contributors
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
+runner="$(git -C "$(dirname "$0")/.." config --get checklocal.runner || true)"
+if [[ -n "$runner" && "${CHECK_LOCAL_HERE:-}" != 1 ]]; then
+  exec "$runner" "$(cd "$(dirname "$0")/.." && pwd -P)" "$@"
+fi
 cd "$(dirname "$0")/.."
 
 repository="Xquik-dev/x-twitter-scraper-python"
