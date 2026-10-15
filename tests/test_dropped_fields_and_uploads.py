@@ -392,6 +392,26 @@ async def test_support_tickets_send_attachments_under_their_plain_name(asynchron
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
+async def test_support_ticket_replies_send_attachments_without_message_text(asynchronous: bool) -> None:
+    request, reply = await send_with_mock_transport(
+        lambda client: client.support.tickets.reply("7", attachments=[FILE]),
+        lambda client: client.support.tickets.reply("7", attachments=[FILE]),
+        minimal(TicketReplyResponse),
+        asynchronous,
+        method="POST",
+    )
+    assert isinstance(reply, TicketReplyResponse)
+    assert request.url.path == "/api/v1/support/tickets/7/messages"
+    assert request.headers["Content-Type"].startswith("multipart/form-data; boundary=")
+    assert multipart_parts(request) == [
+        (
+            b'Content-Disposition: form-data; name="attachments"; filename="avatar.png"\r\nContent-Type: image/png',
+            b"binary-content",
+        ),
+    ]
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
 async def test_space_participants_keep_the_full_size_picture(asynchronous: bool) -> None:
     payload = minimal(SpaceRetrieveResponse)
     space = payload["space"]

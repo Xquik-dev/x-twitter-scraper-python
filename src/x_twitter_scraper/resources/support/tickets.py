@@ -80,7 +80,7 @@ class TicketsResource(SyncAPIResource):
 
           attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
 
-          content: Non-empty support message text.
+          content: Non-empty support message text. Optional when you send attachments.
 
           extra_headers: Send extra headers
 
@@ -246,7 +246,7 @@ class TicketsResource(SyncAPIResource):
         Args:
           attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
 
-          content: Non-empty support message text.
+          content: Non-empty support message text. Optional when you send attachments.
 
           extra_headers: Send extra headers
 
@@ -321,7 +321,7 @@ class AsyncTicketsResource(AsyncAPIResource):
 
           attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
 
-          content: Non-empty support message text.
+          content: Non-empty support message text. Optional when you send attachments.
 
           extra_headers: Send extra headers
 
@@ -487,7 +487,7 @@ class AsyncTicketsResource(AsyncAPIResource):
         Args:
           attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
 
-          content: Non-empty support message text.
+          content: Non-empty support message text. Optional when you send attachments.
 
           extra_headers: Send extra headers
 

@@ -17,6 +17,6 @@ class TicketReplyParams(TypedDict, total=False):
     """1 to 4 support image or video uploads."""
 
     content: Annotated[str, PropertyInfo(alias="body")]
-    """Non-empty support message text."""
+    """Non-empty support message text. Optional when you send attachments."""
 
     idempotency_key: Annotated[str, PropertyInfo(alias="Idempotency-Key")]
