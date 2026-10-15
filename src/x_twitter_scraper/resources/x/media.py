@@ -9,8 +9,8 @@ from typing import Mapping, cast
 import httpx
 
 from ..._files import deepcopy_with_paths
-from ..._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
-from ..._utils import extract_files, maybe_transform, async_maybe_transform
+from ..._types import Body, Omit, Query, Headers, NotGiven, FileTypes, SequenceNotStr, omit, not_given
+from ..._utils import extract_files, required_args, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import media_upload_params, media_download_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -96,12 +96,15 @@ class MediaResource(SyncAPIResource):
             cast_to=MediaDownloadResponse,
         )
 
+    @required_args(["account", "idempotency_key", "url"], ["account", "file", "idempotency_key"])
     def upload(
         self,
         *,
         account: str,
-        url: str,
         idempotency_key: str,
+        file: FileTypes | Omit = omit,
+        is_long_video: bool | Omit = omit,
+        url: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -111,10 +114,15 @@ class MediaResource(SyncAPIResource):
         Uploads media and returns an identifier for later writes.
 
         Args:
-          account: X account (@username or ID) uploading media from URL
+          account: X account (@username or ID) uploading media
+
+          file: Media file to upload, up to 15 MB. A larger file gets 413 `media_too_large`
+              before any account lookup. Send file or url.
+
+          is_long_video: Set true only for video/mp4 multipart uploads longer than 140 seconds.
 
           url: HTTPS URL to download and upload as media, up to 15 MB. Another scheme gets 400
-              `invalid_media_url`.
+              `invalid_media_url`. Send url or file.
 
           extra_headers: Send extra headers
 
@@ -129,6 +137,8 @@ class MediaResource(SyncAPIResource):
             {
                 "account": account,
                 "url": url,
+                "file": file,
+                "is_long_video": is_long_video,
             },
             [["file"]],
         )
@@ -215,12 +225,15 @@ class AsyncMediaResource(AsyncAPIResource):
             cast_to=MediaDownloadResponse,
         )
 
+    @required_args(["account", "idempotency_key", "url"], ["account", "file", "idempotency_key"])
     async def upload(
         self,
         *,
         account: str,
-        url: str,
         idempotency_key: str,
+        file: FileTypes | Omit = omit,
+        is_long_video: bool | Omit = omit,
+        url: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -230,10 +243,15 @@ class AsyncMediaResource(AsyncAPIResource):
         Uploads media and returns an identifier for later writes.
 
         Args:
-          account: X account (@username or ID) uploading media from URL
+          account: X account (@username or ID) uploading media
+
+          file: Media file to upload, up to 15 MB. A larger file gets 413 `media_too_large`
+              before any account lookup. Send file or url.
+
+          is_long_video: Set true only for video/mp4 multipart uploads longer than 140 seconds.
 
           url: HTTPS URL to download and upload as media, up to 15 MB. Another scheme gets 400
-              `invalid_media_url`.
+              `invalid_media_url`. Send url or file.
 
           extra_headers: Send extra headers
 
@@ -248,6 +266,8 @@ class AsyncMediaResource(AsyncAPIResource):
             {
                 "account": account,
                 "url": url,
+                "file": file,
+                "is_long_video": is_long_video,
             },
             [["file"]],
         )

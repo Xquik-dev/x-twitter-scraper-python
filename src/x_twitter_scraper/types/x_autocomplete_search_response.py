@@ -126,6 +126,9 @@ class User(BaseModel):
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
     """Avatar URL."""
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The same avatar at full size."""
+
     protected: Optional[bool] = None
     """Whether the account protects its posts."""
 

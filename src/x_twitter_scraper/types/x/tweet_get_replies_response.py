@@ -1,4 +1,5 @@
 from typing import List, Optional
+from datetime import datetime
 from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
@@ -223,6 +224,13 @@ class TweetGetRepliesResponse(PaginatedTweets):
     The read stopped before it held every reply X shows. Rows stay sorted by date,
     but replies may be missing between them. Retry later for a gap-free order.
     Complete mode and automatic pages set it alike.
+    """
+
+    partial_before: Optional[datetime] = FieldInfo(alias="partialBefore", default=None)
+    """
+    Present on an answer that lacks replies of a large thread posted before this
+    time. X shows only part of the replies older than 7 days. A retry returns about
+    the same replies.
     """
 
     tweets: Optional[List[TweetGetRepliesResponseTweet]] = None  # type: ignore

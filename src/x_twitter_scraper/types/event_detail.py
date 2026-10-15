@@ -100,6 +100,7 @@ __all__ = [
     "DataMonitorPostTombstoneTextEntityRef",
     "DataMonitorProfileChange",
     "DataMonitorLegacyPost",
+    "DataMonitorFollow",
 ]
 
 
@@ -496,6 +497,10 @@ class DataMonitorPostGeo(BaseModel):
 
 
 class DataMonitorPostInterstitialTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -985,6 +990,10 @@ class DataMonitorPostTextHighlight(BaseModel):
 
 
 class DataMonitorPostTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -1241,7 +1250,10 @@ class DataMonitorPost(EventDetailDataDictAccess):
 
 
 class DataMonitorProfileChange(EventDetailDataDictAccess):
-    """Changed profile field with its previous and current values."""
+    """Changed profile field with its previous and current values.
+
+    The field of a count event is followers or following, with both counts as integers.
+    """
 
     field: str
 
@@ -1251,11 +1263,14 @@ class DataMonitorProfileChange(EventDetailDataDictAccess):
     username: str
     """Username observed for this change."""
 
-    current: Union[str, bool, List[str], None] = None
-    """Profile text, flag, or pinned post IDs. Missing values are omitted."""
+    change: Optional[int] = None
+    """Current count minus previous count. Only on the 2 count events."""
 
-    previous: Union[str, bool, List[str], None] = None
-    """Profile text, flag, or pinned post IDs. Missing values are omitted."""
+    current: Union[str, bool, int, List[str], None] = None
+    """Profile text, flag, count, or pinned post IDs. Missing values are omitted."""
+
+    previous: Union[str, bool, int, List[str], None] = None
+    """Profile text, flag, count, or pinned post IDs. Missing values are omitted."""
 
 
 class DataMonitorLegacyPost(EventDetailDataDictAccess):
@@ -1281,7 +1296,46 @@ class DataMonitorLegacyPost(EventDetailDataDictAccess):
         __pydantic_extra__: Dict[str, object]
 
 
-Data: TypeAlias = Union[DataMonitorPost, DataMonitorProfileChange, DataMonitorLegacyPost]
+class DataMonitorFollow(EventDetailDataDictAccess):
+    """The other account of a following or follower event, with the profile fields a user lookup returns.
+
+    It holds the ID alone when X fails the profile lookup.
+    """
+
+    id: str
+    """The other account's X user ID."""
+
+    followed_at: Optional[datetime] = FieldInfo(alias="followedAt", default=None)
+    """X's time of the follow, on following.added & follower.added.
+
+    It is missing when X gives none, as for an account that returns to a list.
+    """
+
+    followed_at_exact: Optional[bool] = FieldInfo(alias="followedAtExact", default=None)
+    """Whether followedAt is X's exact time of this follow.
+
+    When several accounts join between 2 checks, X times the first, the second &
+    the last. Each other one holds the earliest time its follow can have, with false
+    here.
+    """
+
+    reason: Optional[Literal["unavailable", "unfollowed"]] = None
+    """Why the account left the list, on following.removed & follower.removed.
+
+    unavailable means X no longer serves the account. unfollowed means X's follow
+    check says the follow ended. It is missing when X fails the check. Xquik sends
+    no removal while X still confirms the follow.
+    """
+
+    if TYPE_CHECKING:
+        __pydantic_extra__: Dict[str, object] = FieldInfo(init=False)  # pyright: ignore[reportIncompatibleVariableOverride]
+
+        def __getattr__(self, attr: str) -> object: ...
+    else:
+        __pydantic_extra__: Dict[str, object]
+
+
+Data: TypeAlias = Union[DataMonitorPost, DataMonitorProfileChange, DataMonitorLegacyPost, DataMonitorFollow]
 
 
 class EventDetail(BaseModel):

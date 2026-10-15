@@ -33,4 +33,8 @@ EventType: TypeAlias = Literal[
     "space.started",
     "following.added",
     "following.removed",
+    "follower.added",
+    "follower.removed",
+    "profile.followers.changed",
+    "profile.following.changed",
 ]

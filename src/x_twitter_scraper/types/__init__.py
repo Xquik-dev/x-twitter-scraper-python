@@ -54,6 +54,7 @@ from .style_analyze_params import StyleAnalyzeParams as StyleAnalyzeParams
 from .style_compare_params import StyleCompareParams as StyleCompareParams
 from .x_get_article_params import XGetArticleParams as XGetArticleParams
 from .compose_create_params import ComposeCreateParams as ComposeCreateParams
+from .draft_create_response import DraftCreateResponse as DraftCreateResponse
 from .extraction_run_params import ExtractionRunParams as ExtractionRunParams
 from .monitor_create_params import MonitorCreateParams as MonitorCreateParams
 from .monitor_list_response import MonitorListResponse as MonitorListResponse

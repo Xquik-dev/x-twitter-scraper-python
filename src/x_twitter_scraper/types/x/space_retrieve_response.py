@@ -79,6 +79,9 @@ class SpaceAdmin(BaseModel):
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
     """Profile picture URL"""
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The participant's profile picture at full size"""
+
     verified_type: Optional[str] = FieldInfo(alias="verifiedType", default=None)
     """Business or Government badge type"""
 
@@ -138,6 +141,9 @@ class SpaceListener(BaseModel):
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
     """Profile picture URL"""
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The participant's profile picture at full size"""
+
     verified_type: Optional[str] = FieldInfo(alias="verifiedType", default=None)
     """Business or Government badge type"""
 
@@ -196,6 +202,9 @@ class SpaceSpeaker(BaseModel):
 
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
     """Profile picture URL"""
+
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The participant's profile picture at full size"""
 
     verified_type: Optional[str] = FieldInfo(alias="verifiedType", default=None)
     """Business or Government badge type"""

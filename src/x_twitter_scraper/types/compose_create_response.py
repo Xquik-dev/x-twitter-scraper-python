@@ -36,7 +36,7 @@ class ComposePrepareResultEngagementMultiplier(BaseModel):
     action: str
     """Human-readable published signal name."""
 
-    multiplier: Literal["Source default; production value can vary"]
+    multiplier: Literal["Source default; production value can vary", "Source default. Production value can vary."]
 
 
 class ComposePrepareResultRadarRecommendation(BaseModel):

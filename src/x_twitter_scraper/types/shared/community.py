@@ -96,6 +96,9 @@ class MembersFacepileCommunityMemberPreview(BaseModel):
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
     """Profile picture URL of the member"""
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The member's profile picture at full size"""
+
 
 MembersFacepile: TypeAlias = Union[UserProfile, MembersFacepileCommunityMemberPreview]
 

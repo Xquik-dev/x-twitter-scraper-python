@@ -381,12 +381,25 @@ class UserProfile(BaseModel):
 
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The same profile picture at full size, as the account uploaded it.
+
+    Download this one for the image.
+    """
+
     profile_sort_enabled: Optional[bool] = FieldInfo(alias="profileSortEnabled", default=None)
 
     profile_translator_type: Optional[str] = FieldInfo(alias="profileTranslatorType", default=None)
 
     protected: Optional[bool] = None
     """Whether the profile protects its posts"""
+
+    redirects_to_username: Optional[str] = FieldInfo(alias="redirectsToUsername", default=None)
+    """
+    Handle x.com sends this profile's visitors to, such as the new handle of a
+    renamed account whose old handle now holds a placeholder. Missing when x.com
+    shows the profile itself.
+    """
 
     retweeted_at: Optional[datetime] = FieldInfo(alias="retweetedAt", default=None)
     """UTC repost time with includeRetweetTimestamp.

@@ -37,9 +37,14 @@ class Monitor(BaseModel):
     """Customer-set label of the account monitor, when set."""
 
     paused_at: Optional[datetime] = FieldInfo(alias="pausedAt", default=None)
-    """When Xquik automatically paused this monitor."""
+    """When Xquik paused this account monitor."""
 
-    paused_reason: Optional[Literal["x_account_protected", "x_user_not_found"]] = FieldInfo(
+    paused_reason: Optional[Literal["insufficient_credits", "x_account_protected", "x_user_not_found"]] = FieldInfo(
         alias="pausedReason", default=None
     )
-    """Why Xquik automatically paused this monitor."""
+    """Why Xquik paused this account monitor.
+
+    `insufficient_credits` means the balance could not pay an hour, so add credits &
+    resume. The other 2 mean X stopped showing the account. Absent when the monitor
+    is active or you paused it yourself.
+    """

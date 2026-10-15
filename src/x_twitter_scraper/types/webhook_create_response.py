@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import List
+from typing import List, Optional
 from datetime import datetime
 
 from pydantic import Field as FieldInfo
@@ -25,3 +25,10 @@ class WebhookCreateResponse(BaseModel):
     """Plaintext HMAC signing secret returned only at creation."""
 
     url: str
+
+    ignored_fields: Optional[List[str]] = FieldInfo(alias="ignoredFields", default=None)
+    """Fields the request sent that this route does not read, in the order sent.
+
+    They changed nothing. The answer leaves this out when the route read every
+    field.
+    """

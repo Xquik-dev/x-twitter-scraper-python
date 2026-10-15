@@ -10,8 +10,15 @@ from typing_extensions import Literal
 import httpx
 
 from ..._files import deepcopy_with_paths
-from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from ..._utils import extract_files, path_template, maybe_transform, strip_not_given, async_maybe_transform
+from ..._types import Body, Omit, Query, Headers, NotGiven, FileTypes, SequenceNotStr, omit, not_given
+from ..._utils import (
+    extract_files,
+    path_template,
+    required_args,
+    maybe_transform,
+    strip_not_given,
+    async_maybe_transform,
+)
 from ..._compat import cached_property
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
@@ -52,11 +59,13 @@ class TicketsResource(SyncAPIResource):
         """
         return TicketsResourceWithStreamingResponse(self)
 
+    @required_args(["content", "subject"], ["attachments", "subject"])
     def create(
         self,
         *,
-        content: str,
         subject: str,
+        attachments: SequenceNotStr[FileTypes] | Omit = omit,
+        content: str | Omit = omit,
         idempotency_key: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -67,9 +76,11 @@ class TicketsResource(SyncAPIResource):
         Creates a support ticket with an initial message.
 
         Args:
-          content: Non-empty support message text.
-
           subject: Non-empty support ticket subject.
+
+          attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
+
+          content: Non-empty support message text.
 
           extra_headers: Send extra headers
 
@@ -87,10 +98,13 @@ class TicketsResource(SyncAPIResource):
             {
                 "content": content,
                 "subject": subject,
+                "attachments": attachments,
             },
             [["attachments", "<array>"]],
         )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return self._post(
@@ -213,11 +227,13 @@ class TicketsResource(SyncAPIResource):
             cast_to=TicketListResponse,
         )
 
+    @required_args(["content"], ["attachments"])
     def reply(
         self,
         id: str,
         *,
-        content: str,
+        attachments: SequenceNotStr[FileTypes] | Omit = omit,
+        content: str | Omit = omit,
         idempotency_key: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -228,6 +244,8 @@ class TicketsResource(SyncAPIResource):
         Adds a message to an existing support ticket.
 
         Args:
+          attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
+
           content: Non-empty support message text.
 
           extra_headers: Send extra headers
@@ -244,8 +262,10 @@ class TicketsResource(SyncAPIResource):
             **strip_not_given({"Idempotency-Key": idempotency_key}),
             **(extra_headers or dict[str, str | Omit]()),
         }
-        body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        body = deepcopy_with_paths({"content": content, "attachments": attachments}, [["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return self._post(
@@ -280,11 +300,13 @@ class AsyncTicketsResource(AsyncAPIResource):
         """
         return AsyncTicketsResourceWithStreamingResponse(self)
 
+    @required_args(["content", "subject"], ["attachments", "subject"])
     async def create(
         self,
         *,
-        content: str,
         subject: str,
+        attachments: SequenceNotStr[FileTypes] | Omit = omit,
+        content: str | Omit = omit,
         idempotency_key: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -295,9 +317,11 @@ class AsyncTicketsResource(AsyncAPIResource):
         Creates a support ticket with an initial message.
 
         Args:
-          content: Non-empty support message text.
-
           subject: Non-empty support ticket subject.
+
+          attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
+
+          content: Non-empty support message text.
 
           extra_headers: Send extra headers
 
@@ -315,10 +339,13 @@ class AsyncTicketsResource(AsyncAPIResource):
             {
                 "content": content,
                 "subject": subject,
+                "attachments": attachments,
             },
             [["attachments", "<array>"]],
         )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
@@ -441,11 +468,13 @@ class AsyncTicketsResource(AsyncAPIResource):
             cast_to=TicketListResponse,
         )
 
+    @required_args(["content"], ["attachments"])
     async def reply(
         self,
         id: str,
         *,
-        content: str,
+        attachments: SequenceNotStr[FileTypes] | Omit = omit,
+        content: str | Omit = omit,
         idempotency_key: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -456,6 +485,8 @@ class AsyncTicketsResource(AsyncAPIResource):
         Adds a message to an existing support ticket.
 
         Args:
+          attachments: 1 to 4 support image or video uploads. Send content, attachments or both.
+
           content: Non-empty support message text.
 
           extra_headers: Send extra headers
@@ -472,8 +503,10 @@ class AsyncTicketsResource(AsyncAPIResource):
             **strip_not_given({"Idempotency-Key": idempotency_key}),
             **(extra_headers or dict[str, str | Omit]()),
         }
-        body = deepcopy_with_paths({"content": content}, [["attachments", "<array>"]])
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        body = deepcopy_with_paths({"content": content, "attachments": attachments}, [["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return await self._post(

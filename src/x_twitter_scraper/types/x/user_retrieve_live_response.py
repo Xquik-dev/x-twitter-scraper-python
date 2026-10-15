@@ -26,6 +26,9 @@ class BroadcastPeriscopeUser(BaseModel):
     profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
     """Live video avatar URL"""
 
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """The broadcaster's avatar at full size"""
+
     username: Optional[str] = None
     """Live video username"""
 

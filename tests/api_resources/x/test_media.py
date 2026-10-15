@@ -101,6 +101,57 @@ class TestMedia:
 
         assert cast(Any, response.is_closed) is True
 
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_upload_with_file(self, client: XTwitterScraper) -> None:
+        media = client.x.media.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_upload_with_file_and_all_params(self, client: XTwitterScraper) -> None:
+        media = client.x.media.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
+            is_long_video=True,
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_upload_with_file(self, client: XTwitterScraper) -> None:
+        response = client.x.media.with_raw_response.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        media = response.parse()
+        assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_upload_with_file(self, client: XTwitterScraper) -> None:
+        with client.x.media.with_streaming_response.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            media = response.parse()
+            assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
 
 class TestAsyncMedia:
     parametrize = pytest.mark.parametrize(
@@ -176,6 +227,57 @@ class TestAsyncMedia:
         async with async_client.x.media.with_streaming_response.upload(
             account="@elonmusk",
             url="https://example.com/image.png",
+            idempotency_key="Idempotency-Key",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            media = await response.parse()
+            assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_upload_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        media = await async_client.x.media.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_upload_with_file_and_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        media = await async_client.x.media.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
+            is_long_video=True,
+            idempotency_key="Idempotency-Key",
+        )
+        assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_upload_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.media.with_raw_response.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
+            idempotency_key="Idempotency-Key",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        media = await response.parse()
+        assert_matches_type(MediaUploadResponse, media, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_upload_with_file(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.media.with_streaming_response.upload(
+            account="@elonmusk",
+            file=b"raw file contents",
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed

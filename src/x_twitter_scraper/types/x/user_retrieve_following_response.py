@@ -8,10 +8,45 @@ from ..shared.paginated_users import PaginatedUsers
 
 __all__ = [
     "UserRetrieveFollowingResponse",
+    "UserListPage",
+    "UserListPageScanLimit",
     "UserListCoverageResponse",
     "UserListCoverageResponseDiagnostic",
     "UserListCoverageResponseDiagnosticStrategy",
 ]
+
+
+class UserListPageScanLimit(BaseModel):
+    """Present on the last page of a filtered automatic read that sent no maxScan, once the list scanned 100,000 profiles across its pages.
+
+    That page is the list's last.
+    """
+
+    limit: Literal[100000]
+    """The profiles a filtered read scans of a list without maxScan."""
+
+    message: str
+    """What stopped the list & how to read further."""
+
+    rows_read: int = FieldInfo(alias="rowsRead")
+    """Profiles the list read across its pages, kept or dropped by the filters.
+
+    The last page may read past the limit.
+    """
+
+
+class UserListPage(PaginatedUsers):
+    """A relationship page.
+
+    A filtered read's last page may name the scan limit that ended it.
+    """
+
+    scan_limit: Optional[UserListPageScanLimit] = FieldInfo(alias="scanLimit", default=None)
+    """
+    Present on the last page of a filtered automatic read that sent no maxScan, once
+    the list scanned 100,000 profiles across its pages. That page is the list's
+    last.
+    """
 
 
 class UserListCoverageResponseDiagnosticStrategy(BaseModel):
@@ -88,4 +123,4 @@ class UserListCoverageResponse(PaginatedUsers):
     next_cursor: Optional[Literal[""]] = None  # type: ignore
 
 
-UserRetrieveFollowingResponse: TypeAlias = Union[PaginatedUsers, UserListCoverageResponse]
+UserRetrieveFollowingResponse: TypeAlias = Union[UserListPage, UserListCoverageResponse]
