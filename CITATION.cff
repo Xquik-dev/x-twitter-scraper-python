@@ -5,7 +5,7 @@ type: software
 authors:
   - name: Xquik
 version: 0.16.0
-date-released: 2026-10-15
+date-released: 2026-10-16
 url: https://github.com/Xquik-dev/x-twitter-scraper-python
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-python
 license: Apache-2.0

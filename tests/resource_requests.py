@@ -26,6 +26,7 @@ class RequestCall:
     template: str
     cast_to: ast.expr
     source: Path
+    call: ast.Call
 
 
 def _path_template(node: ast.expr) -> str | None:
@@ -54,4 +55,4 @@ def request_calls(resources: Path) -> Iterator[RequestCall]:
             cast_to = next((keyword.value for keyword in node.keywords if keyword.arg == "cast_to"), None)
             if template is None or cast_to is None:
                 raise UnreadableRequestError(source, node.lineno, "has a request whose path or cast_to cannot be read")
-            yield RequestCall(method, template, cast_to, source)
+            yield RequestCall(method, template, cast_to, source, node)

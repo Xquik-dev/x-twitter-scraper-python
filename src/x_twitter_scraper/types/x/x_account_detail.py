@@ -34,6 +34,4 @@ class XAccountDetail(BaseModel):
     Omitted before its first login.
     """
 
-    cookies_obtained_at: Optional[datetime] = FieldInfo(alias="cookiesObtainedAt", default=None)
-
     updated_at: Optional[datetime] = FieldInfo(alias="updatedAt", default=None)

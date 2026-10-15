@@ -40,5 +40,3 @@ class XAccount(BaseModel):
 
     connected_at: Optional[datetime] = FieldInfo(alias="connectedAt", default=None)
     """When the account last connected or reconnected."""
-
-    cookies_obtained_at: Optional[datetime] = FieldInfo(alias="cookiesObtainedAt", default=None)
