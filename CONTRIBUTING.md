@@ -149,7 +149,7 @@ XQUIK_OPENAPI_SPEC=/path/to/openapi.json uv run --locked python -m scripts.check
 
 ## API fields
 
-The check after API coverage fails when the SDK drops or adds fields the API spec does not.
+The check after API coverage fails when the SDK's fields differ from the API spec.
 For each operation the SDK implements, it compares the query parameters and JSON or multipart body fields of the request, and the JSON body of each 2xx response, at every depth.
 It reads the spec's fields through `$ref`, `allOf`, `oneOf` and `anyOf`, and the SDK's fields from the params and response types each request call names.
 Path and header parameters, free-form objects and fields under an object that allows extra properties stay out.

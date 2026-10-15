@@ -10,11 +10,14 @@ from pathlib import Path
 
 import pytest
 
-from scripts.check_api_fields import Obj, Leaf, Array, Opaque, main, sdk_shapes
-from x_twitter_scraper._constants import DEFAULT_BASE_URL
+from scripts.check_api_fields import main
 
 ROOT = Path(__file__).parents[1]
 SPEC_HELP = "Check network access, or set XQUIK_OPENAPI_SPEC to a local copy of https://xquik.com/openapi.json."
+SPEC_FIX = "Fix the spec, or set XQUIK_OPENAPI_SPEC to a valid copy of https://xquik.com/openapi.json."
+UNREADABLE_NEXT = (
+    "Name the params and response types the SDK defines, or teach scripts/check_api_fields.py the new type."
+)
 FIX_NEXT = "Fix each field above in the SDK, or list it in accepted-field-differences.json with a reason."
 REMOVE_NEXT = "Remove each difference above from accepted-field-differences.json."
 INVALID_NEXT = "Fix accepted-field-differences.json in the format CONTRIBUTING.md shows under API fields."
@@ -108,6 +111,7 @@ class Archive(BaseModel):
     anything: Any = None
     blob: Optional[ArchiveBlob] = None
     choice: Optional[ArchiveChoice] = None
+    cleared: Optional[str] = None
     items: Optional[List[ArchiveItem]] = None
     note: Optional[str] = None
     owner: Optional[ArchiveOwner] = None
@@ -371,6 +375,7 @@ SPEC: Dict[str, object] = {
                             },
                             "state": {"allOf": [{"$ref": "#/components/schemas/State"}]},
                             "gone": {"type": "null"},
+                            "cleared": {"anyOf": [{"type": "null"}]},
                             "blob": {"type": "object"},
                             "owner": {
                                 "type": "object",
@@ -540,37 +545,68 @@ def test_an_unreadable_accepted_file_fails(
     )
 
 
-@pytest.mark.parametrize(
-    "spec",
-    [
-        None,
-        {"paths": {"/trends": {"get": {"parameters": [{"$ref": "#/components/parameters/Missing"}]}}}},
-        {"paths": {"/trends": {"get": {"responses": {"200": {"content": {"application/json": {"schema": []}}}}}}}},
-    ],
-    ids=["missing", "dangling-reference", "schema-list"],
-)
-def test_an_unreadable_spec_fails(
-    spec: object, sdk_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+def test_a_missing_spec_fails(
+    sdk_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    spec_path = tmp_path / "broken.json"
-    if spec is not None:
-        spec_path.write_text(json.dumps(spec))
+    spec_path = tmp_path / "missing.json"
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     assert run(sdk_root, capsys, []) == (1, [], [f"Could not read the API spec from {spec_path}. {SPEC_HELP}"])
 
 
 @pytest.mark.parametrize(
-    "call",
+    "spec",
     [
-        'self._get("/weird", cast_to=types.Weird)',
-        'self._get("/weird", cast_to=types.RESPONSES["archive"])',
-        'self._get("/weird", options=make_request_options(query=build_query()), cast_to=object)',
-        'self._get("/weird", cast_to=types.Missing)',
+        {"paths": {"/trends": {"get": {"parameters": [{"$ref": "#/components/parameters/Missing"}]}}}},
+        {"paths": {"/trends": {"get": {"responses": {"200": {"content": {"application/json": {"schema": []}}}}}}}},
+        {"paths": {"/trends": {"$ref": "#/components/pathItems/Trends"}}},
     ],
-    ids=["plain-class", "subscript", "built-query", "missing-name"],
+    ids=["dangling-reference", "schema-list", "path-item-reference"],
+)
+def test_a_spec_with_an_unreadable_part_fails(
+    spec: object, sdk_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    spec_path = tmp_path / "broken.json"
+    spec_path.write_text(json.dumps(spec))
+    monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
+    assert run(sdk_root, capsys, []) == (
+        1,
+        [],
+        [f"The API spec from {spec_path} has a part the check cannot read. {SPEC_FIX}"],
+    )
+
+
+@pytest.mark.parametrize(
+    ("call", "problem"),
+    [
+        ('self._get("/weird", cast_to=types.Weird)', "uses the type Weird, which the check cannot read"),
+        (
+            'self._get("/weird", cast_to=types.RESPONSES["archive"])',
+            "names types.RESPONSES['archive'], which the check cannot read",
+        ),
+        ('self._get("/weird", cast_to=types.Missing)', "names types.Missing, which the check cannot find"),
+        ('self._get("/weird", cast_to=types.Archive.__name__)', "uses the type 'Archive', which the check cannot read"),
+        ('self._get("/weird", cast_to=pick(types.Archive))', "names pick(types.Archive), which the check cannot read"),
+        (
+            'self._get("/weird", options=make_request_options(query=build_query()), cast_to=object)',
+            "builds request fields with build_query(), which the check cannot read",
+        ),
+        (
+            'self._post("/weird", body=maybe_transform(types.ArchiveParams), cast_to=object)',
+            "builds request fields with maybe_transform(types.ArchiveParams), which the check cannot read",
+        ),
+    ],
+    ids=[
+        "plain-class",
+        "subscript",
+        "missing-name",
+        "string-name",
+        "wrapped-cast",
+        "built-query",
+        "one-argument-transform",
+    ],
 )
 def test_an_unreadable_type_names_its_file_and_line(
-    call: str, sdk_root: Path, capsys: pytest.CaptureFixture[str]
+    call: str, problem: str, sdk_root: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     package = next((sdk_root / "src").iterdir()).name
     (sdk_root / "src" / package / "resources" / "weird.py").write_text(
@@ -579,10 +615,7 @@ def test_an_unreadable_type_names_its_file_and_line(
     assert run(sdk_root, capsys, []) == (
         1,
         [],
-        [
-            f"src/{package}/resources/weird.py:6 has request or response types the check cannot read.",
-            "Name the params and response types the SDK defines, or teach scripts/check_api_fields.py the new type.",
-        ],
+        [f"src/{package}/resources/weird.py:6 {problem}.", UNREADABLE_NEXT],
     )
 
 
@@ -601,59 +634,138 @@ def test_an_unreadable_request_names_its_file_and_line(sdk_root: Path, capsys: p
     )
 
 
-def test_the_repository_sdk_converts_every_operation() -> None:
-    shapes = sdk_shapes(ROOT, "x_twitter_scraper", DEFAULT_BASE_URL)
-
-    trends = shapes["GET /api/v1/x/trends"]
-    assert {"at", "count", "country", "fields", "location", "omit", "woeid"} == set(trends.query.props)
-    assert isinstance(trends.response, Obj)
-    assert trends.response.props["capturedAt"].node == Leaf()
-    assert trends.response.props["capturedAt"].required is False
-    assert isinstance(trends.response.props["trends"].node, Array)
-    upload = shapes["POST /api/v1/x/media"].body
-    assert isinstance(upload, Obj)
-    assert {"account", "file", "is_long_video", "url", "Idempotency-Key"} == set(upload.props)
-    assert upload.props["file"].node == Leaf()
-    events = shapes["GET /api/v1/events"]
-    assert isinstance(events.response, Obj)
-    event_types = events.response.props["events"].node
-    assert isinstance(event_types, Array) and isinstance(event_types.items, Obj)
-    assert event_types.items.props["type"].node == Leaf(
-        frozenset(
-            {
-                "tweet.new",
-                "tweet.reply",
-                "tweet.retweet",
-                "tweet.quote",
-                "tweet.media",
-                "tweet.link",
-                "tweet.poll",
-                "tweet.mention",
-                "tweet.hashtag",
-                "tweet.longform",
-                "profile.avatar.changed",
-                "profile.banner.changed",
-                "profile.name.changed",
-                "profile.username.changed",
-                "profile.bio.changed",
-                "profile.location.changed",
-                "profile.url.changed",
-                "profile.verified.changed",
-                "profile.protected.changed",
-                "profile.pinned_tweet.changed",
-                "profile.unavailable.changed",
-                "tweet.deleted",
-                "broadcast.started",
-                "space.started",
-                "following.added",
-                "following.removed",
-                "follower.added",
-                "follower.removed",
-                "profile.followers.changed",
-                "profile.following.changed",
+REPOSITORY_SPEC: Dict[str, object] = {
+    "openapi": "3.1.0",
+    "servers": [{"url": "https://xquik.com/api/v1"}],
+    "paths": {
+        "/x/trends": {
+            "get": {
+                "parameters": [
+                    {"name": name, "in": "query", "schema": {"type": "string"}}
+                    for name in ("at", "count", "country", "fields", "location", "omit", "region", "woeid")
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": True,
+                                    "required": ["capturedAt", "trends"],
+                                    "properties": {
+                                        "capturedAt": {"type": "string", "format": "date-time"},
+                                        "trends": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "additionalProperties": True,
+                                                "required": ["name"],
+                                                "properties": {"name": {"type": "string"}},
+                                            },
+                                        },
+                                    },
+                                }
+                            }
+                        }
+                    }
+                },
             }
-        )
+        },
+        "/x/media": {
+            "post": {
+                "parameters": [
+                    {"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string"}}
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "required": ["account"],
+                                "properties": {
+                                    "account": {"type": "string"},
+                                    "caption": {"type": "string"},
+                                    "file": {"type": "string", "format": "binary"},
+                                    "is_long_video": {"type": "boolean"},
+                                    "url": {"type": "string"},
+                                },
+                            }
+                        }
+                    }
+                },
+                "responses": {"200": {"content": {"application/json": {"schema": {"type": "object"}}}}},
+            }
+        },
+        "/events": {
+            "get": {
+                "parameters": [
+                    {"name": name, "in": "query", "schema": {"type": "string"}}
+                    for name in ("cursor", "eventType", "keywordMonitorId", "limit", "monitorId")
+                ],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": True,
+                                    "required": ["events"],
+                                    "properties": {
+                                        "events": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "additionalProperties": True,
+                                                "required": ["type"],
+                                                "properties": {"type": {"type": "string", "enum": ["tweet.new"]}},
+                                            },
+                                        }
+                                    },
+                                }
+                            }
+                        }
+                    }
+                },
+            }
+        },
+        "/drafts/{id}": {
+            "delete": {
+                "parameters": [{"name": "id", "in": "path", "required": True, "schema": {"type": "string"}}],
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {"type": "object", "properties": {"deleted": {"type": "boolean"}}}
+                            }
+                        }
+                    }
+                },
+            }
+        },
+    },
+}
+
+
+def test_the_repository_sdk_types_are_compared(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = tmp_path / "repo"
+    root.mkdir()
+    (root / "src").symlink_to(ROOT / "src", target_is_directory=True)
+    (root / "accepted-field-differences.json").write_text("[]")
+    spec_path = tmp_path / "openapi.json"
+    spec_path.write_text(json.dumps(REPOSITORY_SPEC))
+    monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
+    assert main(root, "x_twitter_scraper") == 1
+    output = capsys.readouterr()
+    assert (output.out, output.err.splitlines()) == (
+        "",
+        [
+            "DELETE /api/v1/drafts/{id} response missing (body)",
+            "GET /api/v1/events response enum events[].type",
+            "GET /api/v1/x/trends request missing region",
+            "GET /api/v1/x/trends response required capturedAt",
+            "POST /api/v1/x/media request missing caption",
+            FIX_NEXT,
+        ],
     )
-    assert shapes["DELETE /api/v1/drafts/{}"].response is None
-    assert isinstance(shapes["GET /api/v1/x/users/{}"].response, Obj)
-    assert Opaque(free=True) in [prop.node for prop in shapes["GET /api/v1/x/users/{}"].response.props.values()]

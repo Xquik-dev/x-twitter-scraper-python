@@ -29,6 +29,10 @@ class RequestCall:
     call: ast.Call
 
 
+def keyword(call: ast.Call, name: str) -> ast.expr | None:
+    return next((item.value for item in call.keywords if item.arg == name), None)
+
+
 def _path_template(node: ast.expr) -> str | None:
     match node:
         case ast.Constant(value=str() as value):
@@ -52,7 +56,7 @@ def request_calls(resources: Path) -> Iterator[RequestCall]:
             if method is None:
                 continue
             template = _path_template(node.args[0]) if node.args else None
-            cast_to = next((keyword.value for keyword in node.keywords if keyword.arg == "cast_to"), None)
+            cast_to = keyword(node, "cast_to")
             if template is None or cast_to is None:
                 raise UnreadableRequestError(source, node.lineno, "has a request whose path or cast_to cannot be read")
             yield RequestCall(method, template, cast_to, source, node)

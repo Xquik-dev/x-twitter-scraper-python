@@ -3,11 +3,8 @@
 
 from __future__ import annotations
 
-import os
 import re
 import ast
-import sys
-import json
 import datetime
 import importlib
 import collections.abc
@@ -15,33 +12,42 @@ from types import ModuleType
 from typing import Any, Union, Mapping, Iterator, Optional, Sequence, cast, get_args, get_origin
 from pathlib import Path
 from dataclasses import field, dataclass
-from urllib.parse import urlsplit
 from typing_extensions import Literal, Required, Annotated, NotRequired, is_typeddict, get_type_hints
 
-from tests.resource_requests import UnreadableRequestError, request_calls
+from scripts.api_spec import (
+    ROOT,
+    METHOD_PATTERN,
+    CheckFailure,
+    ReviewedList,
+    run,
+    as_object,
+    load_spec,
+    request_key,
+    spec_source,
+    spec_operations,
+    unexpected_spec,
+    read_request_calls,
+)
+from tests.resource_requests import RequestCall, keyword
 from x_twitter_scraper._types import FileTypes
 from x_twitter_scraper._utils import PropertyInfo
 from x_twitter_scraper._compat import PYDANTIC_V1, field_outer_type, get_model_fields, field_is_required
 from x_twitter_scraper._models import BaseModel
-from scripts.check_api_coverage import (
-    ROOT,
-    DEFAULT_SPEC,
-    HTTP_METHODS,
-    SPEC_FAILURE,
-    CheckFailure,
-    as_object,
-    load_spec,
-    server_path,
-    operation_key,
-)
-from x_twitter_scraper._constants import DEFAULT_BASE_URL
 
-ACCEPTED = "accepted-field-differences.json"
 PACKAGE = "x_twitter_scraper"
 SIDES = ("request", "response")
 KINDS = ("missing", "extra", "enum", "required", "nullable")
-DIFFERENCE = re.compile(
-    f"({'|'.join(method.upper() for method in HTTP_METHODS)}) /\\S* ({'|'.join(SIDES)}) ({'|'.join(KINDS)}) \\S+"
+ACCEPTED = ReviewedList(
+    file="accepted-field-differences.json",
+    entry="difference",
+    section="API fields",
+    pattern=re.compile(f"({METHOD_PATTERN}) /\\S* ({'|'.join(SIDES)}) ({'|'.join(KINDS)}) \\S+"),
+    example="Write a method, a path, request or response, a kind and a field, such as "
+    "GET /api/v1/x/tweets/{id}/replies request extra cardName.",
+    key=str,
+)
+UNREADABLE_NEXT = (
+    "Name the params and response types the SDK defines, or teach scripts/check_api_fields.py the new type."
 )
 BODY_TYPES = ("application/json", "multipart/form-data", "application/x-www-form-urlencoded")
 UNTYPED_RESPONSES = {"NoneType", "object", "BinaryAPIResponse", "AsyncBinaryAPIResponse"}
@@ -50,8 +56,13 @@ SEQUENCES = (list, tuple, set, frozenset, collections.abc.Sequence, collections.
 
 
 @dataclass(frozen=True)
-class Opaque:
-    free: bool = False
+class Unknown:
+    pass
+
+
+@dataclass(frozen=True)
+class FreeForm:
+    pass
 
 
 @dataclass(frozen=True)
@@ -77,7 +88,8 @@ class Obj:
     open: bool = False
 
 
-Node = Union[Opaque, Leaf, Array, Obj]
+Node = Union[Unknown, FreeForm, Leaf, Array, Obj]
+OPAQUE = (Unknown, FreeForm)
 
 
 @dataclass(frozen=True)
@@ -88,30 +100,20 @@ class Shape:
     hidden: frozenset[str] = frozenset()
 
 
-MERGED: dict[tuple[int, ...], tuple[Sequence[Node], Node]] = {}
+class UnreadableTypeError(Exception):
+    def __init__(self, reason: str) -> None:
+        super().__init__(reason)
+        self.reason = reason
 
 
 def merge(nodes: Sequence[Node]) -> Node:
-    key = tuple(id(node) for node in nodes)
-    if key not in MERGED:
-        MERGED[key] = (nodes, _merge(nodes))
-    return MERGED[key][1]
-
-
-def _merge(nodes: Sequence[Node]) -> Node:
-    if any(isinstance(node, Opaque) and node.free for node in nodes):
-        return Opaque(free=True)
-    nodes = [node for node in nodes if not isinstance(node, Opaque)]
+    if nodes and all(node is nodes[0] for node in nodes):
+        return nodes[0]
+    if any(isinstance(node, FreeForm) for node in nodes):
+        return FreeForm()
     objects = [node for node in nodes if isinstance(node, Obj)]
     if objects:
-        props: dict[str, Prop] = {}
-        for name in dict.fromkeys(name for node in objects for name in node.props):
-            have = [node.props[name] for node in objects if name in node.props]
-            required = len(have) == len(objects) and all(prop.required for prop in have)
-            nullables = [prop.nullable for prop in have]
-            nullable = None if None in nullables else any(nullables)
-            props[name] = Prop(merge([prop.node for prop in have]), required, nullable)
-        return Obj(props, any(node.open for node in objects))
+        return merge_objects(objects)
     arrays = [node for node in nodes if isinstance(node, Array)]
     if arrays:
         return Array(merge([node.items for node in arrays]))
@@ -119,7 +121,18 @@ def _merge(nodes: Sequence[Node]) -> Node:
     if leaves:
         enums = [leaf.enum for leaf in leaves]
         return Leaf(None if None in enums else frozenset[str]().union(*(enum for enum in enums if enum is not None)))
-    return Opaque()
+    return Unknown()
+
+
+def merge_objects(objects: Sequence[Obj]) -> Obj:
+    props: dict[str, Prop] = {}
+    for name in dict.fromkeys(name for node in objects for name in node.props):
+        have = [node.props[name] for node in objects if name in node.props]
+        required = len(have) == len(objects) and all(prop.required for prop in have)
+        nullables = [prop.nullable for prop in have]
+        nullable = None if None in nullables else any(nullables)
+        props[name] = Prop(merge([prop.node for prop in have]), required, nullable)
+    return Obj(props, any(node.open for node in objects))
 
 
 def intersect(nodes: Sequence[Node]) -> Node:
@@ -128,7 +141,7 @@ def intersect(nodes: Sequence[Node]) -> Node:
     if not objects and arrays:
         return Array(intersect([node.items for node in arrays]))
     if not objects:
-        return next((node for node in nodes if not isinstance(node, Opaque)), Opaque())
+        return next((node for node in nodes if not isinstance(node, OPAQUE)), Unknown())
     props: dict[str, Prop] = {}
     for node in objects:
         for name, prop in node.props.items():
@@ -159,7 +172,7 @@ class Spec:
         reference = schema.get("$ref")
         if isinstance(reference, str):
             if reference in stack:
-                return Opaque(), False
+                return Unknown(), False
             target, nullable = self.node(self.resolve(reference), (*stack, reference))
             types = schema.get("type")
             return target, nullable or (isinstance(types, list) and "null" in cast(list[object], types))
@@ -169,7 +182,7 @@ class Spec:
             nullable = nullable or "null" in cast(list[object], types)
             types = [name for name in cast(list[object], types) if name != "null"]
         elif types == "null":
-            return Opaque(), True
+            return Unknown(), True
         elif types is not None:
             types = [types]
         if "allOf" in schema:
@@ -223,7 +236,7 @@ class Spec:
                 props[name] = Prop(prop_node, name in required, prop_nullable)
             return Obj(props, schema.get("additionalProperties") not in (None, False)), nullable
         if types is not None and "object" in types:
-            return Opaque(free=True), nullable
+            return FreeForm(), nullable
         if types is not None and "array" in types and "items" in schema:
             return Array(self.node(schema["items"], stack)[0]), nullable
         return Leaf(), nullable
@@ -282,75 +295,80 @@ def _normalize(name: str) -> str:
 
 def spec_shapes(document: Mapping[str, object]) -> dict[str, tuple[str, Shape]]:
     spec = Spec(document)
-    shapes: dict[str, tuple[str, Shape]] = {}
-    for path, value in as_object(document.get("paths")).items():
-        item = as_object(value)
-        for method in HTTP_METHODS:
-            if method in item:
-                operation = as_object(item[method])
-                absolute = server_path(operation.get("servers"), item.get("servers"), document.get("servers")) + path
-                shapes[operation_key(method.upper(), absolute)] = (
-                    f"{method.upper()} {absolute}",
-                    spec.shape(item, operation),
-                )
-    return shapes
+    return {
+        operation.key: (operation.label, spec.shape(operation.item, operation.spec))
+        for operation in spec_operations(document)
+    }
 
 
 class Converter:
     def __init__(self) -> None:
-        self.memo: dict[type, Node] = {}
+        self.types: dict[type, Obj] = {}
+        self.unions: dict[object, Node] = {}
 
     def node(self, annotation: object, stack: tuple[type, ...] = ()) -> tuple[Node, bool]:
         while get_origin(annotation) in (Annotated, Required, NotRequired):
             annotation = get_args(annotation)[0]
         if annotation is None or annotation is type(None):
-            return Opaque(), True
+            return Unknown(), True
         if annotation == FileTypes:
             return Leaf(), False
         origin = get_origin(annotation)
         arguments = get_args(annotation)
         if origin is Union:
             members = [member for member in arguments if member is not type(None)]
-            return merge([self.node(member, stack)[0] for member in members]), len(members) < len(arguments)
+            if annotation not in self.unions:
+                self.unions[annotation] = merge([self.node(member, stack)[0] for member in members])
+            return self.unions[annotation], len(members) < len(arguments)
         if origin is Literal:
             return Leaf(frozenset(str(item) for item in arguments if item is not None)), None in arguments
         if origin in SEQUENCES:
             return Array(self.node(arguments[0], stack)[0]), False
         if origin is not None:
-            return Opaque(free=True), False
+            return FreeForm(), False
         if any(annotation is leaf for leaf in LEAF_TYPES):
             return Leaf(), False
         if annotation is object or annotation is Any:
-            return Opaque(), False
-        kind = cast(type, annotation)
-        is_model = isinstance(annotation, type) and issubclass(kind, BaseModel)
-        if not is_model and not (isinstance(annotation, type) and is_typeddict(kind)):
-            raise TypeError(f"The check cannot read the type {annotation!r}")
-        if kind in stack:
-            return Opaque(), False
-        if kind not in self.memo:
-            self.memo[kind] = (self.model if is_model else self.typeddict)(kind, (*stack, kind))
-        return self.memo[kind], False
+            return Unknown(), False
+        if not isinstance(annotation, type):
+            raise UnreadableTypeError(f"uses the type {annotation!r}, which the check cannot read")
+        if annotation in stack:
+            return Unknown(), False
+        if annotation not in self.types:
+            self.types[annotation] = self._fields(annotation, (*stack, annotation))
+        return self.types[annotation], False
 
-    def model(self, model: type, stack: tuple[type, ...]) -> Node:
+    def _fields(self, kind: type, stack: tuple[type, ...]) -> Obj:
+        if is_typeddict(kind):
+            return self._typeddict(kind, stack)
+        if issubclass(kind, BaseModel):
+            return self._model(kind, stack)
+        raise UnreadableTypeError(f"uses the type {kind.__qualname__}, which the check cannot read")
+
+    def _model(self, model: type[BaseModel], stack: tuple[type, ...]) -> Obj:
         props: dict[str, Prop] = {}
-        for name, info in get_model_fields(cast(type[BaseModel], model)).items():
-            annotation = field_outer_type(info)
-            node, nullable = self.node(annotation, stack)
+        for name, info in get_model_fields(model).items():
+            node, nullable = self.node(field_outer_type(info), stack)
             nullable = nullable or (PYDANTIC_V1 and bool(getattr(info, "allow_none", False)))
             required = field_is_required(info)
-            props[info.alias or name] = Prop(node, required, nullable if required else (None if nullable else False))
+            props[info.alias or name] = Prop(node, required, _known_nullable(required, nullable))
         return Obj(props)
 
-    def typeddict(self, typeddict: type, stack: tuple[type, ...]) -> Node:
+    def _typeddict(self, typeddict: type, stack: tuple[type, ...]) -> Obj:
         total = bool(getattr(typeddict, "__total__", True))
         props: dict[str, Prop] = {}
         for name, annotation in get_type_hints(typeddict, include_extras=True).items():
             origin: object = get_origin(annotation)
-            required = True if origin is Required else False if origin is NotRequired else total
             node, nullable = self.node(annotation, stack)
+            required = origin is Required or (origin is not NotRequired and total)
             props[wire_name(name, annotation)] = Prop(node, required, nullable)
         return Obj(props)
+
+
+def _known_nullable(required: bool, nullable: bool) -> Optional[bool]:
+    if required or not nullable:
+        return nullable
+    return None
 
 
 def wire_name(name: str, annotation: object) -> str:
@@ -361,91 +379,98 @@ def wire_name(name: str, annotation: object) -> str:
 
 
 def _resolve(module: ModuleType, expression: ast.expr) -> object:
+    owner: object
     if isinstance(expression, ast.Name):
-        return getattr(module, expression.id)
-    if isinstance(expression, ast.Attribute):
-        return getattr(_resolve(module, expression.value), expression.attr)
-    raise ValueError(ast.unparse(expression))
-
-
-def _keyword(call: ast.Call, name: str) -> Optional[ast.expr]:
-    return next((keyword.value for keyword in call.keywords if keyword.arg == name), None)
+        owner, name = module, expression.id
+    elif isinstance(expression, ast.Attribute):
+        owner, name = _resolve(module, expression.value), expression.attr
+    else:
+        raise UnreadableTypeError(f"names {ast.unparse(expression)}, which the check cannot read")
+    if not hasattr(owner, name):
+        raise UnreadableTypeError(f"names {ast.unparse(expression)}, which the check cannot find")
+    return getattr(owner, name)
 
 
 def _sent_fields(converter: Converter, module: ModuleType, expression: Optional[ast.expr]) -> Optional[Node]:
     if isinstance(expression, ast.Await):
         expression = expression.value
-    if expression is None:
-        return None
-    if isinstance(expression, ast.Dict):
-        return Obj(
-            {str(key.value): Prop(Opaque(), False, None) for key in expression.keys if isinstance(key, ast.Constant)}
-        )
-    if (
-        not isinstance(expression, ast.Call)
-        or not isinstance(expression.func, ast.Name)
-        or expression.func.id not in ("maybe_transform", "async_maybe_transform")
-    ):
-        raise ValueError(f"The check cannot read the request fields {ast.unparse(expression)}")
-    params = _resolve(module, expression.args[1])
-    node = converter.node(params)[0]
-    sent = expression.args[0]
-    if isinstance(node, Obj) and isinstance(sent, ast.Dict) and is_typeddict(params):
-        keys = {key.value for key in sent.keys if isinstance(key, ast.Constant)}
-        hints = get_type_hints(cast(type, params), include_extras=True)
-        wires = {wire_name(name, annotation) for name, annotation in hints.items() if name in keys}
-        node = Obj({wire: prop for wire, prop in node.props.items() if wire in wires})
-    return node
-
-
-def sdk_shapes(root: Path, package: str, base_url: str) -> dict[str, Shape]:
-    converter = Converter()
-    base_path = urlsplit(base_url).path.rstrip("/")
-    resources = root / "src" / package / "resources"
-    shapes: dict[str, Shape] = {}
-    try:
-        calls = list(request_calls(resources))
-    except UnreadableRequestError as error:
-        raise CheckFailure(
-            f"{error.source.relative_to(root)}:{error.line} {error.reason}.",
-            "Fix that line. Write each request path as a string or a path_template call, and pass cast_to.",
-        ) from error
-    for call in calls:
-        relative = call.source.relative_to(resources.parent).with_suffix("")
-        module = importlib.import_module(".".join((package, *relative.parts)))
-        key = operation_key(call.method, base_path + call.template)
-        try:
-            shape = _call_shape(converter, module, call.call, call.cast_to)
-        except (AttributeError, TypeError, ValueError, IndexError) as error:
-            raise CheckFailure(
-                f"{call.source.relative_to(root)}:{call.call.lineno} has request or response types the check cannot read.",
-                "Name the params and response types the SDK defines, or teach scripts/check_api_fields.py the new type.",
-            ) from error
-        previous = shapes.get(key)
-        if previous is not None:
-            shape = Shape(
-                cast(Obj, merge([previous.query, shape.query])),
-                _merge_optional(previous.body, shape.body),
-                _merge_optional(previous.response, shape.response),
+    match expression:
+        case None:
+            return None
+        case ast.Dict(keys=entries):
+            return Obj(
+                {str(key.value): Prop(Unknown(), False, None) for key in entries if isinstance(key, ast.Constant)}
             )
-        shapes[key] = shape
-    return shapes
+        case ast.Call(func=ast.Name(id="maybe_transform" | "async_maybe_transform"), args=[sent, named]):
+            params = _resolve(module, named)
+            node = converter.node(params)[0]
+            if (
+                isinstance(node, Obj)
+                and isinstance(sent, ast.Dict)
+                and isinstance(params, type)
+                and is_typeddict(params)
+            ):
+                names = {key.value for key in sent.keys if isinstance(key, ast.Constant)}
+                hints = get_type_hints(params, include_extras=True)
+                wires = {wire_name(name, annotation) for name, annotation in hints.items() if name in names}
+                node = Obj({wire: prop for wire, prop in node.props.items() if wire in wires})
+            return node
+        case _:
+            raise UnreadableTypeError(
+                f"builds request fields with {ast.unparse(expression)}, which the check cannot read"
+            )
 
 
-def _call_shape(converter: Converter, module: ModuleType, call: ast.Call, cast_to: ast.expr) -> Shape:
-    options = _keyword(call, "options")
-    query = _sent_fields(converter, module, _keyword(options, "query")) if isinstance(options, ast.Call) else None
-    body = _sent_fields(converter, module, _keyword(call, "body"))
-    if isinstance(cast_to, ast.Call):
-        cast_to = cast_to.args[1]
-    response = None if ast.unparse(cast_to) in UNTYPED_RESPONSES else converter.node(_resolve(module, cast_to))[0]
-    return Shape(query if isinstance(query, Obj) else Obj(), body, response)
+def _response(converter: Converter, module: ModuleType, cast_to: ast.expr) -> Optional[Node]:
+    match cast_to:
+        case ast.Call(func=ast.Name(id="cast"), args=[_, target]):
+            return _response(converter, module, target)
+        case ast.Call():
+            raise UnreadableTypeError(f"names {ast.unparse(cast_to)}, which the check cannot read")
+        case _ if ast.unparse(cast_to) in UNTYPED_RESPONSES:
+            return None
+        case _:
+            return converter.node(_resolve(module, cast_to))[0]
+
+
+def _call_shape(converter: Converter, module: ModuleType, request: RequestCall) -> Shape:
+    options = keyword(request.call, "options")
+    query = _sent_fields(converter, module, keyword(options, "query")) if isinstance(options, ast.Call) else None
+    body = _sent_fields(converter, module, keyword(request.call, "body"))
+    return Shape(query if isinstance(query, Obj) else Obj(), body, _response(converter, module, request.cast_to))
 
 
 def _merge_optional(first: Optional[Node], second: Optional[Node]) -> Optional[Node]:
     if first is None or second is None:
         return first or second
     return merge([first, second])
+
+
+def sdk_shapes(root: Path, package: str) -> dict[str, Shape]:
+    converter = Converter()
+    resources = root / "src" / package / "resources"
+    shapes: dict[str, Shape] = {}
+    for request in read_request_calls(root, resources):
+        relative = request.source.relative_to(resources.parent).with_suffix("")
+        module = importlib.import_module(".".join((package, *relative.parts)))
+        try:
+            shape = _call_shape(converter, module, request)
+        except UnreadableTypeError as error:
+            raise CheckFailure(
+                f"{request.source.relative_to(root)}:{request.call.lineno} {error.reason}.", UNREADABLE_NEXT
+            ) from error
+        key = request_key(request)
+        previous = shapes.get(key)
+        shapes[key] = (
+            shape
+            if previous is None
+            else Shape(
+                merge_objects([previous.query, shape.query]),
+                _merge_optional(previous.body, shape.body),
+                _merge_optional(previous.response, shape.response),
+            )
+        )
+    return shapes
 
 
 def _join(path: str, name: str) -> str:
@@ -472,13 +497,11 @@ def compare(spec: Node, sdk: Node, path: str, out: list[tuple[str, str]]) -> Non
     elif isinstance(spec, Leaf) and isinstance(sdk, Leaf):
         if None not in (spec.enum, sdk.enum) and spec.enum != sdk.enum:
             out.append(("enum", path))
-    elif not isinstance(spec, Opaque) and not isinstance(sdk, Opaque):
+    elif not isinstance(spec, OPAQUE) and not isinstance(sdk, OPAQUE):
         out.append(("missing", path or "(body)"))
 
 
-def _visible(node: Optional[Node], hidden: frozenset[str], spec_names: set[str]) -> Optional[Node]:
-    if not isinstance(node, Obj):
-        return node
+def _visible(node: Obj, hidden: frozenset[str], spec_names: set[str]) -> Obj:
     return Obj(
         {name: prop for name, prop in node.props.items() if name in spec_names or _normalize(name) not in hidden},
         node.open,
@@ -486,10 +509,10 @@ def _visible(node: Optional[Node], hidden: frozenset[str], spec_names: set[str])
 
 
 def differences(spec: Shape, sdk: Shape) -> Iterator[tuple[str, str, str]]:
-    spec_names: set[str] = set(spec.query.props) | (set(spec.body.props) if isinstance(spec.body, Obj) else set[str]())
+    spec_names = set(spec.query.props) | (set(spec.body.props) if isinstance(spec.body, Obj) else set[str]())
     request: list[tuple[str, str]] = []
-    compare(spec.query, cast(Obj, _visible(sdk.query, spec.hidden, spec_names)), "", request)
-    body = _visible(sdk.body, spec.hidden, spec_names)
+    compare(spec.query, _visible(sdk.query, spec.hidden, spec_names), "", request)
+    body = _visible(sdk.body, spec.hidden, spec_names) if isinstance(sdk.body, Obj) else sdk.body
     if spec.body is not None and body is not None:
         compare(spec.body, body, "", request)
     elif isinstance(spec.body, Obj):
@@ -503,66 +526,23 @@ def differences(spec: Shape, sdk: Shape) -> Iterator[tuple[str, str, str]]:
     yield from (("response", kind, path) for kind, path in response)
 
 
-def _invalid(problem: str) -> CheckFailure:
-    return CheckFailure(
-        f"{ACCEPTED} is not valid. {problem}",
-        f"Fix {ACCEPTED} in the format CONTRIBUTING.md shows under API fields.",
-    )
-
-
-def read_accepted(root: Path) -> list[str]:
-    try:
-        groups: object = json.loads((root / ACCEPTED).read_bytes())
-    except OSError as error:
-        raise _invalid("The file cannot be read.") from error
-    except json.JSONDecodeError as error:
-        raise _invalid(f"Line {error.lineno} column {error.colno} breaks the JSON syntax.") from error
-    except ValueError as error:
-        raise _invalid("Its bytes are not valid text.") from error
-    if not isinstance(groups, list):
-        raise _invalid("It must be a list of groups, each with a reason and differences.")
-    accepted: list[str] = []
-    for number, group in enumerate(cast(list[object], groups), 1):
-        fields: Mapping[str, object] = cast(Mapping[str, object], group) if isinstance(group, Mapping) else {}
-        if set(fields) != {"reason", "differences"}:
-            raise _invalid(f"Group {number} must hold a reason and differences, and nothing else.")
-        reason, listed = fields["reason"], fields["differences"]
-        if not isinstance(reason, str) or not reason.strip():
-            raise _invalid(f"Group {number} needs a non-empty reason.")
-        if not isinstance(listed, list) or not listed:
-            raise _invalid(f"Group {number} needs at least 1 difference.")
-        for difference in cast(list[object], listed):
-            if not isinstance(difference, str) or not DIFFERENCE.fullmatch(difference):
-                raise _invalid(
-                    f"Group {number} lists {json.dumps(difference)}. "
-                    "Write a method, a path, request or response, a kind and a field, such as "
-                    "GET /api/v1/x/tweets/{id}/replies request extra cardName."
-                )
-            if difference in accepted:
-                raise _invalid(f"{difference} appears more than once.")
-            accepted.append(difference)
-    return accepted
-
-
-def check(spec_source: str, root: Path, package: str = PACKAGE) -> str:
-    document = load_spec(spec_source)
+def check(source: str, root: Path, package: str = PACKAGE) -> str:
+    document = load_spec(source)
     try:
         spec = spec_shapes(document)
     except (KeyError, TypeError, ValueError) as error:
-        raise CheckFailure(SPEC_FAILURE.format(source=spec_source)) from error
-    accepted = read_accepted(root)
-    sdk = sdk_shapes(root, package, DEFAULT_BASE_URL)
+        raise unexpected_spec(source) from error
+    accepted = ACCEPTED.read(root)
+    sdk = sdk_shapes(root, package)
     compared = sorted(spec.keys() & sdk.keys())
-    found = sorted(
-        {
-            f"{spec[key][0]} {side} {kind} {path}"
-            for key in compared
-            for side, kind, path in differences(spec[key][1], sdk[key])
-        }
-    )
-    unaccepted = [difference for difference in found if difference not in accepted]
+    found = {
+        f"{spec[key][0]} {side} {kind} {path}"
+        for key in compared
+        for side, kind, path in differences(spec[key][1], sdk[key])
+    }
+    unaccepted = sorted(found - accepted.keys())
     stale = [
-        f"{ACCEPTED} lists {difference}, which the check no longer finds. Remove it."
+        f"{ACCEPTED.file} lists {difference}, which the check no longer finds. Remove it."
         for difference in accepted
         if difference not in found
     ]
@@ -570,23 +550,18 @@ def check(spec_source: str, root: Path, package: str = PACKAGE) -> str:
         raise CheckFailure(
             *unaccepted,
             *stale,
-            f"Fix each field above in the SDK, or list it in {ACCEPTED} with a reason.",
+            f"Fix each field above in the SDK, or list it in {ACCEPTED.file} with a reason.",
         )
     if stale:
-        raise CheckFailure(*stale, f"Remove each difference above from {ACCEPTED}.")
+        raise CheckFailure(*stale, f"Remove each difference above from {ACCEPTED.file}.")
     return (
         f"The SDK's fields match the API for {len(compared)} operations, "
-        f"and {ACCEPTED} lists {len(accepted)} accepted differences."
+        f"and {ACCEPTED.file} lists {len(accepted)} accepted differences."
     )
 
 
 def main(root: Path = ROOT, package: str = PACKAGE) -> int:
-    try:
-        print(check(os.environ.get("XQUIK_OPENAPI_SPEC") or DEFAULT_SPEC, root, package))
-    except CheckFailure as failure:
-        print("\n".join(failure.lines), file=sys.stderr)
-        return 1
-    return 0
+    return run(lambda: check(spec_source(), root, package))
 
 
 if __name__ == "__main__":
