@@ -31,7 +31,7 @@ from x_twitter_scraper.types.x import (
     ProfileUpdateAvatarResponse,
     ProfileUpdateBannerResponse,
 )
-from x_twitter_scraper.types.event import Event, DataMonitorFollow, DataMonitorProfileChange
+from x_twitter_scraper.types.event import Event, DataMonitorFollow, DataMonitorLegacyPost, DataMonitorProfileChange
 from x_twitter_scraper.types.shared import SearchTweet, UserProfile
 from x_twitter_scraper.types.support import TicketReplyResponse, TicketCreateResponse
 from x_twitter_scraper.types.monitors import KeywordListResponse
@@ -149,14 +149,19 @@ async def test_follower_and_count_events_parse_with_their_data(asynchronous: boo
 
     assert dict(request.url.params) == {"eventType": "follower.added"}
     added, removed, changed = page.events
-    assert added.type == "follower.added"
-    assert isinstance(added.data, DataMonitorFollow)
-    assert added.data.id == "2244994945"
-    assert added.data.followed_at == datetime(2026, 10, 13, 2, 36, 54, 961000, tzinfo=timezone.utc)
-    assert added.data.followed_at_exact is True
-    assert removed.type == "follower.removed"
-    assert isinstance(removed.data, DataMonitorFollow)
-    assert removed.data.reason == "unfollowed"
+    assert (added.type, removed.type) == ("follower.added", "follower.removed")
+    if PYDANTIC_V1:
+        assert isinstance(added.data, DataMonitorLegacyPost)
+        assert added.data.to_dict()["followedAt"] == "2026-10-13T02:36:54.961Z"
+        assert isinstance(removed.data, DataMonitorLegacyPost)
+        assert removed.data.to_dict()["reason"] == "unfollowed"
+    else:
+        assert isinstance(added.data, DataMonitorFollow)
+        assert added.data.id == "2244994945"
+        assert added.data.followed_at == datetime(2026, 10, 13, 2, 36, 54, 961000, tzinfo=timezone.utc)
+        assert added.data.followed_at_exact is True
+        assert isinstance(removed.data, DataMonitorFollow)
+        assert removed.data.reason == "unfollowed"
     assert changed.type == "profile.followers.changed"
     assert isinstance(changed.data, DataMonitorProfileChange)
     assert changed.data.change == -3

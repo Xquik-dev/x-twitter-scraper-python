@@ -99,8 +99,8 @@ __all__ = [
     "DataMonitorPostTombstoneTextEntity",
     "DataMonitorPostTombstoneTextEntityRef",
     "DataMonitorProfileChange",
-    "DataMonitorFollow",
     "DataMonitorLegacyPost",
+    "DataMonitorFollow",
 ]
 
 
@@ -1273,6 +1273,29 @@ class DataMonitorProfileChange(EventDataDictAccess):
     """Profile text, flag, count, or pinned post IDs. Missing values are omitted."""
 
 
+class DataMonitorLegacyPost(EventDataDictAccess):
+    """Older stored posts remain readable. Fields can be missing or null."""
+
+    id: Optional[str] = None
+
+    author: Optional[Dict[str, object]] = None
+
+    quoted_tweet: Optional[Dict[str, object]] = None
+
+    retweeted_tweet: Optional[Dict[str, object]] = None
+
+    text: Optional[str] = None
+
+    if TYPE_CHECKING:
+        # Pydantic <2.8 rejects a value on __pydantic_extra__ at runtime.
+        # https://github.com/pydantic/pydantic/pull/9659
+        __pydantic_extra__: Dict[str, object] = FieldInfo(init=False)  # pyright: ignore[reportIncompatibleVariableOverride]
+
+        def __getattr__(self, attr: str) -> object: ...
+    else:
+        __pydantic_extra__: Dict[str, object]
+
+
 class DataMonitorFollow(EventDataDictAccess):
     """The other account of a following or follower event, with the profile fields a user lookup returns.
 
@@ -1312,30 +1335,7 @@ class DataMonitorFollow(EventDataDictAccess):
         __pydantic_extra__: Dict[str, object]
 
 
-class DataMonitorLegacyPost(EventDataDictAccess):
-    """Older stored posts remain readable. Fields can be missing or null."""
-
-    id: Optional[str] = None
-
-    author: Optional[Dict[str, object]] = None
-
-    quoted_tweet: Optional[Dict[str, object]] = None
-
-    retweeted_tweet: Optional[Dict[str, object]] = None
-
-    text: Optional[str] = None
-
-    if TYPE_CHECKING:
-        # Pydantic <2.8 rejects a value on __pydantic_extra__ at runtime.
-        # https://github.com/pydantic/pydantic/pull/9659
-        __pydantic_extra__: Dict[str, object] = FieldInfo(init=False)  # pyright: ignore[reportIncompatibleVariableOverride]
-
-        def __getattr__(self, attr: str) -> object: ...
-    else:
-        __pydantic_extra__: Dict[str, object]
-
-
-Data: TypeAlias = Union[DataMonitorPost, DataMonitorProfileChange, DataMonitorFollow, DataMonitorLegacyPost]
+Data: TypeAlias = Union[DataMonitorPost, DataMonitorProfileChange, DataMonitorLegacyPost, DataMonitorFollow]
 
 
 class Event(BaseModel):

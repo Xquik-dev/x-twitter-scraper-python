@@ -26,7 +26,7 @@ This release adds the response fields, event types and file uploads the SDK drop
 
 - Code written for 0.15.0 keeps working. No method, type, field or parameter is removed.
 - `url` and `content` are optional keyword arguments now, because `file` or `attachments` can replace them. A call with neither raises `TypeError`.
-- With Pydantic 1, `previous` and `current` of a count event read as strings, because Pydantic 1 tries `str` first.
+- With Pydantic 1, follow events still parse as `DataMonitorLegacyPost` with their fields as extras, and `previous` and `current` of a count event read as strings. Pydantic 1 takes the first union member that fits, so `DataMonitorFollow` sits last.
 
 ## 0.15.0 (2026-10-15)
 
