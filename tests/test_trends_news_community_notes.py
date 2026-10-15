@@ -4,14 +4,14 @@
 
 from __future__ import annotations
 
-from typing import Tuple, Union, TypeVar, Callable, Awaitable
+from typing import Tuple, Union
 from datetime import datetime, timezone
 from typing_extensions import Unpack
 
 import httpx
 import pytest
 
-from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
+from tests.utils import send_with_mock_transport
 from x_twitter_scraper.types import (
     XGetTrendsHistoryParams,
     XGetTrendsHistoryResponse,
@@ -27,7 +27,6 @@ from x_twitter_scraper.types.x import (
 )
 from x_twitter_scraper.types.shared import SearchTweet
 
-T = TypeVar("T")
 NotesPage = Union[CommunityNoteListContributorNotesResponse, CommunityNoteListContributorDeletedNotesResponse]
 
 TRENDS_HISTORY = {
@@ -269,38 +268,6 @@ CONTRIBUTOR_DELETED_NOTES = {
 }
 
 
-async def send(
-    sync_call: Callable[[XTwitterScraper], T],
-    async_call: Callable[[AsyncXTwitterScraper], Awaitable[T]],
-    payload: object,
-    asynchronous: bool,
-) -> Tuple[httpx.Request, T]:
-    requests: list[httpx.Request] = []
-
-    def respond(request: httpx.Request) -> httpx.Response:
-        requests.append(request)
-        return httpx.Response(200, json=payload)
-
-    transport = httpx.MockTransport(respond)
-    if asynchronous:
-        async with AsyncXTwitterScraper(
-            api_key="isolated-test",
-            http_client=httpx.AsyncClient(transport=transport),
-            _strict_response_validation=True,
-        ) as client:
-            result = await async_call(client)
-    else:
-        with XTwitterScraper(
-            api_key="isolated-test",
-            http_client=httpx.Client(transport=transport),
-            _strict_response_validation=True,
-        ) as sync_client:
-            result = sync_call(sync_client)
-    assert len(requests) == 1
-    assert requests[0].method == "GET"
-    return requests[0], result
-
-
 async def list_notes(
     method: str,
     alias: str,
@@ -309,13 +276,13 @@ async def list_notes(
     **arguments: Unpack[CommunityNoteListContributorNotesParams],
 ) -> Tuple[httpx.Request, NotesPage]:
     if method == "notes":
-        return await send(
+        return await send_with_mock_transport(
             lambda client: client.x.community_notes.list_contributor_notes(alias, **arguments),
             lambda client: client.x.community_notes.list_contributor_notes(alias, **arguments),
             payload,
             asynchronous,
         )
-    deleted_request, deleted_page = await send(
+    deleted_request, deleted_page = await send_with_mock_transport(
         lambda client: client.x.community_notes.list_contributor_deleted_notes(alias, **arguments),
         lambda client: client.x.community_notes.list_contributor_deleted_notes(alias, **arguments),
         payload,
@@ -352,7 +319,7 @@ async def test_trends_history_sends_every_filter_and_reads_the_snapshots(asynchr
         "fields": "snapshots,count",
         "omit": "location",
     }
-    request, history = await send(
+    request, history = await send_with_mock_transport(
         lambda client: client.x.get_trends_history(**arguments),
         lambda client: client.x.get_trends_history(**arguments),
         TRENDS_HISTORY,
@@ -405,7 +372,7 @@ async def test_trends_history_sends_every_filter_and_reads_the_snapshots(asynchr
 
 @pytest.mark.parametrize("asynchronous", [False, True])
 async def test_trends_history_without_filters_sends_no_query(asynchronous: bool) -> None:
-    request, history = await send(
+    request, history = await send_with_mock_transport(
         lambda client: client.x.get_trends_history(),
         lambda client: client.x.get_trends_history(),
         TRENDS_HISTORY,
@@ -430,7 +397,7 @@ async def test_trends_history_without_filters_sends_no_query(asynchronous: bool)
 )
 async def test_news_story_versions_reads_each_version(story: str, raw_path: bytes, asynchronous: bool) -> None:
     arguments: XGetNewsStoryVersionsParams = {"fields": "versions.headline", "omit": "versions.text"}
-    request, story_versions = await send(
+    request, story_versions = await send_with_mock_transport(
         lambda client: client.x.get_news_story_versions(story, **arguments),
         lambda client: client.x.get_news_story_versions(story, **arguments),
         NEWS_STORY_VERSIONS,
@@ -452,7 +419,7 @@ async def test_news_story_versions_reads_each_version(story: str, raw_path: byte
 @pytest.mark.parametrize(("alias", "raw_path"), ALIASES)
 async def test_contributor_reads_note_and_rating_counts(alias: str, raw_path: bytes, asynchronous: bool) -> None:
     arguments: CommunityNoteRetrieveContributorParams = {"fields": "alias,notesCount", "omit": "ratingsCount"}
-    request, response = await send(
+    request, response = await send_with_mock_transport(
         lambda client: client.x.community_notes.retrieve_contributor(alias, **arguments),
         lambda client: client.x.community_notes.retrieve_contributor(alias, **arguments),
         CONTRIBUTOR,

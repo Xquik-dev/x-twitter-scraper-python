@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 from typing import List, Optional
+from datetime import datetime
 
 from pydantic import Field as FieldInfo
 
@@ -67,8 +68,21 @@ class XGetTrendsResponse(BaseModel):
 
     woeid: int
 
+    captured_at: Optional[datetime] = FieldInfo(alias="capturedAt", default=None)
+    """When Xquik read this list from X.
+
+    It comes from the stored list and is never estimated.
+    """
+
     location: Optional[Location] = None
     """The place country or location named.
 
     Absent when woeid picked the place or the request named none.
+    """
+
+    requested_at: Optional[datetime] = FieldInfo(alias="requestedAt", default=None)
+    """The time at asked for, as Xquik read it.
+
+    A span such as 24h shows here as the time it counted back to. Present only with
+    at.
     """

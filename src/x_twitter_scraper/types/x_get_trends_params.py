@@ -10,6 +10,17 @@ __all__ = ["XGetTrendsParams"]
 
 
 class XGetTrendsParams(TypedDict, total=False):
+    at: str
+    """A past time, to read what was trending on Twitter then.
+
+    Takes an ISO 8601 time, a date such as 2026-10-13, or Unix seconds. A time
+    without a zone reads as UTC. It also takes a span back from now, as a number &
+    s, m, h or d. So at=24h reads what was trending on Twitter yesterday at this
+    hour, on every run of a schedule. The answer is the stored list nearest that
+    time, with its own time in capturedAt. History starts 2026-10-13 02:20 UTC. A
+    time over 24 hours from every stored list answers 400 at no charge.
+    """
+
     count: int
     """Number of trending topics to return (1-50, default 30)"""
 

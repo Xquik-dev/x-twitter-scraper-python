@@ -286,7 +286,7 @@ class Space(BaseModel):
     sharings: Optional[List[SpaceSharing]] = None
     """Posts the hosts and speakers shared in the Space, in X's order.
 
-    Only when X lists them.
+    Present only when X lists them.
     """
 
     started_at: Optional[datetime] = FieldInfo(alias="startedAt", default=None)

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.15.0 (2026-10-15)
+
+2 existing methods gain the parameter, fields and query types the API spec added.
+
+### Changes
+
+- `x.get_trends` takes `at`, a past time or a span such as `24h`, and reads what was trending on Twitter then. The response gains `captured_at`, when Xquik read the list from X, and `requested_at`, the time `at` asked for.
+- `x.spaces.search` accepts `Live` and `Upcoming` as `query_type`. They list Spaces on air now and scheduled ones, as X's Spaces search does.
+
+### Compatibility
+
+- Code written for 0.14.0 keeps working. Both changes only add.
+
 ## 0.14.0 (2026-10-15)
 
 This release adds 5 methods from the current API spec.
