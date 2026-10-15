@@ -120,7 +120,7 @@ enforce_coverage() {
 }
 
 run_check "" "Install Python 3.10.22, Python 3.14.8, and locked dependencies" \
-  "Install uv 0.13.0 and check network access, then rerun." install_dependencies
+  "Install uv 0.13.1 or newer and check network access, then rerun." install_dependencies
 run_check "lint & types" "Lint: Ruff, Pyright, Mypy, and package import" \
   "Fix the findings above. bash scripts/lint --fix repairs Ruff findings." bash scripts/lint
 run_check "REUSE" "Licensing: REUSE lint" \

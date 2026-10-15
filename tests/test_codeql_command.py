@@ -28,7 +28,7 @@ def check_version(tmp_path: Path, version: str | None) -> subprocess.CompletedPr
     )
 
 
-@pytest.mark.parametrize("version", ["2.27.0", "2.27.2", "2.100.0", "3.0.0"])
+@pytest.mark.parametrize("version", ["2.27.2", "2.27.10", "2.100.0", "3.0.0"])
 def test_supported_codeql_prints_its_version_without_analyzing(tmp_path: Path, version: str) -> None:
     result = check_version(tmp_path, version)
     assert result.returncode == 0, result.stderr
@@ -40,7 +40,7 @@ def test_supported_codeql_prints_its_version_without_analyzing(tmp_path: Path, v
     "version,message",
     [
         (None, "CodeQL CLI is missing. Install it with brew install --cask codeql, then rerun."),
-        ("2.26.9", "CodeQL CLI 2.26.9 is older than 2.27.0. Run brew upgrade --cask codeql."),
+        ("2.27.1", "CodeQL CLI 2.27.1 is older than 2.27.2. Run brew upgrade --cask codeql."),
     ],
 )
 def test_unusable_codeql_fails_with_the_next_step(tmp_path: Path, version: str | None, message: str) -> None:

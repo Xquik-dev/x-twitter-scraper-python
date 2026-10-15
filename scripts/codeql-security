@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd "$(dirname "$0")/.."
-minimum_version=2.27.0
+minimum_version=2.27.2
 codeql="${XQUIK_CODEQL_BIN:-$(command -v codeql || true)}"
 [[ -x "$codeql" ]] || { echo "CodeQL CLI is missing. Install it with brew install --cask codeql, then rerun." >&2; exit 1; }
 version=$("$codeql" version --format=terse)
