@@ -4,6 +4,8 @@
 
 import httpx
 
+DEFAULT_BASE_URL = "https://xquik.com/api/v1"
+
 RAW_RESPONSE_HEADER = "X-Stainless-Raw-Response"
 OVERRIDE_CAST_TO_HEADER = "____stainless_override_cast_to"
 

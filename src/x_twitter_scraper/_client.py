@@ -29,6 +29,7 @@ from ._utils import (
 from ._compat import cached_property
 from ._models import SecurityOptions
 from ._version import __version__
+from ._constants import DEFAULT_BASE_URL
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
 from ._exceptions import APIStatusError
 from ._base_client import (
@@ -119,7 +120,7 @@ class XTwitterScraper(SyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("X_TWITTER_SCRAPER_BASE_URL")
         if base_url is None:
-            base_url = f"https://xquik.com/api/v1"
+            base_url = DEFAULT_BASE_URL
 
         custom_headers_env = os.environ.get("X_TWITTER_SCRAPER_CUSTOM_HEADERS")
         if custom_headers_env is not None:
@@ -431,7 +432,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         if base_url is None:
             base_url = os.environ.get("X_TWITTER_SCRAPER_BASE_URL")
         if base_url is None:
-            base_url = f"https://xquik.com/api/v1"
+            base_url = DEFAULT_BASE_URL
 
         custom_headers_env = os.environ.get("X_TWITTER_SCRAPER_CUSTOM_HEADERS")
         if custom_headers_env is not None:

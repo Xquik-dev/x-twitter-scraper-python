@@ -1,0 +1,15 @@
+[
+  {
+    "reason": "Searches the Xquik docs at https://xquik.com/ask, outside the SDK base URL https://xquik.com/api/v1.",
+    "operations": ["GET /ask", "POST /ask"]
+  },
+  {
+    "reason": "Needs a dashboard sign-in cookie, which API keys and bearer tokens cannot use.",
+    "operations": [
+      "GET /api/v1/api-keys",
+      "POST /api/v1/api-keys",
+      "DELETE /api/v1/api-keys/{id}",
+      "POST /api/v1/credits/quick-topup"
+    ]
+  }
+]
