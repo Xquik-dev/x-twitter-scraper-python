@@ -12,11 +12,11 @@ Install uv 0.13.0 from its official release, then run these commands.
 ./scripts/bootstrap
 ```
 
-Validation uses Python 3.10.21 and 3.14.7 with locked dependencies.
+Validation uses Python 3.10.22 and 3.14.8 with locked dependencies.
 Install both runtimes before measuring parent coverage.
 
 ```sh
-uv python install 3.10.21 3.14.7
+uv python install 3.10.22 3.14.8
 ```
 
 Without `uv`, install `requirements-dev.lock` inside an isolated environment.
@@ -45,12 +45,12 @@ bin/check-local
 
 It runs these checks in order and stops at the first failure.
 
-1. Locked dependency install for Python 3.10.21 and 3.14.7.
+1. Locked dependency install for Python 3.10.22 and 3.14.8.
 2. Ruff, Pyright, Mypy, and a package import.
 3. REUSE licensing lint.
 4. Reproducible wheel and source archive builds.
 5. Package metadata with twine.
-6. Tests on Python 3.10.21 and 3.14.7 with Pydantic 1 and 2.
+6. Tests on Python 3.10.22 and 3.14.8 with Pydantic 1 and 2.
 7. Coverage of the parent revision, then coverage of your change against it.
 8. A `pip-audit` scan of the locked dependencies, judged by the audit policy below.
 9. CodeQL security-extended queries. CodeQL is mandatory.
@@ -78,7 +78,7 @@ brew install --cask codeql
 ```
 
 Set `XQUIK_CODEQL_BIN` to use another CodeQL executable.
-The analysis downloads the pinned `codeql/python-queries@1.8.10` pack when it is missing.
+The analysis downloads the pinned `codeql/python-queries@1.8.12` pack when it is missing.
 
 The dependency audit checks every pin in `uv.lock`.
 That includes pins for other platforms and both Pydantic groups.

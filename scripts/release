@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd "$(dirname "$0")/.."
-export UV_PYTHON=3.14.7
+export UV_PYTHON=3.14.8
 trap 'status=$?; if ((status)); then printf "{\"status\":\"failed\",\"exitCode\":%d}\n" "$status"; fi' EXIT
 mode="${1:?Use prepare, publish, or verify.}"
 shift
