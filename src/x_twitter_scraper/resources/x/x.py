@@ -55,8 +55,10 @@ from ...types import (
     x_search_places_params,
     x_get_home_timeline_params,
     x_get_notifications_params,
+    x_get_trends_history_params,
     x_autocomplete_search_params,
     x_get_trend_locations_params,
+    x_get_news_story_versions_params,
 )
 from .profile import (
     ProfileResource,
@@ -141,6 +143,14 @@ from .write_actions import (
     AsyncWriteActionsResourceWithStreamingResponse,
 )
 from ..._base_client import make_request_options
+from .community_notes import (
+    CommunityNotesResource,
+    AsyncCommunityNotesResource,
+    CommunityNotesResourceWithRawResponse,
+    AsyncCommunityNotesResourceWithRawResponse,
+    CommunityNotesResourceWithStreamingResponse,
+    AsyncCommunityNotesResourceWithStreamingResponse,
+)
 from .communities.communities import (
     CommunitiesResource,
     AsyncCommunitiesResource,
@@ -171,8 +181,10 @@ from ...types.shared.paginated_tweets import PaginatedTweets
 from ...types.x_get_hashflags_response import XGetHashflagsResponse
 from ...types.x_search_places_response import XSearchPlacesResponse
 from ...types.x_get_notifications_response import XGetNotificationsResponse
+from ...types.x_get_trends_history_response import XGetTrendsHistoryResponse
 from ...types.x_autocomplete_search_response import XAutocompleteSearchResponse
 from ...types.x_get_trend_locations_response import XGetTrendLocationsResponse
+from ...types.x_get_news_story_versions_response import XGetNewsStoryVersionsResponse
 
 __all__ = ["XResource", "AsyncXResource"]
 
@@ -252,6 +264,11 @@ class XResource(SyncAPIResource):
     def broadcasts(self) -> BroadcastsResource:
         """X live video details, watch counts, and broadcaster"""
         return BroadcastsResource(self._client)
+
+    @cached_property
+    def community_notes(self) -> CommunityNotesResource:
+        """Community Notes contributors, their notes, ratings & deleted notes"""
+        return CommunityNotesResource(self._client)
 
     @cached_property
     def spaces(self) -> SpacesResource:
@@ -513,6 +530,62 @@ class XResource(SyncAPIResource):
             cast_to=PaginatedTweets,
         )
 
+    def get_news_story_versions(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetNewsStoryVersionsResponse:
+        """
+        Returns each version X wrote of 1 news story, the AI trends x.com shows under
+        Explore & News. Each version has its time, headline & text, oldest first, so you
+        can see how the story changed. X lists every version at once. Each request costs
+        1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/news/{id}/versions", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    x_get_news_story_versions_params.XGetNewsStoryVersionsParams,
+                ),
+            ),
+            cast_to=XGetNewsStoryVersionsResponse,
+        )
+
     def get_notifications(
         self,
         *,
@@ -700,6 +773,113 @@ class XResource(SyncAPIResource):
             cast_to=XGetTrendsResponse,
         )
 
+    def get_trends_history(
+        self,
+        *,
+        count: int | Omit = omit,
+        country: str | Omit = omit,
+        cursor: str | Omit = omit,
+        every: str | Omit = omit,
+        fields: str | Omit = omit,
+        from_: str | Omit = omit,
+        limit: int | Omit = omit,
+        location: str | Omit = omit,
+        omit: str | Omit = omit,
+        to: str | Omit = omit,
+        woeid: int | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetTrendsHistoryResponse:
+        """
+        Returns the Twitter trends archive of a place, as the lists X showed there over
+        a range of time. Use it for trending on Twitter yesterday, last week or any day
+        since 2026-10-13 02:20 UTC. Xquik stores 1 list per place every 5 minutes and
+        keeps it for 25 months. Pick the place by woeid, country or location name, the
+        range with from & to, and the step with every. from & to take a time or a span
+        back from now, such as 7d, so a schedule can read the last day on every run.
+        Each step returns the first list stored in it, with its own time. Each returned
+        list costs 1 credit, so 24 lists cost 24 credits. A step with no stored list
+        returns none and costs nothing. 1 request returns 24 lists, or up to 100 with
+        limit.
+
+        Args:
+          count: Trends to return in each list, from 1 to 50.
+
+          country: Country to read trends history for, by name or 2-letter code, such as Turkey or
+              TR. Case insensitive.
+
+          cursor: The next_cursor of the page before, for the next lists. It keeps the time of the
+              first request, so a range of spans stays the same on every page.
+
+          every: Step between 2 returned lists, as a number & m, h or d, such as 15m, 1h or 1d. A
+              step under 5m returns every stored list.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          from_: Start of the range. Takes an ISO 8601 time, a date such as 2026-10-13, or Unix
+              seconds. A time without a zone reads as UTC. It also takes a span back from now,
+              as a number & s, m, h or d, so from=7d reads the last 7 days. Defaults to 24
+              hours before to. History starts 2026-10-13 02:20 UTC, and a range that begins
+              earlier returns the stored part. Alias sinceTime.
+
+          limit: Maximum lists 1 request returns & charges. A wider range gives a next_cursor for
+              the next lists. A low credit balance can return fewer.
+
+          location: Town or country to read trends history for, by name, such as Istanbul. Case
+              insensitive. Add country when 2 towns share a name. /x/trends/locations lists
+              every name.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          to: End of the range, which it leaves out. Takes the forms of from, so from=2d with
+              to=1d reads the day before the last 24 hours. Defaults to now. Alias untilTime.
+
+          woeid: WOEID of the place, such as 1 for Worldwide or 23424969 for Turkey. It wins over
+              country & location. /x/trends/locations lists every WOEID.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._get(
+            "/x/trends/history",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "count": count,
+                        "country": country,
+                        "cursor": cursor,
+                        "every": every,
+                        "fields": fields,
+                        "from_": from_,
+                        "limit": limit,
+                        "location": location,
+                        "omit": omit,
+                        "to": to,
+                        "woeid": woeid,
+                    },
+                    x_get_trends_history_params.XGetTrendsHistoryParams,
+                ),
+            ),
+            cast_to=XGetTrendsHistoryResponse,
+        )
+
     def search_places(
         self,
         *,
@@ -838,6 +1018,11 @@ class AsyncXResource(AsyncAPIResource):
     def broadcasts(self) -> AsyncBroadcastsResource:
         """X live video details, watch counts, and broadcaster"""
         return AsyncBroadcastsResource(self._client)
+
+    @cached_property
+    def community_notes(self) -> AsyncCommunityNotesResource:
+        """Community Notes contributors, their notes, ratings & deleted notes"""
+        return AsyncCommunityNotesResource(self._client)
 
     @cached_property
     def spaces(self) -> AsyncSpacesResource:
@@ -1099,6 +1284,62 @@ class AsyncXResource(AsyncAPIResource):
             cast_to=PaginatedTweets,
         )
 
+    async def get_news_story_versions(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetNewsStoryVersionsResponse:
+        """
+        Returns each version X wrote of 1 news story, the AI trends x.com shows under
+        Explore & News. Each version has its time, headline & text, oldest first, so you
+        can see how the story changed. X lists every version at once. Each request costs
+        1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/news/{id}/versions", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    x_get_news_story_versions_params.XGetNewsStoryVersionsParams,
+                ),
+            ),
+            cast_to=XGetNewsStoryVersionsResponse,
+        )
+
     async def get_notifications(
         self,
         *,
@@ -1286,6 +1527,113 @@ class AsyncXResource(AsyncAPIResource):
             cast_to=XGetTrendsResponse,
         )
 
+    async def get_trends_history(
+        self,
+        *,
+        count: int | Omit = omit,
+        country: str | Omit = omit,
+        cursor: str | Omit = omit,
+        every: str | Omit = omit,
+        fields: str | Omit = omit,
+        from_: str | Omit = omit,
+        limit: int | Omit = omit,
+        location: str | Omit = omit,
+        omit: str | Omit = omit,
+        to: str | Omit = omit,
+        woeid: int | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> XGetTrendsHistoryResponse:
+        """
+        Returns the Twitter trends archive of a place, as the lists X showed there over
+        a range of time. Use it for trending on Twitter yesterday, last week or any day
+        since 2026-10-13 02:20 UTC. Xquik stores 1 list per place every 5 minutes and
+        keeps it for 25 months. Pick the place by woeid, country or location name, the
+        range with from & to, and the step with every. from & to take a time or a span
+        back from now, such as 7d, so a schedule can read the last day on every run.
+        Each step returns the first list stored in it, with its own time. Each returned
+        list costs 1 credit, so 24 lists cost 24 credits. A step with no stored list
+        returns none and costs nothing. 1 request returns 24 lists, or up to 100 with
+        limit.
+
+        Args:
+          count: Trends to return in each list, from 1 to 50.
+
+          country: Country to read trends history for, by name or 2-letter code, such as Turkey or
+              TR. Case insensitive.
+
+          cursor: The next_cursor of the page before, for the next lists. It keeps the time of the
+              first request, so a range of spans stays the same on every page.
+
+          every: Step between 2 returned lists, as a number & m, h or d, such as 15m, 1h or 1d. A
+              step under 5m returns every stored list.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          from_: Start of the range. Takes an ISO 8601 time, a date such as 2026-10-13, or Unix
+              seconds. A time without a zone reads as UTC. It also takes a span back from now,
+              as a number & s, m, h or d, so from=7d reads the last 7 days. Defaults to 24
+              hours before to. History starts 2026-10-13 02:20 UTC, and a range that begins
+              earlier returns the stored part. Alias sinceTime.
+
+          limit: Maximum lists 1 request returns & charges. A wider range gives a next_cursor for
+              the next lists. A low credit balance can return fewer.
+
+          location: Town or country to read trends history for, by name, such as Istanbul. Case
+              insensitive. Add country when 2 towns share a name. /x/trends/locations lists
+              every name.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          to: End of the range, which it leaves out. Takes the forms of from, so from=2d with
+              to=1d reads the day before the last 24 hours. Defaults to now. Alias untilTime.
+
+          woeid: WOEID of the place, such as 1 for Worldwide or 23424969 for Turkey. It wins over
+              country & location. /x/trends/locations lists every WOEID.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._get(
+            "/x/trends/history",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "count": count,
+                        "country": country,
+                        "cursor": cursor,
+                        "every": every,
+                        "fields": fields,
+                        "from_": from_,
+                        "limit": limit,
+                        "location": location,
+                        "omit": omit,
+                        "to": to,
+                        "woeid": woeid,
+                    },
+                    x_get_trends_history_params.XGetTrendsHistoryParams,
+                ),
+            ),
+            cast_to=XGetTrendsHistoryResponse,
+        )
+
     async def search_places(
         self,
         *,
@@ -1365,6 +1713,9 @@ class XResourceWithRawResponse:
         self.get_home_timeline = to_raw_response_wrapper(
             x.get_home_timeline,
         )
+        self.get_news_story_versions = to_raw_response_wrapper(
+            x.get_news_story_versions,
+        )
         self.get_notifications = to_raw_response_wrapper(
             x.get_notifications,
         )
@@ -1373,6 +1724,9 @@ class XResourceWithRawResponse:
         )
         self.get_trends = to_raw_response_wrapper(
             x.get_trends,
+        )
+        self.get_trends_history = to_raw_response_wrapper(
+            x.get_trends_history,
         )
         self.search_places = to_raw_response_wrapper(
             x.search_places,
@@ -1454,6 +1808,11 @@ class XResourceWithRawResponse:
         return BroadcastsResourceWithRawResponse(self._x.broadcasts)
 
     @cached_property
+    def community_notes(self) -> CommunityNotesResourceWithRawResponse:
+        """Community Notes contributors, their notes, ratings & deleted notes"""
+        return CommunityNotesResourceWithRawResponse(self._x.community_notes)
+
+    @cached_property
     def spaces(self) -> SpacesResourceWithRawResponse:
         """X Space details, host, and speakers"""
         return SpacesResourceWithRawResponse(self._x.spaces)
@@ -1475,6 +1834,9 @@ class AsyncXResourceWithRawResponse:
         self.get_home_timeline = async_to_raw_response_wrapper(
             x.get_home_timeline,
         )
+        self.get_news_story_versions = async_to_raw_response_wrapper(
+            x.get_news_story_versions,
+        )
         self.get_notifications = async_to_raw_response_wrapper(
             x.get_notifications,
         )
@@ -1483,6 +1845,9 @@ class AsyncXResourceWithRawResponse:
         )
         self.get_trends = async_to_raw_response_wrapper(
             x.get_trends,
+        )
+        self.get_trends_history = async_to_raw_response_wrapper(
+            x.get_trends_history,
         )
         self.search_places = async_to_raw_response_wrapper(
             x.search_places,
@@ -1564,6 +1929,11 @@ class AsyncXResourceWithRawResponse:
         return AsyncBroadcastsResourceWithRawResponse(self._x.broadcasts)
 
     @cached_property
+    def community_notes(self) -> AsyncCommunityNotesResourceWithRawResponse:
+        """Community Notes contributors, their notes, ratings & deleted notes"""
+        return AsyncCommunityNotesResourceWithRawResponse(self._x.community_notes)
+
+    @cached_property
     def spaces(self) -> AsyncSpacesResourceWithRawResponse:
         """X Space details, host, and speakers"""
         return AsyncSpacesResourceWithRawResponse(self._x.spaces)
@@ -1585,6 +1955,9 @@ class XResourceWithStreamingResponse:
         self.get_home_timeline = to_streamed_response_wrapper(
             x.get_home_timeline,
         )
+        self.get_news_story_versions = to_streamed_response_wrapper(
+            x.get_news_story_versions,
+        )
         self.get_notifications = to_streamed_response_wrapper(
             x.get_notifications,
         )
@@ -1593,6 +1966,9 @@ class XResourceWithStreamingResponse:
         )
         self.get_trends = to_streamed_response_wrapper(
             x.get_trends,
+        )
+        self.get_trends_history = to_streamed_response_wrapper(
+            x.get_trends_history,
         )
         self.search_places = to_streamed_response_wrapper(
             x.search_places,
@@ -1674,6 +2050,11 @@ class XResourceWithStreamingResponse:
         return BroadcastsResourceWithStreamingResponse(self._x.broadcasts)
 
     @cached_property
+    def community_notes(self) -> CommunityNotesResourceWithStreamingResponse:
+        """Community Notes contributors, their notes, ratings & deleted notes"""
+        return CommunityNotesResourceWithStreamingResponse(self._x.community_notes)
+
+    @cached_property
     def spaces(self) -> SpacesResourceWithStreamingResponse:
         """X Space details, host, and speakers"""
         return SpacesResourceWithStreamingResponse(self._x.spaces)
@@ -1695,6 +2076,9 @@ class AsyncXResourceWithStreamingResponse:
         self.get_home_timeline = async_to_streamed_response_wrapper(
             x.get_home_timeline,
         )
+        self.get_news_story_versions = async_to_streamed_response_wrapper(
+            x.get_news_story_versions,
+        )
         self.get_notifications = async_to_streamed_response_wrapper(
             x.get_notifications,
         )
@@ -1703,6 +2087,9 @@ class AsyncXResourceWithStreamingResponse:
         )
         self.get_trends = async_to_streamed_response_wrapper(
             x.get_trends,
+        )
+        self.get_trends_history = async_to_streamed_response_wrapper(
+            x.get_trends_history,
         )
         self.search_places = async_to_streamed_response_wrapper(
             x.search_places,
@@ -1782,6 +2169,11 @@ class AsyncXResourceWithStreamingResponse:
     def broadcasts(self) -> AsyncBroadcastsResourceWithStreamingResponse:
         """X live video details, watch counts, and broadcaster"""
         return AsyncBroadcastsResourceWithStreamingResponse(self._x.broadcasts)
+
+    @cached_property
+    def community_notes(self) -> AsyncCommunityNotesResourceWithStreamingResponse:
+        """Community Notes contributors, their notes, ratings & deleted notes"""
+        return AsyncCommunityNotesResourceWithStreamingResponse(self._x.community_notes)
 
     @cached_property
     def spaces(self) -> AsyncSpacesResourceWithStreamingResponse:

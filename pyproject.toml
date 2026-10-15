@@ -1,6 +1,6 @@
 [project]
 name = "x_twitter_scraper"
-version = "0.13.1"
+version = "0.14.0"
 description = "X API & Twitter API alternative for Python. Scrape Twitter with a typed Twitter scraper & tweet scraper. Python SDK for Twitter search, followers, webhooks & X automation through Xquik. Not affiliated with X Corp."
 dynamic = ["readme"]
 license = "Apache-2.0"

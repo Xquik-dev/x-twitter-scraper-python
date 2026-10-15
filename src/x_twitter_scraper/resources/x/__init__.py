@@ -130,6 +130,14 @@ from .write_actions import (
     WriteActionsResourceWithStreamingResponse,
     AsyncWriteActionsResourceWithStreamingResponse,
 )
+from .community_notes import (
+    CommunityNotesResource,
+    AsyncCommunityNotesResource,
+    CommunityNotesResourceWithRawResponse,
+    AsyncCommunityNotesResourceWithRawResponse,
+    CommunityNotesResourceWithStreamingResponse,
+    AsyncCommunityNotesResourceWithStreamingResponse,
+)
 from .account_connection_attempts import (
     AccountConnectionAttemptsResource,
     AsyncAccountConnectionAttemptsResource,
@@ -244,6 +252,12 @@ __all__ = [
     "AsyncBroadcastsResourceWithRawResponse",
     "BroadcastsResourceWithStreamingResponse",
     "AsyncBroadcastsResourceWithStreamingResponse",
+    "CommunityNotesResource",
+    "AsyncCommunityNotesResource",
+    "CommunityNotesResourceWithRawResponse",
+    "AsyncCommunityNotesResourceWithRawResponse",
+    "CommunityNotesResourceWithStreamingResponse",
+    "AsyncCommunityNotesResourceWithStreamingResponse",
     "SpacesResource",
     "AsyncSpacesResource",
     "SpacesResourceWithRawResponse",

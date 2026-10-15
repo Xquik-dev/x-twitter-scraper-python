@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.14.0 (2026-10-15)
+
+This release adds 5 methods from the current API spec.
+The SDK now covers 180 of the 186 spec operations. The other 6 search the Xquik docs or need a dashboard sign-in, so the SDK leaves them out.
+
+### New methods
+
+- `x.get_trends_history` reads the trends X showed for a place over a range of time. It takes `from_` for the API's `from` parameter, because `from` is a Python keyword.
+- `x.get_news_story_versions` reads each version X wrote of a news story, oldest first.
+- `x.community_notes` is a new resource with `retrieve_contributor`, `list_contributor_notes` and `list_contributor_deleted_notes`. They read a Community Notes contributor's note and rating counts, the notes they wrote with their posts, and the notes they deleted.
+
+### Compatibility
+
+- Code written for 0.13 keeps working. No existing method, type or parameter changed.
+
 ## 0.13.1 (2026-10-14)
 
 The API and its behavior are the same as in 0.13.0.
