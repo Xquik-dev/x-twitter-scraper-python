@@ -14,12 +14,12 @@ __all__ = ["ProfileUpdateAvatarParams"]
 
 class ProfileUpdateAvatarParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or ID) receiving avatar from URL"""
+    """X account (@username or ID) whose avatar to update"""
+
+    file: FileTypes
+    """Avatar image (max 15 MiB)"""
 
     url: str
     """HTTPS URL to the avatar image to download"""
 
     idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]
-
-    file: FileTypes
-    """Avatar image (max 15 MiB)"""

@@ -14,21 +14,19 @@ __all__ = ["MediaUploadParams"]
 
 class MediaUploadParams(TypedDict, total=False):
     account: Required[str]
-    """X account (@username or ID) uploading media from URL"""
-
-    url: str
-    """HTTPS URL to download and upload as media, up to 15 MB.
-
-    Another scheme gets 400 `invalid_media_url`.
-    """
-
-    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]
+    """X account (@username or ID) uploading media"""
 
     file: FileTypes
     """Media file to upload, up to 15 MB.
-
     A larger file gets 413 `media_too_large` before any account lookup.
     """
 
     is_long_video: bool
     """Set true only for video/mp4 multipart uploads longer than 140 seconds."""
+
+    url: str
+    """HTTPS URL to download and upload as media, up to 15 MB.
+    Another scheme gets 400 `invalid_media_url`.
+    """
+
+    idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]

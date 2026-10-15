@@ -13,10 +13,10 @@ __all__ = ["TicketReplyParams"]
 
 
 class TicketReplyParams(TypedDict, total=False):
+    attachments: SequenceNotStr[FileTypes]
+    """1 to 4 support image or video uploads."""
+
     content: Annotated[str, PropertyInfo(alias="body")]
     """Non-empty support message text."""
 
     idempotency_key: Annotated[str, PropertyInfo(alias="Idempotency-Key")]
-
-    attachments: SequenceNotStr[FileTypes]
-    """1 to 4 support image or video uploads."""

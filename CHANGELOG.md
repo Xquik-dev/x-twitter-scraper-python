@@ -8,8 +8,8 @@ This release adds the response fields, event types and file uploads the SDK drop
 
 - User profiles return `profile_picture_original` and `redirects_to_username`. Space participants, broadcasters, job accounts, article authors, Community member previews and search suggestions return `profile_picture_original`.
 - The links and accounts in tombstone and interstitial notices return `screen_name` and `text`.
-- `EventType` adds `follower.added`, `follower.removed`, `profile.followers.changed` and `profile.following.changed`. Monitors, keyword monitors, webhooks and events take and return them.
-- Event data gains the `DataMonitorFollow` variant for following and follower events, with `followed_at`, `followed_at_exact` and `reason`. Profile change data gains `change`, and its `previous` and `current` take counts.
+- `EventType` adds `follower.added`, `follower.removed`, `profile.followers.changed` and `profile.following.changed`. Account monitors, webhooks and events take and return them. Keyword monitors take the 10 post types only.
+- Event data gains the `DataMonitorFollow` variant, with `followed_at`, `followed_at_exact` and `reason`. Follow event data that carries none of them reads as `DataMonitorLegacyPost` with the same fields, so branch on `event.type` to find follow events. Profile change data gains `change`, and its `previous` and `current` take counts.
 - Account monitors return `insufficient_credits` as a `paused_reason`. Keyword monitors return `paused_at` and `paused_reason`.
 - `account.update_locale`, `drafts.create` and `webhooks.create` return `ignored_fields`. `drafts.create` returns `DraftCreateResponse`, a `DraftDetail` subclass.
 - Follower, following, verified follower and List reads return `UserListPage`, a `PaginatedUsers` subclass with `scan_limit`.
@@ -18,7 +18,7 @@ This release adds the response fields, event types and file uploads the SDK drop
 
 ### File uploads
 
-- `x.media.upload`, `x.profile.update_avatar` and `x.profile.update_banner` take `file` instead of `url`. `x.media.upload` also takes `is_long_video`. A file sends a multipart request.
+- `x.media.upload`, `x.profile.update_avatar` and `x.profile.update_banner` take `file` as well as `url`. `x.media.upload` also takes `is_long_video`. A file sends a multipart request.
 - `support.tickets.create` and `support.tickets.reply` take `attachments`, 1 to 4 files.
 - The README upload sample passes the required `idempotency_key`.
 

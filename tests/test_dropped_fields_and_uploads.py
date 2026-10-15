@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Type
+from typing import Dict, List, Type, Tuple, cast
 from datetime import datetime, timezone
 
 import httpx
@@ -30,6 +30,11 @@ from x_twitter_scraper.types.x import (
     TweetGetRepliesResponse,
     ProfileUpdateAvatarResponse,
     ProfileUpdateBannerResponse,
+    list_retrieve_members_response,
+    list_retrieve_followers_response,
+    user_retrieve_followers_response,
+    user_retrieve_following_response,
+    user_retrieve_verified_followers_response,
 )
 from x_twitter_scraper.types.event import Event, DataMonitorFollow, DataMonitorLegacyPost, DataMonitorProfileChange
 from x_twitter_scraper.types.shared import SearchTweet, UserProfile
@@ -40,7 +45,6 @@ from x_twitter_scraper.types.compose_create_response import (
     ComposePrepareResultEngagementMultiplier,
 )
 from x_twitter_scraper.types.monitors.keyword_list_response import Monitor as KeywordMonitor
-from x_twitter_scraper.types.x.user_retrieve_followers_response import UserListPage
 
 AVATAR = "https://pbs.twimg.com/profile_images/example.jpg"
 FILE = ("avatar.png", b"binary-content", "image/png")
@@ -268,63 +272,70 @@ async def test_writes_report_the_fields_they_ignored(asynchronous: bool) -> None
     assert webhook.event_types == ["follower.added"]
 
 
-def multipart_fields(request: httpx.Request) -> List[bytes]:
+def multipart_parts(request: httpx.Request) -> List[Tuple[bytes, bytes]]:
     boundary = request.headers["Content-Type"].split("boundary=", 1)[1].encode()
     parts = request.content.split(b"--" + boundary)[1:-1]
-    return [part.strip(b"\r\n").split(b"\r\n\r\n", 1)[0] for part in parts]
+    return [cast(Tuple[bytes, bytes], tuple(part.strip(b"\r\n").split(b"\r\n\r\n", 1))) for part in parts]
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-async def test_media_and_profile_images_upload_as_files(asynchronous: bool) -> None:
+async def test_media_uploads_send_the_file_as_a_form(asynchronous: bool) -> None:
     request, media = await send_with_mock_transport(
         lambda client: client.x.media.upload(
-            account="@elonmusk", file=FILE, is_long_video=False, idempotency_key="upload-1"
+            account="@elonmusk", file=FILE, is_long_video=True, idempotency_key="upload-1"
         ),
         lambda client: client.x.media.upload(
-            account="@elonmusk", file=FILE, is_long_video=False, idempotency_key="upload-1"
+            account="@elonmusk", file=FILE, is_long_video=True, idempotency_key="upload-1"
         ),
         minimal(MediaUploadResponse),
         asynchronous,
         method="POST",
     )
+
     assert isinstance(media, MediaUploadResponse)
     assert request.url.path == "/api/v1/x/media"
     assert request.headers["Content-Type"].startswith("multipart/form-data; boundary=")
     assert request.headers["Idempotency-Key"] == "upload-1"
-    assert b"binary-content" in request.content
-    assert multipart_fields(request) == [
-        b'Content-Disposition: form-data; name="account"',
-        b'Content-Disposition: form-data; name="is_long_video"',
-        b'Content-Disposition: form-data; name="file"; filename="avatar.png"\r\nContent-Type: image/png',
+    assert multipart_parts(request) == [
+        (b'Content-Disposition: form-data; name="account"', b"@elonmusk"),
+        (b'Content-Disposition: form-data; name="is_long_video"', b"true"),
+        (
+            b'Content-Disposition: form-data; name="file"; filename="avatar.png"\r\nContent-Type: image/png',
+            b"binary-content",
+        ),
     ]
 
-    for path, response_type in [
-        ("/api/v1/x/profile/avatar", ProfileUpdateAvatarResponse),
-        ("/api/v1/x/profile/banner", ProfileUpdateBannerResponse),
-    ]:
-        if path.endswith("avatar"):
-            request, image = await send_with_mock_transport(
-                lambda client: client.x.profile.update_avatar(account="@elonmusk", file=FILE, idempotency_key="a"),
-                lambda client: client.x.profile.update_avatar(account="@elonmusk", file=FILE, idempotency_key="a"),
-                minimal(response_type),
-                asynchronous,
-                method="PATCH",
-            )
-        else:
-            request, image = await send_with_mock_transport(
-                lambda client: client.x.profile.update_banner(account="@elonmusk", file=FILE, idempotency_key="b"),
-                lambda client: client.x.profile.update_banner(account="@elonmusk", file=FILE, idempotency_key="b"),
-                minimal(response_type),
-                asynchronous,
-                method="PATCH",
-            )
-        assert isinstance(image, response_type)
-        assert request.url.path == path
-        assert request.headers["Content-Type"].startswith("multipart/form-data; boundary=")
-        assert multipart_fields(request) == [
-            b'Content-Disposition: form-data; name="account"',
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("kind", ["avatar", "banner"])
+async def test_profile_images_send_the_file_as_a_form(kind: str, asynchronous: bool) -> None:
+    if kind == "avatar":
+        request, image = await send_with_mock_transport(
+            lambda client: client.x.profile.update_avatar(account="@elonmusk", file=FILE, idempotency_key="a"),
+            lambda client: client.x.profile.update_avatar(account="@elonmusk", file=FILE, idempotency_key="a"),
+            minimal(ProfileUpdateAvatarResponse),
+            asynchronous,
+            method="PATCH",
+        )
+        assert isinstance(image, ProfileUpdateAvatarResponse)
+    else:
+        request, image = await send_with_mock_transport(
+            lambda client: client.x.profile.update_banner(account="@elonmusk", file=FILE, idempotency_key="b"),
+            lambda client: client.x.profile.update_banner(account="@elonmusk", file=FILE, idempotency_key="b"),
+            minimal(ProfileUpdateBannerResponse),
+            asynchronous,
+            method="PATCH",
+        )
+        assert isinstance(image, ProfileUpdateBannerResponse)
+
+    assert request.url.path == f"/api/v1/x/profile/{kind}"
+    assert multipart_parts(request) == [
+        (b'Content-Disposition: form-data; name="account"', b"@elonmusk"),
+        (
             b'Content-Disposition: form-data; name="file"; filename="avatar.png"\r\nContent-Type: image/png',
-        ]
+            b"binary-content",
+        ),
+    ]
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
@@ -345,19 +356,24 @@ async def test_url_uploads_still_send_json(asynchronous: bool) -> None:
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-async def test_support_tickets_take_attachments(asynchronous: bool) -> None:
+async def test_support_tickets_send_attachments_under_their_plain_name(asynchronous: bool) -> None:
     request, ticket = await send_with_mock_transport(
-        lambda client: client.support.tickets.create(subject="Billing", attachments=[FILE]),
-        lambda client: client.support.tickets.create(subject="Billing", attachments=[FILE]),
+        lambda client: client.support.tickets.create(subject="Billing", attachments=[FILE, FILE]),
+        lambda client: client.support.tickets.create(subject="Billing", attachments=[FILE, FILE]),
         minimal(TicketCreateResponse),
         asynchronous,
         method="POST",
     )
     assert isinstance(ticket, TicketCreateResponse)
     assert request.headers["Content-Type"].startswith("multipart/form-data; boundary=")
-    assert multipart_fields(request) == [
-        b'Content-Disposition: form-data; name="subject"',
-        b'Content-Disposition: form-data; name="attachments[]"; filename="avatar.png"\r\nContent-Type: image/png',
+    attachment = (
+        b'Content-Disposition: form-data; name="attachments"; filename="avatar.png"\r\nContent-Type: image/png',
+        b"binary-content",
+    )
+    assert multipart_parts(request) == [
+        (b'Content-Disposition: form-data; name="subject"', b"Billing"),
+        attachment,
+        attachment,
     ]
 
     request, reply = await send_with_mock_transport(
@@ -369,9 +385,9 @@ async def test_support_tickets_take_attachments(asynchronous: bool) -> None:
     )
     assert isinstance(reply, TicketReplyResponse)
     assert request.url.path == "/api/v1/support/tickets/7/messages"
-    assert multipart_fields(request) == [
-        b'Content-Disposition: form-data; name="body"',
-        b'Content-Disposition: form-data; name="attachments[]"; filename="avatar.png"\r\nContent-Type: image/png',
+    assert multipart_parts(request) == [
+        (b'Content-Disposition: form-data; name="body"', b"Here is the receipt."),
+        attachment,
     ]
 
 
@@ -393,24 +409,69 @@ async def test_space_participants_keep_the_full_size_picture(asynchronous: bool)
     assert response.space.admins[0].profile_picture_original == AVATAR
 
 
-@pytest.mark.parametrize("asynchronous", [False, True])
-async def test_long_reads_say_where_they_stopped(asynchronous: bool) -> None:
-    scan_limit = {
-        "limit": 100000,
-        "rowsRead": 100000,
-        "message": "Stopped at the scan limit of 100,000 profiles. Read the list again with a higher maxScan to read further.",
-    }
-    _, followers = await send_with_mock_transport(
-        lambda client: client.x.users.retrieve_followers("44196397", bio_contains="founder"),
-        lambda client: client.x.users.retrieve_followers("44196397", bio_contains="founder"),
-        {"users": [], "has_next_page": False, "next_cursor": "", "scanLimit": scan_limit},
-        asynchronous,
-    )
-    assert isinstance(followers, UserListPage)
-    assert followers.scan_limit is not None
-    assert (followers.scan_limit.limit, followers.scan_limit.rows_read) == (100000, 100000)
-    assert followers.scan_limit.message.startswith("Stopped at the scan limit of 100,000 profiles.")
+SCAN_LIMIT = {
+    "limit": 100000,
+    "rowsRead": 100000,
+    "message": "Stopped at the scan limit of 100,000 profiles. Read the list again with a higher maxScan to read further.",
+}
+USER_LIST_PAGES = (
+    user_retrieve_followers_response.UserListPage,
+    user_retrieve_following_response.UserListPage,
+    user_retrieve_verified_followers_response.UserListPage,
+    list_retrieve_followers_response.UserListPage,
+    list_retrieve_members_response.UserListPage,
+)
+SCAN_PAGE: Dict[str, object] = {"users": [], "has_next_page": False, "next_cursor": "", "scanLimit": SCAN_LIMIT}
 
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+@pytest.mark.parametrize("read", ["followers", "following", "verified_followers", "list_followers", "list_members"])
+async def test_relationship_reads_say_where_they_stopped(read: str, asynchronous: bool) -> None:
+    if read == "followers":
+        request, page = await send_with_mock_transport(
+            lambda client: client.x.users.retrieve_followers("44196397", bio_contains="founder"),
+            lambda client: client.x.users.retrieve_followers("44196397", bio_contains="founder"),
+            SCAN_PAGE,
+            asynchronous,
+        )
+    elif read == "following":
+        request, page = await send_with_mock_transport(
+            lambda client: client.x.users.retrieve_following("44196397", bio_contains="founder"),
+            lambda client: client.x.users.retrieve_following("44196397", bio_contains="founder"),
+            SCAN_PAGE,
+            asynchronous,
+        )
+    elif read == "verified_followers":
+        request, page = await send_with_mock_transport(
+            lambda client: client.x.users.retrieve_verified_followers("44196397", bio_contains="founder"),
+            lambda client: client.x.users.retrieve_verified_followers("44196397", bio_contains="founder"),
+            SCAN_PAGE,
+            asynchronous,
+        )
+    elif read == "list_followers":
+        request, page = await send_with_mock_transport(
+            lambda client: client.x.lists.retrieve_followers("1585430245762441216"),
+            lambda client: client.x.lists.retrieve_followers("1585430245762441216"),
+            SCAN_PAGE,
+            asynchronous,
+        )
+    else:
+        request, page = await send_with_mock_transport(
+            lambda client: client.x.lists.retrieve_members("1585430245762441216"),
+            lambda client: client.x.lists.retrieve_members("1585430245762441216"),
+            SCAN_PAGE,
+            asynchronous,
+        )
+
+    assert request.url.path.endswith(("/followers", "/following", "/verified-followers", "/members"))
+    assert isinstance(page, USER_LIST_PAGES)
+    assert page.scan_limit is not None
+    assert (page.scan_limit.limit, page.scan_limit.rows_read) == (100000, 100000)
+    assert page.scan_limit.message == SCAN_LIMIT["message"]
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_replies_say_when_older_replies_are_partial(asynchronous: bool) -> None:
     _, replies = await send_with_mock_transport(
         lambda client: client.x.tweets.get_replies("1"),
         lambda client: client.x.tweets.get_replies("1"),
@@ -440,12 +501,29 @@ async def test_compose_reads_both_multiplier_notes(multiplier: str, asynchronous
 
 def test_an_upload_needs_a_url_or_a_file() -> None:
     client = XTwitterScraper(api_key="isolated-test")
-    upload: Any = client.x.media.upload
+    upload = client.x.media.upload
     with pytest.raises(
         TypeError,
         match=r"Missing required arguments; Expected either \('account', 'idempotency_key' and 'url'\) or \('account', 'file' and 'idempotency_key'\) arguments to be given",
     ):
         upload(account="@elonmusk", idempotency_key="upload-3")
-    reply: Any = client.support.tickets.reply
+    reply = client.support.tickets.reply
     with pytest.raises(TypeError, match=r"Expected either \('content'\) or \('attachments'\) arguments to be given"):
         reply("7")
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_follow_events_without_follow_fields_read_as_legacy_data(asynchronous: bool) -> None:
+    event = {**minimal(Event), "type": "follower.added", "data": {"id": "2244994945", "username": "XDevelopers"}}
+    _, page = await send_with_mock_transport(
+        lambda client: client.events.list(event_type="follower.added"),
+        lambda client: client.events.list(event_type="follower.added"),
+        {"events": [event], "hasMore": False},
+        asynchronous,
+    )
+
+    found = page.events[0]
+    assert found.type == "follower.added"
+    assert isinstance(found.data, DataMonitorLegacyPost)
+    assert found.data.id == "2244994945"
+    assert found.data.to_dict()["username"] == "XDevelopers"

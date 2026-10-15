@@ -102,7 +102,9 @@ class TicketsResource(SyncAPIResource):
             },
             [["attachments", "<array>"]],
         )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return self._post(
@@ -261,7 +263,9 @@ class TicketsResource(SyncAPIResource):
             **(extra_headers or dict[str, str | Omit]()),
         }
         body = deepcopy_with_paths({"content": content, "attachments": attachments}, [["attachments", "<array>"]])
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return self._post(
@@ -339,7 +343,9 @@ class AsyncTicketsResource(AsyncAPIResource):
             },
             [["attachments", "<array>"]],
         )
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
@@ -498,7 +504,9 @@ class AsyncTicketsResource(AsyncAPIResource):
             **(extra_headers or dict[str, str | Omit]()),
         }
         body = deepcopy_with_paths({"content": content, "attachments": attachments}, [["attachments", "<array>"]])
-        files = extract_files(cast(Mapping[str, object], body), paths=[["attachments", "<array>"]])
+        files = extract_files(
+            cast(Mapping[str, object], body), paths=[["attachments", "<array>"]], array_format="repeat"
+        )
         if files:
             extra_headers = {"Content-Type": "multipart/form-data", **(extra_headers or dict[str, str | Omit]())}
         return await self._post(
