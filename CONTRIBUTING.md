@@ -47,14 +47,15 @@ It runs these checks in order and stops at the first failure.
 
 1. Locked dependency install for Python 3.10.22 and 3.14.8.
 2. API coverage against the API spec, as [API coverage](#api-coverage) describes.
-3. Ruff, Pyright, Mypy, and a package import.
-4. REUSE licensing lint.
-5. Reproducible wheel and source archive builds.
-6. Package metadata with twine.
-7. Tests on Python 3.10.22 and 3.14.8 with Pydantic 1 and 2.
-8. Coverage of the parent revision, then coverage of your change against it.
-9. A `pip-audit` scan of the locked dependencies, judged by the audit policy below.
-10. CodeQL security-extended queries. CodeQL is mandatory.
+3. API fields against the API spec, as [API fields](#api-fields) describes.
+4. Ruff, Pyright, Mypy, and a package import.
+5. REUSE licensing lint.
+6. Reproducible wheel and source archive builds.
+7. Package metadata with twine.
+8. Tests on Python 3.10.22 and 3.14.8 with Pydantic 1 and 2.
+9. Coverage of the parent revision, then coverage of your change against it.
+10. A `pip-audit` scan of the locked dependencies, judged by the audit policy below.
+11. CodeQL security-extended queries. CodeQL is mandatory.
 
 A failure prints 1 line naming the check and the next step.
 With a clean tree and a pushed commit, it posts the result as the `xquik-local-checks` commit status.
@@ -144,6 +145,46 @@ The public copy leaves out `GET /api/v1/credits/topup/redirect`, which the SDK k
 
 ```sh
 XQUIK_OPENAPI_SPEC=/path/to/openapi.json uv run --locked python -m scripts.check_api_coverage
+```
+
+## API fields
+
+The check after API coverage fails when the SDK's fields differ from the API spec.
+For each operation the SDK implements, it compares the query parameters and JSON or multipart body fields of the request, and the JSON body of each 2xx response, at every depth.
+It reads the spec's fields through `$ref`, `allOf`, `oneOf` and `anyOf`, and the SDK's fields from the params and response types each request call names.
+Path and header parameters, free-form objects and fields under an object that allows extra properties stay out.
+A field missing on 1 side counts once, at its top position.
+
+Each difference prints as 1 line with the method, the full path, `request` or `response`, a kind and the field's JSON path.
+
+```text
+GET /api/v1/monitors response enum monitors[].pausedReason
+```
+
+- `missing` means the spec has the field and the SDK does not. Add it to the SDK.
+- `extra` means the SDK has a field the spec does not list. Keep it when callers may use it, and accept it.
+- `enum` means both sides list values and the values differ. Add the missing values, and accept values the SDK keeps.
+- `required` and `nullable` mean the flags differ where the SDK encodes them. Fix them only when the change keeps old calls and old responses working.
+
+Fixes stay additive. Never remove or rename a public field or parameter to satisfy the check. Accept it instead.
+
+`accepted-field-differences.json` holds the reviewed differences the SDK keeps on purpose, in groups with a non-empty `reason`.
+A difference appears at most once.
+An accepted difference the check no longer finds fails as stale, so remove it from the file.
+
+```json
+[
+  {
+    "reason": "Search filters the current spec no longer lists on these routes. The SDK keeps them, so code written for earlier versions keeps working.",
+    "differences": ["GET /api/v1/x/tweets/{id}/replies request extra cardName"]
+  }
+]
+```
+
+The check reads the spec the same way as API coverage, including `XQUIK_OPENAPI_SPEC`.
+
+```sh
+XQUIK_OPENAPI_SPEC=/path/to/openapi.json uv run --locked --all-extras python -m scripts.check_api_fields
 ```
 
 ## Build From Source

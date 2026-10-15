@@ -289,32 +289,8 @@ def test_unreadable_exclusion_file_fails(
 
 @pytest.mark.parametrize(
     "content",
-    [
-        None,
-        "openapi: 3.1.0\npaths: {}\n",
-        "[]",
-        '{"openapi": "3.1.0"}',
-        '{"paths": []}',
-        b"\xff\xfe\x00",
-        '{"paths": {"/x": null}}',
-        '{"paths": {"/x": {"$ref": "#/components/pathItems/x"}}}',
-        '{"paths": {"/x": {"get": "x"}}}',
-        '{"servers": {"url": "https://xquik.com"}, "paths": {"/x": {"get": {}}}}',
-        '{"servers": [{"description": "Production"}], "paths": {"/x": {"get": {}}}}',
-    ],
-    ids=[
-        "missing",
-        "yaml",
-        "list",
-        "no-paths",
-        "paths-list",
-        "not-text",
-        "null-path-item",
-        "path-item-reference",
-        "operation-string",
-        "servers-object",
-        "server-without-url",
-    ],
+    [None, "openapi: 3.1.0\npaths: {}\n", b"\xff\xfe\x00"],
+    ids=["missing", "yaml", "not-text"],
 )
 def test_unreadable_spec_file_fails(
     content: str | bytes | None, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
@@ -328,6 +304,46 @@ def test_unreadable_spec_file_fails(
     assert main(write_root(tmp_path / "repo", RESOURCES, EXCLUSIONS)) == 1
     output = capsys.readouterr()
     assert (output.out, output.err.splitlines()) == ("", [f"Could not read the API spec from {spec_path}. {SPEC_HELP}"])
+
+
+@pytest.mark.parametrize(
+    "content",
+    [
+        "[]",
+        '{"openapi": "3.1.0"}',
+        '{"paths": []}',
+        '{"paths": {"/x": null}}',
+        '{"paths": {"/x": {"$ref": "#/components/pathItems/x"}}}',
+        '{"paths": {"/x": {"get": "x"}}}',
+        '{"servers": {"url": "https://xquik.com"}, "paths": {"/x": {"get": {}}}}',
+        '{"servers": [{"description": "Production"}], "paths": {"/x": {"get": {}}}}',
+    ],
+    ids=[
+        "list",
+        "no-paths",
+        "paths-list",
+        "null-path-item",
+        "path-item-reference",
+        "operation-string",
+        "servers-object",
+        "server-without-url",
+    ],
+)
+def test_spec_with_an_unreadable_part_fails(
+    content: str, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    spec_path = tmp_path / "openapi.json"
+    spec_path.write_text(content)
+    monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
+    assert main(write_root(tmp_path / "repo", RESOURCES, EXCLUSIONS)) == 1
+    output = capsys.readouterr()
+    assert (output.out, output.err.splitlines()) == (
+        "",
+        [
+            f"The API spec from {spec_path} has a part the check cannot read. "
+            "Fix the spec, or set XQUIK_OPENAPI_SPEC to a valid copy of https://xquik.com/openapi.json."
+        ],
+    )
 
 
 class SpecHandler(BaseHTTPRequestHandler):

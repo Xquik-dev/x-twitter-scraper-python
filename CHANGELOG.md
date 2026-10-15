@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.16.0 (2026-10-15)
+## 0.16.0 (2026-10-16)
 
 This release adds the response fields, event types and file uploads the SDK dropped. A field check against the API spec found them.
 
@@ -24,7 +24,7 @@ This release adds the response fields, event types and file uploads the SDK drop
 
 ### Compatibility
 
-- Code written for 0.15.0 keeps working. No method, type, field or parameter is removed.
+- `XAccount` and `XAccountDetail` drop a timestamp field the API stopped returning. It always read None. Other code written for 0.15.0 keeps working, and no method, type or parameter is removed.
 - `url` and `content` are optional keyword arguments now, because `file` or `attachments` can replace them. A call with neither raises `TypeError`.
 - With Pydantic 1, follow events still parse as `DataMonitorLegacyPost` with their fields as extras, and `previous` and `current` of a count event read as strings. Pydantic 1 takes the first union member that fits, so `DataMonitorFollow` sits last.
 

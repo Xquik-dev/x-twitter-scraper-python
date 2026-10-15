@@ -42,10 +42,10 @@ gh() {
 uv() {
  case "$1 $2" in
   'run --locked')
-   if [ "$3 $4 $5 $6" = '--all-extras python -m scripts.check_api_coverage' ]; then
-    printf 'api-coverage\n' >> "$CHECK_EVENTS"
-    [ "$CHECK_CASE" != api-coverage ]
-   fi;;
+   case "$3 $4 $5 $6" in
+    '--all-extras python -m scripts.check_api_coverage') printf 'api-coverage\n' >> "$CHECK_EVENTS"; [ "$CHECK_CASE" != api-coverage ];;
+    '--all-extras python -m scripts.check_api_fields') printf 'api-fields\n' >> "$CHECK_EVENTS"; [ "$CHECK_CASE" != api-fields ];;
+   esac;;
   'python find'|'sync --locked'|'build --out-dir') :;;
   'tool run') [ "$3 $4 $5 $6" = '--from reuse==6.2.0 reuse lint' ] || exit 99; printf 'reuse\n' >> "$CHECK_EVENTS";;
   *) exit 99;;
@@ -57,6 +57,7 @@ bash "$runner" "$@"
 """
 CHECKS = [
     "api-coverage",
+    "api-fields",
     "lint",
     "reuse",
     "check-reproducible",
@@ -66,10 +67,10 @@ CHECKS = [
     "audit",
     "codeql-security",
 ]
-PENDING = "pending: Running API coverage, lint, licensing, build, tests, coverage, audit & CodeQL."
+PENDING = "pending: Running API coverage & fields, lint, licensing, build, tests, coverage, audit & CodeQL."
 PASSED = (
-    "API coverage, lint & types, REUSE, reproducible build, metadata, tests (6045 passed in 2 runs), coverage, audit, "
-    "CodeQL 2.27.2."
+    "API coverage, API fields, lint & types, REUSE, reproducible build, metadata, 6045 tests in 2 runs, coverage, "
+    "audit, CodeQL 2.27.2."
 )
 
 
@@ -113,9 +114,10 @@ def test_success_status_lists_the_checks_that_passed(tmp_path: Path) -> None:
     "case,ran,failed",
     [
         ("api-coverage", CHECKS[:1], "API coverage: compare the SDK operations with the API spec"),
-        ("lint", CHECKS[:2], "Lint: Ruff, Pyright, Mypy, and package import"),
-        ("test", CHECKS[:5], "Tests: Python 3.10.22 and 3.14.8 with Pydantic 1 and 2"),
-        ("audit", CHECKS[:8], "Dependency security: pip-audit and audit-exceptions.json"),
+        ("api-fields", CHECKS[:2], "API fields: compare the SDK fields with the API spec"),
+        ("lint", CHECKS[:3], "Lint: Ruff, Pyright, Mypy, and package import"),
+        ("test", CHECKS[:6], "Tests: Python 3.10.22 and 3.14.8 with Pydantic 1 and 2"),
+        ("audit", CHECKS[:9], "Dependency security: pip-audit and audit-exceptions.json"),
         ("codeql-security", CHECKS, "Static analysis: CodeQL 2.27.2 security-extended queries"),
         ("changed", CHECKS, "Final tree check"),
     ],
