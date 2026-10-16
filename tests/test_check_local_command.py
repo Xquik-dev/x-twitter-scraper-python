@@ -22,6 +22,7 @@ esac
 [ "$CHECK_CASE" != "$name" ]
 """
 STUB = r"""git() {
+ case "$*" in *" config --get checklocal.runner") [ -n "${CHECK_RUNNER-}" ] && echo "$CHECK_RUNNER"; return ;; esac
  case "$1 $2" in
   'rev-parse --quiet') :;;
   'rev-parse HEAD') echo abc123;;
@@ -74,7 +75,9 @@ PASSED = (
 )
 
 
-def run_checks(tmp_path: Path, case: str, *arguments: str) -> tuple[int, list[str], list[str], list[str]]:
+def run_checks(
+    tmp_path: Path, case: str, *arguments: str, env: dict[str, str] | None = None
+) -> tuple[int, list[str], list[str], list[str]]:
     project = tmp_path / "project"
     for folder in ("bin", "scripts"):
         (project / folder).mkdir(parents=True)
@@ -93,6 +96,9 @@ def run_checks(tmp_path: Path, case: str, *arguments: str) -> tuple[int, list[st
             "CHECK_EVENTS": str(events),
             "CHECK_STATUSES": str(statuses),
             "CHECK_DIRTY": str(tmp_path / "dirty"),
+            "CHECK_RUNNER": "",
+            "CHECK_LOCAL_HERE": "",
+            **(env or {}),
         },
         capture_output=True,
         text=True,
@@ -152,3 +158,22 @@ def test_status_is_posted_only_for_a_clean_pushed_commit(
     assert events == CHECKS
     assert statuses == []
     assert output[0] == f"==> Commit status not posted because {reason}"
+
+
+def test_a_configured_runner_takes_the_checkout_and_the_arguments(tmp_path: Path) -> None:
+    runner = tmp_path / "runner"
+    runner.write_text('#!/usr/bin/env bash\nprintf "%s|" "$@"\nexit 3\n')
+    runner.chmod(0o755)
+    status, events, statuses, output = run_checks(
+        tmp_path, "ready", "--no-status", "two words", env={"CHECK_RUNNER": str(runner)}
+    )
+    assert (status, events, statuses) == (3, [], [])
+    assert output == [f"{(tmp_path / 'project').resolve()}|--no-status|two words|"]
+
+
+def test_check_local_here_runs_the_checks_here_despite_a_configured_runner(tmp_path: Path) -> None:
+    status, events, _, output = run_checks(
+        tmp_path, "ready", "--no-status", env={"CHECK_RUNNER": str(tmp_path / "runner"), "CHECK_LOCAL_HERE": "1"}
+    )
+    assert status == 0, output
+    assert events == CHECKS
