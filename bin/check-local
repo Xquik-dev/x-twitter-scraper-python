@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd "$(dirname "$0")/.."
+source scripts/cleanup.sh
 
 repository="Xquik-dev/x-twitter-scraper-python"
 status_context="xquik-local-checks"
@@ -52,7 +53,6 @@ post_status() {
     echo "check-local: could not post the $state $status_context status. Run gh auth status." >&2
 }
 
-workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-check-local.XXXXXX")"
 current_check="Setup"
 passed=()
 summary=""
@@ -66,9 +66,10 @@ on_exit() {
       post_status failure "Failed at $current_check."
     fi
   fi
-  rm -rf -- "${workspace:?}"
+  cleanup_run
 }
-trap on_exit EXIT
+cleanup_traps on_exit
+cleanup_temp_dir workspace xquik-python-check-local
 
 if [[ -n "$status_commit" ]]; then
   echo "==> Posting a pending $status_context status to ${status_commit:0:12}."
@@ -109,7 +110,8 @@ run_tests() {
 }
 
 measure_parent_coverage() {
-  COVERAGE_PARENT_OUTPUT="$workspace/parent-coverage" bash scripts/coverage-parent "$parent_revision"
+  COVERAGE_PARENT_REPORT="$workspace/parent-coverage.json" COVERAGE_PARENT_OUTPUT="$workspace/parent-coverage" \
+    bash scripts/coverage-parent "$parent_revision"
 }
 
 enforce_coverage() {

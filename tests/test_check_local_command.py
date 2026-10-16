@@ -80,6 +80,7 @@ def run_checks(tmp_path: Path, case: str, *arguments: str) -> tuple[int, list[st
         (project / folder).mkdir(parents=True)
     runner = project / "bin/check-local"
     runner.write_bytes((ROOT / "bin/check-local").read_bytes())
+    (project / "scripts/cleanup.sh").write_bytes((ROOT / "scripts/cleanup.sh").read_bytes())
     for name in CHECKS:
         (project / "scripts" / name).write_text(CHECK)
     events, statuses = tmp_path / "events", tmp_path / "statuses"
