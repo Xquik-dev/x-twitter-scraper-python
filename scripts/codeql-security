@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd "$(dirname "$0")/.."
+source scripts/cleanup.sh
 minimum_version=2.27.2
 codeql="${XQUIK_CODEQL_BIN:-$(command -v codeql || true)}"
 [[ -x "$codeql" ]] || { echo "CodeQL CLI is missing. Install it with brew install --cask codeql, then rerun." >&2; exit 1; }
@@ -14,8 +15,8 @@ if [[ "${1:-}" == --version ]]; then
   exit
 fi
 echo "CodeQL CLI $version"
-report=$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-codeql.XXXXXX")
-echo "CodeQL evidence: $report"
+cleanup_traps
+cleanup_temp_dir report xquik-python-codeql
 "$codeql" pack install codeql/no-code-comments
 "$codeql" database create "$report/database" --language=python --build-mode=none --source-root="$PWD" --threads=2
 "$codeql" database analyze --download "$report/database" codeql/python-queries@1.8.12:codeql-suites/python-security-extended.qls codeql/no-code-comments --format=sarifv2.1.0 --output="$report/report.sarif" --threads=2

@@ -58,7 +58,7 @@ def run_audit(
     project, fixtures = tmp_path / "project", tmp_path / "fixtures"
     (project / "scripts").mkdir(parents=True)
     fixtures.mkdir()
-    for name in ("scripts/audit", "scripts/verify_audit.py", "audit-exceptions.json"):
+    for name in ("scripts/audit", "scripts/cleanup.sh", "scripts/verify_audit.py", "audit-exceptions.json"):
         (project / name).write_bytes((ROOT / name).read_bytes())
     for name, text in PINS.items():
         (fixtures / f"{name}.txt").write_text(text)
