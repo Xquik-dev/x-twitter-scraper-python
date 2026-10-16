@@ -7,9 +7,10 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+source scripts/cleanup.sh
 
-audit_workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-audit.XXXXXX")"
-trap 'rm -rf -- "${audit_workspace:?}"' EXIT
+cleanup_traps
+cleanup_temp_dir audit_workspace xquik-python-audit
 
 echo "==> Exporting locked runtime dependencies"
 uv export \

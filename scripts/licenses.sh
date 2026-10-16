@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd -- "$(dirname -- "$0")/.."
+source scripts/cleanup.sh
 
 configuration=$(bun -e 'const config = require("./package.json").config; const c = config.comply; process.stdout.write(`${c.version} ${c.sha256} ${c.sourceDateEpoch} ${config.cargoAudit} ${config.rustVersion} ${c.patchURL} ${c.patchSha256}\n`);')
 read -r version archive_sha source_epoch audit_version rust_version patch_url patch_sha <<<"$configuration"
@@ -12,8 +13,8 @@ audit_current() { [[ $(cargo audit --version 2>/dev/null) == *" $audit_version" 
 
 case "${1:-lint}" in
 install)
-	work=$(mktemp -d)
-	trap 'rm -rf "$work"' EXIT
+	cleanup_traps
+	cleanup_temp_dir work xquik-python-licenses
 	patch="$work/licensing.patch"
 	curl --fail --location --retry 2 --max-time 60 "$patch_url" -o "$patch"
 	printf '%s  %s\n' "$patch_sha" "$patch" | shasum -a 256 --check -

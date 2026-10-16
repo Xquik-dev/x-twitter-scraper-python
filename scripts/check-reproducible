@@ -7,9 +7,10 @@
 set -euo pipefail
 
 cd "$(dirname "$0")/.."
+source scripts/cleanup.sh
 
-reproducibility_workspace="$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-reproducibility.XXXXXX")"
-trap 'rm -rf -- "$reproducibility_workspace"' EXIT
+cleanup_traps
+cleanup_temp_dir reproducibility_workspace xquik-python-reproducibility
 
 mkdir "$reproducibility_workspace/first" "$reproducibility_workspace/second"
 
