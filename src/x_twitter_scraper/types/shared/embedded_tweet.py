@@ -4,6 +4,7 @@
 
 from typing import TYPE_CHECKING, Dict, List, Union, Optional
 from datetime import datetime
+from typing_extensions import Literal
 
 from pydantic import Field as FieldInfo
 
@@ -16,13 +17,19 @@ from .content_disclosure import ContentDisclosure
 __all__ = [
     "EmbeddedTweet",
     "Article",
+    "AuthorUnavailable",
     "Card",
     "CardUserReferenceError",
+    "CashtagAttachment",
     "CommunityNote",
     "ConversationControl",
+    "Coordinates",
     "Edit",
     "Entities",
     "EntitiesHashtag",
+    "EntitiesHashtagTag",
+    "EntitiesHashtagTagInfo",
+    "EntitiesHashtagTagInfoInfo",
     "EntitiesSmarttag",
     "EntitiesSmarttagTag",
     "EntitiesSmarttagTagInfo",
@@ -37,11 +44,20 @@ __all__ = [
     "EntitiesTimestampTagInfoInfo",
     "EntitiesURL",
     "EntitiesUserMention",
+    "ExclusiveContent",
+    "Geo",
+    "Interstitial",
+    "InterstitialText",
+    "InterstitialTextEntity",
+    "InterstitialTextEntityRef",
     "LimitedAction",
     "LimitedActionPrompt",
     "NoteTweet",
     "NoteTweetEntities",
     "NoteTweetEntitiesHashtag",
+    "NoteTweetEntitiesHashtagTag",
+    "NoteTweetEntitiesHashtagTagInfo",
+    "NoteTweetEntitiesHashtagTagInfoInfo",
     "NoteTweetEntitiesSmarttag",
     "NoteTweetEntitiesSmarttagTag",
     "NoteTweetEntitiesSmarttagTagInfo",
@@ -104,6 +120,7 @@ __all__ = [
     "QuotedTweetNoteTweetEntitiesUserMention",
     "QuotedTweetNoteTweetInlineMedia",
     "QuotedTweetNoteTweetRichtextTag",
+    "QuotedTweetPermalink",
     "QuotedTweetPlace",
     "QuotedTweetPreviousCounts",
     "QuotedTweetQuotedTweet",
@@ -431,6 +448,7 @@ __all__ = [
     "QuotedTweetTombstoneText",
     "QuotedTweetTombstoneTextEntity",
     "QuotedTweetTombstoneTextEntityRef",
+    "QuotedTweetUnavailable",
     "ReactionContext",
     "RetweetedTweet",
     "RetweetedTweetArticle",
@@ -805,6 +823,8 @@ __all__ = [
     "RetweetedTweetTombstoneTextEntityRef",
     "SportsContext",
     "SportsContextCompetitor",
+    "SubscriberBadge",
+    "TextHighlight",
     "Tombstone",
     "TombstoneText",
     "TombstoneTextEntity",
@@ -831,6 +851,19 @@ class Article(BaseModel):
     preview_text: Optional[str] = FieldInfo(alias="previewText", default=None)
 
     title: Optional[str] = None
+
+
+class AuthorUnavailable(BaseModel):
+    """Why the tweet has no author.
+
+    X serves a suspended or deleted account as an unavailable user with a reason such as Suspended or NotFound. Omitted when the author is available.
+    """
+
+    reason: str
+    """X's reason code."""
+
+    message: Optional[str] = None
+    """X's notice text for the reason."""
 
 
 class CardUserReferenceError(BaseModel):
@@ -860,6 +893,26 @@ class Card(BaseModel):
     user_references: Optional[List[UserProfile]] = FieldInfo(alias="userReferences", default=None)
 
 
+class CashtagAttachment(BaseModel):
+    cashtag: str
+    """The cashtag with its `$`."""
+
+    candle_size: Optional[str] = FieldInfo(alias="candleSize", default=None)
+    """Span of each candle."""
+
+    end_time: Optional[datetime] = FieldInfo(alias="endTime", default=None)
+    """Time of the chart's last price."""
+
+    size_variant: Optional[int] = FieldInfo(alias="sizeVariant", default=None)
+    """X's size for the chart."""
+
+    start_time: Optional[datetime] = FieldInfo(alias="startTime", default=None)
+    """Time of the chart's first candle."""
+
+    timeframe: Optional[str] = None
+    """Span the chart covers."""
+
+
 class CommunityNote(BaseModel):
     """Community Note presentation metadata returned by X."""
 
@@ -886,13 +939,36 @@ class CommunityNote(BaseModel):
 
 
 class ConversationControl(BaseModel):
-    """Public reply policy and conversation owner."""
+    """Reply policy & conversation owner."""
+
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+    """Regions whose accounts may reply, as country codes.
+
+    Sent with the `country_of_origin` mode.
+    """
 
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+    """
+    Reply policy from X's newer field, such as `my_network`, `premium` or
+    `country_of_origin`. Omitted when X sends none.
+    """
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
+    """The conversation owner's account ID."""
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
     policy: Optional[str] = None
+
+
+class Coordinates(BaseModel):
+    """Author-published point, with longitude before latitude."""
+
+    coordinates: List[float]
+
+    type: Literal["Point"]
 
 
 class Edit(BaseModel):
@@ -905,6 +981,31 @@ class Edit(BaseModel):
     initial_tweet_id: Optional[str] = FieldInfo(alias="initialTweetId", default=None)
 
 
+class EntitiesHashtagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
+    name: Optional[str] = None
+
+    ticker: Optional[str] = None
+
+
+class EntitiesHashtagTagInfo(BaseModel):
+    info: Optional[EntitiesHashtagTagInfoInfo] = None
+
+
+class EntitiesHashtagTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
+    info: Optional[EntitiesHashtagTagInfo] = None
+
+
 class EntitiesHashtag(BaseModel):
     """Provides hashtag text and source offsets within a tweet."""
 
@@ -912,8 +1013,17 @@ class EntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
 
 class EntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -924,6 +1034,14 @@ class EntitiesSmarttagTagInfo(BaseModel):
 
 
 class EntitiesSmarttagTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
     info: Optional[EntitiesSmarttagTagInfo] = None
 
 
@@ -935,11 +1053,18 @@ class EntitiesSmarttag(BaseModel):
     seconds: Optional[float] = None
 
     tag: Optional[EntitiesSmarttagTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
 
     text: Optional[str] = None
 
 
 class EntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -950,6 +1075,14 @@ class EntitiesSymbolTagInfo(BaseModel):
 
 
 class EntitiesSymbolTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
     info: Optional[EntitiesSymbolTagInfo] = None
 
 
@@ -961,11 +1094,18 @@ class EntitiesSymbol(BaseModel):
     seconds: Optional[float] = None
 
     tag: Optional[EntitiesSymbolTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
 
     text: Optional[str] = None
 
 
 class EntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -976,6 +1116,14 @@ class EntitiesTimestampTagInfo(BaseModel):
 
 
 class EntitiesTimestampTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
     info: Optional[EntitiesTimestampTagInfo] = None
 
 
@@ -987,6 +1135,10 @@ class EntitiesTimestamp(BaseModel):
     seconds: Optional[float] = None
 
     tag: Optional[EntitiesTimestampTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
 
     text: Optional[str] = None
 
@@ -1031,6 +1183,71 @@ class Entities(TweetEntitiesDictAccess):
     user_mentions: Optional[List[EntitiesUserMention]] = None
 
 
+class ExclusiveContent(BaseModel):
+    """Marks a subscriber-only post with the creator whose subscription unlocks it.
+
+    Non-subscribers get the preview text & the subscribe link. Omitted on public posts.
+    """
+
+    creator_user_name: str = FieldInfo(alias="creatorUserName")
+    """Username of the creator whose subscription unlocks the post."""
+
+    subscribe_url: Optional[str] = FieldInfo(alias="subscribeUrl", default=None)
+    """Subscribe link X shows non-subscribers. Omitted when X serves the full post."""
+
+
+class Geo(BaseModel):
+    """Author-published point, with latitude before longitude."""
+
+    coordinates: List[float]
+
+    type: Literal["Point"]
+
+
+class InterstitialTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
+    type: Optional[str] = None
+
+    url: Optional[str] = None
+
+    url_type: Optional[str] = FieldInfo(alias="urlType", default=None)
+
+
+class InterstitialTextEntity(BaseModel):
+    from_index: Optional[int] = FieldInfo(alias="fromIndex", default=None)
+    """Whole number from 0."""
+
+    ref: Optional[InterstitialTextEntityRef] = None
+
+    to_index: Optional[int] = FieldInfo(alias="toIndex", default=None)
+    """Whole number from 0."""
+
+
+class InterstitialText(BaseModel):
+    entities: Optional[List[InterstitialTextEntity]] = None
+    """Links inside the notice, by character range."""
+
+    rtl: Optional[bool] = None
+    """Whether X writes it right to left."""
+
+    text: Optional[str] = None
+    """The notice's text."""
+
+
+class Interstitial(BaseModel):
+    """
+    The notice x.com covers the post with until the reader views it, such as X's public interest notice on a post that broke its rules but stays up.
+    """
+
+    display_type: Optional[str] = FieldInfo(alias="displayType", default=None)
+    """How x.com shows the notice. `NonCompliant` marks a post that broke X's rules."""
+
+    text: Optional[InterstitialText] = None
+
+
 class LimitedActionPrompt(BaseModel):
     cta_type: Optional[str] = FieldInfo(alias="ctaType", default=None)
 
@@ -1048,6 +1265,31 @@ class LimitedAction(BaseModel):
     prompt: Optional[LimitedActionPrompt] = None
 
 
+class NoteTweetEntitiesHashtagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
+    name: Optional[str] = None
+
+    ticker: Optional[str] = None
+
+
+class NoteTweetEntitiesHashtagTagInfo(BaseModel):
+    info: Optional[NoteTweetEntitiesHashtagTagInfoInfo] = None
+
+
+class NoteTweetEntitiesHashtagTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
+    info: Optional[NoteTweetEntitiesHashtagTagInfo] = None
+
+
 class NoteTweetEntitiesHashtag(BaseModel):
     """Provides hashtag text and source offsets within a tweet."""
 
@@ -1055,8 +1297,17 @@ class NoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
 
 class NoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1067,6 +1318,14 @@ class NoteTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class NoteTweetEntitiesSmarttagTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
     info: Optional[NoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -1078,11 +1337,18 @@ class NoteTweetEntitiesSmarttag(BaseModel):
     seconds: Optional[float] = None
 
     tag: Optional[NoteTweetEntitiesSmarttagTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
 
     text: Optional[str] = None
 
 
 class NoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1093,6 +1359,14 @@ class NoteTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class NoteTweetEntitiesSymbolTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
     info: Optional[NoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -1104,11 +1378,18 @@ class NoteTweetEntitiesSymbol(BaseModel):
     seconds: Optional[float] = None
 
     tag: Optional[NoteTweetEntitiesSymbolTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
 
     text: Optional[str] = None
 
 
 class NoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+    """Whether X marks the SmartTag active."""
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1119,6 +1400,14 @@ class NoteTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class NoteTweetEntitiesTimestampTag(BaseModel):
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
+
+    id: Optional[str] = None
+    """X's ID for the SmartTag."""
+
     info: Optional[NoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -1130,6 +1419,10 @@ class NoteTweetEntitiesTimestamp(BaseModel):
     seconds: Optional[float] = None
 
     tag: Optional[NoteTweetEntitiesTimestampTag] = None
+    """X's SmartTag for a cashtag, smarttag or hashtag.
+
+    Xquik leaves out X's trading platforms, which differ by reader.
+    """
 
     text: Optional[str] = None
 
@@ -1176,14 +1469,17 @@ class NoteTweetEntities(TweetEntitiesDictAccess):
 
 class NoteTweetInlineMedia(BaseModel):
     index: int
+    """Whole number from 0."""
 
     media_id: str = FieldInfo(alias="mediaId")
 
 
 class NoteTweetRichtextTag(BaseModel):
     from_index: int = FieldInfo(alias="fromIndex")
+    """Whole number from 0."""
 
     to_index: int = FieldInfo(alias="toIndex")
+    """Whole number from 0."""
 
     types: List[str]
 
@@ -1194,6 +1490,7 @@ class NoteTweet(BaseModel):
     text: str
 
     id: Optional[str] = None
+    """X's global ID of the Note, base64 of `NoteTweet:<noteId>`."""
 
     entities: Optional[NoteTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
@@ -1202,6 +1499,9 @@ class NoteTweet(BaseModel):
     """Inline media positions in the Note Tweet text."""
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
+
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+    """The Note's own ID, apart from the post's."""
 
     richtext_tags: Optional[List[NoteTweetRichtextTag]] = FieldInfo(alias="richtextTags", default=None)
 
@@ -1231,14 +1531,60 @@ class PreviousCounts(BaseModel):
     """Engagement counts retained from a prior tweet edit."""
 
     bookmark_count: Optional[int] = FieldInfo(alias="bookmarkCount", default=None)
+    """Whole number from 0."""
 
     like_count: Optional[int] = FieldInfo(alias="likeCount", default=None)
+    """Whole number from 0."""
 
     quote_count: Optional[int] = FieldInfo(alias="quoteCount", default=None)
+    """Whole number from 0."""
 
     reply_count: Optional[int] = FieldInfo(alias="replyCount", default=None)
+    """Whole number from 0."""
 
     retweet_count: Optional[int] = FieldInfo(alias="retweetCount", default=None)
+    """Whole number from 0."""
+
+
+class QuotedTweetPermalink(BaseModel):
+    """The quoted post's link, kept when X withholds that post."""
+
+    display_url: Optional[str] = FieldInfo(alias="displayUrl", default=None)
+
+    expanded_url: Optional[str] = FieldInfo(alias="expandedUrl", default=None)
+
+    url: Optional[str] = None
+
+
+class QuotedTweetUnavailable(BaseModel):
+    """Why X shows no quoted post.
+
+    Omitted when X names no reason, as its legacy answers never do.
+    """
+
+    reason: str
+    """
+    X's reason, such as `Suspended` for a suspended author or `Protected` for an
+    author who protects their posts.
+    """
+
+
+class SubscriberBadge(BaseModel):
+    """The Subscriber badge X shows on a reply.
+
+    The reply's author subscribes to the creator who started the conversation. Omitted on a post without the badge.
+    """
+
+    creator_id: str = FieldInfo(alias="creatorId")
+    """Account ID of the creator the author subscribes to."""
+
+
+class TextHighlight(BaseModel):
+    end_index: int = FieldInfo(alias="endIndex")
+    """The first code point after the match."""
+
+    start_index: int = FieldInfo(alias="startIndex")
+    """The first code point of the match."""
 
 
 class QuotedTweetArticle(BaseModel):
@@ -1319,7 +1665,13 @@ class QuotedTweetCommunityNote(BaseModel):
 class QuotedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -1343,8 +1695,12 @@ class QuotedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class QuotedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1355,6 +1711,8 @@ class QuotedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -1371,6 +1729,8 @@ class QuotedTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1381,6 +1741,8 @@ class QuotedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -1397,6 +1759,8 @@ class QuotedTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1407,6 +1771,8 @@ class QuotedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -1486,8 +1852,12 @@ class QuotedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class QuotedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1498,6 +1868,8 @@ class QuotedTweetNoteTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -1514,6 +1886,8 @@ class QuotedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1524,6 +1898,8 @@ class QuotedTweetNoteTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -1540,6 +1916,8 @@ class QuotedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1550,6 +1928,8 @@ class QuotedTweetNoteTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -1633,6 +2013,8 @@ class QuotedTweetNoteTweet(BaseModel):
     """Inline media positions in the Note Tweet text."""
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
+
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
 
     richtext_tags: Optional[List[QuotedTweetNoteTweetRichtextTag]] = FieldInfo(alias="richtextTags", default=None)
 
@@ -1750,7 +2132,13 @@ class QuotedTweetQuotedTweetCommunityNote(BaseModel):
 class QuotedTweetQuotedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -1774,8 +2162,12 @@ class QuotedTweetQuotedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class QuotedTweetQuotedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1786,6 +2178,8 @@ class QuotedTweetQuotedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -1802,6 +2196,8 @@ class QuotedTweetQuotedTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetQuotedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1812,6 +2208,8 @@ class QuotedTweetQuotedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -1828,6 +2226,8 @@ class QuotedTweetQuotedTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetQuotedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1838,6 +2238,8 @@ class QuotedTweetQuotedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -1917,8 +2319,12 @@ class QuotedTweetQuotedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class QuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1929,6 +2335,8 @@ class QuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -1945,6 +2353,8 @@ class QuotedTweetQuotedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1955,6 +2365,8 @@ class QuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -1971,6 +2383,8 @@ class QuotedTweetQuotedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -1981,6 +2395,8 @@ class QuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -2066,6 +2482,8 @@ class QuotedTweetQuotedTweetNoteTweet(BaseModel):
     """Inline media positions in the Note Tweet text."""
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
+
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
 
     richtext_tags: Optional[List[QuotedTweetQuotedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
@@ -2185,7 +2603,13 @@ class QuotedTweetQuotedTweetQuotedTweetCommunityNote(BaseModel):
 class QuotedTweetQuotedTweetQuotedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -2209,8 +2633,12 @@ class QuotedTweetQuotedTweetQuotedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class QuotedTweetQuotedTweetQuotedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2221,6 +2649,8 @@ class QuotedTweetQuotedTweetQuotedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetQuotedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -2237,6 +2667,8 @@ class QuotedTweetQuotedTweetQuotedTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2247,6 +2679,8 @@ class QuotedTweetQuotedTweetQuotedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetQuotedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -2263,6 +2697,8 @@ class QuotedTweetQuotedTweetQuotedTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2273,6 +2709,8 @@ class QuotedTweetQuotedTweetQuotedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetQuotedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -2352,8 +2790,12 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2364,6 +2806,8 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo(BaseMode
 
 
 class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -2380,6 +2824,8 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2390,6 +2836,8 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo(BaseModel)
 
 
 class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -2406,6 +2854,8 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2416,6 +2866,8 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo(BaseMod
 
 
 class QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -2502,6 +2954,8 @@ class QuotedTweetQuotedTweetQuotedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[QuotedTweetQuotedTweetQuotedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -2556,8 +3010,14 @@ class QuotedTweetQuotedTweetQuotedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -2581,6 +3041,8 @@ class QuotedTweetQuotedTweetQuotedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -2598,6 +3060,10 @@ class QuotedTweetQuotedTweetQuotedTweetSportsContext(BaseModel):
 
 
 class QuotedTweetQuotedTweetQuotedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -2657,11 +3123,17 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[QuotedTweetQuotedTweetQuotedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[QuotedTweetQuotedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -2681,6 +3153,8 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -2691,8 +3165,16 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
     entities: Optional[QuotedTweetQuotedTweetQuotedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -2700,13 +3182,19 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -2742,6 +3230,10 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[QuotedTweetQuotedTweetQuotedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -2760,10 +3252,16 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[QuotedTweetQuotedTweetQuotedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -2861,7 +3359,13 @@ class QuotedTweetQuotedTweetRetweetedTweetCommunityNote(BaseModel):
 class QuotedTweetQuotedTweetRetweetedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -2885,8 +3389,12 @@ class QuotedTweetQuotedTweetRetweetedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class QuotedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2897,6 +3405,8 @@ class QuotedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -2913,6 +3423,8 @@ class QuotedTweetQuotedTweetRetweetedTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2923,6 +3435,8 @@ class QuotedTweetQuotedTweetRetweetedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetRetweetedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -2939,6 +3453,8 @@ class QuotedTweetQuotedTweetRetweetedTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -2949,6 +3465,8 @@ class QuotedTweetQuotedTweetRetweetedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetRetweetedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -3028,8 +3546,12 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3040,6 +3562,8 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo(BaseM
 
 
 class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -3056,6 +3580,8 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3066,6 +3592,8 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo(BaseMod
 
 
 class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -3082,6 +3610,8 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3092,6 +3622,8 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo(Base
 
 
 class QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -3178,6 +3710,8 @@ class QuotedTweetQuotedTweetRetweetedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[QuotedTweetQuotedTweetRetweetedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -3232,8 +3766,14 @@ class QuotedTweetQuotedTweetRetweetedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -3257,6 +3797,8 @@ class QuotedTweetQuotedTweetRetweetedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -3274,6 +3816,10 @@ class QuotedTweetQuotedTweetRetweetedTweetSportsContext(BaseModel):
 
 
 class QuotedTweetQuotedTweetRetweetedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -3333,11 +3879,17 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[QuotedTweetQuotedTweetRetweetedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[QuotedTweetQuotedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -3357,6 +3909,8 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -3367,8 +3921,16 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
     entities: Optional[QuotedTweetQuotedTweetRetweetedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -3376,13 +3938,19 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -3418,6 +3986,10 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[QuotedTweetQuotedTweetRetweetedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -3436,10 +4008,16 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[QuotedTweetQuotedTweetRetweetedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -3453,8 +4031,14 @@ class QuotedTweetQuotedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -3478,6 +4062,8 @@ class QuotedTweetQuotedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -3495,6 +4081,10 @@ class QuotedTweetQuotedTweetSportsContext(BaseModel):
 
 
 class QuotedTweetQuotedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -3554,11 +4144,17 @@ class QuotedTweetQuotedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[QuotedTweetQuotedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[QuotedTweetQuotedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -3576,6 +4172,8 @@ class QuotedTweetQuotedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -3586,8 +4184,16 @@ class QuotedTweetQuotedTweet(BaseModel):
     entities: Optional[QuotedTweetQuotedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -3595,13 +4201,19 @@ class QuotedTweetQuotedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -3621,6 +4233,8 @@ class QuotedTweetQuotedTweet(BaseModel):
     note_tweet: Optional[QuotedTweetQuotedTweetNoteTweet] = FieldInfo(alias="noteTweet", default=None)
     """Complete Note Tweet content and rich-text metadata."""
 
+    parent_tweet: Optional[QuotedTweetQuotedTweetQuotedTweet] = FieldInfo(alias="parentTweet", default=None)
+
     place: Optional[QuotedTweetQuotedTweetPlace] = None
     """Describes public place metadata on a geotagged tweet."""
 
@@ -3637,6 +4251,10 @@ class QuotedTweetQuotedTweet(BaseModel):
 
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
+
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
 
     reaction_context: Optional[QuotedTweetQuotedTweetReactionContext] = FieldInfo(alias="reactionContext", default=None)
     """Public post and user referenced by this reaction."""
@@ -3655,10 +4273,16 @@ class QuotedTweetQuotedTweet(BaseModel):
     sports_context: Optional[QuotedTweetQuotedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[QuotedTweetQuotedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -3756,7 +4380,13 @@ class QuotedTweetRetweetedTweetCommunityNote(BaseModel):
 class QuotedTweetRetweetedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -3780,8 +4410,12 @@ class QuotedTweetRetweetedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class QuotedTweetRetweetedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3792,6 +4426,8 @@ class QuotedTweetRetweetedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -3808,6 +4444,8 @@ class QuotedTweetRetweetedTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetRetweetedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3818,6 +4456,8 @@ class QuotedTweetRetweetedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -3834,6 +4474,8 @@ class QuotedTweetRetweetedTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetRetweetedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3844,6 +4486,8 @@ class QuotedTweetRetweetedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -3923,8 +4567,12 @@ class QuotedTweetRetweetedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class QuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3935,6 +4583,8 @@ class QuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -3951,6 +4601,8 @@ class QuotedTweetRetweetedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3961,6 +4613,8 @@ class QuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -3977,6 +4631,8 @@ class QuotedTweetRetweetedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -3987,6 +4643,8 @@ class QuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -4072,6 +4730,8 @@ class QuotedTweetRetweetedTweetNoteTweet(BaseModel):
     """Inline media positions in the Note Tweet text."""
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
+
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
 
     richtext_tags: Optional[List[QuotedTweetRetweetedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
@@ -4191,7 +4851,13 @@ class QuotedTweetRetweetedTweetQuotedTweetCommunityNote(BaseModel):
 class QuotedTweetRetweetedTweetQuotedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -4215,8 +4881,12 @@ class QuotedTweetRetweetedTweetQuotedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class QuotedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4227,6 +4897,8 @@ class QuotedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -4243,6 +4915,8 @@ class QuotedTweetRetweetedTweetQuotedTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4253,6 +4927,8 @@ class QuotedTweetRetweetedTweetQuotedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetQuotedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -4269,6 +4945,8 @@ class QuotedTweetRetweetedTweetQuotedTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4279,6 +4957,8 @@ class QuotedTweetRetweetedTweetQuotedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetQuotedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -4358,8 +5038,12 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4370,6 +5054,8 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo(BaseM
 
 
 class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -4386,6 +5072,8 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4396,6 +5084,8 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo(BaseMod
 
 
 class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -4412,6 +5102,8 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4422,6 +5114,8 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo(Base
 
 
 class QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -4508,6 +5202,8 @@ class QuotedTweetRetweetedTweetQuotedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[QuotedTweetRetweetedTweetQuotedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -4562,8 +5258,14 @@ class QuotedTweetRetweetedTweetQuotedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -4587,6 +5289,8 @@ class QuotedTweetRetweetedTweetQuotedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -4604,6 +5308,10 @@ class QuotedTweetRetweetedTweetQuotedTweetSportsContext(BaseModel):
 
 
 class QuotedTweetRetweetedTweetQuotedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -4663,11 +5371,17 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[QuotedTweetRetweetedTweetQuotedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[QuotedTweetRetweetedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -4687,6 +5401,8 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -4697,8 +5413,16 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
     entities: Optional[QuotedTweetRetweetedTweetQuotedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -4706,13 +5430,19 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -4748,6 +5478,10 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[QuotedTweetRetweetedTweetQuotedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -4766,10 +5500,16 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[QuotedTweetRetweetedTweetQuotedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -4867,7 +5607,13 @@ class QuotedTweetRetweetedTweetRetweetedTweetCommunityNote(BaseModel):
 class QuotedTweetRetweetedTweetRetweetedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -4891,8 +5637,12 @@ class QuotedTweetRetweetedTweetRetweetedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4903,6 +5653,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -4919,6 +5671,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSmarttag(BaseModel):
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4929,6 +5683,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -4945,6 +5701,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -4955,6 +5713,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTagInfo(BaseModel)
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -5034,8 +5794,12 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesHashtag(BaseModel)
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -5046,6 +5810,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo(Ba
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -5062,6 +5828,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttag(BaseModel
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -5072,6 +5840,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo(Base
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -5088,6 +5858,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -5098,6 +5870,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo(B
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[QuotedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -5184,6 +5958,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[QuotedTweetRetweetedTweetRetweetedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -5238,8 +6014,14 @@ class QuotedTweetRetweetedTweetRetweetedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -5263,6 +6045,8 @@ class QuotedTweetRetweetedTweetRetweetedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -5280,6 +6064,10 @@ class QuotedTweetRetweetedTweetRetweetedTweetSportsContext(BaseModel):
 
 
 class QuotedTweetRetweetedTweetRetweetedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -5339,11 +6127,17 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[QuotedTweetRetweetedTweetRetweetedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[QuotedTweetRetweetedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -5363,6 +6157,8 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -5373,8 +6169,16 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
     entities: Optional[QuotedTweetRetweetedTweetRetweetedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -5382,13 +6186,19 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -5424,6 +6234,10 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[QuotedTweetRetweetedTweetRetweetedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -5442,10 +6256,16 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[QuotedTweetRetweetedTweetRetweetedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -5459,8 +6279,14 @@ class QuotedTweetRetweetedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -5484,6 +6310,8 @@ class QuotedTweetRetweetedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -5501,6 +6329,10 @@ class QuotedTweetRetweetedTweetSportsContext(BaseModel):
 
 
 class QuotedTweetRetweetedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -5560,11 +6392,17 @@ class QuotedTweetRetweetedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[QuotedTweetRetweetedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[QuotedTweetRetweetedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -5582,6 +6420,8 @@ class QuotedTweetRetweetedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -5592,8 +6432,16 @@ class QuotedTweetRetweetedTweet(BaseModel):
     entities: Optional[QuotedTweetRetweetedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -5601,13 +6449,19 @@ class QuotedTweetRetweetedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -5627,6 +6481,8 @@ class QuotedTweetRetweetedTweet(BaseModel):
     note_tweet: Optional[QuotedTweetRetweetedTweetNoteTweet] = FieldInfo(alias="noteTweet", default=None)
     """Complete Note Tweet content and rich-text metadata."""
 
+    parent_tweet: Optional[QuotedTweetRetweetedTweetQuotedTweet] = FieldInfo(alias="parentTweet", default=None)
+
     place: Optional[QuotedTweetRetweetedTweetPlace] = None
     """Describes public place metadata on a geotagged tweet."""
 
@@ -5643,6 +6499,10 @@ class QuotedTweetRetweetedTweet(BaseModel):
 
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
+
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
 
     reaction_context: Optional[QuotedTweetRetweetedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
@@ -5663,10 +6523,16 @@ class QuotedTweetRetweetedTweet(BaseModel):
     sports_context: Optional[QuotedTweetRetweetedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[QuotedTweetRetweetedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -5680,8 +6546,14 @@ class QuotedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -5705,6 +6577,8 @@ class QuotedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -5722,6 +6596,10 @@ class QuotedTweetSportsContext(BaseModel):
 
 
 class QuotedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -5781,11 +6659,17 @@ class QuotedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[QuotedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[QuotedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -5803,6 +6687,8 @@ class QuotedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -5813,8 +6699,16 @@ class QuotedTweet(BaseModel):
     entities: Optional[QuotedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -5822,13 +6716,19 @@ class QuotedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -5845,6 +6745,8 @@ class QuotedTweet(BaseModel):
 
     note_tweet: Optional[QuotedTweetNoteTweet] = FieldInfo(alias="noteTweet", default=None)
     """Complete Note Tweet content and rich-text metadata."""
+
+    parent_tweet: Optional[QuotedTweetQuotedTweet] = FieldInfo(alias="parentTweet", default=None)
 
     place: Optional[QuotedTweetPlace] = None
     """Describes public place metadata on a geotagged tweet."""
@@ -5863,6 +6765,10 @@ class QuotedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[QuotedTweetReactionContext] = FieldInfo(alias="reactionContext", default=None)
     """Public post and user referenced by this reaction."""
 
@@ -5880,10 +6786,16 @@ class QuotedTweet(BaseModel):
     sports_context: Optional[QuotedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[QuotedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -5894,7 +6806,7 @@ class QuotedTweet(BaseModel):
 
 
 class ReactionContext(BaseModel):
-    """Public post and user referenced by this reaction."""
+    """Public post & user this reaction references."""
 
     reacted_to_post_id: Optional[str] = FieldInfo(alias="reactedToPostId", default=None)
     """Referenced post ID."""
@@ -5981,7 +6893,13 @@ class RetweetedTweetCommunityNote(BaseModel):
 class RetweetedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -6005,8 +6923,12 @@ class RetweetedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class RetweetedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6017,6 +6939,8 @@ class RetweetedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -6033,6 +6957,8 @@ class RetweetedTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6043,6 +6969,8 @@ class RetweetedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -6059,6 +6987,8 @@ class RetweetedTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6069,6 +6999,8 @@ class RetweetedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class RetweetedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -6148,8 +7080,12 @@ class RetweetedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class RetweetedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6160,6 +7096,8 @@ class RetweetedTweetNoteTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -6176,6 +7114,8 @@ class RetweetedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6186,6 +7126,8 @@ class RetweetedTweetNoteTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -6202,6 +7144,8 @@ class RetweetedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6212,6 +7156,8 @@ class RetweetedTweetNoteTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class RetweetedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -6295,6 +7241,8 @@ class RetweetedTweetNoteTweet(BaseModel):
     """Inline media positions in the Note Tweet text."""
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
+
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
 
     richtext_tags: Optional[List[RetweetedTweetNoteTweetRichtextTag]] = FieldInfo(alias="richtextTags", default=None)
 
@@ -6412,7 +7360,13 @@ class RetweetedTweetQuotedTweetCommunityNote(BaseModel):
 class RetweetedTweetQuotedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -6436,8 +7390,12 @@ class RetweetedTweetQuotedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class RetweetedTweetQuotedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6448,6 +7406,8 @@ class RetweetedTweetQuotedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -6464,6 +7424,8 @@ class RetweetedTweetQuotedTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetQuotedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6474,6 +7436,8 @@ class RetweetedTweetQuotedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -6490,6 +7454,8 @@ class RetweetedTweetQuotedTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetQuotedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6500,6 +7466,8 @@ class RetweetedTweetQuotedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -6579,8 +7547,12 @@ class RetweetedTweetQuotedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class RetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6591,6 +7563,8 @@ class RetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -6607,6 +7581,8 @@ class RetweetedTweetQuotedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6617,6 +7593,8 @@ class RetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -6633,6 +7611,8 @@ class RetweetedTweetQuotedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6643,6 +7623,8 @@ class RetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -6728,6 +7710,8 @@ class RetweetedTweetQuotedTweetNoteTweet(BaseModel):
     """Inline media positions in the Note Tweet text."""
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
+
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
 
     richtext_tags: Optional[List[RetweetedTweetQuotedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
@@ -6847,7 +7831,13 @@ class RetweetedTweetQuotedTweetQuotedTweetCommunityNote(BaseModel):
 class RetweetedTweetQuotedTweetQuotedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -6871,8 +7861,12 @@ class RetweetedTweetQuotedTweetQuotedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class RetweetedTweetQuotedTweetQuotedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6883,6 +7877,8 @@ class RetweetedTweetQuotedTweetQuotedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetQuotedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -6899,6 +7895,8 @@ class RetweetedTweetQuotedTweetQuotedTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6909,6 +7907,8 @@ class RetweetedTweetQuotedTweetQuotedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetQuotedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -6925,6 +7925,8 @@ class RetweetedTweetQuotedTweetQuotedTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -6935,6 +7937,8 @@ class RetweetedTweetQuotedTweetQuotedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetQuotedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -7014,8 +8018,12 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7026,6 +8034,8 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo(BaseM
 
 
 class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -7042,6 +8052,8 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7052,6 +8064,8 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo(BaseMod
 
 
 class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -7068,6 +8082,8 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7078,6 +8094,8 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo(Base
 
 
 class RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -7164,6 +8182,8 @@ class RetweetedTweetQuotedTweetQuotedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[RetweetedTweetQuotedTweetQuotedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -7218,8 +8238,14 @@ class RetweetedTweetQuotedTweetQuotedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -7243,6 +8269,8 @@ class RetweetedTweetQuotedTweetQuotedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -7260,6 +8288,10 @@ class RetweetedTweetQuotedTweetQuotedTweetSportsContext(BaseModel):
 
 
 class RetweetedTweetQuotedTweetQuotedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -7319,11 +8351,17 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[RetweetedTweetQuotedTweetQuotedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[RetweetedTweetQuotedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -7343,6 +8381,8 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -7353,8 +8393,16 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
     entities: Optional[RetweetedTweetQuotedTweetQuotedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -7362,13 +8410,19 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -7404,6 +8458,10 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[RetweetedTweetQuotedTweetQuotedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -7422,10 +8480,16 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[RetweetedTweetQuotedTweetQuotedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -7523,7 +8587,13 @@ class RetweetedTweetQuotedTweetRetweetedTweetCommunityNote(BaseModel):
 class RetweetedTweetQuotedTweetRetweetedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -7547,8 +8617,12 @@ class RetweetedTweetQuotedTweetRetweetedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7559,6 +8633,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetRetweetedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -7575,6 +8651,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7585,6 +8663,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetRetweetedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -7601,6 +8681,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7611,6 +8693,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetEntitiesTimestampTagInfo(BaseModel)
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetRetweetedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -7690,8 +8774,12 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesHashtag(BaseModel)
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7702,6 +8790,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo(Ba
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -7718,6 +8808,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSmarttag(BaseModel
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7728,6 +8820,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo(Base
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -7744,6 +8838,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -7754,6 +8850,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo(B
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetQuotedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -7840,6 +8938,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[RetweetedTweetQuotedTweetRetweetedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -7894,8 +8994,14 @@ class RetweetedTweetQuotedTweetRetweetedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -7919,6 +9025,8 @@ class RetweetedTweetQuotedTweetRetweetedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -7936,6 +9044,10 @@ class RetweetedTweetQuotedTweetRetweetedTweetSportsContext(BaseModel):
 
 
 class RetweetedTweetQuotedTweetRetweetedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -7995,11 +9107,17 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[RetweetedTweetQuotedTweetRetweetedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[RetweetedTweetQuotedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -8019,6 +9137,8 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -8029,8 +9149,16 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
     entities: Optional[RetweetedTweetQuotedTweetRetweetedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -8038,13 +9166,19 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -8080,6 +9214,10 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[RetweetedTweetQuotedTweetRetweetedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -8098,10 +9236,16 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[RetweetedTweetQuotedTweetRetweetedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -8115,8 +9259,14 @@ class RetweetedTweetQuotedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -8140,6 +9290,8 @@ class RetweetedTweetQuotedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -8157,6 +9309,10 @@ class RetweetedTweetQuotedTweetSportsContext(BaseModel):
 
 
 class RetweetedTweetQuotedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -8216,11 +9372,17 @@ class RetweetedTweetQuotedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[RetweetedTweetQuotedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[RetweetedTweetQuotedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -8238,6 +9400,8 @@ class RetweetedTweetQuotedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -8248,8 +9412,16 @@ class RetweetedTweetQuotedTweet(BaseModel):
     entities: Optional[RetweetedTweetQuotedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -8257,13 +9429,19 @@ class RetweetedTweetQuotedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -8283,6 +9461,8 @@ class RetweetedTweetQuotedTweet(BaseModel):
     note_tweet: Optional[RetweetedTweetQuotedTweetNoteTweet] = FieldInfo(alias="noteTweet", default=None)
     """Complete Note Tweet content and rich-text metadata."""
 
+    parent_tweet: Optional[RetweetedTweetQuotedTweetQuotedTweet] = FieldInfo(alias="parentTweet", default=None)
+
     place: Optional[RetweetedTweetQuotedTweetPlace] = None
     """Describes public place metadata on a geotagged tweet."""
 
@@ -8299,6 +9479,10 @@ class RetweetedTweetQuotedTweet(BaseModel):
 
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
+
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
 
     reaction_context: Optional[RetweetedTweetQuotedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
@@ -8319,10 +9503,16 @@ class RetweetedTweetQuotedTweet(BaseModel):
     sports_context: Optional[RetweetedTweetQuotedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[RetweetedTweetQuotedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -8420,7 +9610,13 @@ class RetweetedTweetRetweetedTweetCommunityNote(BaseModel):
 class RetweetedTweetRetweetedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -8444,8 +9640,12 @@ class RetweetedTweetRetweetedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class RetweetedTweetRetweetedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8456,6 +9656,8 @@ class RetweetedTweetRetweetedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -8472,6 +9674,8 @@ class RetweetedTweetRetweetedTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8482,6 +9686,8 @@ class RetweetedTweetRetweetedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -8498,6 +9704,8 @@ class RetweetedTweetRetweetedTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8508,6 +9716,8 @@ class RetweetedTweetRetweetedTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -8587,8 +9797,12 @@ class RetweetedTweetRetweetedTweetNoteTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class RetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8599,6 +9813,8 @@ class RetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -8615,6 +9831,8 @@ class RetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8625,6 +9843,8 @@ class RetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -8641,6 +9861,8 @@ class RetweetedTweetRetweetedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8651,6 +9873,8 @@ class RetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -8736,6 +9960,8 @@ class RetweetedTweetRetweetedTweetNoteTweet(BaseModel):
     """Inline media positions in the Note Tweet text."""
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
+
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
 
     richtext_tags: Optional[List[RetweetedTweetRetweetedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
@@ -8855,7 +10081,13 @@ class RetweetedTweetRetweetedTweetQuotedTweetCommunityNote(BaseModel):
 class RetweetedTweetRetweetedTweetQuotedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -8879,8 +10111,12 @@ class RetweetedTweetRetweetedTweetQuotedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8891,6 +10127,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetQuotedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -8907,6 +10145,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8917,6 +10157,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSymbolTagInfo(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetQuotedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -8933,6 +10175,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -8943,6 +10187,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetEntitiesTimestampTagInfo(BaseModel)
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetQuotedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -9022,8 +10268,12 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesHashtag(BaseModel)
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9034,6 +10284,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo(Ba
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -9050,6 +10302,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSmarttag(BaseModel
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9060,6 +10314,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo(Base
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -9076,6 +10332,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9086,6 +10344,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo(B
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetQuotedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -9172,6 +10432,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[RetweetedTweetRetweetedTweetQuotedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -9226,8 +10488,14 @@ class RetweetedTweetRetweetedTweetQuotedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -9251,6 +10519,8 @@ class RetweetedTweetRetweetedTweetQuotedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -9268,6 +10538,10 @@ class RetweetedTweetRetweetedTweetQuotedTweetSportsContext(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetQuotedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -9327,11 +10601,17 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[RetweetedTweetRetweetedTweetQuotedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[RetweetedTweetRetweetedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -9351,6 +10631,8 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -9361,8 +10643,16 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
     entities: Optional[RetweetedTweetRetweetedTweetQuotedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -9370,13 +10660,19 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -9412,6 +10708,10 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[RetweetedTweetRetweetedTweetQuotedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -9430,10 +10730,16 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[RetweetedTweetRetweetedTweetQuotedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -9531,7 +10837,13 @@ class RetweetedTweetRetweetedTweetRetweetedTweetCommunityNote(BaseModel):
 class RetweetedTweetRetweetedTweetRetweetedTweetConversationControl(BaseModel):
     """Public reply policy and conversation owner."""
 
+    allowed_country_codes: Optional[List[str]] = FieldInfo(alias="allowedCountryCodes", default=None)
+
     invite_via_mention: Optional[bool] = FieldInfo(alias="inviteViaMention", default=None)
+
+    mode: Optional[str] = None
+
+    owner_id: Optional[str] = FieldInfo(alias="ownerId", default=None)
 
     owner_username: Optional[str] = FieldInfo(alias="ownerUsername", default=None)
 
@@ -9555,8 +10867,12 @@ class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesHashtag(BaseModel):
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[EntitiesHashtagTag] = None
+
 
 class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9567,6 +10883,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTagInfo(BaseMode
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -9583,6 +10901,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSmarttag(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9593,6 +10913,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTagInfo(BaseModel)
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSymbolTagInfo] = None
 
 
@@ -9609,6 +10931,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesSymbol(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9619,6 +10943,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTagInfo(BaseMod
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetRetweetedTweetEntitiesTimestampTagInfo] = None
 
 
@@ -9698,8 +11024,12 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesHashtag(BaseMod
 
     indices: Optional[List[int]] = None
 
+    tag: Optional[NoteTweetEntitiesHashtagTag] = None
+
 
 class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9710,6 +11040,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttagTagInfo] = None
 
 
@@ -9726,6 +11058,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSmarttag(BaseMo
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9736,6 +11070,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo(B
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbolTagInfo] = None
 
 
@@ -9752,6 +11088,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesSymbol(BaseMode
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfoInfo(BaseModel):
+    active: Optional[bool] = None
+
     name: Optional[str] = None
 
     ticker: Optional[str] = None
@@ -9762,6 +11100,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInf
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTag(BaseModel):
+    id: Optional[str] = None
+
     info: Optional[RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetEntitiesTimestampTagInfo] = None
 
 
@@ -9848,6 +11188,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetNoteTweet(BaseModel):
 
     is_expandable: Optional[bool] = FieldInfo(alias="isExpandable", default=None)
 
+    note_id: Optional[str] = FieldInfo(alias="noteId", default=None)
+
     richtext_tags: Optional[List[RetweetedTweetRetweetedTweetRetweetedTweetNoteTweetRichtextTag]] = FieldInfo(
         alias="richtextTags", default=None
     )
@@ -9902,8 +11244,14 @@ class RetweetedTweetRetweetedTweetRetweetedTweetSportsContextCompetitor(BaseMode
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -9927,6 +11275,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -9944,6 +11294,10 @@ class RetweetedTweetRetweetedTweetRetweetedTweetSportsContext(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetRetweetedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -10003,11 +11357,17 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[RetweetedTweetRetweetedTweetRetweetedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[RetweetedTweetRetweetedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
@@ -10027,6 +11387,8 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -10037,8 +11399,16 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
     entities: Optional[RetweetedTweetRetweetedTweetRetweetedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -10046,13 +11416,19 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -10090,6 +11466,10 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[RetweetedTweetRetweetedTweetRetweetedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -10108,10 +11488,16 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
     )
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[RetweetedTweetRetweetedTweetRetweetedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -10125,8 +11511,14 @@ class RetweetedTweetRetweetedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -10150,6 +11542,8 @@ class RetweetedTweetRetweetedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -10167,6 +11561,10 @@ class RetweetedTweetRetweetedTweetSportsContext(BaseModel):
 
 
 class RetweetedTweetRetweetedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -10226,11 +11624,17 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[RetweetedTweetRetweetedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[RetweetedTweetRetweetedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -10248,6 +11652,8 @@ class RetweetedTweetRetweetedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -10258,8 +11664,16 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     entities: Optional[RetweetedTweetRetweetedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -10267,13 +11681,19 @@ class RetweetedTweetRetweetedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -10292,6 +11712,8 @@ class RetweetedTweetRetweetedTweet(BaseModel):
 
     note_tweet: Optional[RetweetedTweetRetweetedTweetNoteTweet] = FieldInfo(alias="noteTweet", default=None)
     """Complete Note Tweet content and rich-text metadata."""
+
+    parent_tweet: Optional[RetweetedTweetRetweetedTweetQuotedTweet] = FieldInfo(alias="parentTweet", default=None)
 
     place: Optional[RetweetedTweetRetweetedTweetPlace] = None
     """Describes public place metadata on a geotagged tweet."""
@@ -10312,6 +11734,10 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[RetweetedTweetRetweetedTweetReactionContext] = FieldInfo(
         alias="reactionContext", default=None
     )
@@ -10331,10 +11757,16 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     sports_context: Optional[RetweetedTweetRetweetedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[RetweetedTweetRetweetedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -10348,8 +11780,14 @@ class RetweetedTweetSportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
     """Team logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
     """Team logo for light backgrounds."""
@@ -10373,6 +11811,8 @@ class RetweetedTweetSportsContext(BaseModel):
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
     """Scheduled Unix time in milliseconds, preserving the source representation."""
 
@@ -10390,6 +11830,10 @@ class RetweetedTweetSportsContext(BaseModel):
 
 
 class RetweetedTweetTombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -10449,11 +11893,17 @@ class RetweetedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+
     card: Optional[RetweetedTweetCard] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
     community_note: Optional[RetweetedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -10471,6 +11921,8 @@ class RetweetedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -10481,8 +11933,16 @@ class RetweetedTweet(BaseModel):
     entities: Optional[RetweetedTweetEntities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+
+    geo: Optional[Geo] = None
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -10490,13 +11950,19 @@ class RetweetedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -10513,6 +11979,8 @@ class RetweetedTweet(BaseModel):
 
     note_tweet: Optional[RetweetedTweetNoteTweet] = FieldInfo(alias="noteTweet", default=None)
     """Complete Note Tweet content and rich-text metadata."""
+
+    parent_tweet: Optional[RetweetedTweetQuotedTweet] = FieldInfo(alias="parentTweet", default=None)
 
     place: Optional[RetweetedTweetPlace] = None
     """Describes public place metadata on a geotagged tweet."""
@@ -10531,6 +11999,10 @@ class RetweetedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+
     reaction_context: Optional[RetweetedTweetReactionContext] = FieldInfo(alias="reactionContext", default=None)
     """Public post and user referenced by this reaction."""
 
@@ -10548,10 +12020,16 @@ class RetweetedTweet(BaseModel):
     sports_context: Optional[RetweetedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+
     tombstone: Optional[RetweetedTweetTombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -10565,11 +12043,20 @@ class SportsContextCompetitor(BaseModel):
     abbreviation: Optional[str] = None
     """Team abbreviation."""
 
+    color: Optional[str] = None
+    """Team display color."""
+
     dark_logo_url: Optional[str] = FieldInfo(alias="darkLogoUrl", default=None)
-    """Team logo for dark backgrounds."""
+    """Logo for dark backgrounds."""
+
+    is_active: Optional[bool] = FieldInfo(alias="isActive", default=None)
+    """Active competitor."""
+
+    is_winner: Optional[bool] = FieldInfo(alias="isWinner", default=None)
+    """Winning competitor."""
 
     logo_url: Optional[str] = FieldInfo(alias="logoUrl", default=None)
-    """Team logo for light backgrounds."""
+    """Logo for light backgrounds."""
 
     name: Optional[str] = None
     """Team name."""
@@ -10582,22 +12069,25 @@ class SportsContextCompetitor(BaseModel):
 
 
 class SportsContext(BaseModel):
-    """Sports game context attached to the post, when available."""
+    """Game metadata attached to this post."""
 
     competitors: Optional[List[SportsContextCompetitor]] = None
-    """Teams and their reported scores."""
+    """Teams & reported scores."""
 
     game_id: Optional[str] = FieldInfo(alias="gameId", default=None)
     """Game ID."""
 
+    league: Optional[str] = None
+    """League ID."""
+
     scheduled_at_ms: Union[float, str, None] = FieldInfo(alias="scheduledAtMs", default=None)
-    """Scheduled Unix time in milliseconds, preserving the source representation."""
+    """Scheduled Unix milliseconds, retaining the source type."""
 
     state: Optional[str] = None
-    """Game state reported by the source."""
+    """Reported game state."""
 
     status_text: Optional[str] = FieldInfo(alias="statusText", default=None)
-    """Display text for game progress."""
+    """Game progress text."""
 
     title: Optional[str] = None
     """Game title."""
@@ -10607,6 +12097,10 @@ class SportsContext(BaseModel):
 
 
 class TombstoneTextEntityRef(BaseModel):
+    screen_name: Optional[str] = FieldInfo(alias="screenName", default=None)
+
+    text: Optional[str] = None
+
     type: Optional[str] = None
 
     url: Optional[str] = None
@@ -10616,10 +12110,12 @@ class TombstoneTextEntityRef(BaseModel):
 
 class TombstoneTextEntity(BaseModel):
     from_index: Optional[int] = FieldInfo(alias="fromIndex", default=None)
+    """Whole number from 0."""
 
     ref: Optional[TombstoneTextEntityRef] = None
 
     to_index: Optional[int] = FieldInfo(alias="toIndex", default=None)
+    """Whole number from 0."""
 
 
 class TombstoneText(BaseModel):
@@ -10669,11 +12165,27 @@ class EmbeddedTweet(BaseModel):
     author: Optional[UserProfile] = None
     """Public X profile."""
 
+    author_unavailable: Optional[AuthorUnavailable] = FieldInfo(alias="authorUnavailable", default=None)
+    """Why the tweet has no author.
+
+    X serves a suspended or deleted account as an unavailable user with a reason
+    such as Suspended or NotFound. Omitted when the author is available.
+    """
+
     card: Optional[Card] = None
     """Describes a public card and its referenced profiles."""
 
+    cashtag_attachments: Optional[List[CashtagAttachment]] = FieldInfo(alias="cashtagAttachments", default=None)
+    """Price charts the author attached under the post, 1 per cashtag.
+
+    Absent when the post has none. X may send a cashtag without a chart window.
+    """
+
     community_id: Optional[str] = FieldInfo(alias="communityId", default=None)
     """Community ID."""
+
+    community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
+    """Community name. Present when X sends it with the post."""
 
     community_note: Optional[CommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -10689,6 +12201,9 @@ class EmbeddedTweet(BaseModel):
 
     conversation_id: Optional[str] = FieldInfo(alias="conversationId", default=None)
 
+    coordinates: Optional[Coordinates] = None
+    """Author-published point, with longitude before latitude."""
+
     created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
 
     display_text_range: Optional[List[int]] = FieldInfo(alias="displayTextRange", default=None)
@@ -10699,8 +12214,24 @@ class EmbeddedTweet(BaseModel):
     entities: Optional[Entities] = None
     """Lists hashtags, symbols, links, and mentions from tweet text."""
 
+    exclusive_content: Optional[ExclusiveContent] = FieldInfo(alias="exclusiveContent", default=None)
+    """Marks a subscriber-only post with the creator whose subscription unlocks it.
+
+    Non-subscribers get the preview text & the subscribe link. Omitted on public
+    posts.
+    """
+
+    geo: Optional[Geo] = None
+    """Author-published point, with latitude before longitude."""
+
     grok_share_attachment: Optional[Dict[str, object]] = FieldInfo(alias="grokShareAttachment", default=None)
     """Public metadata whose fields are defined by X."""
+
+    grok_translated_post: Optional[Dict[str, object]] = FieldInfo(alias="grokTranslatedPost", default=None)
+    """Grok's translation of the post, as X shows it."""
+
+    has_community_notes: Optional[bool] = FieldInfo(alias="hasCommunityNotes", default=None)
+    """Whether X holds Community Notes on the post, shown or not."""
 
     in_reply_to_id: Optional[str] = FieldInfo(alias="inReplyToId", default=None)
 
@@ -10708,13 +12239,23 @@ class EmbeddedTweet(BaseModel):
 
     in_reply_to_username: Optional[str] = FieldInfo(alias="inReplyToUsername", default=None)
 
+    interstitial: Optional[Interstitial] = None
+    """
+    The notice x.com covers the post with until the reader views it, such as X's
+    public interest notice on a post that broke its rules but stays up.
+    """
+
     is_limited_reply: Optional[bool] = FieldInfo(alias="isLimitedReply", default=None)
 
     is_note_tweet: Optional[bool] = FieldInfo(alias="isNoteTweet", default=None)
 
+    is_pinned: Optional[bool] = FieldInfo(alias="isPinned", default=None)
+
     is_quote_status: Optional[bool] = FieldInfo(alias="isQuoteStatus", default=None)
 
     is_reply: Optional[bool] = FieldInfo(alias="isReply", default=None)
+
+    is_retweet: Optional[bool] = FieldInfo(alias="isRetweet", default=None)
 
     is_translatable: Optional[bool] = FieldInfo(alias="isTranslatable", default=None)
 
@@ -10731,6 +12272,9 @@ class EmbeddedTweet(BaseModel):
 
     note_tweet: Optional[NoteTweet] = FieldInfo(alias="noteTweet", default=None)
     """Complete Note Tweet content and rich-text metadata."""
+
+    parent_tweet: Optional[QuotedTweet] = FieldInfo(alias="parentTweet", default=None)
+    """The post this one replies to, with the same fields."""
 
     place: Optional[Place] = None
     """Describes public place metadata on a geotagged tweet."""
@@ -10749,6 +12293,15 @@ class EmbeddedTweet(BaseModel):
     quoted_tweet_id: Optional[str] = FieldInfo(alias="quotedTweetId", default=None)
     """Quoted tweet ID."""
 
+    quoted_tweet_permalink: Optional[QuotedTweetPermalink] = FieldInfo(alias="quotedTweetPermalink", default=None)
+    """The quoted post's link, kept when X withholds that post."""
+
+    quoted_tweet_unavailable: Optional[QuotedTweetUnavailable] = FieldInfo(alias="quotedTweetUnavailable", default=None)
+    """Why X shows no quoted post.
+
+    Omitted when X names no reason, as its legacy answers never do.
+    """
+
     reaction_context: Optional[ReactionContext] = FieldInfo(alias="reactionContext", default=None)
     """Public post and user referenced by this reaction."""
 
@@ -10766,10 +12319,28 @@ class EmbeddedTweet(BaseModel):
     sports_context: Optional[SportsContext] = FieldInfo(alias="sportsContext", default=None)
     """Sports game context attached to the post, when available."""
 
+    subscriber_badge: Optional[SubscriberBadge] = FieldInfo(alias="subscriberBadge", default=None)
+    """The Subscriber badge X shows on a reply.
+
+    The reply's author subscribes to the creator who started the conversation.
+    Omitted on a post without the badge.
+    """
+
+    text_highlights: Optional[List[TextHighlight]] = FieldInfo(alias="textHighlights", default=None)
+    """Where `text` matches the search, on each row a search read.
+
+    Offsets count code points of `text`, as `displayTextRange` does. Empty when X
+    marks nothing in the post. X marks matches only in a post's first 280
+    characters.
+    """
+
     tombstone: Optional[Tombstone] = None
     """Public visibility notice attached to an available tweet."""
 
     type: Optional[str] = None
+
+    unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+    """The author's ID when X withholds the author's profile."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""

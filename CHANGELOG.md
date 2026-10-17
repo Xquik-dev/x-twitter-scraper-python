@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Bulk retry can target specific accounts with `accountIds`.
+- Embedded parent, quoted and retweeted posts carry every tweet field and the author.
 - User profiles and tweet users return optional `override_verified_year` in `identity_verification`, the year X shows as the start of verification in place of `verified_since_msec`.
 - The check scripts remove their temp dirs on every exit, including a failed step and a signal.
 

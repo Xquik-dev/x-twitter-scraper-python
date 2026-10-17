@@ -5,11 +5,12 @@
 from __future__ import annotations
 
 import os
+import json
 from typing import Any, cast
 
 import pytest
 
-from tests.utils import assert_matches_type
+from tests.utils import assert_matches_type, send_with_mock_transport
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
     XAccountDetail,
@@ -529,3 +530,33 @@ class TestAsyncAccounts:
                 id="",
                 password="<ACCOUNT_PASSWORD>",
             )
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_bulk_retry_sends_account_ids(asynchronous: bool) -> None:
+    request, account = await send_with_mock_transport(
+        lambda client: client.x.accounts.bulk_retry(account_ids=["1", "xacct_2"]),
+        lambda client: client.x.accounts.bulk_retry(account_ids=["1", "xacct_2"]),
+        {"cleared": 2},
+        asynchronous,
+        method="POST",
+    )
+
+    assert request.url.path == "/api/v1/x/accounts/bulk-retry"
+    assert json.loads(request.content) == {"accountIds": ["1", "xacct_2"]}
+    assert account.cleared == 2
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_bulk_retry_omits_account_ids(asynchronous: bool) -> None:
+    request, account = await send_with_mock_transport(
+        lambda client: client.x.accounts.bulk_retry(),
+        lambda client: client.x.accounts.bulk_retry(),
+        {"cleared": 3},
+        asynchronous,
+        method="POST",
+    )
+
+    assert request.url.path == "/api/v1/x/accounts/bulk-retry"
+    assert json.loads(request.content) == {}
+    assert account.cleared == 3
