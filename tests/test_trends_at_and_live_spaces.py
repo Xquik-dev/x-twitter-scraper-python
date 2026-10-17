@@ -12,7 +12,7 @@ import pytest
 
 from tests.utils import send_with_mock_transport
 from x_twitter_scraper.types import XGetTrendsParams
-from x_twitter_scraper.types.x import SpaceSearchParams
+from x_twitter_scraper.types.x import Space, SpaceParticipant, SpaceSearchParams
 
 QueryType = Literal["Latest", "Top", "Live", "Upcoming"]
 QUERY_TYPES: list[QueryType] = ["Latest", "Top", "Live", "Upcoming"]
@@ -43,6 +43,22 @@ TRENDS = {
     },
     "capturedAt": "2026-10-13T14:00:26.000Z",
     "requestedAt": "2026-10-13T14:00:00.000Z",
+}
+
+SPACE = {
+    "space": {
+        "id": "1OGwblLjnQMKB",
+        "title": "Extending the Network to the Edge",
+        "state": "Ended",
+        "startedAt": "2026-03-11T17:00:26.227Z",
+        "endedAt": "2026-03-11T17:49:29.190Z",
+        "totalLiveListeners": 841,
+        "totalReplayWatched": 609,
+        "creator": {"id": "951329744804392960", "username": "solana", "name": "Solana"},
+        "admins": [{"id": "951329744804392960", "username": "solana", "name": "Solana"}],
+        "speakers": [],
+        "listeners": [],
+    }
 }
 
 SPACES = {
@@ -147,3 +163,24 @@ async def test_spaces_search_reads_the_spec_example(asynchronous: bool) -> None:
 def test_spaces_search_types_every_query_type_of_the_spec() -> None:
     query_type = get_type_hints(SpaceSearchParams, include_extras=True)["query_type"]
     assert get_args(get_args(query_type)[0]) == ("Latest", "Top", "Live", "Upcoming")
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_space_operations_return_the_same_model(asynchronous: bool) -> None:
+    _, retrieved = await send_with_mock_transport(
+        lambda client: client.x.spaces.retrieve("1OGwblLjnQMKB"),
+        lambda client: client.x.spaces.retrieve("1OGwblLjnQMKB"),
+        SPACE,
+        asynchronous,
+    )
+    _, searched = await send_with_mock_transport(
+        lambda client: client.x.spaces.search(q="from:solana"),
+        lambda client: client.x.spaces.search(q="from:solana"),
+        SPACES,
+        asynchronous,
+    )
+
+    spaces: list[Space] = [retrieved.space, searched.spaces[0]]
+    assert type(spaces[0]) is type(spaces[1]) is Space
+    assert spaces[0].id == spaces[1].id == "1OGwblLjnQMKB"
+    assert type(spaces[0].admins[0]) is type(spaces[1].admins[0]) is SpaceParticipant

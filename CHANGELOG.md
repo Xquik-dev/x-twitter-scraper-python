@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Jobs, Spaces, broadcasts and Community Notes reuse named models across responses. Existing public type names keep working.
+
 ## 0.16.0 (2026-10-16)
 
 This release adds the response fields, event types and file uploads the SDK dropped. A field check against the API spec found them.
@@ -164,7 +168,7 @@ Full Changelog: [v0.11.0...v0.11.1](https://github.com/Xquik-dev/x-twitter-scrap
 
 ### Documentation
 
-* refine public Python SDK text ([#49](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/49)) ([811c7c2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/811c7c28c26b25967283942c7a2b35ea112dee5a))
+* refine public Python SDK text ([811c7c2](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/811c7c28c26b25967283942c7a2b35ea112dee5a))
 
 ## 0.11.0 (2026-08-12)
 
@@ -214,7 +218,7 @@ Full Changelog: [v0.7.0...v0.8.0](https://github.com/Xquik-dev/x-twitter-scraper
 
 ### Features
 
-* **api:** add complete reply extraction, rich response contracts, and typed account outcomes ([#32](https://github.com/Xquik-dev/x-twitter-scraper-python/pull/32)) ([23ab238](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/23ab238d37c98eaa10ed10867d7a5e4d855f9294))
+* **api:** add complete reply extraction, rich response contracts, and typed account outcomes ([23ab238](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/23ab238d37c98eaa10ed10867d7a5e4d855f9294))
 
 ## 0.7.0 (2026-07-29)
 
@@ -246,7 +250,7 @@ Full Changelog: [v0.5.2...v0.6.0](https://github.com/Xquik-dev/x-twitter-scraper
 
 ### Bug Fixes
 
-* audit locked Python dependencies ([#22](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/22)) ([b3427e6](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/b3427e6ea683a2cc983ad6ef4fc3c69ed3922063))
+* audit locked Python dependencies ([b3427e6](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/b3427e6ea683a2cc983ad6ef4fc3c69ed3922063))
 
 
 ### Chores
@@ -264,7 +268,7 @@ Full Changelog: [v0.5.1...v0.5.2](https://github.com/Xquik-dev/x-twitter-scraper
 
 ### Documentation
 
-* map common X data tasks ([#16](https://github.com/Xquik-dev/x-twitter-scraper-python/issues/16)) ([9c5827e](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9c5827e8a0ec1fbdffe66938bfaddff357fe7f01))
+* map common X data tasks ([9c5827e](https://github.com/Xquik-dev/x-twitter-scraper-python/commit/9c5827e8a0ec1fbdffe66938bfaddff357fe7f01))
 
 ## 0.5.1 (2026-07-22)
 
