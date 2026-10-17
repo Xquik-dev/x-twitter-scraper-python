@@ -63,6 +63,7 @@ Pass `--no-status` to skip that status.
 Coverage compares against `HEAD^` by default.
 For a branch with several commits, pass its base, as in `bin/check-local origin/main`.
 SDK commits preserve full-source coverage. LOC changes remain advisory.
+The check scripts remove their temporary directories on any exit, including failure or interruption.
 
 The extended gate adds formatting, fuzzing, comply licensing, and a LOC report.
 
@@ -71,6 +72,7 @@ bun run check:all /absolute/path/to/parent-coverage.json HEAD
 ```
 
 Measure parent coverage using `bash scripts/coverage --baseline` at the parent revision.
+The baseline stays in the Git common directory as `xquik-coverage-baseline.json`, or at `COVERAGE_BASELINE` when set.
 The extended gate verifies that report against Git's source hashes.
 
 Install CodeQL CLI 2.27.2 or newer before running `bin/check-local`.
@@ -96,12 +98,12 @@ Use Linux x86_64 with uv 0.13.1 or newer and a working systemd user service.
 From another platform, set `XQUIK_FUZZ_HOST` to your authorized Linux SSH runner.
 The command transfers SDK source and lockfiles into an isolated temporary directory.
 The fuzz process cannot access the network or modify files outside its evidence directory.
-Logs, generated inputs, and failure artifacts remain at the printed evidence path.
+Logs and failure inputs print before the temporary directory is removed.
 SDK validation has no time limit. All required checks must still pass.
 
 Each CodeQL run creates a fresh database and runs security-extended queries.
 Findings, failed extraction, and incomplete analysis block release.
-Reports remain in the printed evidence directory.
+The report prints before the temporary directory is removed.
 
 Add regression tests for every corrected defect.
 
