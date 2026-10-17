@@ -43,6 +43,10 @@ Run every check before requesting review.
 bin/check-local
 ```
 
+When `git config checklocal.runner` names a command, `bin/check-local` runs that command with the checkout path and its own arguments instead.
+A maintainer can use it to run the checks on another machine.
+Set `CHECK_LOCAL_HERE=1` to run them here anyway.
+
 It runs these checks in order and stops at the first failure.
 
 1. Locked dependency install for Python 3.10.22 and 3.14.8.
