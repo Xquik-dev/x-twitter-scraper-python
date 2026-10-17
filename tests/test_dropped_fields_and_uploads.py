@@ -56,7 +56,7 @@ def minimal(model: Type[BaseModel]) -> Dict[str, object]:
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-async def test_user_profiles_keep_the_full_size_picture_redirect_and_identity_verification(asynchronous: bool) -> None:
+async def test_user_profiles_keep_the_fields_the_sdk_dropped(asynchronous: bool) -> None:
     payload = {
         **minimal(UserProfile),
         "profilePictureOriginal": AVATAR,
