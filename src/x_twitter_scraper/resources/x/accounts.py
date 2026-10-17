@@ -8,10 +8,10 @@ from typing import Any, cast
 
 import httpx
 
-from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
+from ..._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
-from ...types.x import account_list_params, account_create_params, account_reauth_params
+from ...types.x import account_list_params, account_create_params, account_reauth_params, account_bulk_retry_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
     to_raw_response_wrapper,
@@ -216,17 +216,36 @@ class AccountsResource(SyncAPIResource):
     def bulk_retry(
         self,
         *,
+        account_ids: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountBulkRetryResponse:
         """
-        Clears loginFailedAt and loginFailureReason for all accounts with transient or
-        automated failure reasons, making them eligible for retry on next use.
+        Clears loginFailedAt and loginFailureReason for every account with a transient
+        or automated failure reason. Each can then retry on its next use. Name accounts
+        in accountIds to retry only those. Needs a dashboard session, since each retry
+        signs in to X again.
+
+        Args:
+          account_ids: IDs of the X accounts to retry. Accounts that failed for another reason, or
+              belong to someone else, stay as they are.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
         """
         return self._post(
             "/x/accounts/bulk-retry",
+            body=maybe_transform(
+                {"account_ids": account_ids},
+                account_bulk_retry_params.AccountBulkRetryParams,
+            ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -468,17 +487,36 @@ class AsyncAccountsResource(AsyncAPIResource):
     async def bulk_retry(
         self,
         *,
+        account_ids: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> AccountBulkRetryResponse:
         """
-        Clears loginFailedAt and loginFailureReason for all accounts with transient or
-        automated failure reasons, making them eligible for retry on next use.
+        Clears loginFailedAt and loginFailureReason for every account with a transient
+        or automated failure reason. Each can then retry on its next use. Name accounts
+        in accountIds to retry only those. Needs a dashboard session, since each retry
+        signs in to X again.
+
+        Args:
+          account_ids: IDs of the X accounts to retry. Accounts that failed for another reason, or
+              belong to someone else, stay as they are.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
         """
         return await self._post(
             "/x/accounts/bulk-retry",
+            body=await async_maybe_transform(
+                {"account_ids": account_ids},
+                account_bulk_retry_params.AccountBulkRetryParams,
+            ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),

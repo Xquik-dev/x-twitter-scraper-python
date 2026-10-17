@@ -64,6 +64,7 @@ from .analysis_classify_params import AnalysisClassifyParams as AnalysisClassify
 from .dm_delete_message_params import DmDeleteMessageParams as DmDeleteMessageParams
 from .tweet_get_replies_params import TweetGetRepliesParams as TweetGetRepliesParams
 from .tweet_translate_response import TweetTranslateResponse as TweetTranslateResponse
+from .account_bulk_retry_params import AccountBulkRetryParams as AccountBulkRetryParams
 from .analysis_sentiment_params import AnalysisSentimentParams as AnalysisSentimentParams
 from .broadcast_retrieve_params import BroadcastRetrieveParams as BroadcastRetrieveParams
 from .community_create_response import CommunityCreateResponse as CommunityCreateResponse
