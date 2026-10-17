@@ -117,8 +117,10 @@ def test_replies_read_fully_populated_embedded_posts(parse: Callable[..., Any], 
             value={"tweets": [{**POST, field: EMBEDDED}], "has_next_page": False, "next_cursor": ""},
         ),
     )
-    tweet = response.tweets[0]
-    embedded = tweet.parent_tweet if field == "parentTweet" else getattr(tweet, field)
+    tweets = response.tweets
+    assert tweets is not None
+    tweet = tweets[0]
+    embedded: object = tweet.parent_tweet if field == "parentTweet" else getattr(tweet, field)
     assert isinstance(embedded, EmbeddedTweet)
     assert (embedded.id, embedded.text, embedded.like_count, embedded.view_count) == (
         "1234567890",
@@ -184,9 +186,11 @@ def test_replies_read_fully_populated_embedded_posts(parse: Callable[..., Any], 
 @pytest.mark.parametrize("parse", PARSERS)
 @pytest.mark.parametrize("path", NESTED_PATHS)
 def test_nested_posts_keep_typed_fields_at_every_depth(parse: Callable[..., Any], path: tuple[str, ...]) -> None:
-    value = EMBEDDED
+    value: object = EMBEDDED
     for field in reversed(path):
-        value = {**POST, "parentTweet" if field == "parent_tweet" else field: value}
+        nested: dict[str, object] = {**POST}
+        nested["parentTweet" if field == "parent_tweet" else field] = value
+        value = nested
     embedded = parse(type_=EmbeddedTweet, value=value)
     for field in path:
         embedded = getattr(embedded, field)
@@ -222,9 +226,11 @@ def test_nested_posts_keep_typed_fields_at_every_depth(parse: Callable[..., Any]
 @pytest.mark.parametrize("parse", PARSERS)
 @pytest.mark.parametrize("path", NESTED_PATHS)
 def test_embedded_posts_parse_without_added_fields(parse: Callable[..., Any], path: tuple[str, ...]) -> None:
-    value = POST
+    value: object = POST
     for field in reversed(path):
-        value = {**POST, "parentTweet" if field == "parent_tweet" else field: value}
+        nested: dict[str, object] = {**POST}
+        nested["parentTweet" if field == "parent_tweet" else field] = value
+        value = nested
     embedded = parse(type_=EmbeddedTweet, value=value)
     for field in path:
         embedded = getattr(embedded, field)
