@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- User profiles and tweet users return optional `override_verified_year` in `identity_verification`, the year X shows as the start of verification in place of `verified_since_msec`.
+
 ## 0.16.0 (2026-10-16)
 
 This release adds the response fields, event types and file uploads the SDK dropped. A field check against the API spec found them.

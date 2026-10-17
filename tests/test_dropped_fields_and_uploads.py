@@ -56,8 +56,13 @@ def minimal(model: Type[BaseModel]) -> Dict[str, object]:
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-async def test_user_profiles_keep_the_full_size_picture_and_redirect(asynchronous: bool) -> None:
-    payload = {**minimal(UserProfile), "profilePictureOriginal": AVATAR, "redirectsToUsername": "spacexsi"}
+async def test_user_profiles_keep_the_full_size_picture_redirect_and_identity_verification(asynchronous: bool) -> None:
+    payload = {
+        **minimal(UserProfile),
+        "profilePictureOriginal": AVATAR,
+        "redirectsToUsername": "spacexsi",
+        "identityVerification": {"overrideVerifiedYear": 2009},
+    }
     _, profile = await send_with_mock_transport(
         lambda client: client.x.users.retrieve("44196397"),
         lambda client: client.x.users.retrieve("44196397"),
@@ -67,6 +72,8 @@ async def test_user_profiles_keep_the_full_size_picture_and_redirect(asynchronou
 
     assert profile.profile_picture_original == AVATAR
     assert profile.redirects_to_username == "spacexsi"
+    assert profile.identity_verification is not None
+    assert profile.identity_verification.override_verified_year == 2009
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
