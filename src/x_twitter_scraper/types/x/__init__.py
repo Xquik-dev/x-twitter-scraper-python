@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from .job import Job as Job
+from .space import Space as Space
 from .x_account import XAccount as XAccount
 from .tweet_author import TweetAuthor as TweetAuthor
 from .tweet_detail import TweetDetail as TweetDetail
@@ -11,6 +13,7 @@ from .dm_send_params import DmSendParams as DmSendParams
 from .dm_send_response import DmSendResponse as DmSendResponse
 from .x_account_detail import XAccountDetail as XAccountDetail
 from .job_search_params import JobSearchParams as JobSearchParams
+from .space_participant import SpaceParticipant as SpaceParticipant
 from .tweet_list_params import TweetListParams as TweetListParams
 from .tweet_embed_params import TweetEmbedParams as TweetEmbedParams
 from .account_list_params import AccountListParams as AccountListParams
@@ -69,6 +72,7 @@ from .broadcast_retrieve_params import BroadcastRetrieveParams as BroadcastRetri
 from .community_create_response import CommunityCreateResponse as CommunityCreateResponse
 from .community_delete_response import CommunityDeleteResponse as CommunityDeleteResponse
 from .job_list_locations_params import JobListLocationsParams as JobListLocationsParams
+from .paginated_community_notes import PaginatedCommunityNotes as PaginatedCommunityNotes
 from .tweet_check_repost_params import TweetCheckRepostParams as TweetCheckRepostParams
 from .tweet_get_insights_params import TweetGetInsightsParams as TweetGetInsightsParams
 from .user_retrieve_live_params import UserRetrieveLiveParams as UserRetrieveLiveParams
@@ -87,6 +91,7 @@ from .account_bulk_retry_response import AccountBulkRetryResponse as AccountBulk
 from .analysis_sentiment_response import AnalysisSentimentResponse as AnalysisSentimentResponse
 from .analysis_viral_score_params import AnalysisViralScoreParams as AnalysisViralScoreParams
 from .broadcast_retrieve_response import BroadcastRetrieveResponse as BroadcastRetrieveResponse
+from .community_notes_contributor import CommunityNotesContributor as CommunityNotesContributor
 from .job_list_locations_response import JobListLocationsResponse as JobListLocationsResponse
 from .list_retrieve_search_params import ListRetrieveSearchParams as ListRetrieveSearchParams
 from .list_retrieve_tweets_params import ListRetrieveTweetsParams as ListRetrieveTweetsParams
@@ -120,6 +125,7 @@ from .user_retrieve_insights_params import UserRetrieveInsightsParams as UserRet
 from .user_retrieve_mentions_params import UserRetrieveMentionsParams as UserRetrieveMentionsParams
 from .analysis_market_signals_params import AnalysisMarketSignalsParams as AnalysisMarketSignalsParams
 from .community_list_topics_response import CommunityListTopicsResponse as CommunityListTopicsResponse
+from .community_notes_rating_outcome import CommunityNotesRatingOutcome as CommunityNotesRatingOutcome
 from .community_retrieve_info_params import CommunityRetrieveInfoParams as CommunityRetrieveInfoParams
 from .list_retrieve_followers_params import ListRetrieveFollowersParams as ListRetrieveFollowersParams
 from .list_retrieve_members_response import ListRetrieveMembersResponse as ListRetrieveMembersResponse

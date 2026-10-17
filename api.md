@@ -2,6 +2,7 @@
 
 ```python
 from x_twitter_scraper.types import (
+    Broadcast,
     Community,
     CommunityPage,
     CommunityTopic,
@@ -462,7 +463,7 @@ Methods
 Types
 
 ```python
-from x_twitter_scraper.types.x import JobRetrieveResponse, JobListLocationsResponse, JobSearchResponse
+from x_twitter_scraper.types.x import Job, JobRetrieveResponse, JobListLocationsResponse, JobSearchResponse
 ```
 
 Methods
@@ -674,13 +675,16 @@ from x_twitter_scraper.types.x import (
     CommunityNoteListContributorDeletedNotesResponse,
     CommunityNoteListContributorNotesResponse,
     CommunityNoteRetrieveContributorResponse,
+    CommunityNotesContributor,
+    CommunityNotesRatingOutcome,
+    PaginatedCommunityNotes,
 )
 ```
 
 Methods
 
-- <code title="get /x/community-notes/contributors/{alias}/deleted-notes">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">list_contributor_deleted_notes</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_list_contributor_deleted_notes_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_note_list_contributor_deleted_notes_response.py">CommunityNoteListContributorDeletedNotesResponse</a></code>
-- <code title="get /x/community-notes/contributors/{alias}/notes">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">list_contributor_notes</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_list_contributor_notes_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_note_list_contributor_notes_response.py">CommunityNoteListContributorNotesResponse</a></code>
+- <code title="get /x/community-notes/contributors/{alias}/deleted-notes">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">list_contributor_deleted_notes</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_list_contributor_deleted_notes_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/paginated_community_notes.py">PaginatedCommunityNotes</a></code>
+- <code title="get /x/community-notes/contributors/{alias}/notes">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">list_contributor_notes</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_list_contributor_notes_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/paginated_community_notes.py">PaginatedCommunityNotes</a></code>
 - <code title="get /x/community-notes/contributors/{alias}">client.x.community_notes.<a href="./src/x_twitter_scraper/resources/x/community_notes.py">retrieve_contributor</a>(alias, \*\*<a href="src/x_twitter_scraper/types/x/community_note_retrieve_contributor_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_note_retrieve_contributor_response.py">CommunityNoteRetrieveContributorResponse</a></code>
 
 ## Spaces
@@ -688,7 +692,13 @@ Methods
 Types
 
 ```python
-from x_twitter_scraper.types.x import SpaceRetrieveResponse, SpaceRetrieveReplayResponse, SpaceSearchResponse
+from x_twitter_scraper.types.x import (
+    Space,
+    SpaceParticipant,
+    SpaceRetrieveResponse,
+    SpaceRetrieveReplayResponse,
+    SpaceSearchResponse,
+)
 ```
 
 Methods

@@ -22,11 +22,8 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
+from ...types.x.paginated_community_notes import PaginatedCommunityNotes
 from ...types.x.community_note_retrieve_contributor_response import CommunityNoteRetrieveContributorResponse
-from ...types.x.community_note_list_contributor_notes_response import CommunityNoteListContributorNotesResponse
-from ...types.x.community_note_list_contributor_deleted_notes_response import (
-    CommunityNoteListContributorDeletedNotesResponse,
-)
 
 __all__ = ["CommunityNotesResource", "AsyncCommunityNotesResource"]
 
@@ -64,7 +61,7 @@ class CommunityNotesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityNoteListContributorDeletedNotesResponse:
+    ) -> PaginatedCommunityNotes:
         """Returns the notes a contributor deleted, newest first.
 
         X keeps each note's ID,
@@ -116,7 +113,7 @@ class CommunityNotesResource(SyncAPIResource):
                     community_note_list_contributor_deleted_notes_params.CommunityNoteListContributorDeletedNotesParams,
                 ),
             ),
-            cast_to=CommunityNoteListContributorDeletedNotesResponse,
+            cast_to=PaginatedCommunityNotes,
         )
 
     def list_contributor_notes(
@@ -131,7 +128,7 @@ class CommunityNotesResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityNoteListContributorNotesResponse:
+    ) -> PaginatedCommunityNotes:
         """Returns a contributor's notes, newest first, each with the post it is on.
 
         Includes notes X has not rated helpful, which x.com shows under no post. Each
@@ -182,7 +179,7 @@ class CommunityNotesResource(SyncAPIResource):
                     community_note_list_contributor_notes_params.CommunityNoteListContributorNotesParams,
                 ),
             ),
-            cast_to=CommunityNoteListContributorNotesResponse,
+            cast_to=PaginatedCommunityNotes,
         )
 
     def retrieve_contributor(
@@ -275,7 +272,7 @@ class AsyncCommunityNotesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityNoteListContributorDeletedNotesResponse:
+    ) -> PaginatedCommunityNotes:
         """Returns the notes a contributor deleted, newest first.
 
         X keeps each note's ID,
@@ -327,7 +324,7 @@ class AsyncCommunityNotesResource(AsyncAPIResource):
                     community_note_list_contributor_deleted_notes_params.CommunityNoteListContributorDeletedNotesParams,
                 ),
             ),
-            cast_to=CommunityNoteListContributorDeletedNotesResponse,
+            cast_to=PaginatedCommunityNotes,
         )
 
     async def list_contributor_notes(
@@ -342,7 +339,7 @@ class AsyncCommunityNotesResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> CommunityNoteListContributorNotesResponse:
+    ) -> PaginatedCommunityNotes:
         """Returns a contributor's notes, newest first, each with the post it is on.
 
         Includes notes X has not rated helpful, which x.com shows under no post. Each
@@ -393,7 +390,7 @@ class AsyncCommunityNotesResource(AsyncAPIResource):
                     community_note_list_contributor_notes_params.CommunityNoteListContributorNotesParams,
                 ),
             ),
-            cast_to=CommunityNoteListContributorNotesResponse,
+            cast_to=PaginatedCommunityNotes,
         )
 
     async def retrieve_contributor(

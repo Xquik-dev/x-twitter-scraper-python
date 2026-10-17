@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Jobs, Spaces, broadcasts and Community Notes reuse named models across responses. Existing public type names keep working.
+
 ## 0.16.0 (2026-10-16)
 
 This release adds the response fields, event types and file uploads the SDK dropped. A field check against the API spec found them.

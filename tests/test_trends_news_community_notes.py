@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Tuple, Union
+from typing import Tuple
 from datetime import datetime, timezone
 from typing_extensions import Unpack
 
@@ -19,15 +19,14 @@ from x_twitter_scraper.types import (
     XGetNewsStoryVersionsResponse,
 )
 from x_twitter_scraper.types.x import (
+    PaginatedCommunityNotes,
+    CommunityNotesContributor,
+    CommunityNotesRatingOutcome,
     CommunityNoteRetrieveContributorParams,
     CommunityNoteListContributorNotesParams,
     CommunityNoteRetrieveContributorResponse,
-    CommunityNoteListContributorNotesResponse,
-    CommunityNoteListContributorDeletedNotesResponse,
 )
 from x_twitter_scraper.types.shared import SearchTweet
-
-NotesPage = Union[CommunityNoteListContributorNotesResponse, CommunityNoteListContributorDeletedNotesResponse]
 
 TRENDS_HISTORY = {
     "fromTime": "2026-10-13T00:00:00.000Z",
@@ -274,7 +273,7 @@ async def list_notes(
     payload: object,
     asynchronous: bool,
     **arguments: Unpack[CommunityNoteListContributorNotesParams],
-) -> Tuple[httpx.Request, NotesPage]:
+) -> Tuple[httpx.Request, PaginatedCommunityNotes]:
     if method == "notes":
         return await send_with_mock_transport(
             lambda client: client.x.community_notes.list_contributor_notes(alias, **arguments),
@@ -302,6 +301,28 @@ ALIASES = [
     ),
 ]
 NOTE_LISTS = [pytest.param("notes", b"/notes", id="notes"), pytest.param("deleted", b"/deleted-notes", id="deleted")]
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_contributor_note_lists_return_the_same_model(asynchronous: bool) -> None:
+    _, notes = await list_notes("notes", "ardent-beach-friarbird", CONTRIBUTOR_NOTES, asynchronous)
+    _, deleted = await list_notes("deleted", "ardent-beach-friarbird", CONTRIBUTOR_DELETED_NOTES, asynchronous)
+    _, retrieved = await send_with_mock_transport(
+        lambda client: client.x.community_notes.retrieve_contributor("ardent-beach-friarbird"),
+        lambda client: client.x.community_notes.retrieve_contributor("ardent-beach-friarbird"),
+        CONTRIBUTOR,
+        asynchronous,
+    )
+
+    pages: list[PaginatedCommunityNotes] = [notes, deleted]
+    assert type(pages[0]) is type(pages[1]) is PaginatedCommunityNotes
+    assert type(notes.notes[0]) is type(deleted.notes[0])
+    contributor = notes.notes[0].contributor
+    assert contributor is not None
+    assert type(contributor) is type(retrieved.contributor) is CommunityNotesContributor
+    assert retrieved.contributor.ratings_count is not None
+    ratings = retrieved.contributor.ratings_count
+    assert type(ratings.successful) is type(ratings.unsuccessful) is CommunityNotesRatingOutcome
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
