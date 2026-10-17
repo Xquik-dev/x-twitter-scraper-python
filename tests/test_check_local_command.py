@@ -205,9 +205,13 @@ case "$CLEANUP_SCRIPT" in
  bin/check-local)
   uv() { cleanup_step; }
   export -f uv;;
- scripts/check-reproducible|scripts/audit|scripts/check-all)
+ scripts/check-reproducible|scripts/audit)
   uv() { cleanup_step; }
   export -f uv;;
+ scripts/check-all)
+  uv() { [ "$1" = sync ]; }
+  bun() { cleanup_step; }
+  export -f uv bun;;
  scripts/licenses.sh)
   bun() { echo '0.1 fixture 1 0.1 1.0 fixture fixture'; }
   curl() { cleanup_step; }
@@ -258,6 +262,10 @@ def cleanup_project(tmp_path: Path, script: str) -> tuple[Path, dict[str, str]]:
         (project / "scripts/audit").write_text("exit 0\n")
     if script == "bin/check-local":
         (project / "scripts/codeql-security").write_text("cleanup_step\n")
+    if script == "scripts/check-all":
+        for name in ("fuzz", "coverage", "format", "audit", "codeql-security", "check-loc"):
+            (project / "scripts" / name).write_text("cleanup_step\n")
+        (project / "scripts/lint").write_text("exit 0\n")
     codeql = tmp_path / "codeql"
     codeql.write_text('#!/usr/bin/env bash\nif [ "$1" = version ]; then echo 2.27.2; else cleanup_step; fi\n')
     codeql.chmod(0o755)
@@ -269,11 +277,20 @@ def cleanup_project(tmp_path: Path, script: str) -> tuple[Path, dict[str, str]]:
     temporary.mkdir()
     return project, {
         **os.environ,
+        "COVERAGE_PARENT_OUTPUT": "",
+        "COVERAGE_PARENT_REPORT": "",
+        "COVERAGE_BASELINE": "",
+        "COVERAGE_FILE": "",
+        "COVERAGE_RCFILE": "",
+        "PYTHONPATH": "",
+        "UV_PYTHON": "",
+        "SOURCE_DATE_EPOCH": "",
         "TMPDIR": str(temporary),
         "CLEANUP_SCRIPT": script,
         "CLEANUP_PYTHON": sys.executable,
         "CLEANUP_STEP": str(step),
         "CLEANUP_READY": str(tmp_path / "ready"),
+        "CLEANUP_READY_COUNT": "7" if script == "scripts/check-all" else "1",
         "CLEANUP_SANITIZER": str(sanitizer),
         "XQUIK_CODEQL_BIN": str(codeql),
         "XQUIK_FUZZ_HOST": "",
@@ -297,6 +314,7 @@ def run_cleanup(
     stop: signal.Signals | None,
     *,
     command: str = CLEANUP_STUB,
+    script_only: bool = False,
 ) -> subprocess.CompletedProcess[str]:
     ready = Path(environment["CLEANUP_READY"])
     environment["CLEANUP_MODE"] = "fail" if stop is None else "signal"
@@ -322,7 +340,10 @@ def run_cleanup(
                 time.sleep(0.01)
             assert ready.exists(), process.communicate(timeout=10)
             assert len(list(ready.iterdir())) == expected
-            os.killpg(process.pid, stop)
+            if script_only:
+                os.kill(process.pid, stop)
+            else:
+                os.killpg(process.pid, stop)
         stdout, stderr = process.communicate(timeout=15)
     finally:
         try:
@@ -344,25 +365,32 @@ def test_scripts_remove_readonly_temporary_directories_on_failure_or_signal(
     project, environment = cleanup_project(tmp_path, script)
     registered = worktrees(project)
     result = run_cleanup(project, environment, arguments, stop)
-    assert result.returncode == status, result.stdout + result.stderr
+    expected = 1 if script == "scripts/check-all" and stop is None else status
+    assert result.returncode == expected, result.stdout + result.stderr
     assert list(Path(environment["TMPDIR"]).iterdir()) == []
     assert worktrees(project) == registered
 
 
-@pytest.mark.parametrize("script", ["scripts/coverage", "scripts/coverage-parent"])
+@pytest.mark.parametrize(
+    "script,arguments,children",
+    [
+        ("scripts/coverage", ["--baseline"], 3),
+        ("scripts/coverage-parent", ["HEAD"], 3),
+        ("scripts/check-all", ["parent.json"], 7),
+    ],
+)
 @pytest.mark.parametrize("stop,status", [(signal.SIGHUP, 129), (signal.SIGINT, -signal.SIGINT), (signal.SIGTERM, 143)])
-def test_coverage_stops_background_children_before_removing_their_directories(
-    tmp_path: Path, script: str, stop: signal.Signals, status: int
+def test_scripts_stop_background_children_before_removing_their_directories(
+    tmp_path: Path, script: str, arguments: list[str], children: int, stop: signal.Signals, status: int
 ) -> None:
     project, environment = cleanup_project(tmp_path, script)
     registered = worktrees(project)
     stopped = tmp_path / "stopped"
     stopped.mkdir()
-    environment.update(CLEANUP_BACKGROUND="1", CLEANUP_READY_COUNT="3", CLEANUP_STOPPED=str(stopped))
-    arguments = ["--baseline"] if script == "scripts/coverage" else ["HEAD"]
-    result = run_cleanup(project, environment, arguments, stop)
+    environment.update(CLEANUP_BACKGROUND="1", CLEANUP_READY_COUNT=str(children), CLEANUP_STOPPED=str(stopped))
+    result = run_cleanup(project, environment, arguments, stop, script_only=True)
     assert result.returncode == status, result.stdout + result.stderr
-    assert len(list(stopped.iterdir())) == 3
+    assert len(list(stopped.iterdir())) == children
     assert all(marker.read_text() == "True" for marker in stopped.iterdir())
     assert list(Path(environment["TMPDIR"]).iterdir()) == []
     assert worktrees(project) == registered
@@ -427,13 +455,29 @@ def test_coverage_does_not_resolve_a_baseline_when_comparing_parent_coverage(tmp
     ],
 )
 def test_coverage_keeps_successful_reports_after_temporary_directories_are_removed(
-    tmp_path: Path, script: str, arguments: list[str], report: str, relative: bool
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, script: str, arguments: list[str], report: str, relative: bool
 ) -> None:
+    parent_output = tmp_path / "parent-output"
+    parent_output.write_text("parent fixture\n")
+    monkeypatch.setenv("COVERAGE_PARENT_OUTPUT", str(parent_output))
+    monkeypatch.setenv("COVERAGE_PARENT_REPORT", str(tmp_path / "inherited-parent.json"))
+    monkeypatch.setenv("COVERAGE_BASELINE", str(tmp_path / "inherited-baseline.json"))
     project, environment = cleanup_project(tmp_path, script)
-    registered = worktrees(project)
-    environment.update(
-        COVERAGE_BASELINE="", COVERAGE_PARENT_REPORT=report if relative else "", BASH_ENV=str(tmp_path / "bash-env")
+    common = project / ".git"
+    linked = tmp_path / "linked"
+    subprocess.run(
+        ["git", "worktree", "add", "--detach", str(linked), "HEAD"],
+        cwd=project,
+        capture_output=True,
+        check=True,
     )
+    for name in (script, "scripts/cleanup.sh"):
+        (linked / name).write_bytes((project / name).read_bytes())
+    project = linked
+    registered = worktrees(project)
+    environment["BASH_ENV"] = str(tmp_path / "bash-env")
+    if relative:
+        environment["COVERAGE_PARENT_REPORT"] = report
     Path(environment["BASH_ENV"]).write_text(
         """uv() {
  while (($#)); do
@@ -456,6 +500,62 @@ export -f uv
     assert result.returncode == 0, result.stdout + result.stderr
     assert list(Path(environment["TMPDIR"]).iterdir()) == []
     assert worktrees(project) == registered
-    destination = tmp_path / report if relative else project / ".git" / report
+    destination = tmp_path / report if relative else common / report
     assert destination.read_text() == '{"fixture":true}\n'
     assert str(destination) in result.stdout
+    assert parent_output.read_text() == "parent fixture\n"
+    subprocess.run(
+        ["git", "worktree", "remove", "--force", str(project)], cwd=common.parent, capture_output=True, check=True
+    )
+    assert destination.read_text() == '{"fixture":true}\n'
+
+
+def test_remote_fuzz_sigint_stops_its_caller_before_the_next_command(tmp_path: Path) -> None:
+    project, environment = cleanup_project(tmp_path, "scripts/fuzz")
+    remote = tmp_path / "remote"
+    environment.update(XQUIK_FUZZ_HOST="fixture", CLEANUP_REMOTE=str(remote))
+    captured = subprocess.run(
+        [
+            "bash",
+            "-c",
+            """tar() { printf fixture; }
+ssh() { printf '%s\\n' "$3" > "$CLEANUP_REMOTE"; }
+export -f tar ssh
+bash "$1"
+""",
+            "remote-fuzz-test",
+            str(project / "scripts/fuzz"),
+        ],
+        cwd=project,
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=15,
+    )
+    assert captured.returncode == 0, captured.stdout + captured.stderr
+    continued = tmp_path / "continued"
+    environment.update(
+        CLEANUP_COMMAND=remote.read_text(),
+        CLEANUP_CONTINUED=str(continued),
+        CLEANUP_HELPER=str(project / "scripts/cleanup.sh"),
+    )
+    result = run_cleanup(
+        project,
+        environment,
+        [],
+        signal.SIGINT,
+        command="""tar() {
+  mkdir -p "$4/scripts"
+  cp "$CLEANUP_HELPER" "$4/scripts/cleanup.sh"
+  printf 'cleanup_step\\n' > "$4/scripts/fuzz"
+}
+cleanup_step() { "$CLEANUP_PYTHON" "$CLEANUP_STEP"; }
+export -f tar cleanup_step
+bash -c "$CLEANUP_COMMAND"
+touch "$CLEANUP_CONTINUED"
+""",
+    )
+    assert result.returncode == -signal.SIGINT, result.stdout + result.stderr
+    assert not continued.exists()
+    assert list(Path(environment["TMPDIR"]).iterdir()) == []

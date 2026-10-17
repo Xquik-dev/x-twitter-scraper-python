@@ -65,7 +65,7 @@ uv run --locked --all-extras coverage json -o "$coverage_workspace/report.json"
 echo "Coverage JSON: $((SECONDS - phase_started))s"
 uv run --locked --all-extras python "$source_tool" attach "$coverage_workspace/report.json" "$coverage_workspace/sources.json"
 if [[ "$parent_coverage" == --baseline ]]; then
-  baseline="${COVERAGE_BASELINE:-$(git rev-parse --path-format=absolute --git-path xquik-coverage-baseline.json)}"
+  baseline="${COVERAGE_BASELINE:-$(git rev-parse --path-format=absolute --git-common-dir)/xquik-coverage-baseline.json}"
   uv run --locked --all-extras python "$source_tool" verify-parent "$coverage_workspace/report.json" HEAD
   cp "$coverage_workspace/report.json" "$baseline"
   echo "Coverage baseline: $baseline"

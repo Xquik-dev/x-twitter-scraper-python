@@ -10,17 +10,19 @@ if [[ -n "${XQUIK_FUZZ_HOST:-}" ]]; then
   [[ "$XQUIK_FUZZ_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9@._-]*$ ]] || { echo 'Invalid SSH host.' >&2; exit 2; }
   remote_fuzz=$(
     cat <<'REMOTE'
-set -eu
+exec bash -c '
+set -euo pipefail
 umask 077
 work=$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-fuzz-source.XXXXXX")
-trap 'cd /; chmod -R u+w "$work" 2>/dev/null || true; rm -rf "$work"' EXIT
-trap 'exit 129' HUP
-trap 'exit 130' INT
-trap 'exit 143' TERM
+trap "cd /; chmod -R u+w -- \"\$work\" 2>/dev/null || true; rm -rf -- \"\$work\"" EXIT
 tar -xzf - -C "$work"
 cd "$work"
+source scripts/cleanup.sh
+cleanup_paths+=("$work")
+cleanup_traps
 unset XQUIK_FUZZ_HOST
 bash scripts/fuzz
+'
 REMOTE
   )
   tar --exclude='.env*' --exclude='__pycache__' -czf - \
