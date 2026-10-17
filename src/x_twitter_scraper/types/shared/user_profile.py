@@ -140,6 +140,9 @@ class IdentityVerification(BaseModel):
     is_identity_verified: Optional[bool] = FieldInfo(alias="isIdentityVerified", default=None)
     """Whether the owner verified their ID with X."""
 
+    override_verified_year: Optional[int] = FieldInfo(alias="overrideVerifiedYear", default=None)
+    """The year X shows as the start of verification, in place of verifiedSinceMsec."""
+
     verified_since_msec: Optional[str] = FieldInfo(alias="verifiedSinceMsec", default=None)
     """When X verified the account, in milliseconds since 1970, as text."""
 
