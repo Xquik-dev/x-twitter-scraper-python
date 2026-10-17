@@ -3,12 +3,32 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd "$(dirname "$0")/.."
+source scripts/cleanup.sh
+cleanup_traps
 
 if [[ -n "${XQUIK_FUZZ_HOST:-}" ]]; then
   [[ "$XQUIK_FUZZ_HOST" =~ ^[a-zA-Z0-9][a-zA-Z0-9@._-]*$ ]] || { echo 'Invalid SSH host.' >&2; exit 2; }
+  remote_fuzz=$(
+    cat <<'REMOTE'
+exec bash -c '
+set -euo pipefail
+umask 077
+work=$(mktemp -d "${TMPDIR:-/tmp}/xquik-python-fuzz-source.XXXXXX")
+trap "cd /; chmod -R u+w -- \"\$work\" 2>/dev/null || true; rm -rf -- \"\$work\"" EXIT
+tar -xzf - -C "$work"
+cd "$work"
+source scripts/cleanup.sh
+cleanup_paths+=("$work")
+cleanup_traps
+unset XQUIK_FUZZ_HOST
+bash scripts/fuzz
+'
+REMOTE
+  )
   tar --exclude='.env*' --exclude='__pycache__' -czf - \
-    src pyproject.toml uv.lock README.md LICENSE scripts/fuzz scripts/audit scripts/verify_audit.py audit-exceptions.json .clusterfuzzlite/fuzz_querystring.py |
-    ssh -- "$XQUIK_FUZZ_HOST" 'set -eu; umask 077; work=$(mktemp -d); echo "Remote fuzz source: $work" >&2; tar -xzf - -C "$work"; cd "$work"; unset XQUIK_FUZZ_HOST; bash scripts/fuzz'
+    src pyproject.toml uv.lock README.md LICENSE scripts/fuzz scripts/audit scripts/cleanup.sh scripts/verify_audit.py \
+    audit-exceptions.json .clusterfuzzlite/fuzz_querystring.py |
+    ssh -- "$XQUIK_FUZZ_HOST" "$remote_fuzz"
   exit
 fi
 
@@ -18,13 +38,20 @@ uv sync --locked --all-extras --group fuzz
 bash scripts/audit
 sanitizer=$(uv run --locked --no-sync python -c 'import atheris,pathlib; print(pathlib.Path(atheris.path()) / "asan_with_fuzzer.so")')
 [[ -f "$sanitizer" ]] || { echo 'Atheris AddressSanitizer runtime is missing.' >&2; exit 1; }
-evidence=$(mktemp -d)
+cleanup_temp_dir evidence xquik-python-fuzz
 mkdir "$evidence/corpus"
-echo "Fuzz evidence: $evidence"
+fuzz_status=0
 systemd-run --user --wait --pipe \
   -p PrivateNetwork=yes -p NoNewPrivileges=yes -p MemoryMax=3G -p CPUQuota=100% \
   -p ProtectSystem=strict -p ProtectHome=read-only -p "ReadWritePaths=$evidence" \
   -p RuntimeMaxSec=240 -p "WorkingDirectory=$PWD" \
   /usr/bin/env "LD_PRELOAD=$sanitizer" ASAN_OPTIONS=detect_leaks=0:symbolize=1 \
   "$PWD/.venv/bin/python" "$PWD/.clusterfuzzlite/fuzz_querystring.py" "$evidence/corpus" \
-  -max_total_time=180 -max_len=4096 -rss_limit_mb=2048 -timeout=60 "-artifact_prefix=$evidence/" 2>&1 | tee "$evidence/run.log"
+  -max_total_time=180 -max_len=4096 -rss_limit_mb=2048 -timeout=60 "-artifact_prefix=$evidence/" 2>&1 | tee "$evidence/run.log" ||
+  fuzz_status=$?
+for artifact in "$evidence"/crash-* "$evidence"/leak-* "$evidence"/oom-* "$evidence"/timeout-*; do
+  if [[ -f "$artifact" ]]; then
+    printf 'Fuzz input %s as base64: %s\n' "${artifact##*/}" "$(base64 <"$artifact" | tr -d '\n')"
+  fi
+done
+exit "$fuzz_status"
