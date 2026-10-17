@@ -2,13 +2,15 @@
 # SPDX-FileCopyrightText: 2026 Xquik contributors
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
+report="${COVERAGE_PARENT_REPORT:-}"
+if [[ -n "$report" && "$report" != /* ]]; then report="$PWD/$report"; fi
 cd "$(dirname "$0")/.."
 source scripts/cleanup.sh
 project="$PWD"
 export UV_PYTHON=3.14.8
 export COVERAGE_RCFILE="$project/pyproject.toml"
 revision=$(git rev-parse --verify "${1:-HEAD^}^{commit}")
-report="${COVERAGE_PARENT_REPORT:-$(git rev-parse --path-format=absolute --git-path xquik-parent-coverage.json)}"
+report="${report:-$(git rev-parse --path-format=absolute --git-path xquik-parent-coverage.json)}"
 cleanup_traps
 cleanup_temp_dir evidence xquik-python-parent
 cleanup_worktree "$evidence/source"

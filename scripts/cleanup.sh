@@ -49,21 +49,23 @@ cleanup_descendants() {
 }
 
 cleanup_stop_children() {
-  local pid child tries tree=()
+  local pid child tries tree=() alive=()
   for pid in ${cleanup_pids[@]+"${cleanup_pids[@]}"}; do
     tree+=("$pid")
     while read -r child; do tree+=("$child"); done < <(cleanup_descendants "$pid")
   done
   ((${#tree[@]})) || return 0
   kill -TERM "${tree[@]}" 2>/dev/null || true
-  for pid in "${cleanup_pids[@]}"; do wait "$pid" 2>/dev/null || true; done
-  for pid in "${tree[@]}"; do
-    for ((tries = 0; tries < 100; tries++)); do
-      kill -0 "$pid" 2>/dev/null || break
-      sleep 0.1
+  for ((tries = 0; tries < 100; tries++)); do
+    alive=()
+    for pid in "${tree[@]}"; do
+      if kill -0 "$pid" 2>/dev/null; then alive+=("$pid"); fi
     done
-    kill -0 "$pid" 2>/dev/null && kill -KILL "$pid" 2>/dev/null || true
+    ((${#alive[@]})) || break
+    sleep 0.1
   done
+  for pid in ${alive[@]+"${alive[@]}"}; do kill -KILL "$pid" 2>/dev/null || true; done
+  for pid in "${cleanup_pids[@]}"; do wait "$pid" 2>/dev/null || true; done
   cleanup_pids=()
 }
 
@@ -82,6 +84,6 @@ cleanup_run() {
 cleanup_traps() {
   trap "${1:-cleanup_run}" EXIT
   trap 'exit 129' HUP
-  trap 'exit 130' INT
+  trap 'trap - INT; kill -INT "$$"' INT
   trap 'exit 143' TERM
 }
