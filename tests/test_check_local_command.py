@@ -307,6 +307,10 @@ def worktrees(project: Path) -> str:
     ).stdout
 
 
+def default_sigint() -> None:
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+
+
 def run_cleanup(
     project: Path,
     environment: dict[str, str],
@@ -329,6 +333,7 @@ def run_cleanup(
         stderr=subprocess.PIPE,
         text=True,
         start_new_session=True,
+        preexec_fn=default_sigint,
     )
     try:
         if stop is not None:
@@ -409,6 +414,17 @@ def test_sigint_stops_a_parent_without_an_int_trap_before_its_next_command(tmp_p
     )
     assert result.returncode == -signal.SIGINT, result.stdout + result.stderr
     assert not continued.exists()
+    assert list(Path(environment["TMPDIR"]).iterdir()) == []
+
+
+def test_sigint_cleanup_holds_when_the_test_run_is_a_background_job_that_ignores_sigint(tmp_path: Path) -> None:
+    project, environment = cleanup_project(tmp_path, "scripts/check-reproducible")
+    inherited = signal.signal(signal.SIGINT, signal.SIG_IGN)
+    try:
+        result = run_cleanup(project, environment, [], signal.SIGINT)
+    finally:
+        signal.signal(signal.SIGINT, inherited)
+    assert result.returncode == -signal.SIGINT, result.stdout + result.stderr
     assert list(Path(environment["TMPDIR"]).iterdir()) == []
 
 
