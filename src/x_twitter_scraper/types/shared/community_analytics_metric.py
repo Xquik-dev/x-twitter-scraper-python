@@ -10,10 +10,10 @@ __all__ = ["CommunityAnalyticsMetric"]
 
 
 class CommunityAnalyticsMetric(BaseModel):
-    """X reports each metric's count and percentage change for its latest period."""
+    """A community metric for X's latest period & its percent change."""
 
     change_percent: float = FieldInfo(alias="changePercent")
-    """Read the unrounded percentage change from one day earlier."""
+    """Change in percent from the same figure 1 day earlier. Values stay unrounded."""
 
     count: int
-    """Read this metric's total for X's latest period."""
+    """Total for this metric during X's latest period."""

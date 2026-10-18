@@ -466,15 +466,29 @@ class CommunitiesResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityAnalytics:
-        """Read community activity and growth for X's latest period.
+        """Returns community activity for X's latest period.
 
-        Each metric includes a count and its percentage change from one day earlier.
-        Each request costs 1 credit.
+        Includes likes, new members, posts, replies & unique posters. Each metric has a
+        count and a changePercent. Each request costs 1 credit.
 
-        Use fields to keep named fields and omit to drop them.
-        Separate names with commas and use dots for nested fields.
-        Send extra headers, query parameters or JSON properties with the extra arguments.
-        Override the client timeout in seconds with timeout.
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
@@ -1571,15 +1585,29 @@ class AsyncCommunitiesResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> CommunityAnalytics:
-        """Read community activity and growth for X's latest period.
+        """Returns community activity for X's latest period.
 
-        Each metric includes a count and its percentage change from one day earlier.
-        Each request costs 1 credit.
+        Includes likes, new members, posts, replies & unique posters. Each metric has a
+        count and a changePercent. Each request costs 1 credit.
 
-        Use fields to keep named fields and omit to drop them.
-        Separate names with commas and use dots for nested fields.
-        Send extra headers, query parameters or JSON properties with the extra arguments.
-        Override the client timeout in seconds with timeout.
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")

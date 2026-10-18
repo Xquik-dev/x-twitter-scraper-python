@@ -13,32 +13,42 @@ __all__ = ["CommunityAnalytics", "Metrics"]
 
 
 class Metrics(BaseModel):
-    """X reports activity counts and percentage changes for its latest period."""
+    """The period's activity, each metric with its count and changePercent.
+
+    likes counts likes on community posts and newMembers the accounts that joined.
+    posts counts the community posts and replies the replies to them. uniquePosters
+    counts the distinct accounts that posted.
+    """
 
     likes: CommunityAnalyticsMetric
-    """Count likes on community posts."""
+    """A community metric for X's latest period & its percent change."""
 
     new_members: CommunityAnalyticsMetric = FieldInfo(alias="newMembers")
-    """Count accounts that joined the community."""
+    """A community metric for X's latest period & its percent change."""
 
     posts: CommunityAnalyticsMetric
-    """Count community posts."""
+    """A community metric for X's latest period & its percent change."""
 
     replies: CommunityAnalyticsMetric
-    """Count replies to community posts."""
+    """A community metric for X's latest period & its percent change."""
 
     unique_posters: CommunityAnalyticsMetric = FieldInfo(alias="uniquePosters")
-    """Count distinct accounts that posted in the community."""
+    """A community metric for X's latest period & its percent change."""
 
 
 class CommunityAnalytics(BaseModel):
-    """X reports community activity and growth for its latest period."""
+    """Community activity & growth for X's latest period."""
 
     id: str
-    """Identify the community from your request."""
+    """The community ID from your request."""
 
     metrics: Metrics
-    """Read each activity metric's count and percentage change."""
+    """The period's activity, each metric with its count and changePercent.
+
+    likes counts likes on community posts and newMembers the accounts that joined.
+    posts counts the community posts and replies the replies to them. uniquePosters
+    counts the distinct accounts that posted.
+    """
 
     period_ends_at: datetime = FieldInfo(alias="periodEndsAt")
-    """Read when X's latest period ends in UTC."""
+    """The end of X's latest period, in UTC."""
