@@ -3105,9 +3105,6 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -3265,6 +3262,9 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
     type: Optional[str] = None
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -3864,9 +3864,6 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -4025,6 +4022,9 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
 
@@ -4131,9 +4131,6 @@ class QuotedTweetQuotedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
-
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -4292,6 +4289,9 @@ class QuotedTweetQuotedTweet(BaseModel):
     type: Optional[str] = None
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -5362,9 +5362,6 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -5522,6 +5519,9 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
     type: Optional[str] = None
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -6121,9 +6121,6 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -6282,6 +6279,9 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
 
@@ -6388,9 +6388,6 @@ class QuotedTweetRetweetedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
-
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -6552,6 +6549,9 @@ class QuotedTweetRetweetedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
 
@@ -6658,9 +6658,6 @@ class QuotedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
-
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -6817,6 +6814,9 @@ class QuotedTweet(BaseModel):
     type: Optional[str] = None
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -8354,9 +8354,6 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -8514,6 +8511,9 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
     type: Optional[str] = None
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -9113,9 +9113,6 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -9274,6 +9271,9 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
 
@@ -9380,9 +9380,6 @@ class RetweetedTweetQuotedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
-
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -9543,6 +9540,9 @@ class RetweetedTweetQuotedTweet(BaseModel):
     type: Optional[str] = None
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -10613,9 +10613,6 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -10773,6 +10770,9 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
     type: Optional[str] = None
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
@@ -11372,9 +11372,6 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
-
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -11535,6 +11532,9 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
 
@@ -11641,9 +11641,6 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
-
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -11807,6 +11804,9 @@ class RetweetedTweetRetweetedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
 
@@ -11913,9 +11913,6 @@ class RetweetedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
-
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -12073,6 +12070,9 @@ class RetweetedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
 
@@ -12188,9 +12188,6 @@ class EmbeddedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
-
-    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
-    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -12386,6 +12383,9 @@ class EmbeddedTweet(BaseModel):
 
     unavailable_author_id: Optional[str] = FieldInfo(alias="unavailableAuthorId", default=None)
     """The author's ID when X withholds the author's profile."""
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""
