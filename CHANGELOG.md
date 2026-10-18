@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Posts and embedded posts name the counts X did not send in `unknown_counts`.
 - Bulk retry can target specific accounts with `accountIds`.
 - Embedded parent, quoted and retweeted posts carry every tweet field and the author.
 - User profiles and tweet users return optional `override_verified_year` in `identity_verification`, the year X shows as the start of verification in place of `verified_since_msec`.
