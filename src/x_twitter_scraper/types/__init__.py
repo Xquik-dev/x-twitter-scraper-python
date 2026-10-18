@@ -19,6 +19,8 @@ from .shared import (
     PaginatedUsers as PaginatedUsers,
     PaginatedTweets as PaginatedTweets,
     ContentDisclosure as ContentDisclosure,
+    CommunityAnalytics as CommunityAnalytics,
+    CommunityAnalyticsMetric as CommunityAnalyticsMetric,
 )
 from .winner import Winner as Winner
 from .monitor import Monitor as Monitor

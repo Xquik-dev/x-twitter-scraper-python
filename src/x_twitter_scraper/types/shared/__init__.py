@@ -14,3 +14,5 @@ from .community_topic import CommunityTopic as CommunityTopic
 from .paginated_users import PaginatedUsers as PaginatedUsers
 from .paginated_tweets import PaginatedTweets as PaginatedTweets
 from .content_disclosure import ContentDisclosure as ContentDisclosure
+from .community_analytics import CommunityAnalytics as CommunityAnalytics
+from .community_analytics_metric import CommunityAnalyticsMetric as CommunityAnalyticsMetric

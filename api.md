@@ -3,6 +3,8 @@
 ```python
 from x_twitter_scraper.types import (
     Community,
+    CommunityAnalytics,
+    CommunityAnalyticsMetric,
     CommunityPage,
     CommunityTopic,
     ContentDisclosure,
@@ -538,6 +540,7 @@ Methods
 - <code title="get /x/communities/popular">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">list_popular</a>(\*\*<a href="src/x_twitter_scraper/types/x/community_list_popular_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/community_page.py">CommunityPage</a></code>
 - <code title="get /x/communities/suggested">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">list_suggested</a>(\*\*<a href="src/x_twitter_scraper/types/x/community_list_suggested_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_list_suggested_response.py">CommunityListSuggestedResponse</a></code>
 - <code title="get /x/communities/topics">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">list_topics</a>(\*\*<a href="src/x_twitter_scraper/types/x/community_list_topics_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_list_topics_response.py">CommunityListTopicsResponse</a></code>
+- <code title="get /x/communities/{id}/analytics">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">retrieve_analytics</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/community_retrieve_analytics_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/community_analytics.py">CommunityAnalytics</a></code>
 - <code title="get /x/communities/{id}/info">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">retrieve_info</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/community_retrieve_info_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/community_retrieve_info_response.py">CommunityRetrieveInfoResponse</a></code>
 - <code title="get /x/communities/{id}/members">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">retrieve_members</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/community_retrieve_members_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/communities/{id}/moderators">client.x.communities.<a href="./src/x_twitter_scraper/resources/x/communities/communities.py">retrieve_moderators</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/community_retrieve_moderators_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>

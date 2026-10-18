@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Communities add the analytics read with `retrieve_analytics`.
 - Posts and embedded posts name the counts X did not send in `unknown_counts`.
 - Bulk retry can target specific accounts with `accountIds`.
 - Embedded parent, quoted and retweeted posts carry every tweet field and the author.
