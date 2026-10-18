@@ -965,6 +965,9 @@ class TweetDetail(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")

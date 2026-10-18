@@ -101,10 +101,46 @@ PARSERS = [
     pytest.param(validate_type, id="strict"),
 ]
 NESTED_PATHS = [
-    path
-    for depth in range(4)
-    for path in product(("parent_tweet", "quoted_tweet", "retweeted_tweet"), repeat=depth)
+    path for depth in range(4) for path in product(("parent_tweet", "quoted_tweet", "retweeted_tweet"), repeat=depth)
 ]
+
+
+@pytest.mark.parametrize("parse", PARSERS)
+@pytest.mark.parametrize("path", NESTED_PATHS)
+@pytest.mark.parametrize("unknown_counts", [None, ["bookmarkCount", "viewCount"], ["futureCount"]])
+def test_replies_read_unknown_counts_on_posts_and_embedded_posts(
+    parse: Callable[..., Any], path: tuple[str, ...], unknown_counts: list[str] | None
+) -> None:
+    post: dict[str, object] = {**POST, "bookmarkCount": 0, "viewCount": 0}
+    if unknown_counts is not None:
+        post["unknownCounts"] = unknown_counts
+    value: object = post
+    for field in reversed(path):
+        nested: dict[str, object] = {**post}
+        nested["parentTweet" if field == "parent_tweet" else field] = value
+        value = nested
+    response = cast(
+        TweetGetRepliesResponse,
+        parse(
+            type_=TweetGetRepliesResponse,
+            value={"tweets": [{**post, "retweeted_tweet": value}], "has_next_page": False, "next_cursor": ""},
+        ),
+    )
+    tweets = response.tweets
+    assert tweets is not None
+    tweet = tweets[0]
+    assert tweet.unknown_counts == unknown_counts
+    assert tweet.bookmark_count == 0
+    assert tweet.view_count == 0
+    embedded = tweet.retweeted_tweet
+    assert isinstance(embedded, EmbeddedTweet)
+    assert embedded.unknown_counts == unknown_counts
+    for field in path:
+        embedded = getattr(embedded, field)
+
+    assert embedded.unknown_counts == unknown_counts
+    assert embedded.bookmark_count == 0
+    assert embedded.view_count == 0
 
 
 @pytest.mark.parametrize("parse", PARSERS)

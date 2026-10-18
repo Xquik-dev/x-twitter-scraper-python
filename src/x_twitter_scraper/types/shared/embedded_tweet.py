@@ -3105,6 +3105,9 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -3861,6 +3864,9 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -4125,6 +4131,9 @@ class QuotedTweetQuotedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -5353,6 +5362,9 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -6109,6 +6121,9 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -6373,6 +6388,9 @@ class QuotedTweetRetweetedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -6640,6 +6658,9 @@ class QuotedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -8333,6 +8354,9 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -9089,6 +9113,9 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -9353,6 +9380,9 @@ class RetweetedTweetQuotedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -10583,6 +10613,9 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -11339,6 +11372,9 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
+
     like_count: int = FieldInfo(alias="likeCount")
 
     quote_count: int = FieldInfo(alias="quoteCount")
@@ -11605,6 +11641,9 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -11874,6 +11913,9 @@ class RetweetedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
@@ -12146,6 +12188,9 @@ class EmbeddedTweet(BaseModel):
     id: str
 
     bookmark_count: int = FieldInfo(alias="bookmarkCount")
+
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts for this post, so treat each 0 as unknown."""
 
     like_count: int = FieldInfo(alias="likeCount")
 
