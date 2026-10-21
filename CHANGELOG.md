@@ -1,14 +1,25 @@
 # Changelog
 
-## Unreleased
+## 0.17.0 (2026-10-22)
 
-- Every request sends `X-Xquik-SDK: python` beside the platform headers it already sends.
-- Communities add the analytics read with `retrieve_analytics`.
-- Posts and embedded posts return `soft_intervention`, the label X shows under a post whose reach it limits.
-- Posts and embedded posts name the counts X did not send in `unknown_counts`.
-- Bulk retry can target specific accounts with `accountIds`.
+This release adds the Community analytics read and the post fields the API added since 0.16.0. Code written for 0.16.0 keeps working, and no method, type or parameter is removed.
+
+### New reads and fields
+
+- `x.communities.retrieve_analytics` returns `CommunityAnalytics` with 5 metrics, each a `count` and a `change_percent`.
+- Posts and embedded posts return `soft_intervention`, the label X shows under a post whose reach it limits. `SoftIntervention` holds the label's kind, its text and links, and the page that explains it.
+- Posts and embedded posts name the counts X did not send in `unknown_counts`. Each of those counts reads 0, so treat it as unknown.
 - Embedded parent, quoted and retweeted posts carry every tweet field and the author.
 - User profiles and tweet users return optional `override_verified_year` in `identity_verification`, the year X shows as the start of verification in place of `verified_since_msec`.
+- Bulk retry can target specific accounts with `accountIds`.
+
+### Requests
+
+- Every request sends `X-Xquik-SDK: python` beside the platform headers it already sends.
+
+### Maintenance
+
+- The lock file moves aiohttp to 3.14.5, certifi to 2026.10.19 and yarl to 1.25.1, past their published advisories.
 - The check scripts remove their temp dirs on every exit, including a failed step and a signal.
 
 ## 0.16.0 (2026-10-16)
