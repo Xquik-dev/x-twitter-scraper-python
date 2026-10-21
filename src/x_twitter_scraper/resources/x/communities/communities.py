@@ -48,6 +48,7 @@ from ....types.x import (
     community_search_members_params,
     community_retrieve_search_params,
     community_retrieve_members_params,
+    community_retrieve_analytics_params,
     community_retrieve_moderators_params,
 )
 from ...._resource import SyncAPIResource, AsyncAPIResource
@@ -61,6 +62,7 @@ from ...._base_client import make_request_options
 from ....types.shared.community_page import CommunityPage
 from ....types.shared.paginated_users import PaginatedUsers
 from ....types.shared.paginated_tweets import PaginatedTweets
+from ....types.shared.community_analytics import CommunityAnalytics
 from ....types.x.community_create_response import CommunityCreateResponse
 from ....types.x.community_delete_response import CommunityDeleteResponse
 from ....types.x.community_list_topics_response import CommunityListTopicsResponse
@@ -451,6 +453,61 @@ class CommunitiesResource(SyncAPIResource):
                 ),
             ),
             cast_to=CommunityListTopicsResponse,
+        )
+
+    def retrieve_analytics(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> CommunityAnalytics:
+        """Returns community activity for X's latest period.
+
+        Includes likes, new members, posts, replies & unique posters. Each metric has a
+        count and a changePercent. Each request costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/communities/{id}/analytics", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    community_retrieve_analytics_params.CommunityRetrieveAnalyticsParams,
+                ),
+            ),
+            cast_to=CommunityAnalytics,
         )
 
     def retrieve_info(
@@ -1517,6 +1574,61 @@ class AsyncCommunitiesResource(AsyncAPIResource):
             cast_to=CommunityListTopicsResponse,
         )
 
+    async def retrieve_analytics(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> CommunityAnalytics:
+        """Returns community activity for X's latest period.
+
+        Includes likes, new members, posts, replies & unique posters. Each metric has a
+        count and a changePercent. Each request costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/communities/{id}/analytics", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    community_retrieve_analytics_params.CommunityRetrieveAnalyticsParams,
+                ),
+            ),
+            cast_to=CommunityAnalytics,
+        )
+
     async def retrieve_info(
         self,
         id: str,
@@ -2220,6 +2332,9 @@ class CommunitiesResourceWithRawResponse:
         self.list_topics = to_raw_response_wrapper(
             communities.list_topics,
         )
+        self.retrieve_analytics = to_raw_response_wrapper(
+            communities.retrieve_analytics,
+        )
         self.retrieve_info = to_raw_response_wrapper(
             communities.retrieve_info,
         )
@@ -2273,6 +2388,9 @@ class AsyncCommunitiesResourceWithRawResponse:
         )
         self.list_topics = async_to_raw_response_wrapper(
             communities.list_topics,
+        )
+        self.retrieve_analytics = async_to_raw_response_wrapper(
+            communities.retrieve_analytics,
         )
         self.retrieve_info = async_to_raw_response_wrapper(
             communities.retrieve_info,
@@ -2328,6 +2446,9 @@ class CommunitiesResourceWithStreamingResponse:
         self.list_topics = to_streamed_response_wrapper(
             communities.list_topics,
         )
+        self.retrieve_analytics = to_streamed_response_wrapper(
+            communities.retrieve_analytics,
+        )
         self.retrieve_info = to_streamed_response_wrapper(
             communities.retrieve_info,
         )
@@ -2381,6 +2502,9 @@ class AsyncCommunitiesResourceWithStreamingResponse:
         )
         self.list_topics = async_to_streamed_response_wrapper(
             communities.list_topics,
+        )
+        self.retrieve_analytics = async_to_streamed_response_wrapper(
+            communities.retrieve_analytics,
         )
         self.retrieve_info = async_to_streamed_response_wrapper(
             communities.retrieve_info,

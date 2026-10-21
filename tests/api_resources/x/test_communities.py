@@ -23,6 +23,7 @@ from x_twitter_scraper.types.shared import (
     CommunityPage,
     PaginatedUsers,
     PaginatedTweets,
+    CommunityAnalytics,
 )
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
@@ -298,6 +299,58 @@ class TestCommunities:
             assert_matches_type(CommunityListTopicsResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_analytics(self, client: XTwitterScraper) -> None:
+        community = client.x.communities.retrieve_analytics(
+            id="id",
+        )
+        assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_analytics_with_all_params(self, client: XTwitterScraper) -> None:
+        community = client.x.communities.retrieve_analytics(
+            id="id",
+            fields="id,metrics,periodEndsAt",
+            omit="metrics.likes.count",
+        )
+        assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_analytics(self, client: XTwitterScraper) -> None:
+        response = client.x.communities.with_raw_response.retrieve_analytics(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        community = response.parse()
+        assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_analytics(self, client: XTwitterScraper) -> None:
+        with client.x.communities.with_streaming_response.retrieve_analytics(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            community = response.parse()
+            assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_analytics(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.communities.with_raw_response.retrieve_analytics(
+                id="",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -926,6 +979,58 @@ class TestAsyncCommunities:
             assert_matches_type(CommunityListTopicsResponse, community, path=["response"])
 
         assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_analytics(self, async_client: AsyncXTwitterScraper) -> None:
+        community = await async_client.x.communities.retrieve_analytics(
+            id="id",
+        )
+        assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_analytics_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        community = await async_client.x.communities.retrieve_analytics(
+            id="id",
+            fields="id,metrics,periodEndsAt",
+            omit="metrics.likes.count",
+        )
+        assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_analytics(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.communities.with_raw_response.retrieve_analytics(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        community = await response.parse()
+        assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_analytics(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.communities.with_streaming_response.retrieve_analytics(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            community = await response.parse()
+            assert_matches_type(CommunityAnalytics, community, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_analytics(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.communities.with_raw_response.retrieve_analytics(
+                id="",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
