@@ -4,7 +4,7 @@ anyio==4.14.2
 ast-serialize==0.13.0
 backports-asyncio-runner==1.2.0 ; python_full_version < '3.11'
 backports-tarfile==1.2.0 ; python_full_version < '3.12' and platform_machine != 'ppc64le' and platform_machine != 's390x'
-certifi==2026.7.22
+certifi==2026.10.19
 cffi==2.1.1 ; platform_machine != 'ppc64le' and platform_machine != 's390x' and platform_python_implementation != 'PyPy' and sys_platform == 'linux'
 charset-normalizer==3.5.1
 colorama==0.4.6 ; sys_platform == 'win32'
