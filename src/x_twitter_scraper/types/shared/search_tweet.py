@@ -13,6 +13,7 @@ from .tweet_media import TweetMedia
 from .user_profile import UserProfile
 from ..._dict_access import TweetEntitiesDictAccess
 from .embedded_tweet import EmbeddedTweet
+from .soft_intervention import SoftIntervention
 from .content_disclosure import ContentDisclosure
 
 __all__ = [
@@ -1135,6 +1136,12 @@ class SearchTweet(BaseModel):
 
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
+
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
 
     source: Optional[str] = None
     """The app the post was sent from, as X labels it. X sends it for some posts only."""

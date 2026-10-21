@@ -14,6 +14,7 @@ from x_twitter_scraper.types import (
     PaginatedTweets,
     PaginatedUsers,
     SearchTweet,
+    SoftIntervention,
     TweetMedia,
     UserProfile,
 )

@@ -12,6 +12,7 @@ from ..._models import BaseModel
 from .tweet_media import TweetMedia
 from .user_profile import UserProfile
 from ..._dict_access import TweetEntitiesDictAccess
+from .soft_intervention import SoftIntervention
 from .content_disclosure import ContentDisclosure
 
 __all__ = [
@@ -3245,6 +3246,12 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[QuotedTweetQuotedTweetQuotedTweetSportsContext] = FieldInfo(
@@ -4004,6 +4011,12 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[QuotedTweetQuotedTweetRetweetedTweetSportsContext] = FieldInfo(
@@ -4273,6 +4286,12 @@ class QuotedTweetQuotedTweet(BaseModel):
 
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
+
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
 
     source: Optional[str] = None
 
@@ -5502,6 +5521,12 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[QuotedTweetRetweetedTweetQuotedTweetSportsContext] = FieldInfo(
@@ -6261,6 +6286,12 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[QuotedTweetRetweetedTweetRetweetedTweetSportsContext] = FieldInfo(
@@ -6533,6 +6564,12 @@ class QuotedTweetRetweetedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[QuotedTweetRetweetedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
@@ -6798,6 +6835,12 @@ class QuotedTweet(BaseModel):
 
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
+
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
 
     source: Optional[str] = None
 
@@ -8494,6 +8537,12 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[RetweetedTweetQuotedTweetQuotedTweetSportsContext] = FieldInfo(
@@ -9253,6 +9302,12 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[RetweetedTweetQuotedTweetRetweetedTweetSportsContext] = FieldInfo(
@@ -9524,6 +9579,12 @@ class RetweetedTweetQuotedTweet(BaseModel):
 
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
+
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
 
     source: Optional[str] = None
 
@@ -10753,6 +10814,12 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[RetweetedTweetRetweetedTweetQuotedTweetSportsContext] = FieldInfo(
@@ -11514,6 +11581,12 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[RetweetedTweetRetweetedTweetRetweetedTweetSportsContext] = FieldInfo(
@@ -11788,6 +11861,12 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
 
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
+
     source: Optional[str] = None
 
     sports_context: Optional[RetweetedTweetRetweetedTweetSportsContext] = FieldInfo(alias="sportsContext", default=None)
@@ -12053,6 +12132,12 @@ class RetweetedTweet(BaseModel):
 
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
+
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
 
     source: Optional[str] = None
 
@@ -12355,6 +12440,12 @@ class EmbeddedTweet(BaseModel):
 
     scopes: Optional[Dict[str, object]] = None
     """Public metadata whose fields are defined by X."""
+
+    soft_intervention: Optional[SoftIntervention] = FieldInfo(alias="softIntervention", default=None)
+    """The label X shows under a post whose reach it limits.
+
+    It links to the page that explains it.
+    """
 
     source: Optional[str] = None
 
