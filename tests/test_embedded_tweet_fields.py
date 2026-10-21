@@ -21,6 +21,22 @@ AUTHOR = {"id": "11348282", "username": "NASA", "name": "NASA", "followers": 923
 TAG = {"id": "TSLA", "info": {"info": {"active": True, "name": "Tesla", "ticker": "TSLA"}}}
 ENTITIES = {"hashtags": [{"text": "TSLA", "indices": [0, 5], "tag": TAG}]}
 NESTED = {**POST, "author": AUTHOR, "communityName": "Build in Public", "entities": ENTITIES}
+SOFT_INTERVENTION = {
+    "displayType": "Fosnr",
+    "engagementNudge": True,
+    "text": {
+        "text": "This Post may violate X's rules against Abuse.",
+        "rtl": False,
+        "entities": [
+            {
+                "fromIndex": 22,
+                "toIndex": 29,
+                "ref": {"type": "TimelineUrl", "url": "https://help.x.com/rules", "urlType": "ExternalUrl"},
+            }
+        ],
+    },
+    "url": {"url": "https://help.x.com/rules-and-policies/enforcement-options", "urlType": "ExternalUrl"},
+}
 EMBEDDED = {
     **POST,
     "type": "tweet",
@@ -86,6 +102,7 @@ EMBEDDED = {
     "subscriberBadge": {"creatorId": "11348282"},
     "tombstone": {"text": {"text": "Notice", "entities": [{"ref": {"screenName": "NASA", "text": "NASA"}}]}},
     "interstitial": {"displayType": "NonCompliant", "text": {"text": "Notice"}},
+    "softIntervention": SOFT_INTERVENTION,
     "unmentionedUserIds": ["9876543210"],
     "viewState": "EnabledWithCount",
     "entities": ENTITIES,
@@ -257,6 +274,11 @@ def test_nested_posts_keep_typed_fields_at_every_depth(parse: Callable[..., Any]
     assert embedded.sports_context.league == "league-1"
     assert embedded.sports_context.competitors[0].color == "ffffff"
     assert embedded.tombstone.text.entities[0].ref.screen_name == "NASA"
+    assert embedded.soft_intervention.display_type == "Fosnr"
+    assert embedded.soft_intervention.engagement_nudge is True
+    assert embedded.soft_intervention.text.entities[0].to_index == 29
+    assert embedded.soft_intervention.text.entities[0].ref.url == "https://help.x.com/rules"
+    assert embedded.soft_intervention.url.url_type == "ExternalUrl"
 
 
 @pytest.mark.parametrize("parse", PARSERS)
@@ -282,6 +304,7 @@ def test_embedded_posts_parse_without_added_fields(parse: Callable[..., Any], pa
     assert embedded.grok_translated_post is None
     assert embedded.has_community_notes is None
     assert embedded.interstitial is None
+    assert embedded.soft_intervention is None
     assert embedded.is_pinned is None
     assert embedded.is_retweet is None
     if len(path) < 3:
