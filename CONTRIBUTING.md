@@ -23,15 +23,29 @@ Without `uv`, install `requirements-dev.lock` inside an isolated environment.
 
 Never commit credentials or runtime environment files.
 
-## Generated Code
+## Change the SDK by hand
 
-Most SDK files come from the public OpenAPI contract.
+Maintainers write and review every file in this repository by hand.
+No code generator runs.
 
-Preserve generated method names and response contracts.
+When the API changes, the [API coverage](#api-coverage) and [API fields](#api-fields) checks fail.
+Each failure names the operation or field that the SDK lacks.
+Add each one in the style of the code around it.
 
-Avoid generated-file changes when a generator fix exists.
+1. Add the method to its resource in `src/x_twitter_scraper/resources`, for the sync and async clients.
+2. Add its params and response types in `src/x_twitter_scraper/types`.
+3. List the method and its types in `api.md`.
+4. Add sync and async tests in `tests/api_resources`.
+5. Add a line to the `Unreleased` section of `CHANGELOG.md`.
 
-Place stable examples outside generated directories.
+Keep every change additive.
+Never remove or rename a public method, parameter, type, field, or the `x_twitter_scraper` package.
+To rename something, add the new name beside the old one and keep the old one working.
+
+Each request sends `X-Xquik-SDK: python`, which Xquik reads to count SDK requests.
+Keep the other headers that `platform_headers` in `src/x_twitter_scraper/_base_client.py` sets, since changing them changes every request the SDK sends.
+
+Publish each release from a local Mac, as [Releases](#releases) describes.
 
 ## Verify Changes
 

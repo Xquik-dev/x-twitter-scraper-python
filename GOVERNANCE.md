@@ -20,7 +20,9 @@ Use public issues for non-sensitive design discussions.
 
 Use pull requests for reviewed repository changes.
 
-Preserve generated API contracts unless the public specification changes.
+Never remove or rename a public method, parameter, type, or field.
+
+Add new ones when the public specification changes.
 
 Prefer consensus for user-visible and governance decisions.
 
