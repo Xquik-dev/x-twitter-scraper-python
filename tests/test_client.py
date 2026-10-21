@@ -404,6 +404,7 @@ class TestXTwitterScraper:
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
         assert request.headers.get("x-stainless-lang") == "python"
+        assert request.headers.get("x-xquik-sdk") == "python"
 
         test_client2 = XTwitterScraper(
             base_url=base_url,
@@ -1330,6 +1331,7 @@ class TestAsyncXTwitterScraper:
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
         assert request.headers.get("x-foo") == "bar"
         assert request.headers.get("x-stainless-lang") == "python"
+        assert request.headers.get("x-xquik-sdk") == "python"
 
         test_client2 = AsyncXTwitterScraper(
             base_url=base_url,
