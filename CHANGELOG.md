@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Every request sends `X-Xquik-SDK: python` beside the platform headers it already sends.
 - Communities add the analytics read with `retrieve_analytics`.
 - Posts and embedded posts return `soft_intervention`, the label X shows under a post whose reach it limits.
 - Posts and embedded posts name the counts X did not send in `unknown_counts`.
