@@ -9,6 +9,7 @@ from typing_extensions import Literal, TypeAlias
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
+from ..._dict_access import EventDataDictAccess
 
 __all__ = [
     "MonitorPostMetricChange",
@@ -191,7 +192,7 @@ class PostMonitorMetrics(BaseModel):
     buckets: List[PostMonitorMetricsBucket]
 
 
-class MonitorPostMetricChange(BaseModel):
+class MonitorPostMetricChange(EventDataDictAccess):
     """A post metric's change since its last event.
 
     It fires on post.likes.changed, post.retweets.changed, post.replies.changed,
@@ -211,7 +212,7 @@ class MonitorPostMetricChange(BaseModel):
     """The count the last event of this metric reported."""
 
 
-class MonitorPostEdit(BaseModel):
+class MonitorPostEdit(EventDataDictAccess):
     """The post's text before & after an edit, on post.edited."""
 
     previous_text: str = FieldInfo(alias="previousText")
@@ -224,7 +225,7 @@ class MonitorPostEdit(BaseModel):
     """X's ID of the newest version of the post."""
 
 
-class MonitorPostDeleted(BaseModel):
+class MonitorPostDeleted(EventDataDictAccess):
     """The last text the monitor saw, on post.deleted."""
 
     text: str

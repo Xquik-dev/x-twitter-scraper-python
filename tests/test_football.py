@@ -454,7 +454,7 @@ async def test_list_games_sends_the_league_and_window(asynchronous: bool) -> Non
     assert game.id == "2055084502741811200"
     assert game.starts_at == datetime(2026, 10, 20, 0, 15, tzinfo=timezone.utc)
     assert game.team_ids == ["689566294702555136", "689566304366292992"]
-    assert game.odds.away.spread == "text"
+    assert game.odds is not None and game.odds.away.spread == "text"
     team = schedule.teams["689566294702555136"]
     assert team.abbreviation == "SF"
     assert team.colors[0].r == 170
@@ -478,7 +478,8 @@ async def test_retrieve_scoreboard_reads_1_game(asynchronous: bool) -> None:
     assert scoreboard.home.timeouts_left == 2
     assert scoreboard.periods[0].home_points == 13
     assert scoreboard.last_play is not None and scoreboard.last_play.id == "170"
-    assert scoreboard.players["1520565710329499648"].x_user.username == "brockpurdy13"
+    x_user = scoreboard.players["1520565710329499648"].x_user
+    assert x_user is not None and x_user.username == "brockpurdy13"
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
@@ -492,7 +493,8 @@ async def test_retrieve_box_score_reads_team_and_player_stats(asynchronous: bool
 
     assert request.url.path == "/api/v1/x/sports/ncaafb/games/2055084502741811200/box-score"
     assert isinstance(box, FootballBoxScore)
-    assert box.home.totals is not None and box.home.totals.third_downs.attempts == 14
+    totals = box.home.totals
+    assert totals is not None and totals.third_downs is not None and totals.third_downs.attempts == 14
     player = box.home.players[0]
     assert player.passing is not None and player.passing.yards == 264
     assert player.defense is not None and player.defense.sacks == 0.5
