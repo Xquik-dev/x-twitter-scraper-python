@@ -10,6 +10,7 @@ from x_twitter_scraper.types import (
     ContentDisclosure,
     EmbeddedTweet,
     Error,
+    ErrorCode,
     EventType,
     PaginatedTweets,
     PaginatedUsers,

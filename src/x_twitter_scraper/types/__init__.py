@@ -9,6 +9,7 @@ from .event import Event as Event
 from .shared import (
     Error as Error,
     Community as Community,
+    ErrorCode as ErrorCode,
     EventType as EventType,
     TweetMedia as TweetMedia,
     SearchTweet as SearchTweet,
