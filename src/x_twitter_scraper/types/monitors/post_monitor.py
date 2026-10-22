@@ -11,6 +11,9 @@ from pydantic import Field as FieldInfo
 from ..._models import BaseModel
 
 __all__ = [
+    "MonitorPostMetricChange",
+    "MonitorPostEdit",
+    "MonitorPostDeleted",
     "PostEventType",
     "PostMetricReading",
     "PostMetrics",
@@ -186,3 +189,43 @@ class PostMonitorMetrics(BaseModel):
     hours: int
 
     buckets: List[PostMonitorMetricsBucket]
+
+
+class MonitorPostMetricChange(BaseModel):
+    """A post metric's change since its last event.
+
+    It fires on post.likes.changed, post.retweets.changed, post.replies.changed,
+    post.quotes.changed, post.bookmarks.changed & post.views.changed.
+    """
+
+    change: int
+    """Current count minus previous count."""
+
+    current: int
+    """The count X shows now."""
+
+    metric: Literal["bookmarks", "likes", "quotes", "replies", "retweets", "views"]
+    """The metric that changed."""
+
+    previous: int
+    """The count the last event of this metric reported."""
+
+
+class MonitorPostEdit(BaseModel):
+    """The post's text before & after an edit, on post.edited."""
+
+    previous_text: str = FieldInfo(alias="previousText")
+    """The text before the edit."""
+
+    text: str
+    """The text of the newest version."""
+
+    version_id: str = FieldInfo(alias="versionId")
+    """X's ID of the newest version of the post."""
+
+
+class MonitorPostDeleted(BaseModel):
+    """The last text the monitor saw, on post.deleted."""
+
+    text: str
+    """The post's text before its author deleted it."""

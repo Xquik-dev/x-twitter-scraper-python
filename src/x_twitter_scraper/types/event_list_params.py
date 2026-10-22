@@ -4,10 +4,12 @@
 
 from __future__ import annotations
 
+from typing import Union
 from typing_extensions import Annotated, TypedDict
 
 from .._utils import PropertyInfo
 from .shared.event_type import EventType
+from .monitors.post_monitor import PostEventType
 
 __all__ = ["EventListParams"]
 
@@ -19,7 +21,7 @@ class EventListParams(TypedDict, total=False):
     The after alias also works. Offset pagination is not supported.
     """
 
-    event_type: Annotated[EventType, PropertyInfo(alias="eventType")]
+    event_type: Annotated[Union[EventType, PostEventType], PropertyInfo(alias="eventType")]
     """Filter events by type"""
 
     keyword_monitor_id: Annotated[str, PropertyInfo(alias="keywordMonitorId")]

@@ -221,3 +221,41 @@ async def test_events_filter_by_post_monitor_and_carry_the_post(asynchronous: bo
     assert event.post_url == "https://x.com/xquik/status/2104984505677430978"
     assert event.author_id == "1661816432185823232"
     assert event.author_username == "xquik"
+
+
+@pytest.mark.parametrize(
+    "data, field, value",
+    [
+        ({"metric": "likes", "previous": 17096, "current": 17200, "change": 104}, "metric", "likes"),
+        (
+            {
+                "previousText": "We cut costs by 20%.",
+                "text": "We cut costs by 25%.",
+                "versionId": "2082577277246973001",
+            },
+            "version_id",
+            "2082577277246973001",
+        ),
+    ],
+)
+async def test_post_event_data_reads_metric_changes_and_edits(data: dict[str, object], field: str, value: str) -> None:
+    _, page = await send_with_mock_transport(
+        lambda client: client.events.list(event_type="post.likes.changed"),
+        lambda client: client.events.list(event_type="post.likes.changed"),
+        {
+            "events": [
+                {
+                    "id": "9002",
+                    "type": "post.likes.changed",
+                    "monitorId": "31",
+                    "monitorType": "post",
+                    "occurredAt": "2026-10-22T11:05:00.000Z",
+                    "data": data,
+                }
+            ],
+            "hasMore": False,
+        },
+        False,
+    )
+
+    assert getattr(page.events[0].data, field) == value

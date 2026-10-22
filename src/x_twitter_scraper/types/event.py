@@ -13,7 +13,7 @@ from .._dict_access import EventDataDictAccess
 from .shared.event_type import EventType
 from .shared.tweet_media import TweetMedia
 from .shared.user_profile import UserProfile
-from .monitors.post_monitor import PostEventType
+from .monitors.post_monitor import PostEventType, MonitorPostEdit, MonitorPostDeleted, MonitorPostMetricChange
 from .shared.embedded_tweet import EmbeddedTweet
 from .shared.soft_intervention import SoftIntervention
 from .shared.content_disclosure import ContentDisclosure
@@ -1346,7 +1346,15 @@ class DataMonitorFollow(EventDataDictAccess):
         __pydantic_extra__: Dict[str, object]
 
 
-Data: TypeAlias = Union[DataMonitorPost, DataMonitorProfileChange, DataMonitorLegacyPost, DataMonitorFollow]
+Data: TypeAlias = Union[
+    DataMonitorPost,
+    DataMonitorProfileChange,
+    MonitorPostMetricChange,
+    MonitorPostEdit,
+    MonitorPostDeleted,
+    DataMonitorLegacyPost,
+    DataMonitorFollow,
+]
 
 
 class Event(BaseModel):

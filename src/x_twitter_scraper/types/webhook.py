@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import List
+from typing import List, Union
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -10,6 +10,7 @@ from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 from .shared.event_type import EventType
+from .monitors.post_monitor import PostEventType
 
 __all__ = ["Webhook"]
 
@@ -31,7 +32,7 @@ class Webhook(BaseModel):
     Delivery attempts continue.
     """
 
-    event_types: List[EventType] = FieldInfo(alias="eventTypes")
+    event_types: List[Union[EventType, PostEventType]] = FieldInfo(alias="eventTypes")
     """Array of event types to subscribe to."""
 
     failure_hard_cap: int = FieldInfo(alias="failureHardCap")

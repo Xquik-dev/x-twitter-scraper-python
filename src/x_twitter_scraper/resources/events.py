@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from typing import Union
+
 import httpx
 
 from ..types import event_list_params
@@ -23,6 +25,7 @@ from .._base_client import make_request_options
 from ..types.event_detail import EventDetail
 from ..types.shared.event_type import EventType
 from ..types.event_list_response import EventListResponse
+from ..types.monitors.post_monitor import PostEventType
 
 __all__ = ["EventsResource", "AsyncEventsResource"]
 
@@ -83,7 +86,7 @@ class EventsResource(SyncAPIResource):
         self,
         *,
         cursor: str | Omit = omit,
-        event_type: EventType | Omit = omit,
+        event_type: Union[EventType, PostEventType] | Omit = omit,
         keyword_monitor_id: str | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
@@ -239,7 +242,7 @@ class AsyncEventsResource(AsyncAPIResource):
         self,
         *,
         cursor: str | Omit = omit,
-        event_type: EventType | Omit = omit,
+        event_type: Union[EventType, PostEventType] | Omit = omit,
         keyword_monitor_id: str | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
