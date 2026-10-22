@@ -353,7 +353,7 @@ def run_cleanup(
     finally:
         try:
             os.killpg(process.pid, signal.SIGKILL)
-        except ProcessLookupError:
+        except (ProcessLookupError, PermissionError):
             pass
         process.communicate(timeout=10)
     assert ready.exists(), stdout + stderr
