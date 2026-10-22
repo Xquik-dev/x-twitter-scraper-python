@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.18.0 (2026-10-22)
+
+This release names every error code the API sends. Code written for 0.17.0 keeps working, and no method, type or parameter is removed.
 
 - `Error` accepts the 7 codes the API added, `contributor_not_found`, `invalid_contributor_alias`, `invalid_news_id`, `news_not_found`, `session_required`, `topup_in_progress` and `x_video_too_large`.
 - `ErrorCode` lists every code that `Error` accepts.
