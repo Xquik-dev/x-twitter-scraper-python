@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- `client.monitors.posts` adds post monitors with `create`, `retrieve`, `update`, `list`, `delete` and the hourly `retrieve_metrics`.
+- Events carry `post_id`, `post_url`, `author_id` and `author_username` for post events, and `client.events.list` filters by `post_monitor_id`.
+- `client.x.sports` adds the NFL & college football reads `list_games`, `retrieve_scoreboard`, `retrieve_box_score` and `retrieve_plays`.
 - `Error` accepts the 7 codes the API added, `contributor_not_found`, `invalid_contributor_alias`, `invalid_news_id`, `news_not_found`, `session_required`, `topup_in_progress` and `x_video_too_large`.
 - `ErrorCode` lists every code that `Error` accepts.
 

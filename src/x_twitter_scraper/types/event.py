@@ -13,6 +13,7 @@ from .._dict_access import EventDataDictAccess
 from .shared.event_type import EventType
 from .shared.tweet_media import TweetMedia
 from .shared.user_profile import UserProfile
+from .monitors.post_monitor import PostEventType
 from .shared.embedded_tweet import EmbeddedTweet
 from .shared.soft_intervention import SoftIntervention
 from .shared.content_disclosure import ContentDisclosure
@@ -1361,12 +1362,12 @@ class Event(BaseModel):
     Account monitor ID for account events, or keyword monitor ID for keyword events.
     """
 
-    monitor_type: Literal["account", "keyword"] = FieldInfo(alias="monitorType")
+    monitor_type: Literal["account", "keyword", "post"] = FieldInfo(alias="monitorType")
     """Source monitor type."""
 
     occurred_at: datetime = FieldInfo(alias="occurredAt")
 
-    type: EventType
+    type: Union[EventType, PostEventType]
     """Type of monitor event fired when account activity occurs.
 
     tweet.deleted fires once X confirms the account deleted a post the monitor saw.
@@ -1377,6 +1378,12 @@ class Event(BaseModel):
     Keyword monitors take the 10 post types only.
     """
 
+    author_id: Optional[str] = FieldInfo(alias="authorId", default=None)
+    """Permanent X user ID of the monitored post's author, present for post events."""
+
+    author_username: Optional[str] = FieldInfo(alias="authorUsername", default=None)
+    """Username of the monitored post's author, present for post events."""
+
     keyword_monitor_id: Optional[str] = FieldInfo(alias="keywordMonitorId", default=None)
     """Keyword monitor ID, present for keyword monitor events."""
 
@@ -1385,6 +1392,12 @@ class Event(BaseModel):
 
     A rename leaves the event's label unchanged.
     """
+
+    post_id: Optional[str] = FieldInfo(alias="postId", default=None)
+    """ID of the monitored post, present for post events."""
+
+    post_url: Optional[str] = FieldInfo(alias="postUrl", default=None)
+    """Link to the monitored post, present for post events."""
 
     query: Optional[str] = None
     """Keyword query, present for keyword monitor events."""

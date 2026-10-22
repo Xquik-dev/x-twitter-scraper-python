@@ -34,3 +34,6 @@ class EventListParams(TypedDict, total=False):
 
     monitor_id: Annotated[str, PropertyInfo(alias="monitorId")]
     """Account monitor ID. The monitor_id alias also works."""
+
+    post_monitor_id: Annotated[str, PropertyInfo(alias="postMonitorId")]
+    """Post monitor ID. The post_monitor_id alias also works."""

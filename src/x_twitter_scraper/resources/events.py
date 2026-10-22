@@ -87,6 +87,7 @@ class EventsResource(SyncAPIResource):
         keyword_monitor_id: str | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
+        post_monitor_id: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -107,6 +108,8 @@ class EventsResource(SyncAPIResource):
               With none affordable, it returns 402 insufficient_credits.
 
           monitor_id: Account monitor ID. The monitor_id alias also works.
+
+          post_monitor_id: Post monitor ID. The post_monitor_id alias also works.
 
           extra_headers: Send extra headers
 
@@ -130,6 +133,7 @@ class EventsResource(SyncAPIResource):
                         "keyword_monitor_id": keyword_monitor_id,
                         "limit": limit,
                         "monitor_id": monitor_id,
+                        "post_monitor_id": post_monitor_id,
                     },
                     event_list_params.EventListParams,
                 ),
@@ -239,6 +243,7 @@ class AsyncEventsResource(AsyncAPIResource):
         keyword_monitor_id: str | Omit = omit,
         limit: int | Omit = omit,
         monitor_id: str | Omit = omit,
+        post_monitor_id: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -259,6 +264,8 @@ class AsyncEventsResource(AsyncAPIResource):
               With none affordable, it returns 402 insufficient_credits.
 
           monitor_id: Account monitor ID. The monitor_id alias also works.
+
+          post_monitor_id: Post monitor ID. The post_monitor_id alias also works.
 
           extra_headers: Send extra headers
 
@@ -282,6 +289,7 @@ class AsyncEventsResource(AsyncAPIResource):
                         "keyword_monitor_id": keyword_monitor_id,
                         "limit": limit,
                         "monitor_id": monitor_id,
+                        "post_monitor_id": post_monitor_id,
                     },
                     event_list_params.EventListParams,
                 ),
