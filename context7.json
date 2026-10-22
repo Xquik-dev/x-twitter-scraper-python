@@ -13,7 +13,6 @@
   ],
   "excludeFiles": [
     ".python-version",
-    ".stats.yml",
     "Brewfile",
     "CHANGELOG.md",
     "CITATION.cff",

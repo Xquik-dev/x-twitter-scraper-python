@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: Apache-2.0
 set -euo pipefail
 cd "$(dirname "$0")/.."
-scope=(. ':!*.md' ':!*.lock' ':!.stats.yml' ':!LICENSE*' ':!LICENSES/**'
+scope=(. ':!*.md' ':!*.lock' ':!LICENSE*' ':!LICENSES/**'
   ':!src/x_twitter_scraper/resources/**' ':!src/x_twitter_scraper/types/**'
   ':!src/x_twitter_scraper/_client.py' ':!tests/api_resources/**' ':!tests/test_client.py')
 [[ -z "$(git ls-files --others --exclude-standard)" ]] || { echo "Review new files and run git add -N first." >&2; exit 1; }
