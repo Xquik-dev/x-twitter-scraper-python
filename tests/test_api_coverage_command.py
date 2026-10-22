@@ -459,7 +459,11 @@ def test_repository_sdk_and_exclusions_are_readable(
         "paths": {
             "/ask": {"get": {"operationId": "askXquik"}, "post": {"operationId": "askXquikPost"}},
             "/api/v1/api-keys": {"get": {"operationId": "listApiKeys"}, "post": {"operationId": "createApiKey"}},
-            "/api/v1/api-keys/{keyId}": {"delete": {"operationId": "revokeApiKey"}},
+            "/api/v1/api-keys/bulk-revoke": {"post": {"operationId": "bulkRevokeApiKeys"}},
+            "/api/v1/api-keys/{keyId}": {
+                "delete": {"operationId": "revokeApiKey"},
+                "patch": {"operationId": "updateApiKey"},
+            },
             "/api/v1/credits/quick-topup": {"post": {"operationId": "quickTopupCredits"}},
             "/api/v1/x/trends": {"get": {"operationId": "getXTrends"}},
             "/api/v1/x/tweets/{tweetId}": {"get": {"operationId": "getXTweet"}},
@@ -471,5 +475,5 @@ def test_repository_sdk_and_exclusions_are_readable(
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     assert main(ROOT) == 0
     assert capsys.readouterr().out.splitlines() == [
-        "The SDK covers 3 of 9 API operations, and excluded-operations.json lists the other 6."
+        "The SDK covers 3 of 11 API operations, and excluded-operations.json lists the other 8."
     ]

@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from .error import Error as Error
+from .error import Error as Error, ErrorCode as ErrorCode
 from .community import Community as Community
 from .event_type import EventType as EventType
 from .tweet_media import TweetMedia as TweetMedia
