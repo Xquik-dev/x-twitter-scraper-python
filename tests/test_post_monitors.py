@@ -84,6 +84,7 @@ async def test_create_sends_the_post_label_and_event_types(asynchronous: bool) -
         ),
         POST_MONITOR,
         asynchronous,
+        method="POST",
     )
 
     assert request.method == "POST"
@@ -117,6 +118,7 @@ async def test_update_sends_null_to_remove_the_label(asynchronous: bool) -> None
         lambda client: client.monitors.posts.update("31", is_active=False, name=None),
         POST_MONITOR,
         asynchronous,
+        method="PATCH",
     )
 
     assert request.method == "PATCH"
@@ -151,6 +153,7 @@ async def test_delete_returns_the_status_url(asynchronous: bool) -> None:
         lambda client: client.monitors.posts.delete("31"),
         {"deletionStatus": "deleting", "statusUrl": "/api/v1/monitors/posts/31", "success": True},
         asynchronous,
+        method="DELETE",
     )
 
     assert request.method == "DELETE"
