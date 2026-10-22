@@ -1351,8 +1351,8 @@ Data: TypeAlias = Union[
     DataMonitorProfileChange,
     MonitorPostMetricChange,
     MonitorPostEdit,
-    MonitorPostDeleted,
     DataMonitorLegacyPost,
+    MonitorPostDeleted,
     DataMonitorFollow,
 ]
 
