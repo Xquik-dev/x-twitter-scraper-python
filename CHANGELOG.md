@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.18.0 (2026-10-23)
+
+This release adds post monitors, NFL & college football reads and every API error code. Code written for 0.17.0 keeps working, and no method, type or parameter is removed.
 
 - `client.monitors.posts` adds post monitors with `create`, `retrieve`, `update`, `list`, `delete` and the hourly `retrieve_metrics`.
 - Events carry `post_id`, `post_url`, `author_id` and `author_username` for post events, and `client.events.list` filters by `post_monitor_id`.
