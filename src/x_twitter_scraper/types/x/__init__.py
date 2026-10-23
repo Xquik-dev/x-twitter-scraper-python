@@ -13,6 +13,7 @@ from .football import (
     FootballBoxScore as FootballBoxScore,
     FootballSchedule as FootballSchedule,
     FootballScoreboard as FootballScoreboard,
+    SportsGameAudience as SportsGameAudience,
 )
 from .x_account import XAccount as XAccount
 from .tweet_author import TweetAuthor as TweetAuthor
@@ -139,6 +140,7 @@ from .list_retrieve_members_response import ListRetrieveMembersResponse as ListR
 from .profile_update_avatar_response import ProfileUpdateAvatarResponse as ProfileUpdateAvatarResponse
 from .profile_update_banner_response import ProfileUpdateBannerResponse as ProfileUpdateBannerResponse
 from .space_retrieve_replay_response import SpaceRetrieveReplayResponse as SpaceRetrieveReplayResponse
+from .sport_retrieve_audience_params import SportRetrieveAudienceParams as SportRetrieveAudienceParams
 from .tweet_get_retweeter_ids_params import TweetGetRetweeterIdsParams as TweetGetRetweeterIdsParams
 from .user_retrieve_followers_params import UserRetrieveFollowersParams as UserRetrieveFollowersParams
 from .user_retrieve_following_params import UserRetrieveFollowingParams as UserRetrieveFollowingParams

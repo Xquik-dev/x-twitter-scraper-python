@@ -12,6 +12,7 @@ from ..._compat import cached_property
 from ...types.x import (
     sport_list_games_params,
     sport_retrieve_plays_params,
+    sport_retrieve_audience_params,
     sport_retrieve_box_score_params,
     sport_retrieve_scoreboard_params,
 )
@@ -23,13 +24,19 @@ from ..._response import (
     async_to_streamed_response_wrapper,
 )
 from ..._base_client import make_request_options
-from ...types.x.football import FootballPlays, FootballBoxScore, FootballSchedule, FootballScoreboard
+from ...types.x.football import (
+    FootballPlays,
+    FootballBoxScore,
+    FootballSchedule,
+    FootballScoreboard,
+    SportsGameAudience,
+)
 
 __all__ = ["SportsResource", "AsyncSportsResource"]
 
 
 class SportsResource(SyncAPIResource):
-    """NFL & college football games, scoreboards, box scores & play-by-play"""
+    """NFL & college football games, scoreboards, plays, box scores & audiences"""
 
     @cached_property
     def with_raw_response(self) -> SportsResourceWithRawResponse:
@@ -293,9 +300,66 @@ class SportsResource(SyncAPIResource):
             cast_to=FootballPlays,
         )
 
+    def retrieve_audience(
+        self,
+        id: str,
+        *,
+        league: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> SportsGameAudience:
+        """
+        Returns who follows 1 game on X. It has live viewers, fan picks per team & the
+        game chat's state. Each request costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return self._get(
+            path_template("/x/sports/{league}/games/{id}/audience", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    sport_retrieve_audience_params.SportRetrieveAudienceParams,
+                ),
+            ),
+            cast_to=SportsGameAudience,
+        )
+
 
 class AsyncSportsResource(AsyncAPIResource):
-    """NFL & college football games, scoreboards, box scores & play-by-play"""
+    """NFL & college football games, scoreboards, plays, box scores & audiences"""
 
     @cached_property
     def with_raw_response(self) -> AsyncSportsResourceWithRawResponse:
@@ -559,6 +623,63 @@ class AsyncSportsResource(AsyncAPIResource):
             cast_to=FootballPlays,
         )
 
+    async def retrieve_audience(
+        self,
+        id: str,
+        *,
+        league: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> SportsGameAudience:
+        """
+        Returns who follows 1 game on X. It has live viewers, fan picks per team & the
+        game chat's state. Each request costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return await self._get(
+            path_template("/x/sports/{league}/games/{id}/audience", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    sport_retrieve_audience_params.SportRetrieveAudienceParams,
+                ),
+            ),
+            cast_to=SportsGameAudience,
+        )
+
 
 class SportsResourceWithRawResponse:
     def __init__(self, sports: SportsResource) -> None:
@@ -575,6 +696,9 @@ class SportsResourceWithRawResponse:
         )
         self.retrieve_plays = to_raw_response_wrapper(
             sports.retrieve_plays,
+        )
+        self.retrieve_audience = to_raw_response_wrapper(
+            sports.retrieve_audience,
         )
 
 
@@ -594,6 +718,9 @@ class AsyncSportsResourceWithRawResponse:
         self.retrieve_plays = async_to_raw_response_wrapper(
             sports.retrieve_plays,
         )
+        self.retrieve_audience = async_to_raw_response_wrapper(
+            sports.retrieve_audience,
+        )
 
 
 class SportsResourceWithStreamingResponse:
@@ -612,6 +739,9 @@ class SportsResourceWithStreamingResponse:
         self.retrieve_plays = to_streamed_response_wrapper(
             sports.retrieve_plays,
         )
+        self.retrieve_audience = to_streamed_response_wrapper(
+            sports.retrieve_audience,
+        )
 
 
 class AsyncSportsResourceWithStreamingResponse:
@@ -629,4 +759,7 @@ class AsyncSportsResourceWithStreamingResponse:
         )
         self.retrieve_plays = async_to_streamed_response_wrapper(
             sports.retrieve_plays,
+        )
+        self.retrieve_audience = async_to_streamed_response_wrapper(
+            sports.retrieve_audience,
         )

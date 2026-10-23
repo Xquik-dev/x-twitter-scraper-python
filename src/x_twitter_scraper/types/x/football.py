@@ -19,6 +19,7 @@ __all__ = [
     "FootballScheduleGame",
     "SportsTeamColor",
     "SportsTeamLogos",
+    "SportsTeamRecord",
     "SportsTeam",
     "FootballSchedule",
     "FootballScoreboardSituation",
@@ -55,6 +56,12 @@ __all__ = [
     "FootballDrive",
     "FootballQuarter",
     "FootballPlays",
+    "SportsGameAudienceViewers",
+    "SportsGameAudienceTeamPick",
+    "SportsGameAudienceTeamPicks",
+    "SportsGameAudienceChatOpensIn",
+    "SportsGameAudienceChat",
+    "SportsGameAudience",
 ]
 
 FootballLeague: TypeAlias = Literal["nfl", "ncaafb"]
@@ -164,6 +171,22 @@ class SportsTeamLogos(BaseModel):
     """The logo for dark backgrounds."""
 
 
+class SportsTeamRecord(BaseModel):
+    """The team's wins, losses & ties this season.
+
+    X sends it only in college football games.
+    """
+
+    wins: Optional[int]
+    """Games the team won this season."""
+
+    losses: Optional[int]
+    """Games the team lost this season."""
+
+    ties: Optional[int]
+    """Games the team tied this season."""
+
+
 class SportsTeam(BaseModel):
     """A team, as X's sports pages show it."""
 
@@ -183,8 +206,9 @@ class SportsTeam(BaseModel):
     """Another ID X keeps for the team."""
 
     location: Optional[str]
-    """The school or place a college team plays for. X sends it only in college
-    football schedules.
+    """The school or place the team plays for.
+
+    X sends it in college football schedules & in a game's audience.
     """
 
     colors: List[SportsTeamColor]
@@ -195,6 +219,12 @@ class SportsTeam(BaseModel):
 
     x_user_id: Optional[str] = FieldInfo(alias="xUserId")
     """The user ID of the team's X account."""
+
+    record: Optional[SportsTeamRecord]
+    """The team's wins, losses & ties this season.
+
+    X sends it only in college football games.
+    """
 
 
 class FootballSchedule(BaseModel):
@@ -956,3 +986,91 @@ class FootballPlays(BaseModel):
 
     players: Dict[str, FootballPlayer]
     """The players these plays name, by player ID."""
+
+
+class SportsGameAudienceViewers(BaseModel):
+    """People watching the game on X at X's last count.
+
+    Null before X counts any, as before kickoff.
+    """
+
+    count: int
+    """How many people watched the game on X."""
+
+    as_of: datetime = FieldInfo(alias="asOf")
+    """When X counted them."""
+
+
+class SportsGameAudienceTeamPick(BaseModel):
+    """1 team's picks."""
+
+    team_id: str = FieldInfo(alias="teamId")
+    """The team ID, a key in teams."""
+
+    count: Optional[int]
+    """How many people picked this team."""
+
+
+class SportsGameAudienceTeamPicks(BaseModel):
+    """How many people on X picked a team to root for."""
+
+    total: Optional[int]
+    """Picks for every team in the game."""
+
+    teams: List[SportsGameAudienceTeamPick]
+    """Picks per team."""
+
+
+class SportsGameAudienceChatOpensIn(BaseModel):
+    """Time left until the chat opens. Null while it is open & after the game."""
+
+    days: Optional[int]
+    """Whole days left."""
+
+    hours: Optional[int]
+    """Hours left after the days."""
+
+    minutes: Optional[int]
+    """Minutes left after the hours."""
+
+
+class SportsGameAudienceChat(BaseModel):
+    """The game's live chat on X."""
+
+    available: Optional[bool]
+    """Whether the chat is open now."""
+
+    broadcast_id: Optional[str] = FieldInfo(alias="broadcastId")
+    """X's ID for the game's chat room."""
+
+    opens_in: Optional[SportsGameAudienceChatOpensIn] = FieldInfo(alias="opensIn")
+    """Time left until the chat opens. Null while it is open & after the game."""
+
+
+class SportsGameAudience(BaseModel):
+    """Who watches & roots for 1 game on X."""
+
+    id: str
+    """The ID of the game, from your request."""
+
+    league: FootballLeague
+    """The game's league, from your request."""
+
+    viewers: Optional[SportsGameAudienceViewers]
+    """People watching the game on X at X's last count.
+
+    Null before X counts any, as before kickoff.
+    """
+
+    team_picks: SportsGameAudienceTeamPicks = FieldInfo(alias="teamPicks")
+    """How many people on X picked a team to root for."""
+
+    chat: SportsGameAudienceChat
+    """The game's live chat on X."""
+
+    teams: Dict[str, SportsTeam]
+    """The game's teams, by team ID.
+
+    X's team picker sends no short name, alternate ID, X account or record, so
+    those are null.
+    """
