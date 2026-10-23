@@ -10,7 +10,13 @@ import pytest
 
 from tests.utils import send_with_mock_transport
 from x_twitter_scraper import XTwitterScraper
-from x_twitter_scraper.types.x import FootballPlays, FootballBoxScore, FootballSchedule, FootballScoreboard
+from x_twitter_scraper.types.x import (
+    FootballPlays,
+    FootballBoxScore,
+    FootballSchedule,
+    FootballScoreboard,
+    SportsGameAudience,
+)
 
 SCHEDULE = {
     "league": "nfl",
@@ -48,6 +54,7 @@ SCHEDULE = {
                 "dark": "https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig",
             },
             "xUserId": "43403778",
+            "record": {"wins": 7, "losses": 1, "ties": 0},
         }
     },
 }
@@ -122,6 +129,7 @@ SCOREBOARD = {
                 "dark": "https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig",
             },
             "xUserId": "43403778",
+            "record": None,
         }
     },
     "players": {
@@ -300,6 +308,7 @@ BOX_SCORE = {
                 "dark": "https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig",
             },
             "xUserId": "43403778",
+            "record": None,
         }
     },
     "players": {
@@ -408,6 +417,7 @@ PLAYS = {
                 "dark": "https://pbs.twimg.com/semantic_core_img/2094848191451598848/82O7RY0H?format=png&name=orig",
             },
             "xUserId": "43403778",
+            "record": None,
         }
     },
     "players": {
@@ -428,6 +438,39 @@ PLAYS = {
                 "small": "https://pbs.twimg.com/semantic_core_img/1960202905849405441/OnS0Xdd9?format=png&name=orig",
             },
             "xUser": {"id": "723177170382647296", "username": "brockpurdy13", "blueVerified": True},
+        }
+    },
+}
+
+
+AUDIENCE = {
+    "id": "2055084502741811200",
+    "league": "ncaafb",
+    "viewers": {"count": 155, "asOf": "2026-10-20T06:19:50.000Z"},
+    "teamPicks": {
+        "total": 7976,
+        "teams": [
+            {"teamId": "689566294702555136", "count": 4998},
+            {"teamId": "689566304366292992", "count": 2978},
+        ],
+    },
+    "chat": {
+        "available": False,
+        "broadcastId": "nfl-2055084502741811200",
+        "opensIn": {"days": 0, "hours": 12, "minutes": 2},
+    },
+    "teams": {
+        "689566294702555136": {
+            "id": "689566294702555136",
+            "name": "Virginia Tech Hokies",
+            "shortName": None,
+            "abbreviation": "VT",
+            "alternateId": None,
+            "location": "Virginia Tech",
+            "colors": [{"r": 134, "g": 31, "b": 65}],
+            "logos": {"default": None, "light": None, "dark": None},
+            "xUserId": None,
+            "record": None,
         }
     },
 }
@@ -459,6 +502,7 @@ async def test_list_games_sends_the_league_and_window(asynchronous: bool) -> Non
     assert team.abbreviation == "SF"
     assert team.colors[0].r == 170
     assert team.x_user_id == "43403778"
+    assert team.record is not None and (team.record.wins, team.record.losses, team.record.ties) == (7, 1, 0)
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
@@ -521,7 +565,31 @@ async def test_retrieve_plays_reads_drives_and_plays(asynchronous: bool) -> None
     assert play.post is not None and play.post.id == "2112339130483151117"
 
 
-@pytest.mark.parametrize("method", ["retrieve_scoreboard", "retrieve_box_score", "retrieve_plays"])
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_retrieve_audience_reads_viewers_team_picks_and_chat(asynchronous: bool) -> None:
+    request, audience = await send_with_mock_transport(
+        lambda client: client.x.sports.retrieve_audience("2055084502741811200", league="ncaafb", fields="viewers,chat"),
+        lambda client: client.x.sports.retrieve_audience("2055084502741811200", league="ncaafb", fields="viewers,chat"),
+        AUDIENCE,
+        asynchronous,
+    )
+
+    assert request.method == "GET"
+    assert request.url.path == "/api/v1/x/sports/ncaafb/games/2055084502741811200/audience"
+    assert dict(request.url.params) == {"fields": "viewers,chat"}
+    assert isinstance(audience, SportsGameAudience)
+    assert audience.viewers is not None and audience.viewers.as_of == datetime(
+        2026, 10, 20, 6, 19, 50, tzinfo=timezone.utc
+    )
+    assert [pick.count for pick in audience.team_picks.teams] == [4998, 2978]
+    assert audience.chat.broadcast_id == "nfl-2055084502741811200"
+    assert audience.chat.opens_in is not None and audience.chat.opens_in.hours == 12
+    team = audience.teams["689566294702555136"]
+    assert team.location == "Virginia Tech"
+    assert team.record is None
+
+
+@pytest.mark.parametrize("method", ["retrieve_scoreboard", "retrieve_box_score", "retrieve_plays", "retrieve_audience"])
 def test_an_empty_id_or_league_raises_before_any_request(client: XTwitterScraper, method: str) -> None:
     with pytest.raises(ValueError, match="`id`"):
         getattr(client.x.sports, method)("", league="nfl")

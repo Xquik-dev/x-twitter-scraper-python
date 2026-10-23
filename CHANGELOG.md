@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.19.0 (2026-10-23)
+
+This release adds a game's audience read and each team's season record. Code written for 0.18.0 keeps working.
+
+- `client.x.sports.retrieve_audience` returns a game's live viewers, fan picks per team & the game chat's state as `SportsGameAudience`.
+- `SportsTeam` adds `record`, the team's wins, losses & ties this season. X sends it only in college football games.
+
 ## 0.18.0 (2026-10-23)
 
 This release adds post monitors, NFL & college football reads and every API error code. Code written for 0.17.0 keeps working, and no method, type or parameter is removed.
