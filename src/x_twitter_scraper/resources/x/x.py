@@ -48,6 +48,14 @@ from .spaces import (
     SpacesResourceWithStreamingResponse,
     AsyncSpacesResourceWithStreamingResponse,
 )
+from .sports import (
+    SportsResource,
+    AsyncSportsResource,
+    SportsResourceWithRawResponse,
+    AsyncSportsResourceWithRawResponse,
+    SportsResourceWithStreamingResponse,
+    AsyncSportsResourceWithStreamingResponse,
+)
 from ...types import (
     x_get_trends_params,
     x_get_article_params,
@@ -274,6 +282,11 @@ class XResource(SyncAPIResource):
     def spaces(self) -> SpacesResource:
         """X Space details, host, and speakers"""
         return SpacesResource(self._client)
+
+    @cached_property
+    def sports(self) -> SportsResource:
+        """NFL & college football games, scoreboards, box scores & play-by-play"""
+        return SportsResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> XResourceWithRawResponse:
@@ -1040,6 +1053,11 @@ class AsyncXResource(AsyncAPIResource):
     def spaces(self) -> AsyncSpacesResource:
         """X Space details, host, and speakers"""
         return AsyncSpacesResource(self._client)
+
+    @cached_property
+    def sports(self) -> AsyncSportsResource:
+        """NFL & college football games, scoreboards, box scores & play-by-play"""
+        return AsyncSportsResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> AsyncXResourceWithRawResponse:
@@ -1841,6 +1859,11 @@ class XResourceWithRawResponse:
         """X Space details, host, and speakers"""
         return SpacesResourceWithRawResponse(self._x.spaces)
 
+    @cached_property
+    def sports(self) -> SportsResourceWithRawResponse:
+        """NFL & college football games, scoreboards, box scores & play-by-play"""
+        return SportsResourceWithRawResponse(self._x.sports)
+
 
 class AsyncXResourceWithRawResponse:
     def __init__(self, x: AsyncXResource) -> None:
@@ -1961,6 +1984,11 @@ class AsyncXResourceWithRawResponse:
     def spaces(self) -> AsyncSpacesResourceWithRawResponse:
         """X Space details, host, and speakers"""
         return AsyncSpacesResourceWithRawResponse(self._x.spaces)
+
+    @cached_property
+    def sports(self) -> AsyncSportsResourceWithRawResponse:
+        """NFL & college football games, scoreboards, box scores & play-by-play"""
+        return AsyncSportsResourceWithRawResponse(self._x.sports)
 
 
 class XResourceWithStreamingResponse:
@@ -2083,6 +2111,11 @@ class XResourceWithStreamingResponse:
         """X Space details, host, and speakers"""
         return SpacesResourceWithStreamingResponse(self._x.spaces)
 
+    @cached_property
+    def sports(self) -> SportsResourceWithStreamingResponse:
+        """NFL & college football games, scoreboards, box scores & play-by-play"""
+        return SportsResourceWithStreamingResponse(self._x.sports)
+
 
 class AsyncXResourceWithStreamingResponse:
     def __init__(self, x: AsyncXResource) -> None:
@@ -2203,3 +2236,8 @@ class AsyncXResourceWithStreamingResponse:
     def spaces(self) -> AsyncSpacesResourceWithStreamingResponse:
         """X Space details, host, and speakers"""
         return AsyncSpacesResourceWithStreamingResponse(self._x.spaces)
+
+    @cached_property
+    def sports(self) -> AsyncSportsResourceWithStreamingResponse:
+        """NFL & college football games, scoreboards, box scores & play-by-play"""
+        return AsyncSportsResourceWithStreamingResponse(self._x.sports)

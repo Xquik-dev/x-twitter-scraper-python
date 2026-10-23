@@ -2,6 +2,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+from .posts import (
+    PostsResource,
+    AsyncPostsResource,
+    PostsResourceWithRawResponse,
+    AsyncPostsResourceWithRawResponse,
+    PostsResourceWithStreamingResponse,
+    AsyncPostsResourceWithStreamingResponse,
+)
 from .keywords import (
     KeywordsResource,
     AsyncKeywordsResource,
@@ -20,6 +28,12 @@ from .monitors import (
 )
 
 __all__ = [
+    "PostsResource",
+    "AsyncPostsResource",
+    "PostsResourceWithRawResponse",
+    "AsyncPostsResourceWithRawResponse",
+    "PostsResourceWithStreamingResponse",
+    "AsyncPostsResourceWithStreamingResponse",
     "KeywordsResource",
     "AsyncKeywordsResource",
     "KeywordsResourceWithRawResponse",

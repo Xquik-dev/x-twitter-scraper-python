@@ -157,6 +157,28 @@ Methods
 - <code title="get /monitors/keywords">client.monitors.keywords.<a href="./src/x_twitter_scraper/resources/monitors/keywords.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/monitors/keyword_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitors/keyword_list_response.py">KeywordListResponse</a></code>
 - <code title="delete /monitors/keywords/{id}">client.monitors.keywords.<a href="./src/x_twitter_scraper/resources/monitors/keywords.py">deactivate</a>(id) -> <a href="./src/x_twitter_scraper/types/monitors/keyword_deactivate_response.py">KeywordDeactivateResponse</a></code>
 
+## Posts
+
+Types
+
+```python
+from x_twitter_scraper.types.monitors import (
+    PostMonitor,
+    PostMonitorMetrics,
+    PostListResponse,
+    PostDeleteResponse,
+)
+```
+
+Methods
+
+- <code title="post /monitors/posts">client.monitors.posts.<a href="./src/x_twitter_scraper/resources/monitors/posts.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/monitors/post_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitors/post_monitor.py">PostMonitor</a></code>
+- <code title="get /monitors/posts/{id}">client.monitors.posts.<a href="./src/x_twitter_scraper/resources/monitors/posts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/monitors/post_monitor.py">PostMonitor</a></code>
+- <code title="patch /monitors/posts/{id}">client.monitors.posts.<a href="./src/x_twitter_scraper/resources/monitors/posts.py">update</a>(id, \*\*<a href="src/x_twitter_scraper/types/monitors/post_update_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitors/post_monitor.py">PostMonitor</a></code>
+- <code title="get /monitors/posts">client.monitors.posts.<a href="./src/x_twitter_scraper/resources/monitors/posts.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/monitors/post_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitors/post_list_response.py">PostListResponse</a></code>
+- <code title="delete /monitors/posts/{id}">client.monitors.posts.<a href="./src/x_twitter_scraper/resources/monitors/posts.py">delete</a>(id) -> <a href="./src/x_twitter_scraper/types/monitors/post_delete_response.py">PostDeleteResponse</a></code>
+- <code title="get /monitors/posts/{id}/metrics">client.monitors.posts.<a href="./src/x_twitter_scraper/resources/monitors/posts.py">retrieve_metrics</a>(id, \*\*<a href="src/x_twitter_scraper/types/monitors/post_retrieve_metrics_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitors/post_monitor.py">PostMonitorMetrics</a></code>
+
 # Events
 
 Types
@@ -701,6 +723,26 @@ Methods
 - <code title="get /x/spaces/{id}">client.x.spaces.<a href="./src/x_twitter_scraper/resources/x/spaces.py">retrieve</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/space_retrieve_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/space_retrieve_response.py">SpaceRetrieveResponse</a></code>
 - <code title="get /x/spaces/{id}/replay">client.x.spaces.<a href="./src/x_twitter_scraper/resources/x/spaces.py">retrieve_replay</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/space_retrieve_replay_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/space_retrieve_replay_response.py">SpaceRetrieveReplayResponse</a></code>
 - <code title="get /x/spaces/search">client.x.spaces.<a href="./src/x_twitter_scraper/resources/x/spaces.py">search</a>(\*\*<a href="src/x_twitter_scraper/types/x/space_search_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/space_search_response.py">SpaceSearchResponse</a></code>
+
+## Sports
+
+Types
+
+```python
+from x_twitter_scraper.types.x import (
+    FootballSchedule,
+    FootballScoreboard,
+    FootballBoxScore,
+    FootballPlays,
+)
+```
+
+Methods
+
+- <code title="get /x/sports/{league}/games">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">list_games</a>(league, \*\*<a href="src/x_twitter_scraper/types/x/sport_list_games_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballSchedule</a></code>
+- <code title="get /x/sports/{league}/games/{id}">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_scoreboard</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_scoreboard_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballScoreboard</a></code>
+- <code title="get /x/sports/{league}/games/{id}/box-score">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_box_score</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_box_score_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballBoxScore</a></code>
+- <code title="get /x/sports/{league}/games/{id}/plays">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_plays</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_plays_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballPlays</a></code>
 
 # Trends
 

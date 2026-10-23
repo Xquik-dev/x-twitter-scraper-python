@@ -4,6 +4,16 @@
 
 from __future__ import annotations
 
+from .football import (
+    SportsTeam as SportsTeam,
+    FootballPlay as FootballPlay,
+    FootballPlays as FootballPlays,
+    FootballLeague as FootballLeague,
+    FootballPlayer as FootballPlayer,
+    FootballBoxScore as FootballBoxScore,
+    FootballSchedule as FootballSchedule,
+    FootballScoreboard as FootballScoreboard,
+)
 from .x_account import XAccount as XAccount
 from .tweet_author import TweetAuthor as TweetAuthor
 from .tweet_detail import TweetDetail as TweetDetail
@@ -57,6 +67,7 @@ from .follower_check_response import FollowerCheckResponse as FollowerCheckRespo
 from .media_download_response import MediaDownloadResponse as MediaDownloadResponse
 from .profile_update_response import ProfileUpdateResponse as ProfileUpdateResponse
 from .space_retrieve_response import SpaceRetrieveResponse as SpaceRetrieveResponse
+from .sport_list_games_params import SportListGamesParams as SportListGamesParams
 from .tweet_get_quotes_params import TweetGetQuotesParams as TweetGetQuotesParams
 from .tweet_get_thread_params import TweetGetThreadParams as TweetGetThreadParams
 from .tweet_retrieve_response import TweetRetrieveResponse as TweetRetrieveResponse
@@ -91,6 +102,7 @@ from .broadcast_retrieve_response import BroadcastRetrieveResponse as BroadcastR
 from .job_list_locations_response import JobListLocationsResponse as JobListLocationsResponse
 from .list_retrieve_search_params import ListRetrieveSearchParams as ListRetrieveSearchParams
 from .list_retrieve_tweets_params import ListRetrieveTweetsParams as ListRetrieveTweetsParams
+from .sport_retrieve_plays_params import SportRetrievePlaysParams as SportRetrievePlaysParams
 from .tweet_check_repost_response import TweetCheckRepostResponse as TweetCheckRepostResponse
 from .tweet_get_favoriters_params import TweetGetFavoritersParams as TweetGetFavoritersParams
 from .tweet_get_insights_response import TweetGetInsightsResponse as TweetGetInsightsResponse
@@ -133,6 +145,7 @@ from .user_retrieve_following_params import UserRetrieveFollowingParams as UserR
 from .write_action_retrieve_response import WriteActionRetrieveResponse as WriteActionRetrieveResponse
 from .community_list_suggested_params import CommunityListSuggestedParams as CommunityListSuggestedParams
 from .community_search_members_params import CommunitySearchMembersParams as CommunitySearchMembersParams
+from .sport_retrieve_box_score_params import SportRetrieveBoxScoreParams as SportRetrieveBoxScoreParams
 from .tweet_get_hidden_replies_params import TweetGetHiddenRepliesParams as TweetGetHiddenRepliesParams
 from .user_retrieve_affiliates_params import UserRetrieveAffiliatesParams as UserRetrieveAffiliatesParams
 from .user_retrieve_highlights_params import UserRetrieveHighlightsParams as UserRetrieveHighlightsParams
@@ -142,6 +155,7 @@ from .bookmark_retrieve_folders_params import BookmarkRetrieveFoldersParams as B
 from .community_retrieve_info_response import CommunityRetrieveInfoResponse as CommunityRetrieveInfoResponse
 from .community_retrieve_search_params import CommunityRetrieveSearchParams as CommunityRetrieveSearchParams
 from .list_retrieve_followers_response import ListRetrieveFollowersResponse as ListRetrieveFollowersResponse
+from .sport_retrieve_scoreboard_params import SportRetrieveScoreboardParams as SportRetrieveScoreboardParams
 from .tweet_get_retweeter_ids_response import TweetGetRetweeterIdsResponse as TweetGetRetweeterIdsResponse
 from .user_retrieve_followers_response import UserRetrieveFollowersResponse as UserRetrieveFollowersResponse
 from .user_retrieve_following_response import UserRetrieveFollowingResponse as UserRetrieveFollowingResponse

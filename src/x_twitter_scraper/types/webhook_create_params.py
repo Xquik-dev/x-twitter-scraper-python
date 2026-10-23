@@ -4,17 +4,18 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Union
 from typing_extensions import Required, Annotated, TypedDict
 
 from .._utils import PropertyInfo
 from .shared.event_type import EventType
+from .monitors.post_monitor import PostEventType
 
 __all__ = ["WebhookCreateParams"]
 
 
 class WebhookCreateParams(TypedDict, total=False):
-    event_types: Required[Annotated[List[EventType], PropertyInfo(alias="eventTypes")]]
+    event_types: Required[Annotated[List[Union[EventType, PostEventType]], PropertyInfo(alias="eventTypes")]]
     """Array of event types to subscribe to."""
 
     url: Required[str]

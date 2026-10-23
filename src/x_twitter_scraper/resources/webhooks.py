@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Union
 
 import httpx
 
@@ -28,6 +28,7 @@ from .._response import (
 from .._base_client import make_request_options
 from ..types.webhook import Webhook
 from ..types.shared.event_type import EventType
+from ..types.monitors.post_monitor import PostEventType
 from ..types.webhook_list_response import WebhookListResponse
 from ..types.webhook_test_response import WebhookTestResponse
 from ..types.webhook_create_response import WebhookCreateResponse
@@ -63,7 +64,7 @@ class WebhooksResource(SyncAPIResource):
     def create(
         self,
         *,
-        event_types: List[EventType],
+        event_types: List[Union[EventType, PostEventType]],
         url: str,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -107,7 +108,7 @@ class WebhooksResource(SyncAPIResource):
         self,
         id: str,
         *,
-        event_types: List[EventType] | Omit = omit,
+        event_types: List[Union[EventType, PostEventType]] | Omit = omit,
         is_active: bool | Omit = omit,
         url: str | Omit = omit,
         extra_headers: Headers | None = None,
@@ -399,7 +400,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
     async def create(
         self,
         *,
-        event_types: List[EventType],
+        event_types: List[Union[EventType, PostEventType]],
         url: str,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -443,7 +444,7 @@ class AsyncWebhooksResource(AsyncAPIResource):
         self,
         id: str,
         *,
-        event_types: List[EventType] | Omit = omit,
+        event_types: List[Union[EventType, PostEventType]] | Omit = omit,
         is_active: bool | Omit = omit,
         url: str | Omit = omit,
         extra_headers: Headers | None = None,
