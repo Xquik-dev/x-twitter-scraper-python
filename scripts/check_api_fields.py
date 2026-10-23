@@ -249,7 +249,7 @@ class Spec:
         if types is not None and "object" in types:
             values = schema.get("additionalProperties")
             if isinstance(values, Mapping) and values and not schema.get("required"):
-                return Container("map", self.node(values, stack)[0]), nullable
+                return Container("map", self.node(cast(Mapping[str, object], values), stack)[0]), nullable
             return FreeForm(), nullable
         if types is not None and "array" in types and "items" in schema:
             return Container("array", self.node(schema["items"], stack)[0]), nullable
