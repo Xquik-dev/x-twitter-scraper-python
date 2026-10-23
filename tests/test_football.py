@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 import pytest
 
 from tests.utils import send_with_mock_transport
-from x_twitter_scraper import XTwitterScraper
+from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
     FootballPlays,
     FootballBoxScore,
@@ -597,3 +597,15 @@ def test_an_empty_id_or_league_raises_before_any_request(client: XTwitterScraper
         getattr(client.x.sports, method)("1", league="")
     with pytest.raises(ValueError, match="`league`"):
         client.x.sports.list_games("")
+
+
+@pytest.mark.parametrize("method", ["retrieve_scoreboard", "retrieve_box_score", "retrieve_plays", "retrieve_audience"])
+async def test_an_async_empty_id_or_league_raises_before_any_request(
+    async_client: AsyncXTwitterScraper, method: str
+) -> None:
+    with pytest.raises(ValueError, match="`id`"):
+        await getattr(async_client.x.sports, method)("", league="nfl")
+    with pytest.raises(ValueError, match="`league`"):
+        await getattr(async_client.x.sports, method)("1", league="")
+    with pytest.raises(ValueError, match="`league`"):
+        await async_client.x.sports.list_games("")
