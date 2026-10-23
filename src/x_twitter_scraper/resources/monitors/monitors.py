@@ -8,6 +8,14 @@ from typing import List, Optional
 
 import httpx
 
+from .posts import (
+    PostsResource,
+    AsyncPostsResource,
+    PostsResourceWithRawResponse,
+    AsyncPostsResourceWithRawResponse,
+    PostsResourceWithStreamingResponse,
+    AsyncPostsResourceWithStreamingResponse,
+)
 from ...types import monitor_list_params, monitor_create_params, monitor_update_params
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
@@ -44,6 +52,11 @@ class MonitorsResource(SyncAPIResource):
     def keywords(self) -> KeywordsResource:
         """X account monitoring with 1-second checks"""
         return KeywordsResource(self._client)
+
+    @cached_property
+    def posts(self) -> PostsResource:
+        """Post monitoring with replies, quotes, edits, deletion & 6 metrics"""
+        return PostsResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> MonitorsResourceWithRawResponse:
@@ -275,6 +288,11 @@ class AsyncMonitorsResource(AsyncAPIResource):
     def keywords(self) -> AsyncKeywordsResource:
         """X account monitoring with 1-second checks"""
         return AsyncKeywordsResource(self._client)
+
+    @cached_property
+    def posts(self) -> AsyncPostsResource:
+        """Post monitoring with replies, quotes, edits, deletion & 6 metrics"""
+        return AsyncPostsResource(self._client)
 
     @cached_property
     def with_raw_response(self) -> AsyncMonitorsResourceWithRawResponse:
@@ -524,6 +542,11 @@ class MonitorsResourceWithRawResponse:
         """X account monitoring with 1-second checks"""
         return KeywordsResourceWithRawResponse(self._monitors.keywords)
 
+    @cached_property
+    def posts(self) -> PostsResourceWithRawResponse:
+        """Post monitoring with replies, quotes, edits, deletion & 6 metrics"""
+        return PostsResourceWithRawResponse(self._monitors.posts)
+
 
 class AsyncMonitorsResourceWithRawResponse:
     def __init__(self, monitors: AsyncMonitorsResource) -> None:
@@ -549,6 +572,11 @@ class AsyncMonitorsResourceWithRawResponse:
     def keywords(self) -> AsyncKeywordsResourceWithRawResponse:
         """X account monitoring with 1-second checks"""
         return AsyncKeywordsResourceWithRawResponse(self._monitors.keywords)
+
+    @cached_property
+    def posts(self) -> AsyncPostsResourceWithRawResponse:
+        """Post monitoring with replies, quotes, edits, deletion & 6 metrics"""
+        return AsyncPostsResourceWithRawResponse(self._monitors.posts)
 
 
 class MonitorsResourceWithStreamingResponse:
@@ -576,6 +604,11 @@ class MonitorsResourceWithStreamingResponse:
         """X account monitoring with 1-second checks"""
         return KeywordsResourceWithStreamingResponse(self._monitors.keywords)
 
+    @cached_property
+    def posts(self) -> PostsResourceWithStreamingResponse:
+        """Post monitoring with replies, quotes, edits, deletion & 6 metrics"""
+        return PostsResourceWithStreamingResponse(self._monitors.posts)
+
 
 class AsyncMonitorsResourceWithStreamingResponse:
     def __init__(self, monitors: AsyncMonitorsResource) -> None:
@@ -601,3 +634,8 @@ class AsyncMonitorsResourceWithStreamingResponse:
     def keywords(self) -> AsyncKeywordsResourceWithStreamingResponse:
         """X account monitoring with 1-second checks"""
         return AsyncKeywordsResourceWithStreamingResponse(self._monitors.keywords)
+
+    @cached_property
+    def posts(self) -> AsyncPostsResourceWithStreamingResponse:
+        """Post monitoring with replies, quotes, edits, deletion & 6 metrics"""
+        return AsyncPostsResourceWithStreamingResponse(self._monitors.posts)

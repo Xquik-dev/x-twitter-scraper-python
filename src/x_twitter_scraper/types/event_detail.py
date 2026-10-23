@@ -13,6 +13,7 @@ from .._dict_access import EventDetailDataDictAccess
 from .shared.event_type import EventType
 from .shared.tweet_media import TweetMedia
 from .shared.user_profile import UserProfile
+from .monitors.post_monitor import PostEventType, MonitorPostEdit, MonitorPostDeleted, MonitorPostMetricChange
 from .shared.embedded_tweet import EmbeddedTweet
 from .shared.soft_intervention import SoftIntervention
 from .shared.content_disclosure import ContentDisclosure
@@ -1345,7 +1346,15 @@ class DataMonitorFollow(EventDetailDataDictAccess):
         __pydantic_extra__: Dict[str, object]
 
 
-Data: TypeAlias = Union[DataMonitorPost, DataMonitorProfileChange, DataMonitorLegacyPost, DataMonitorFollow]
+Data: TypeAlias = Union[
+    DataMonitorPost,
+    DataMonitorProfileChange,
+    MonitorPostMetricChange,
+    MonitorPostEdit,
+    DataMonitorLegacyPost,
+    MonitorPostDeleted,
+    DataMonitorFollow,
+]
 
 
 class EventDetail(BaseModel):
@@ -1359,12 +1368,12 @@ class EventDetail(BaseModel):
     monitor_id: str = FieldInfo(alias="monitorId")
     """Monitor ID associated with this detailed event payload."""
 
-    monitor_type: Literal["account", "keyword"] = FieldInfo(alias="monitorType")
+    monitor_type: Literal["account", "keyword", "post"] = FieldInfo(alias="monitorType")
     """Source monitor type for this detailed event."""
 
     occurred_at: datetime = FieldInfo(alias="occurredAt")
 
-    type: EventType
+    type: Union[EventType, PostEventType]
     """Type of monitor event fired when account activity occurs.
 
     tweet.deleted fires once X confirms the account deleted a post the monitor saw.

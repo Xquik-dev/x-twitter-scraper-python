@@ -700,7 +700,7 @@ REPOSITORY_SPEC: Dict[str, object] = {
             "get": {
                 "parameters": [
                     {"name": name, "in": "query", "schema": {"type": "string"}}
-                    for name in ("cursor", "eventType", "keywordMonitorId", "limit", "monitorId")
+                    for name in ("cursor", "eventType", "keywordMonitorId", "limit", "monitorId", "postMonitorId")
                 ],
                 "responses": {
                     "200": {

@@ -58,6 +58,14 @@ from .spaces import (
     SpacesResourceWithStreamingResponse,
     AsyncSpacesResourceWithStreamingResponse,
 )
+from .sports import (
+    SportsResource,
+    AsyncSportsResource,
+    SportsResourceWithRawResponse,
+    AsyncSportsResourceWithRawResponse,
+    SportsResourceWithStreamingResponse,
+    AsyncSportsResourceWithStreamingResponse,
+)
 from .tweets import (
     TweetsResource,
     AsyncTweetsResource,
@@ -156,6 +164,12 @@ from .account_connection_challenges import (
 )
 
 __all__ = [
+    "SportsResource",
+    "AsyncSportsResource",
+    "SportsResourceWithRawResponse",
+    "AsyncSportsResourceWithRawResponse",
+    "SportsResourceWithStreamingResponse",
+    "AsyncSportsResourceWithStreamingResponse",
     "WriteActionsResource",
     "AsyncWriteActionsResource",
     "WriteActionsResourceWithRawResponse",

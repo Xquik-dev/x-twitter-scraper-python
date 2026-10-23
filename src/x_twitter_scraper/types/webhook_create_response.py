@@ -2,13 +2,14 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import List, Optional
+from typing import List, Union, Optional
 from datetime import datetime
 
 from pydantic import Field as FieldInfo
 
 from .._models import BaseModel
 from .shared.event_type import EventType
+from .monitors.post_monitor import PostEventType
 
 __all__ = ["WebhookCreateResponse"]
 
@@ -18,7 +19,7 @@ class WebhookCreateResponse(BaseModel):
 
     created_at: datetime = FieldInfo(alias="createdAt")
 
-    event_types: List[EventType] = FieldInfo(alias="eventTypes")
+    event_types: List[Union[EventType, PostEventType]] = FieldInfo(alias="eventTypes")
     """Array of event types to subscribe to."""
 
     secret: str
