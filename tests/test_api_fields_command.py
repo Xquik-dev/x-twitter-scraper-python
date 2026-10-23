@@ -115,6 +115,13 @@ class Archive(BaseModel):
     items: Optional[List[ArchiveItem]] = None
     note: Optional[str] = None
     owner: Optional[ArchiveOwner] = None
+    owners: Optional[Dict[str, ArchiveOwner]] = None
+    ranks: Optional[Dict[str, ArchiveItem]] = None
+    tiers: Optional[Dict[str, ArchiveItem]] = None
+    labels: Optional[Dict[str, Any]] = None
+    crews: Optional[Dict[str, ArchiveOwner]] = None
+    teams: Optional[Dict[str, ArchiveOwner]] = None
+    extras: Optional[Dict[str, Any]] = None
     size: Optional[int] = None
     state: Optional[Literal["open", "closed"]] = None
 
@@ -382,6 +389,61 @@ SPEC: Dict[str, object] = {
                                 "additionalProperties": True,
                                 "properties": {"id": {"type": "string"}},
                             },
+                            "ranks": {
+                                "allOf": [
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"a": {"type": "string"}},
+                                        },
+                                    },
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"b": {"type": "string"}, "color": {"type": "string"}},
+                                        },
+                                    },
+                                ]
+                            },
+                            "tiers": {
+                                "anyOf": [
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"a": {"type": "string"}},
+                                        },
+                                    },
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"b": {"type": "string"}, "color": {"type": "string"}},
+                                        },
+                                    },
+                                ]
+                            },
+                            "labels": {"type": "object", "additionalProperties": {"type": "string"}},
+                            "owners": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "string"},
+                                        "nickname": {"type": "string"},
+                                        "rank": {"type": "integer"},
+                                    },
+                                },
+                            },
+                            "crews": {"type": "object", "additionalProperties": True},
+                            "teams": {"type": "object", "additionalProperties": {}},
+                            "extras": {
+                                "type": "object",
+                                "additionalProperties": False,
+                                "properties": {"id": {"type": "string"}},
+                            },
                             "choice": {
                                 "type": "object",
                                 "properties": {"kind": {"type": "string"}},
@@ -417,7 +479,10 @@ FOUND = [
     "GET /api/v1/trends response required trends[].rank",
     "POST /api/v1/archive/{archiveId} request extra note",
     "POST /api/v1/archive/{archiveId} response missing gone",
+    "POST /api/v1/archive/{archiveId} response missing owners{}.rank",
+    "POST /api/v1/archive/{archiveId} response missing ranks{}.color",
     "POST /api/v1/archive/{archiveId} response missing size",
+    "POST /api/v1/archive/{archiveId} response missing tiers{}.color",
     "POST /api/v1/media request extra attachments",
     "POST /api/v1/media request missing is_long_video",
     "POST /api/v1/media request missing url",
@@ -460,7 +525,7 @@ def test_accepted_differences_pass(sdk_root: Path, capsys: pytest.CaptureFixture
     assert run(sdk_root, capsys, accepted) == (
         0,
         [
-            "The SDK's fields match the API for 7 operations, and accepted-field-differences.json lists 21 accepted differences."
+            "The SDK's fields match the API for 7 operations, and accepted-field-differences.json lists 24 accepted differences."
         ],
         [],
     )

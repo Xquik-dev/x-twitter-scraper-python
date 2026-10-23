@@ -9,7 +9,7 @@ import datetime
 import importlib
 import collections.abc
 from types import ModuleType
-from typing import Any, Union, Mapping, Iterator, Optional, Sequence, cast, get_args, get_origin
+from typing import Any, Union, Mapping, Callable, Iterator, Optional, Sequence, cast, get_args, get_origin
 from pathlib import Path
 from dataclasses import field, dataclass
 from typing_extensions import Literal, Required, Annotated, NotRequired, is_typeddict, get_type_hints
@@ -53,6 +53,8 @@ BODY_TYPES = ("application/json", "multipart/form-data", "application/x-www-form
 UNTYPED_RESPONSES = {"NoneType", "object", "BinaryAPIResponse", "AsyncBinaryAPIResponse"}
 LEAF_TYPES = (str, int, float, bool, bytes, datetime.datetime, datetime.date)
 SEQUENCES = (list, tuple, set, frozenset, collections.abc.Sequence, collections.abc.Iterable)
+ContainerKind = Literal["array", "map"]
+SUFFIXES: dict[ContainerKind, str] = {"array": "[]", "map": "{}"}
 
 
 @dataclass(frozen=True)
@@ -71,7 +73,8 @@ class Leaf:
 
 
 @dataclass(frozen=True)
-class Array:
+class Container:
+    kind: ContainerKind
     items: Node
 
 
@@ -88,7 +91,7 @@ class Obj:
     open: bool = False
 
 
-Node = Union[Unknown, FreeForm, Leaf, Array, Obj]
+Node = Union[Unknown, FreeForm, Leaf, Container, Obj]
 OPAQUE = (Unknown, FreeForm)
 
 
@@ -106,6 +109,14 @@ class UnreadableTypeError(Exception):
         self.reason = reason
 
 
+def combine_containers(nodes: Sequence[Node], combine: Callable[[Sequence[Node]], Node]) -> Optional[Container]:
+    for kind in SUFFIXES:
+        items = [node.items for node in nodes if isinstance(node, Container) and node.kind == kind]
+        if items:
+            return Container(kind, combine(items))
+    return None
+
+
 def merge(nodes: Sequence[Node]) -> Node:
     if nodes and all(node is nodes[0] for node in nodes):
         return nodes[0]
@@ -114,9 +125,9 @@ def merge(nodes: Sequence[Node]) -> Node:
     objects = [node for node in nodes if isinstance(node, Obj)]
     if objects:
         return merge_objects(objects)
-    arrays = [node for node in nodes if isinstance(node, Array)]
-    if arrays:
-        return Array(merge([node.items for node in arrays]))
+    container = combine_containers(nodes, merge)
+    if container is not None:
+        return container
     leaves = [node for node in nodes if isinstance(node, Leaf)]
     if leaves:
         enums = [leaf.enum for leaf in leaves]
@@ -137,10 +148,10 @@ def merge_objects(objects: Sequence[Obj]) -> Obj:
 
 def intersect(nodes: Sequence[Node]) -> Node:
     objects = [node for node in nodes if isinstance(node, Obj)]
-    arrays = [node for node in nodes if isinstance(node, Array)]
-    if not objects and arrays:
-        return Array(intersect([node.items for node in arrays]))
     if not objects:
+        container = combine_containers(nodes, intersect)
+        if container is not None:
+            return container
         return next((node for node in nodes if not isinstance(node, OPAQUE)), Unknown())
     props: dict[str, Prop] = {}
     for node in objects:
@@ -236,9 +247,12 @@ class Spec:
                 props[name] = Prop(prop_node, name in required, prop_nullable)
             return Obj(props, schema.get("additionalProperties") not in (None, False)), nullable
         if types is not None and "object" in types:
+            values = schema.get("additionalProperties")
+            if isinstance(values, Mapping) and values and not schema.get("required"):
+                return Container("map", self.node(cast(Mapping[str, object], values), stack)[0]), nullable
             return FreeForm(), nullable
         if types is not None and "array" in types and "items" in schema:
-            return Array(self.node(schema["items"], stack)[0]), nullable
+            return Container("array", self.node(schema["items"], stack)[0]), nullable
         return Leaf(), nullable
 
     def parameter(self, value: object) -> Mapping[str, object]:
@@ -323,7 +337,10 @@ class Converter:
         if origin is Literal:
             return Leaf(frozenset(str(item) for item in arguments if item is not None)), None in arguments
         if origin in SEQUENCES:
-            return Array(self.node(arguments[0], stack)[0]), False
+            return Container("array", self.node(arguments[0], stack)[0]), False
+        if origin is dict:
+            values = self.node(arguments[1], stack)[0]
+            return (FreeForm() if isinstance(values, Unknown) else Container("map", values)), False
         if origin is not None:
             return FreeForm(), False
         if any(annotation is leaf for leaf in LEAF_TYPES):
@@ -492,8 +509,8 @@ def compare(spec: Node, sdk: Node, path: str, out: list[tuple[str, str]]) -> Non
             compare(spec_prop.node, sdk_prop.node, here, out)
         if not spec.open:
             out.extend(("extra", _join(path, name)) for name in sdk.props if name not in spec.props)
-    elif isinstance(spec, Array) and isinstance(sdk, Array):
-        compare(spec.items, sdk.items, f"{path}[]", out)
+    elif isinstance(spec, Container) and isinstance(sdk, Container) and spec.kind == sdk.kind:
+        compare(spec.items, sdk.items, f"{path}{SUFFIXES[spec.kind]}", out)
     elif isinstance(spec, Leaf) and isinstance(sdk, Leaf):
         if None not in (spec.enum, sdk.enum) and spec.enum != sdk.enum:
             out.append(("enum", path))
