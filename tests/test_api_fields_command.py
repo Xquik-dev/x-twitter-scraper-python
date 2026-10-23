@@ -115,6 +115,7 @@ class Archive(BaseModel):
     items: Optional[List[ArchiveItem]] = None
     note: Optional[str] = None
     owner: Optional[ArchiveOwner] = None
+    owners: Optional[Dict[str, ArchiveOwner]] = None
     size: Optional[int] = None
     state: Optional[Literal["open", "closed"]] = None
 
@@ -382,6 +383,17 @@ SPEC: Dict[str, object] = {
                                 "additionalProperties": True,
                                 "properties": {"id": {"type": "string"}},
                             },
+                            "owners": {
+                                "type": "object",
+                                "additionalProperties": {
+                                    "type": "object",
+                                    "properties": {
+                                        "id": {"type": "string"},
+                                        "nickname": {"type": "string"},
+                                        "rank": {"type": "integer"},
+                                    },
+                                },
+                            },
                             "choice": {
                                 "type": "object",
                                 "properties": {"kind": {"type": "string"}},
@@ -417,6 +429,7 @@ FOUND = [
     "GET /api/v1/trends response required trends[].rank",
     "POST /api/v1/archive/{archiveId} request extra note",
     "POST /api/v1/archive/{archiveId} response missing gone",
+    "POST /api/v1/archive/{archiveId} response missing owners{}.rank",
     "POST /api/v1/archive/{archiveId} response missing size",
     "POST /api/v1/media request extra attachments",
     "POST /api/v1/media request missing is_long_video",
@@ -460,7 +473,7 @@ def test_accepted_differences_pass(sdk_root: Path, capsys: pytest.CaptureFixture
     assert run(sdk_root, capsys, accepted) == (
         0,
         [
-            "The SDK's fields match the API for 7 operations, and accepted-field-differences.json lists 21 accepted differences."
+            "The SDK's fields match the API for 7 operations, and accepted-field-differences.json lists 22 accepted differences."
         ],
         [],
     )
