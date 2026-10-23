@@ -116,6 +116,9 @@ class Archive(BaseModel):
     note: Optional[str] = None
     owner: Optional[ArchiveOwner] = None
     owners: Optional[Dict[str, ArchiveOwner]] = None
+    ranks: Optional[Dict[str, ArchiveItem]] = None
+    tiers: Optional[Dict[str, ArchiveItem]] = None
+    labels: Optional[Dict[str, Any]] = None
     size: Optional[int] = None
     state: Optional[Literal["open", "closed"]] = None
 
@@ -383,6 +386,43 @@ SPEC: Dict[str, object] = {
                                 "additionalProperties": True,
                                 "properties": {"id": {"type": "string"}},
                             },
+                            "ranks": {
+                                "allOf": [
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"a": {"type": "string"}},
+                                        },
+                                    },
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"b": {"type": "string"}},
+                                        },
+                                    },
+                                ]
+                            },
+                            "tiers": {
+                                "oneOf": [
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"a": {"type": "string"}},
+                                        },
+                                    },
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                            "type": "object",
+                                            "properties": {"b": {"type": "string"}},
+                                        },
+                                    },
+                                ]
+                            },
+                            "labels": {"type": "object", "additionalProperties": {"type": "string"}},
                             "owners": {
                                 "type": "object",
                                 "additionalProperties": {

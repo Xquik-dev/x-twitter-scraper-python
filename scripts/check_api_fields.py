@@ -76,6 +76,11 @@ class Array:
 
 
 @dataclass(frozen=True)
+class Dictionary:
+    values: Node
+
+
+@dataclass(frozen=True)
 class Prop:
     node: Node
     required: bool
@@ -88,7 +93,7 @@ class Obj:
     open: bool = False
 
 
-Node = Union[Unknown, FreeForm, Leaf, Array, Obj]
+Node = Union[Unknown, FreeForm, Leaf, Array, Dictionary, Obj]
 OPAQUE = (Unknown, FreeForm)
 
 
@@ -117,6 +122,9 @@ def merge(nodes: Sequence[Node]) -> Node:
     arrays = [node for node in nodes if isinstance(node, Array)]
     if arrays:
         return Array(merge([node.items for node in arrays]))
+    dictionaries = [node for node in nodes if isinstance(node, Dictionary)]
+    if dictionaries:
+        return Dictionary(merge([node.values for node in dictionaries]))
     leaves = [node for node in nodes if isinstance(node, Leaf)]
     if leaves:
         enums = [leaf.enum for leaf in leaves]
@@ -140,6 +148,9 @@ def intersect(nodes: Sequence[Node]) -> Node:
     arrays = [node for node in nodes if isinstance(node, Array)]
     if not objects and arrays:
         return Array(intersect([node.items for node in arrays]))
+    dictionaries = [node for node in nodes if isinstance(node, Dictionary)]
+    if not objects and dictionaries:
+        return Dictionary(intersect([node.values for node in dictionaries]))
     if not objects:
         return next((node for node in nodes if not isinstance(node, OPAQUE)), Unknown())
     props: dict[str, Prop] = {}
@@ -235,6 +246,9 @@ class Spec:
                 prop_node, prop_nullable = self.node(item, stack)
                 props[name] = Prop(prop_node, name in required, prop_nullable)
             return Obj(props, schema.get("additionalProperties") not in (None, False)), nullable
+        values = schema.get("additionalProperties")
+        if types is not None and "object" in types and isinstance(values, Mapping) and not schema.get("required"):
+            return Dictionary(self.node(values, stack)[0]), nullable
         if types is not None and "object" in types:
             return FreeForm(), nullable
         if types is not None and "array" in types and "items" in schema:
@@ -324,6 +338,9 @@ class Converter:
             return Leaf(frozenset(str(item) for item in arguments if item is not None)), None in arguments
         if origin in SEQUENCES:
             return Array(self.node(arguments[0], stack)[0]), False
+        if origin is dict:
+            values = self.node(arguments[1], stack)[0]
+            return (FreeForm() if isinstance(values, Unknown) else Dictionary(values)), False
         if origin is not None:
             return FreeForm(), False
         if any(annotation is leaf for leaf in LEAF_TYPES):
@@ -494,6 +511,8 @@ def compare(spec: Node, sdk: Node, path: str, out: list[tuple[str, str]]) -> Non
             out.extend(("extra", _join(path, name)) for name in sdk.props if name not in spec.props)
     elif isinstance(spec, Array) and isinstance(sdk, Array):
         compare(spec.items, sdk.items, f"{path}[]", out)
+    elif isinstance(spec, Dictionary) and isinstance(sdk, Dictionary):
+        compare(spec.values, sdk.values, f"{path}{{}}", out)
     elif isinstance(spec, Leaf) and isinstance(sdk, Leaf):
         if None not in (spec.enum, sdk.enum) and spec.enum != sdk.enum:
             out.append(("enum", path))
