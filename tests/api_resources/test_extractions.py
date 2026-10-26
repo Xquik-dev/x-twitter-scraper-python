@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-
 import pytest
 
 from tests.utils import assert_matches_type

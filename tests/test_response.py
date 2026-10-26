@@ -11,6 +11,7 @@ import pytest
 import pydantic
 
 from x_twitter_scraper import BaseModel, XTwitterScraper, AsyncXTwitterScraper
+from x_twitter_scraper._models import FinalRequestOptions
 from x_twitter_scraper._response import (
     APIResponse,
     BaseAPIResponse,
@@ -20,7 +21,7 @@ from x_twitter_scraper._response import (
     extract_response_type,
 )
 from x_twitter_scraper._streaming import Stream
-from x_twitter_scraper._base_client import FinalRequestOptions, make_request_options
+from x_twitter_scraper._base_client import make_request_options
 
 
 class ConcreteBaseAPIResponse(APIResponse[bytes]): ...

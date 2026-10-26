@@ -27,9 +27,9 @@ from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, APIResponse
 from x_twitter_scraper._types import Omit
 from x_twitter_scraper._utils import asyncify
 from x_twitter_scraper._models import BaseModel, FinalRequestOptions
+from x_twitter_scraper._constants import DEFAULT_TIMEOUT
 from x_twitter_scraper._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
 from x_twitter_scraper._base_client import (
-    DEFAULT_TIMEOUT,
     HTTPX_DEFAULT_TIMEOUT,
     BaseClient,
     OtherPlatform,

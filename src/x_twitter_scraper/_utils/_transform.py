@@ -36,7 +36,6 @@ from ._typing import (
     strip_annotated_type,
 )
 
-
 PropertyFormat = Literal["iso8601", "base64", "custom"]
 
 

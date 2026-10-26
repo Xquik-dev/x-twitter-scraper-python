@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import sys
-import json
 import time
 import uuid
 import email
@@ -65,7 +64,7 @@ from ._types import (
     ModelBuilderProtocol,
     not_given,
 )
-from ._utils import is_dict, asyncify, is_given, lru_cache, is_mapping
+from ._utils import is_dict, is_list, asyncify, is_given, is_tuple, lru_cache, is_mapping
 from ._compat import PYDANTIC_V1, model_copy, model_dump
 from ._models import GenericModel, SecurityOptions, FinalRequestOptions, validate_type, construct_type
 from ._response import (
@@ -90,19 +89,20 @@ from ._exceptions import (
     APIConnectionError,
     APIResponseValidationError,
 )
-from ._utils._json import openapi_dumps
+from ._utils._json import json_loads, openapi_dumps
 
 log: logging.Logger = logging.getLogger(__name__)
 
-SyncPageT = TypeVar("SyncPageT", bound="BaseSyncPage[Any]")
-AsyncPageT = TypeVar("AsyncPageT", bound="BaseAsyncPage[Any]")
+SyncPageT = TypeVar("SyncPageT", bound="BaseSyncPage[object]")
+AsyncPageT = TypeVar("AsyncPageT", bound="BaseAsyncPage[object]")
 
 
 _T = TypeVar("_T")
 _T_co = TypeVar("_T_co", covariant=True)
+_ItemT_co = TypeVar("_ItemT_co", covariant=True)
 
-_StreamT = TypeVar("_StreamT", bound=Stream[Any])
-_AsyncStreamT = TypeVar("_AsyncStreamT", bound=AsyncStream[Any])
+_StreamT = TypeVar("_StreamT", bound=Stream[object])
+_AsyncStreamT = TypeVar("_AsyncStreamT", bound=AsyncStream[object])
 
 if TYPE_CHECKING:
     from httpx._config import (
@@ -163,9 +163,9 @@ class PageInfo:
         return f"{self.__class__.__name__}(params={self.params})"
 
 
-class BasePage(GenericModel, Generic[_T]):
+class BasePage(GenericModel, Generic[_ItemT_co]):
     _options: FinalRequestOptions = PrivateAttr()
-    _model: Type[_T] = PrivateAttr()
+    _model: Type[object] = PrivateAttr()
 
     def has_next_page(self) -> bool:
         items = self._get_page_items()
@@ -175,11 +175,11 @@ class BasePage(GenericModel, Generic[_T]):
 
     def next_page_info(self) -> Optional[PageInfo]: ...
 
-    def _get_page_items(self) -> Iterable[_T]:
+    def _get_page_items(self) -> Iterable[_ItemT_co]:
         raise NotImplementedError("Page items unavailable. Implement _get_page_items in the page subclass.")
 
     def _params_from_url(self, url: URL) -> httpx.QueryParams:
-        return httpx.QueryParams(cast(Any, self._options.params)).merge(url.params)
+        return httpx.QueryParams(_query_param_pairs(self._options.params)).merge(url.params)
 
     def _info_to_options(self, info: PageInfo) -> FinalRequestOptions:
         options = model_copy(self._options)
@@ -209,13 +209,13 @@ class BasePage(GenericModel, Generic[_T]):
         raise ValueError("Unexpected PageInfo state")
 
 
-class BaseSyncPage(BasePage[_T], Generic[_T]):
+class BaseSyncPage(BasePage[_ItemT_co], Generic[_ItemT_co]):
     _client: SyncAPIClient = pydantic.PrivateAttr()
 
     def _set_private_attributes(
         self,
         client: SyncAPIClient,
-        model: Type[_T],
+        model: Type[object],
         options: FinalRequestOptions,
     ) -> None:
         if (not PYDANTIC_V1) and getattr(self, "__pydantic_private__", None) is None:
@@ -226,7 +226,7 @@ class BaseSyncPage(BasePage[_T], Generic[_T]):
         self._options = options
 
     @override
-    def __iter__(self) -> Iterator[_T]:  # type: ignore
+    def __iter__(self) -> Iterator[_ItemT_co]:  # type: ignore
         for page in self.iter_pages():
             yield from page._get_page_items()
 
@@ -263,11 +263,15 @@ class AsyncPaginator(Generic[_T, AsyncPageT]):
         self._options = options
         self._page_cls = page_cls
 
-    def __await__(self) -> Generator[Any, None, AsyncPageT]:
+    def __await__(self) -> Generator[object, None, AsyncPageT]:
         return self._get_page().__await__()
 
     async def _get_page(self) -> AsyncPageT:
-        def _parser(resp: AsyncPageT) -> AsyncPageT:
+        page_cls = self._page_cls
+
+        def _parser(resp: object) -> object:
+            if not isinstance(resp, page_cls):
+                raise TypeError(f"Expected a {page_cls} page but received {type(resp)}")
             resp._set_private_attributes(
                 model=self._model,
                 options=self._options,
@@ -280,17 +284,19 @@ class AsyncPaginator(Generic[_T, AsyncPageT]):
         return await self._client.request(self._page_cls, self._options)
 
     async def __aiter__(self) -> AsyncIterator[_T]:
-        page = cast(BaseAsyncPage[_T], await self)
+        page = await self
         async for item in page:
+            if not isinstance(item, self._model):
+                raise TypeError(f"Expected a {self._model} page item but received {type(item)}")
             yield item
 
 
-class BaseAsyncPage(BasePage[_T], Generic[_T]):
+class BaseAsyncPage(BasePage[_ItemT_co], Generic[_ItemT_co]):
     _client: AsyncAPIClient = pydantic.PrivateAttr()
 
     def _set_private_attributes(
         self,
-        model: Type[_T],
+        model: Type[object],
         client: AsyncAPIClient,
         options: FinalRequestOptions,
     ) -> None:
@@ -301,7 +307,7 @@ class BaseAsyncPage(BasePage[_T], Generic[_T]):
         self._client = client
         self._options = options
 
-    async def __aiter__(self) -> AsyncIterator[_T]:
+    async def __aiter__(self) -> AsyncIterator[_ItemT_co]:
         async for page in self.iter_pages():
             for item in page._get_page_items():
                 yield item
@@ -327,7 +333,7 @@ class BaseAsyncPage(BasePage[_T], Generic[_T]):
 
 
 _HttpxClientT = TypeVar("_HttpxClientT", bound=Union[httpx.Client, httpx.AsyncClient])
-_DefaultStreamT = TypeVar("_DefaultStreamT", bound=Union[Stream[Any], AsyncStream[Any]])
+_DefaultStreamT = TypeVar("_DefaultStreamT", bound=Union[Stream[object], AsyncStream[object]])
 
 
 class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
@@ -383,7 +389,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
             body = err_text
 
             try:
-                body = json.loads(err_text)
+                body = json_loads(err_text)
                 err_msg = f"Error code: {response.status_code} - {body}"
             except Exception:
                 err_msg = err_text or f"Error code: {response.status_code}"
@@ -743,9 +749,9 @@ class SyncHttpxClientWrapper(DefaultHttpxClient):
             pass
 
 
-class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
+class SyncAPIClient(BaseClient[httpx.Client, Stream[object]]):
     _client: httpx.Client
-    _default_stream_cls: type[Stream[Any]] | None = None
+    _default_stream_cls: type[Stream[object]] | None = None
 
     def __init__(
         self,
@@ -962,7 +968,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         options: FinalRequestOptions,
         response: httpx.Response,
         stream: bool,
-        stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None,
+        stream_cls: type[Stream[object]] | type[AsyncStream[object]] | None,
         retries_taken: int = 0,
     ) -> ResponseT:
         origin = get_origin(cast_to) or cast_to
@@ -1001,7 +1007,9 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[Any]]):
         page: Type[SyncPageT],
         options: FinalRequestOptions,
     ) -> SyncPageT:
-        def _parser(resp: SyncPageT) -> SyncPageT:
+        def _parser(resp: object) -> object:
+            if not isinstance(resp, page):
+                raise TypeError(f"Expected a {page} page but received {type(resp)}")
             resp._set_private_attributes(
                 client=self,
                 model=model,
@@ -1225,9 +1233,9 @@ class AsyncHttpxClientWrapper(DefaultAsyncHttpxClient):
             pass
 
 
-class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
+class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[object]]):
     _client: httpx.AsyncClient
-    _default_stream_cls: type[AsyncStream[Any]] | None = None
+    _default_stream_cls: type[AsyncStream[object]] | None = None
 
     def __init__(
         self,
@@ -1445,7 +1453,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[Any]]):
         options: FinalRequestOptions,
         response: httpx.Response,
         stream: bool,
-        stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None,
+        stream_cls: type[Stream[object]] | type[AsyncStream[object]] | None,
         retries_taken: int = 0,
     ) -> ResponseT:
         origin = get_origin(cast_to) or cast_to
@@ -1841,3 +1849,17 @@ def _merge_mappings(
 ) -> Dict[_T_co, _T]:
     merged = {**obj1, **obj2}
     return {key: value for key, value in merged.items() if not isinstance(value, Omit)}
+
+
+_QueryValue = Union[str, int, float, bool, None]
+
+
+def _query_param_pairs(params: Mapping[str, object]) -> list[tuple[str, _QueryValue]]:
+    pairs: list[tuple[str, _QueryValue]] = []
+    for key, value in params.items():
+        values: Iterable[object] = value if is_list(value) or is_tuple(value) else (value,)
+        for item in values:
+            if item is not None and not isinstance(item, (str, int, float, bool)):
+                raise TypeError(f"Expected a primitive query value for {key!r} but received {type(item)}")
+            pairs.append((key, item))
+    return pairs

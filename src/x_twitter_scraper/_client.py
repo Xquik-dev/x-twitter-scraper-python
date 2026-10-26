@@ -29,11 +29,10 @@ from ._utils import (
 from ._compat import cached_property
 from ._models import SecurityOptions
 from ._version import __version__
-from ._constants import DEFAULT_BASE_URL
+from ._constants import DEFAULT_BASE_URL, DEFAULT_MAX_RETRIES
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
 from ._exceptions import APIStatusError
 from ._base_client import (
-    DEFAULT_MAX_RETRIES,
     SyncAPIClient,
     AsyncAPIClient,
 )

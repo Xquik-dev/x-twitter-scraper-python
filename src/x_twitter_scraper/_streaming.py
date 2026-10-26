@@ -5,25 +5,26 @@
 # Initially copied from https://github.com/florimondmanca/httpx-sse/blob/master/src/httpx_sse/_decoders.py
 from __future__ import annotations
 
-import json
 import inspect
 from types import TracebackType
-from typing import TYPE_CHECKING, Any, Generic, TypeVar, Iterator, Optional, AsyncIterator, cast
-from typing_extensions import Self, Protocol, TypeGuard, override, get_origin, runtime_checkable
+from typing import TYPE_CHECKING, Generic, TypeVar, Iterator, Optional, AsyncIterator
+from typing_extensions import Self, Protocol, TypeGuard, override, runtime_checkable
 
 import httpx
 
-from ._utils import extract_type_var_from_base
+from ._types import JsonValue
+from ._utils import get_origin, extract_type_var_from_base
+from ._utils._json import json_loads
 
 if TYPE_CHECKING:
     from ._client import XTwitterScraper, AsyncXTwitterScraper
     from ._models import FinalRequestOptions
 
 
-_T = TypeVar("_T")
+_T_co = TypeVar("_T_co", covariant=True)
 
 
-class Stream(Generic[_T]):
+class Stream(Generic[_T_co]):
     """Provides the core interface to iterate over a synchronous stream response."""
 
     response: httpx.Response
@@ -33,7 +34,7 @@ class Stream(Generic[_T]):
     def __init__(
         self,
         *,
-        cast_to: type[_T],
+        cast_to: type[_T_co],
         response: httpx.Response,
         client: XTwitterScraper,
         options: Optional[FinalRequestOptions] = None,
@@ -45,17 +46,17 @@ class Stream(Generic[_T]):
         self._decoder = client._make_sse_decoder()
         self._iterator = self.__stream__()
 
-    def __next__(self) -> _T:
+    def __next__(self) -> _T_co:
         return self._iterator.__next__()
 
-    def __iter__(self) -> Iterator[_T]:
+    def __iter__(self) -> Iterator[_T_co]:
         for item in self._iterator:
             yield item
 
     def _iter_events(self) -> Iterator[ServerSentEvent]:
         yield from self._decoder.iter_bytes(self.response.iter_bytes())
 
-    def __stream__(self) -> Iterator[_T]:
+    def __stream__(self) -> Iterator[_T_co]:
         cast_to = self._cast_to
         response = self.response
         process_data = self._client._process_response_data
@@ -89,7 +90,7 @@ class Stream(Generic[_T]):
         self.response.close()
 
 
-class AsyncStream(Generic[_T]):
+class AsyncStream(Generic[_T_co]):
     """Provides the core interface to iterate over an asynchronous stream response."""
 
     response: httpx.Response
@@ -99,7 +100,7 @@ class AsyncStream(Generic[_T]):
     def __init__(
         self,
         *,
-        cast_to: type[_T],
+        cast_to: type[_T_co],
         response: httpx.Response,
         client: AsyncXTwitterScraper,
         options: Optional[FinalRequestOptions] = None,
@@ -111,10 +112,10 @@ class AsyncStream(Generic[_T]):
         self._decoder = client._make_sse_decoder()
         self._iterator = self.__stream__()
 
-    async def __anext__(self) -> _T:
+    async def __anext__(self) -> _T_co:
         return await self._iterator.__anext__()
 
-    async def __aiter__(self) -> AsyncIterator[_T]:
+    async def __aiter__(self) -> AsyncIterator[_T_co]:
         async for item in self._iterator:
             yield item
 
@@ -122,7 +123,7 @@ class AsyncStream(Generic[_T]):
         async for sse in self._decoder.aiter_bytes(self.response.aiter_bytes()):
             yield sse
 
-    async def __stream__(self) -> AsyncIterator[_T]:
+    async def __stream__(self) -> AsyncIterator[_T_co]:
         cast_to = self._cast_to
         response = self.response
         process_data = self._client._process_response_data
@@ -189,8 +190,8 @@ class ServerSentEvent:
     def data(self) -> str:
         return self._data
 
-    def json(self) -> Any:
-        return json.loads(self.data)
+    def json(self) -> JsonValue:
+        return json_loads(self.data)
 
     @override
     def __repr__(self) -> str:
@@ -307,21 +308,19 @@ class SSEBytesDecoder(Protocol):
     def aiter_bytes(self, iterator: AsyncIterator[bytes]) -> AsyncIterator[ServerSentEvent]: ...
 
 
-def is_stream_class_type(typ: type) -> TypeGuard[type[Stream[object]] | type[AsyncStream[object]]]:
+def is_stream_class_type(typ: object) -> TypeGuard[type[Stream[object]] | type[AsyncStream[object]]]:
     origin = get_origin(typ) or typ
     return inspect.isclass(origin) and issubclass(origin, (Stream, AsyncStream))
 
 
 def extract_stream_chunk_type(
-    stream_cls: type,
+    stream_cls: object,
     *,
     failure_message: str | None = None,
-) -> type:
-    from ._base_client import Stream, AsyncStream
-
+) -> object:
     return extract_type_var_from_base(
         stream_cls,
         index=0,
-        generic_bases=cast("tuple[type, ...]", (Stream, AsyncStream)),
+        generic_bases=(Stream, AsyncStream),
         failure_message=failure_message,
     )

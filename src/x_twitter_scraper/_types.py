@@ -8,7 +8,6 @@ from os import PathLike
 from typing import (
     IO,
     TYPE_CHECKING,
-    Any,
     Dict,
     List,
     Type,
@@ -37,11 +36,10 @@ from typing_extensions import (
 
 import httpx
 import pydantic
-from httpx import URL, Proxy, Timeout, Response, BaseTransport, AsyncBaseTransport
+from httpx import URL, Proxy, Timeout as Timeout, Response, BaseTransport, AsyncBaseTransport
 
 if TYPE_CHECKING:
-    from ._models import BaseModel, SecurityOptions
-    from ._response import APIResponse, AsyncAPIResponse
+    from ._models import SecurityOptions
 
 Transport = BaseTransport
 AsyncTransport = AsyncBaseTransport
@@ -165,36 +163,15 @@ class HeadersLikeProtocol(Protocol):
 
 HeadersLike = Union[Headers, HeadersLikeProtocol]
 
-ResponseT = TypeVar(
-    "ResponseT",
-    bound=Union[
-        object,
-        str,
-        None,
-        "BaseModel",
-        List[Any],
-        Dict[str, Any],
-        Response,
-        ModelBuilderProtocol,
-        "APIResponse[Any]",
-        "AsyncAPIResponse[Any]",
-    ],
-)
+ResponseT = TypeVar("ResponseT")
 
 StrBytesIntFloat = Union[str, bytes, int, float]
 
+JsonValue: TypeAlias = Union[str, int, float, bool, List["JsonValue"], Dict[str, "JsonValue"], None]
+
 IncEx: TypeAlias = Union[Set[int], Set[str], Mapping[int, Union["IncEx", bool]], Mapping[str, Union["IncEx", bool]]]
 
-PostParser = Callable[[Any], Any]
-
-
-@runtime_checkable
-class InheritsGeneric(Protocol):
-    __orig_bases__: tuple[_GenericAlias]
-
-
-class _GenericAlias(Protocol):
-    __origin__: type[object]
+PostParser = Callable[[object], object]
 
 
 class HttpxSendArgs(TypedDict, total=False, closed=True):

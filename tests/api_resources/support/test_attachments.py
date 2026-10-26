@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-
 import pytest
 
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper

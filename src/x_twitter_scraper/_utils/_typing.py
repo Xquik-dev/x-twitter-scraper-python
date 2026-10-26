@@ -16,7 +16,7 @@ from typing_extensions import (
 )
 
 from ._utils import is_tuple, lru_cache
-from ._compat import get_args, get_origin, is_union as _is_union
+from ._compat import get_args, is_union as _is_union, get_origin
 
 
 def is_annotated_type(typ: object) -> bool:
