@@ -11,12 +11,13 @@ from pathlib import Path
 
 import pytest
 
+from tests.utils import json_dumps
 from scripts.verify_coverage import verify_coverage, coverage_metrics, verify_non_regression
 
 
 def write_report(path: Path, *, lines: tuple[int, int], branches: tuple[int, int]) -> None:
     path.write_text(
-        json.dumps(
+        json_dumps(
             {
                 "meta": {"format": 3, "version": "test", "branch_coverage": True},
                 "totals": {
@@ -97,10 +98,10 @@ def test_missing_and_uncovered_functions_cannot_pass(tmp_path: Path) -> None:
     write_report(parent, lines=(100, 100), branches=(100, 100))
     report = json.loads(parent.read_text())
     report["files"]["example.py"]["functions"]["example"]["summary"]["covered_lines"] = 0
-    candidate.write_text(json.dumps(report))
+    candidate.write_text(json_dumps(report))
     assert not verify_non_regression(candidate, parent)
     report["files"] = {}
-    candidate.write_text(json.dumps(report))
+    candidate.write_text(json_dumps(report))
     with pytest.raises(ValueError, match="lacks files"):
         coverage_metrics(candidate)
 
@@ -113,7 +114,7 @@ def test_incompatible_parent_report_is_rejected(tmp_path: Path, field: str, valu
     write_report(candidate, lines=(100, 100), branches=(100, 100))
     report = json.loads(candidate.read_text())
     report["meta"][field] = value
-    parent.write_text(json.dumps(report))
+    parent.write_text(json_dumps(report))
     with pytest.raises(ValueError, match="Regenerate both reports"):
         verify_non_regression(candidate, parent)
 

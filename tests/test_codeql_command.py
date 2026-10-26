@@ -4,11 +4,12 @@
 from __future__ import annotations
 
 import os
-import json
 import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests.utils import json_dumps
 
 SCRIPT = Path(__file__).parents[1] / "scripts/codeql-security"
 FAKE_CODEQL = "#!/usr/bin/env bash\n[ \"$*\" = 'version --format=terse' ] || exit 99\necho {version}\n"
@@ -87,7 +88,7 @@ def unread(file: str, line: int) -> list[dict[str, object]]:
 
 
 def report(notifications: list[dict[str, object]], diagnostics: list[str]) -> str:
-    return json.dumps(
+    return json_dumps(
         {
             "version": "2.1.0",
             "runs": [

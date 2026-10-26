@@ -5,11 +5,12 @@ from __future__ import annotations
 
 import os
 import sys
-import json
 import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests.utils import json_dumps
 
 ROOT = Path(__file__).parents[1]
 PINS = {
@@ -71,7 +72,7 @@ def run_audit(
             "AUDIT_FIXTURES": str(fixtures),
             "AUDIT_PYTHON": sys.executable,
             "AUDIT_RECEIVED": str(received),
-            "AUDIT_FINDINGS": json.dumps(findings),
+            "AUDIT_FINDINGS": json_dumps(findings),
         },
         capture_output=True,
         text=True,

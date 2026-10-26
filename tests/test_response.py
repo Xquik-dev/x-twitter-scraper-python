@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import json
 from typing import Any, Dict, List, Union, Callable, cast
 from typing_extensions import Annotated
 
@@ -10,7 +9,7 @@ import httpx
 import pytest
 import pydantic
 
-from tests.utils import json_response
+from tests.utils import json_dumps, json_response
 from x_twitter_scraper import BaseModel, XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper._types import JsonValue, HttpxResponse
 from x_twitter_scraper._models import FinalRequestOptions
@@ -131,7 +130,7 @@ class CustomModel(BaseModel):
     "model_type", [CustomModel, Annotated[CustomModel, "random metadata"]], ids=["model", "annotated"]
 )
 async def test_response_parse_custom_model(response_factory: ResponseFactory, model_type: object) -> None:
-    response = response_factory(httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})), False)
+    response = response_factory(httpx.Response(200, content=json_dumps({"foo": "hello!", "bar": 2})), False)
     model = cast("type[CustomModel]", model_type)
     obj = await response.parse(to=model) if isinstance(response, AsyncAPIResponse) else response.parse(to=model)
     assert obj.foo == "hello!"

@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import os
+import json
 import traceback
 import contextlib
 from typing import Tuple, TypeVar, Callable, Awaitable, Generator
@@ -31,6 +32,8 @@ from x_twitter_scraper._compat import PYDANTIC_V1, field_outer_type, get_model_f
 from x_twitter_scraper._models import BaseModel
 from x_twitter_scraper._utils._compat import get_args, is_class, get_origin
 
+# json.dumps takes Any, so a literal passed to it infers Any members. https://docs.python.org/3/library/json.html#json.dumps
+json_dumps: Callable[[object], str] = json.dumps
 # The builtin getattr returns Any, and an attribute of an unknown object is an unknown object. https://docs.python.org/3/library/functions.html#getattr
 get_attribute: Callable[[object, str], object] = getattr
 get_attribute_or: Callable[[object, str, object], object] = getattr

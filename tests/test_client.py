@@ -7,7 +7,6 @@ from __future__ import annotations
 import gc
 import os
 import sys
-import json
 import asyncio
 import inspect
 import weakref
@@ -24,7 +23,7 @@ import httpcore
 from respx import MockRouter
 from pydantic import ValidationError
 
-from tests.utils import json_response, request_timeout
+from tests.utils import json_dumps, json_response, request_timeout
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, APIResponseValidationError
 from x_twitter_scraper._types import Omit, HttpxResponse
 from x_twitter_scraper._utils import asyncify, get_header
@@ -738,7 +737,7 @@ class TestXTwitterScraper:
         respx_mock.get("/foo").mock(
             return_value=httpx.Response(
                 200,
-                content=json.dumps({"foo": 2}),
+                content=json_dumps({"foo": 2}),
                 headers={"Content-Type": "application/text"},
             )
         )
@@ -1661,7 +1660,7 @@ class TestAsyncXTwitterScraper:
         respx_mock.get("/foo").mock(
             return_value=httpx.Response(
                 200,
-                content=json.dumps({"foo": 2}),
+                content=json_dumps({"foo": 2}),
                 headers={"Content-Type": "application/text"},
             )
         )
