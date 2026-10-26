@@ -8,19 +8,43 @@ set -e
 
 cd "$(dirname "$0")/.."
 
+report="$(mktemp -d)"
+trap 'rm -rf "$report"' EXIT
+
 if [ "$1" = "--fix" ]; then
   echo "==> Running ruff with --fix"
-  uv run ruff check . --fix
+  uv run ruff check --ignore-noqa . --fix
 else
   echo "==> Running ruff"
-  uv run ruff check .
+  uv run ruff check --ignore-noqa .
 fi
+
+# mypy has no setting that turns its ignore and inline config comments off, so the build rejects them and pyright's. https://mypy.readthedocs.io/en/stable/common_issues.html#spurious-errors-and-locally-silencing-the-checker
+no_ignore_comments() {
+  git grep -nP --untracked '#\s*((mypy|pyright):|type:\s*ignore)' -- '*.py' '*.pyi'
+  (($? == 1))
+}
+
+echo "==> Checking type checker comments"
+no_ignore_comments || {
+  echo "Remove the comments listed above and fix the type errors they hide."
+  exit 1
+}
 
 echo "==> Running pyright"
 uv run pyright
 
+# mypy allows an Any expression assigned to an annotated name, so the build also fails on each Any its report counts. https://mypy.readthedocs.io/en/stable/command_line.html#cmdoption-mypy-disallow-any-expr
+type_check() {
+  uv run mypy --any-exprs-report "$report" &&
+    awk '$2 ~ /^[1-9]/ { print } $1 == "Total" { total = $2 } END { exit total != "0" }' "$report/any-exprs.txt"
+}
+
 echo "==> Running mypy"
-uv run mypy .
+type_check || {
+  echo "Fix the mypy errors and the Any counts listed above."
+  exit 1
+}
 
 echo "==> Checking package import"
 uv run python -c 'import x_twitter_scraper'
