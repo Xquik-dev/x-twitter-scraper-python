@@ -34,10 +34,6 @@ BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 T = TypeVar("T")
 
 
-def header(headers: httpx.Headers, name: str) -> str | None:
-    return headers[name] if name in headers else None
-
-
 def json_response(status_code: int, *, json: JsonValue) -> httpx.Response:
     return httpx.Response(status_code, json=json)
 

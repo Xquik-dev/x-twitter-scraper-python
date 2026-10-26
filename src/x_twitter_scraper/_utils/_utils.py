@@ -22,6 +22,7 @@ from pathlib import Path
 from datetime import date, datetime
 from typing_extensions import ParamSpec, TypeGuard, get_args
 
+import httpx
 import sniffio
 
 from .._types import Omit, NotGiven, FileTypes, ArrayFormat, HeadersLike
@@ -302,6 +303,10 @@ def _find_mapping_header(headers: object, lower_header: str) -> str | None:
             if k.lower() == lower_header and isinstance(v, str):
                 return v
     return None
+
+
+def get_header(headers: httpx.Headers, name: str) -> str | None:
+    return headers[name] if name in headers else None
 
 
 def get_required_header(headers: HeadersLike, header: str) -> str:

@@ -13,6 +13,7 @@ from ._utils import (
     is_given as is_given,
     is_tuple as is_tuple,
     json_safe as json_safe,
+    get_header as get_header,
     is_mapping as is_mapping,
     is_tuple_t as is_tuple_t,
     is_iterable as is_iterable,

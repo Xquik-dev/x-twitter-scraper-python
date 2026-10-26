@@ -23,10 +23,10 @@ import httpcore
 from respx import MockRouter
 from pydantic import ValidationError
 
-from tests.utils import header, json_response
+from tests.utils import json_response
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, APIResponseValidationError
 from x_twitter_scraper._types import Omit, HttpxResponse
-from x_twitter_scraper._utils import asyncify
+from x_twitter_scraper._utils import asyncify, get_header
 from x_twitter_scraper._models import BaseModel, FinalRequestOptions
 from x_twitter_scraper._constants import DEFAULT_TIMEOUT
 from x_twitter_scraper._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
@@ -404,9 +404,9 @@ class TestXTwitterScraper:
             default_headers={"X-Foo": "bar"},
         )
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert header(request.headers, "x-foo") == "bar"
-        assert header(request.headers, "x-stainless-lang") == "python"
-        assert header(request.headers, "x-xquik-sdk") == "python"
+        assert get_header(request.headers, "x-foo") == "bar"
+        assert get_header(request.headers, "x-stainless-lang") == "python"
+        assert get_header(request.headers, "x-xquik-sdk") == "python"
 
         test_client2 = XTwitterScraper(
             base_url=base_url,
@@ -419,8 +419,8 @@ class TestXTwitterScraper:
             },
         )
         request = test_client2._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert header(request.headers, "x-foo") == "stainless"
-        assert header(request.headers, "x-stainless-lang") == "my-overriding-header"
+        assert get_header(request.headers, "x-foo") == "stainless"
+        assert get_header(request.headers, "x-stainless-lang") == "my-overriding-header"
 
         test_client.close()
         test_client2.close()
@@ -430,7 +430,7 @@ class TestXTwitterScraper:
             base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert header(request.headers, "x-api-key") == api_key
+        assert get_header(request.headers, "x-api-key") == api_key
 
         with update_env(
             **{
@@ -449,7 +449,7 @@ class TestXTwitterScraper:
             client2._build_request(FinalRequestOptions(method="get", url="/foo"))
 
         request2 = client2._build_request(FinalRequestOptions(method="get", url="/foo", headers={"x-api-key": Omit()}))
-        assert header(request2.headers, "x-api-key") is None
+        assert get_header(request2.headers, "x-api-key") is None
 
     def test_default_query_option(self) -> None:
         client = XTwitterScraper(
@@ -547,7 +547,7 @@ class TestXTwitterScraper:
                 **make_request_options(extra_headers={"X-Foo": "Foo"}),
             ),
         )
-        assert header(request.headers, "X-Foo") == "Foo"
+        assert get_header(request.headers, "X-Foo") == "Foo"
 
         request = client.with_options(default_headers={"X-Bar": "true"})._build_request(
             FinalRequestOptions(
@@ -558,7 +558,7 @@ class TestXTwitterScraper:
                 ),
             ),
         )
-        assert header(request.headers, "X-Bar") == "false"
+        assert get_header(request.headers, "X-Bar") == "false"
 
     def test_request_extra_query(self, client: XTwitterScraper) -> None:
         request = client._build_request(
@@ -1054,7 +1054,7 @@ class TestXTwitterScraper:
 
         response = client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
 
-        assert header(response.http_request.headers, "x-stainless-retry-count") == "42"
+        assert get_header(response.http_request.headers, "x-stainless-retry-count") == "42"
 
     def test_proxy_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("HTTPS_PROXY", "https://example.org")
@@ -1331,9 +1331,9 @@ class TestAsyncXTwitterScraper:
             default_headers={"X-Foo": "bar"},
         )
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert header(request.headers, "x-foo") == "bar"
-        assert header(request.headers, "x-stainless-lang") == "python"
-        assert header(request.headers, "x-xquik-sdk") == "python"
+        assert get_header(request.headers, "x-foo") == "bar"
+        assert get_header(request.headers, "x-stainless-lang") == "python"
+        assert get_header(request.headers, "x-xquik-sdk") == "python"
 
         test_client2 = AsyncXTwitterScraper(
             base_url=base_url,
@@ -1346,8 +1346,8 @@ class TestAsyncXTwitterScraper:
             },
         )
         request = test_client2._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert header(request.headers, "x-foo") == "stainless"
-        assert header(request.headers, "x-stainless-lang") == "my-overriding-header"
+        assert get_header(request.headers, "x-foo") == "stainless"
+        assert get_header(request.headers, "x-stainless-lang") == "my-overriding-header"
 
         await test_client.close()
         await test_client2.close()
@@ -1357,7 +1357,7 @@ class TestAsyncXTwitterScraper:
             base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert header(request.headers, "x-api-key") == api_key
+        assert get_header(request.headers, "x-api-key") == api_key
 
         with update_env(
             **{
@@ -1376,7 +1376,7 @@ class TestAsyncXTwitterScraper:
             client2._build_request(FinalRequestOptions(method="get", url="/foo"))
 
         request2 = client2._build_request(FinalRequestOptions(method="get", url="/foo", headers={"x-api-key": Omit()}))
-        assert header(request2.headers, "x-api-key") is None
+        assert get_header(request2.headers, "x-api-key") is None
 
     async def test_default_query_option(self) -> None:
         client = AsyncXTwitterScraper(
@@ -1474,7 +1474,7 @@ class TestAsyncXTwitterScraper:
                 **make_request_options(extra_headers={"X-Foo": "Foo"}),
             ),
         )
-        assert header(request.headers, "X-Foo") == "Foo"
+        assert get_header(request.headers, "X-Foo") == "Foo"
 
         request = client.with_options(default_headers={"X-Bar": "true"})._build_request(
             FinalRequestOptions(
@@ -1485,7 +1485,7 @@ class TestAsyncXTwitterScraper:
                 ),
             ),
         )
-        assert header(request.headers, "X-Bar") == "false"
+        assert get_header(request.headers, "X-Bar") == "false"
 
     def test_request_extra_query(self, client: XTwitterScraper) -> None:
         request = client._build_request(
@@ -1990,7 +1990,7 @@ class TestAsyncXTwitterScraper:
 
         response = await client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
 
-        assert header(response.http_request.headers, "x-stainless-retry-count") == "42"
+        assert get_header(response.http_request.headers, "x-stainless-retry-count") == "42"
 
     async def test_get_platform(self) -> None:
         platform = await asyncify(get_platform)()

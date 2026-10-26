@@ -65,7 +65,7 @@ from ._types import (
     ModelBuilderProtocol,
     not_given,
 )
-from ._utils import is_dict, is_list, memoize, asyncify, is_given, is_tuple, is_mapping
+from ._utils import is_dict, is_list, memoize, asyncify, is_given, is_tuple, get_header, is_mapping
 from ._compat import PYDANTIC_V1, model_copy, model_dump
 from ._models import GenericModel, SecurityOptions, FinalRequestOptions, validate_type, construct_type
 from ._response import (
@@ -490,7 +490,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
 
         headers = self._build_headers(options, retries_taken=retries_taken)
         params = _merge_mappings({**self._auth_query(options.security), **self.default_query}, options.params)
-        content_type = headers.get("Content-Type")
+        content_type = get_header(headers, "Content-Type")
         files = options.files
 
         if content_type is not None and content_type.startswith("multipart/form-data"):
@@ -572,7 +572,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         return cast_to
 
     def _should_stream_response_body(self, request: httpx.Request) -> bool:
-        return bool(request.headers.get(RAW_RESPONSE_HEADER) == "stream")
+        return bool(get_header(request.headers, RAW_RESPONSE_HEADER) == "stream")
 
     def _process_response_data(
         self,
@@ -656,12 +656,15 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
             return None
 
         for header, scale in (("retry-after-ms", 1000), ("retry-after", 1)):
+            value = get_header(response_headers, header)
+            if value is None:
+                continue
             try:
-                return float(response_headers.get(header)) / scale
-            except (TypeError, ValueError):
+                return float(value) / scale
+            except ValueError:
                 pass
 
-        retry_date_tuple = email.utils.parsedate_tz(response_headers.get("retry-after"))
+        retry_date_tuple = email.utils.parsedate_tz(get_header(response_headers, "retry-after"))
         if retry_date_tuple is None:
             return None
 
@@ -702,7 +705,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         return timeout
 
     def _should_retry(self, response: httpx.Response) -> bool:
-        should_retry_header = response.headers.get("x-should-retry")
+        should_retry_header = get_header(response.headers, "x-should-retry")
 
         if should_retry_header == "true":
             log.debug("Retrying as header `x-should-retry` is set to `true`")
@@ -976,7 +979,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[object]]):
         custom_response = (
             inspect.isclass(origin)
             and issubclass(origin, BaseAPIResponse)
-            and (not stream or bool(response.request.headers.get(RAW_RESPONSE_HEADER)))
+            and (not stream or bool(get_header(response.request.headers, RAW_RESPONSE_HEADER)))
         )
         if custom_response:
             if not issubclass(origin, APIResponse):
@@ -997,7 +1000,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[object]]):
             options=options,
             retries_taken=retries_taken,
         )
-        if custom_response or bool(response.request.headers.get(RAW_RESPONSE_HEADER)):
+        if custom_response or bool(get_header(response.request.headers, RAW_RESPONSE_HEADER)):
             return cast(ResponseT, api_response)
 
         return api_response.parse()
@@ -1461,7 +1464,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[object]]):
         custom_response = (
             inspect.isclass(origin)
             and issubclass(origin, BaseAPIResponse)
-            and (not stream or bool(response.request.headers.get(RAW_RESPONSE_HEADER)))
+            and (not stream or bool(get_header(response.request.headers, RAW_RESPONSE_HEADER)))
         )
         if custom_response:
             if not issubclass(origin, AsyncAPIResponse):
@@ -1482,7 +1485,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[object]]):
             options=options,
             retries_taken=retries_taken,
         )
-        if custom_response or bool(response.request.headers.get(RAW_RESPONSE_HEADER)):
+        if custom_response or bool(get_header(response.request.headers, RAW_RESPONSE_HEADER)):
             return cast(ResponseT, api_response)
 
         return await api_response.parse()
