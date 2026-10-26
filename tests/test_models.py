@@ -11,6 +11,7 @@ import pytest
 import pydantic
 from pydantic import Field
 
+from tests.utils import get_attribute
 from x_twitter_scraper._utils import PropertyInfo
 from x_twitter_scraper._compat import PYDANTIC_V1, parse_obj, model_dump, model_json
 from x_twitter_scraper._models import DISCRIMINATOR_CACHE, BaseModel, EagerIterable, construct_type
@@ -170,14 +171,14 @@ def test_nested_dictionary_model() -> None:
 def test_unknown_fields(unknown: object, expected: object) -> None:
     model = BasicModel.construct(foo="foo", unknown=unknown)
     assert model.foo == "foo"
-    assert cast(Any, model).unknown == expected
+    assert get_attribute(model, "unknown") == expected
     assert model_dump(model) == {"foo": "foo", "unknown": expected}
 
 
 def test_strict_validation_unknown_fields() -> None:
     model = parse_obj(BasicModel, dict(foo="hello!", user="Robert"))
     assert model.foo == "hello!"
-    assert cast(Any, model).user == "Robert"
+    assert get_attribute(model, "user") == "Robert"
 
     assert model_dump(model) == {"foo": "hello!", "user": "Robert"}
 
@@ -324,7 +325,7 @@ def test_union_of_lists() -> None:
     assert isinstance(m.items[0], LevelModel)
     assert m.items[0].level == 1
     assert isinstance(m.items[1], LevelModel)
-    assert cast(Any, m.items[1]).name == "Robert"
+    assert get_attribute(m.items[1], "name") == "Robert"
 
     m = Model.construct(items=[{"level": -1}, 156])
     assert len(m.items) == 2
@@ -373,7 +374,7 @@ def test_union_of_dict() -> None:
     assert isinstance(m.data["hello"], NamedModel)
     assert m.data["hello"].name == "there"
     assert isinstance(m.data["foo"], NamedModel)
-    assert cast(Any, m.data["foo"]).foo == "bar"
+    assert get_attribute(m.data["foo"], "foo") == "bar"
 
 
 @pytest.mark.parametrize("validated", [False, True], ids=["construct", "validate"])
@@ -516,7 +517,7 @@ def test_annotated_types() -> None:
 
     m = construct_type(
         value={"value": "foo"},
-        type_=cast(Any, Annotated[Model, "random metadata"]),
+        type_=Annotated[Model, "random metadata"],
     )
     assert isinstance(m, Model)
     assert m.value == "foo"
@@ -534,23 +535,22 @@ def test_annotated_types() -> None:
 def test_discriminated_unions_invalid_data(value: dict[str, object], is_b: bool, expected_data: object) -> None:
     m = construct_type(
         value=value,
-        type_=cast(Any, Annotated[Union[StringVariant, IntegerVariant], PropertyInfo(discriminator="type")]),
+        type_=Annotated[Union[StringVariant, IntegerVariant], PropertyInfo(discriminator="type")],
     )
     assert isinstance(m, IntegerVariant if is_b else StringVariant)
     assert m.type == value["type"]
     assert m.data == expected_data
     if "new_thing" in value:
-        assert cast(Any, m).new_thing == "bar"
+        assert get_attribute(m, "new_thing") == "bar"
 
 
 @pytest.mark.parametrize("variant", ["b", "c"])
 def test_discriminated_unions_invalid_data_nested_unions(variant: str) -> None:
     m = construct_type(
         value={"type": variant, "data": "foo"},
-        type_=cast(
-            Any,
-            Annotated[Union[Union[StringVariant, IntegerVariant], BooleanVariant], PropertyInfo(discriminator="type")],
-        ),
+        type_=Annotated[
+            Union[Union[StringVariant, IntegerVariant], BooleanVariant], PropertyInfo(discriminator="type")
+        ],
     )
     assert isinstance(m, IntegerVariant if variant == "b" else BooleanVariant)
     assert m.type == variant
@@ -574,7 +574,7 @@ def test_discriminated_unions_with_aliases_invalid_data(variant: str, value: obj
 
     m = construct_type(
         value={"type": variant, "data": value},
-        type_=cast(Any, Annotated[Union[A, B], PropertyInfo(discriminator="foo_type")]),
+        type_=Annotated[Union[A, B], PropertyInfo(discriminator="foo_type")],
     )
     assert isinstance(m, B if variant == "b" else A)
     assert m.foo_type == variant
@@ -594,7 +594,7 @@ def test_discriminated_unions_overlapping_discriminators_invalid_data() -> None:
 
     m = construct_type(
         value={"type": "a", "data": "foo"},
-        type_=cast(Any, Annotated[Union[A, B], PropertyInfo(discriminator="type")]),
+        type_=Annotated[Union[A, B], PropertyInfo(discriminator="type")],
     )
     assert isinstance(m, B)
     assert m.type == "a"
@@ -613,7 +613,7 @@ def test_discriminated_unions_invalid_data_uses_cache() -> None:
     assert not DISCRIMINATOR_CACHE.get(UnionType)
 
     m = construct_type(
-        value={"type": "b", "data": "foo"}, type_=cast(Any, Annotated[UnionType, PropertyInfo(discriminator="type")])
+        value={"type": "b", "data": "foo"}, type_=Annotated[UnionType, PropertyInfo(discriminator="type")]
     )
     assert isinstance(m, B)
     assert m.type == "b"
@@ -623,11 +623,11 @@ def test_discriminated_unions_invalid_data_uses_cache() -> None:
     assert discriminator is not None
 
     m = construct_type(
-        value={"type": "b", "data": "foo"}, type_=cast(Any, Annotated[UnionType, PropertyInfo(discriminator="type")])
+        value={"type": "b", "data": "foo"}, type_=Annotated[UnionType, PropertyInfo(discriminator="type")]
     )
     assert isinstance(m, B)
     assert m.type == "b"
-    assert m.data == "foo"  # type: ignore[comparison-overlap]
+    assert m.data == "foo"
 
     assert DISCRIMINATOR_CACHE.get(UnionType) is discriminator
 
@@ -686,7 +686,7 @@ def test_discriminated_union_case() -> None:
 
     m = construct_type(
         value={"type": "modelB", "data": {"type": "a", "data": True}},
-        type_=cast(Any, Annotated[Union[ModelA, ModelB], PropertyInfo(discriminator="type")]),
+        type_=Annotated[Union[ModelA, ModelB], PropertyInfo(discriminator="type")],
     )
 
     assert isinstance(m, ModelB)
