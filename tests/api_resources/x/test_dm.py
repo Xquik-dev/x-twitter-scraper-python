@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -45,7 +44,7 @@ class TestDm:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         dm = response.parse()
         assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
 
@@ -59,12 +58,12 @@ class TestDm:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             dm = response.parse()
             assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -114,7 +113,7 @@ class TestDm:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         dm = response.parse()
         assert_matches_type(DmRetrieveHistoryResponse, dm, path=["response"])
 
@@ -126,12 +125,12 @@ class TestDm:
             account="account",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             dm = response.parse()
             assert_matches_type(DmRetrieveHistoryResponse, dm, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -176,7 +175,7 @@ class TestDm:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         dm = response.parse()
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -190,12 +189,12 @@ class TestDm:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             dm = response.parse()
             assert_matches_type(DmSendResponse, dm, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -236,7 +235,7 @@ class TestAsyncDm:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         dm = await response.parse()
         assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
 
@@ -250,12 +249,12 @@ class TestAsyncDm:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             dm = await response.parse()
             assert_matches_type(DmDeleteMessageResponse, dm, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -305,7 +304,7 @@ class TestAsyncDm:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         dm = await response.parse()
         assert_matches_type(DmRetrieveHistoryResponse, dm, path=["response"])
 
@@ -317,12 +316,12 @@ class TestAsyncDm:
             account="account",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             dm = await response.parse()
             assert_matches_type(DmRetrieveHistoryResponse, dm, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -367,7 +366,7 @@ class TestAsyncDm:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         dm = await response.parse()
         assert_matches_type(DmSendResponse, dm, path=["response"])
 
@@ -381,12 +380,12 @@ class TestAsyncDm:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             dm = await response.parse()
             assert_matches_type(DmSendResponse, dm, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

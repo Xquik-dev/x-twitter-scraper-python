@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -35,7 +34,7 @@ class TestWriteActions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         write_action = response.parse()
         assert_matches_type(WriteActionRetrieveResponse, write_action, path=["response"])
 
@@ -46,12 +45,12 @@ class TestWriteActions:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             write_action = response.parse()
             assert_matches_type(WriteActionRetrieveResponse, write_action, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -83,7 +82,7 @@ class TestAsyncWriteActions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         write_action = await response.parse()
         assert_matches_type(WriteActionRetrieveResponse, write_action, path=["response"])
 
@@ -94,12 +93,12 @@ class TestAsyncWriteActions:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             write_action = await response.parse()
             assert_matches_type(WriteActionRetrieveResponse, write_action, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

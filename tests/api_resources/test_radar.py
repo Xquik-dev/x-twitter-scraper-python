@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -44,7 +43,7 @@ class TestRadar:
         response = client.radar.with_raw_response.retrieve_trending_topics()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         radar = response.parse()
         assert_matches_type(RadarRetrieveTrendingTopicsResponse, radar, path=["response"])
 
@@ -53,12 +52,12 @@ class TestRadar:
     def test_streaming_response_retrieve_trending_topics(self, client: XTwitterScraper) -> None:
         with client.radar.with_streaming_response.retrieve_trending_topics() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             radar = response.parse()
             assert_matches_type(RadarRetrieveTrendingTopicsResponse, radar, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncRadar:
@@ -91,7 +90,7 @@ class TestAsyncRadar:
         response = await async_client.radar.with_raw_response.retrieve_trending_topics()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         radar = await response.parse()
         assert_matches_type(RadarRetrieveTrendingTopicsResponse, radar, path=["response"])
 
@@ -100,9 +99,9 @@ class TestAsyncRadar:
     async def test_streaming_response_retrieve_trending_topics(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.radar.with_streaming_response.retrieve_trending_topics() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             radar = await response.parse()
             assert_matches_type(RadarRetrieveTrendingTopicsResponse, radar, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

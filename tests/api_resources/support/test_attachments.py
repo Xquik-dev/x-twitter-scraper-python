@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Any, cast
 
 import pytest
 
@@ -24,7 +23,7 @@ class TestAttachments:
         assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
         assert attachment.is_closed
         assert attachment.json() == {"foo": "bar"}
-        assert cast(Any, attachment.is_closed) is True
+        assert attachment.is_closed is True
         assert isinstance(attachment, BinaryAPIResponse)
 
     @parametrize
@@ -36,7 +35,7 @@ class TestAttachments:
         assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
         assert attachment.is_closed
         assert attachment.json() == {"foo": "bar"}
-        assert cast(Any, attachment.is_closed) is True
+        assert attachment.is_closed is True
         assert isinstance(attachment, BinaryAPIResponse)
 
     @parametrize
@@ -48,7 +47,7 @@ class TestAttachments:
         assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
 
         assert attachment.is_closed is True
-        assert attachment.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert attachment.http_request.headers["X-Stainless-Lang"] == "python"
         assert attachment.json() == {"foo": "bar"}
         assert isinstance(attachment, BinaryAPIResponse)
 
@@ -59,13 +58,13 @@ class TestAttachments:
         ) as attachment:
             assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
             assert not attachment.is_closed
-            assert attachment.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert attachment.http_request.headers["X-Stainless-Lang"] == "python"
 
             assert attachment.json() == {"foo": "bar"}
-            assert cast(Any, attachment.is_closed) is True
+            assert attachment.http_response.is_closed is True
             assert isinstance(attachment, StreamedBinaryAPIResponse)
 
-        assert cast(Any, attachment.is_closed) is True
+        assert attachment.is_closed is True
 
     @parametrize
     def test_path_params_download(self, client: XTwitterScraper) -> None:
@@ -88,7 +87,7 @@ class TestAsyncAttachments:
         assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
         assert attachment.is_closed
         assert await attachment.json() == {"foo": "bar"}
-        assert cast(Any, attachment.is_closed) is True
+        assert attachment.is_closed is True
         assert isinstance(attachment, AsyncBinaryAPIResponse)
 
     @parametrize
@@ -100,7 +99,7 @@ class TestAsyncAttachments:
         assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
         assert attachment.is_closed
         assert await attachment.json() == {"foo": "bar"}
-        assert cast(Any, attachment.is_closed) is True
+        assert attachment.is_closed is True
         assert isinstance(attachment, AsyncBinaryAPIResponse)
 
     @parametrize
@@ -112,7 +111,7 @@ class TestAsyncAttachments:
         assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
 
         assert attachment.is_closed is True
-        assert attachment.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert attachment.http_request.headers["X-Stainless-Lang"] == "python"
         assert await attachment.json() == {"foo": "bar"}
         assert isinstance(attachment, AsyncBinaryAPIResponse)
 
@@ -123,13 +122,13 @@ class TestAsyncAttachments:
         ) as attachment:
             assert attachment.http_request.url.path == "/support/attachments/att_a1b2c3d4e5f6a1b2c3d4e5f6"
             assert not attachment.is_closed
-            assert attachment.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert attachment.http_request.headers["X-Stainless-Lang"] == "python"
 
             assert await attachment.json() == {"foo": "bar"}
-            assert cast(Any, attachment.is_closed) is True
+            assert attachment.http_response.is_closed is True
             assert isinstance(attachment, AsyncStreamedBinaryAPIResponse)
 
-        assert cast(Any, attachment.is_closed) is True
+        assert attachment.is_closed is True
 
     @parametrize
     async def test_path_params_download(self, async_client: AsyncXTwitterScraper) -> None:

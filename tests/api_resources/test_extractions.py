@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from typing import Any, cast
 
 import pytest
 
@@ -60,7 +59,7 @@ class TestExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = response.parse()
         assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
 
@@ -71,12 +70,12 @@ class TestExtractions:
             id="L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = response.parse()
             assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -109,7 +108,7 @@ class TestExtractions:
         response = client.extractions.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = response.parse()
         assert_matches_type(ExtractionListResponse, extraction, path=["response"])
 
@@ -118,12 +117,12 @@ class TestExtractions:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.extractions.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = response.parse()
             assert_matches_type(ExtractionListResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -141,7 +140,7 @@ class TestExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = response.parse()
         assert_matches_type(ExtractionCancelResponse, extraction, path=["response"])
 
@@ -152,12 +151,12 @@ class TestExtractions:
             "L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = response.parse()
             assert_matches_type(ExtractionCancelResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -295,7 +294,7 @@ class TestExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = response.parse()
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -306,12 +305,12 @@ class TestExtractions:
             tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = response.parse()
             assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @parametrize
     def test_method_export_results(self, client: XTwitterScraper) -> None:
@@ -322,7 +321,7 @@ class TestExtractions:
         assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert extraction.json() == {"foo": "bar"}
-        assert cast(Any, extraction.is_closed) is True
+        assert extraction.is_closed is True
         assert isinstance(extraction, BinaryAPIResponse)
 
     @parametrize
@@ -355,7 +354,7 @@ class TestExtractions:
         assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert extraction.json() == {"foo": "bar"}
-        assert cast(Any, extraction.is_closed) is True
+        assert extraction.is_closed is True
         assert isinstance(extraction, BinaryAPIResponse)
 
     @parametrize
@@ -368,7 +367,7 @@ class TestExtractions:
         assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
 
         assert extraction.is_closed is True
-        assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert extraction.http_request.headers["X-Stainless-Lang"] == "python"
         assert extraction.json() == {"foo": "bar"}
         assert isinstance(extraction, BinaryAPIResponse)
 
@@ -380,13 +379,13 @@ class TestExtractions:
         ) as extraction:
             assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
             assert not extraction.is_closed
-            assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert extraction.http_request.headers["X-Stainless-Lang"] == "python"
 
             assert extraction.json() == {"foo": "bar"}
-            assert cast(Any, extraction.is_closed) is True
+            assert extraction.http_response.is_closed is True
             assert isinstance(extraction, StreamedBinaryAPIResponse)
 
-        assert cast(Any, extraction.is_closed) is True
+        assert extraction.is_closed is True
 
     @parametrize
     def test_path_params_export_results(self, client: XTwitterScraper) -> None:
@@ -526,7 +525,7 @@ class TestExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = response.parse()
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
@@ -537,12 +536,12 @@ class TestExtractions:
             tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = response.parse()
             assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncExtractions:
@@ -581,7 +580,7 @@ class TestAsyncExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = await response.parse()
         assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
 
@@ -592,12 +591,12 @@ class TestAsyncExtractions:
             id="L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = await response.parse()
             assert_matches_type(ExtractionRetrieveResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -630,7 +629,7 @@ class TestAsyncExtractions:
         response = await async_client.extractions.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = await response.parse()
         assert_matches_type(ExtractionListResponse, extraction, path=["response"])
 
@@ -639,12 +638,12 @@ class TestAsyncExtractions:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.extractions.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = await response.parse()
             assert_matches_type(ExtractionListResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -662,7 +661,7 @@ class TestAsyncExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = await response.parse()
         assert_matches_type(ExtractionCancelResponse, extraction, path=["response"])
 
@@ -673,12 +672,12 @@ class TestAsyncExtractions:
             "L3NjAbCdEfGh",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = await response.parse()
             assert_matches_type(ExtractionCancelResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -816,7 +815,7 @@ class TestAsyncExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = await response.parse()
         assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
@@ -827,12 +826,12 @@ class TestAsyncExtractions:
             tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = await response.parse()
             assert_matches_type(ExtractionEstimateCostResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @parametrize
     async def test_method_export_results(self, async_client: AsyncXTwitterScraper) -> None:
@@ -843,7 +842,7 @@ class TestAsyncExtractions:
         assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert await extraction.json() == {"foo": "bar"}
-        assert cast(Any, extraction.is_closed) is True
+        assert extraction.is_closed is True
         assert isinstance(extraction, AsyncBinaryAPIResponse)
 
     @parametrize
@@ -876,7 +875,7 @@ class TestAsyncExtractions:
         assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
         assert extraction.is_closed
         assert await extraction.json() == {"foo": "bar"}
-        assert cast(Any, extraction.is_closed) is True
+        assert extraction.is_closed is True
         assert isinstance(extraction, AsyncBinaryAPIResponse)
 
     @parametrize
@@ -889,7 +888,7 @@ class TestAsyncExtractions:
         assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
 
         assert extraction.is_closed is True
-        assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert extraction.http_request.headers["X-Stainless-Lang"] == "python"
         assert await extraction.json() == {"foo": "bar"}
         assert isinstance(extraction, AsyncBinaryAPIResponse)
 
@@ -901,13 +900,13 @@ class TestAsyncExtractions:
         ) as extraction:
             assert extraction.http_request.url.path == "/extractions/L3NjAbCdEfGh/export"
             assert not extraction.is_closed
-            assert extraction.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert extraction.http_request.headers["X-Stainless-Lang"] == "python"
 
             assert await extraction.json() == {"foo": "bar"}
-            assert cast(Any, extraction.is_closed) is True
+            assert extraction.http_response.is_closed is True
             assert isinstance(extraction, AsyncStreamedBinaryAPIResponse)
 
-        assert cast(Any, extraction.is_closed) is True
+        assert extraction.is_closed is True
 
     @parametrize
     async def test_path_params_export_results(self, async_client: AsyncXTwitterScraper) -> None:
@@ -1047,7 +1046,7 @@ class TestAsyncExtractions:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         extraction = await response.parse()
         assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
@@ -1058,9 +1057,9 @@ class TestAsyncExtractions:
             tool_type="follower_explorer",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             extraction = await response.parse()
             assert_matches_type(ExtractionRunResponse, extraction, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -31,7 +30,7 @@ class TestAccountConnectionAttempts:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account_connection_attempt = response.parse()
         assert_matches_type(AccountConnectionAttemptRetrieveResponse, account_connection_attempt, path=["response"])
 
@@ -42,12 +41,12 @@ class TestAccountConnectionAttempts:
             "xatt_0123456789abcdef0123456789abcdef",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account_connection_attempt = response.parse()
             assert_matches_type(AccountConnectionAttemptRetrieveResponse, account_connection_attempt, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -79,7 +78,7 @@ class TestAsyncAccountConnectionAttempts:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account_connection_attempt = await response.parse()
         assert_matches_type(AccountConnectionAttemptRetrieveResponse, account_connection_attempt, path=["response"])
 
@@ -90,12 +89,12 @@ class TestAsyncAccountConnectionAttempts:
             "xatt_0123456789abcdef0123456789abcdef",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account_connection_attempt = await response.parse()
             assert_matches_type(AccountConnectionAttemptRetrieveResponse, account_connection_attempt, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

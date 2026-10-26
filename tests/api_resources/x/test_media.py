@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -45,7 +44,7 @@ class TestMedia:
         response = client.x.media.with_raw_response.download()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = response.parse()
         assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
@@ -54,12 +53,12 @@ class TestMedia:
     def test_streaming_response_download(self, client: XTwitterScraper) -> None:
         with client.x.media.with_streaming_response.download() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = response.parse()
             assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -81,7 +80,7 @@ class TestMedia:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = response.parse()
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -94,12 +93,12 @@ class TestMedia:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = response.parse()
             assert_matches_type(MediaUploadResponse, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -132,7 +131,7 @@ class TestMedia:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = response.parse()
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -145,12 +144,12 @@ class TestMedia:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = response.parse()
             assert_matches_type(MediaUploadResponse, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncMedia:
@@ -181,7 +180,7 @@ class TestAsyncMedia:
         response = await async_client.x.media.with_raw_response.download()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = await response.parse()
         assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
@@ -190,12 +189,12 @@ class TestAsyncMedia:
     async def test_streaming_response_download(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.media.with_streaming_response.download() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = await response.parse()
             assert_matches_type(MediaDownloadResponse, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -217,7 +216,7 @@ class TestAsyncMedia:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = await response.parse()
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -230,12 +229,12 @@ class TestAsyncMedia:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = await response.parse()
             assert_matches_type(MediaUploadResponse, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -268,7 +267,7 @@ class TestAsyncMedia:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = await response.parse()
         assert_matches_type(MediaUploadResponse, media, path=["response"])
 
@@ -281,9 +280,9 @@ class TestAsyncMedia:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = await response.parse()
             assert_matches_type(MediaUploadResponse, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -52,7 +51,7 @@ class TestLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = response.parse()
         assert_matches_type(ListRetrieveResponse, list_, path=["response"])
 
@@ -63,12 +62,12 @@ class TestLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = response.parse()
             assert_matches_type(ListRetrieveResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -127,7 +126,7 @@ class TestLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = response.parse()
         assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
 
@@ -138,12 +137,12 @@ class TestLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = response.parse()
             assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -202,7 +201,7 @@ class TestLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = response.parse()
         assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
 
@@ -213,12 +212,12 @@ class TestLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = response.parse()
             assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -256,7 +255,7 @@ class TestLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = response.parse()
         assert_matches_type(ListRetrieveSearchResponse, list_, path=["response"])
 
@@ -267,12 +266,12 @@ class TestLists:
             q="q",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = response.parse()
             assert_matches_type(ListRetrieveSearchResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -357,7 +356,7 @@ class TestLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = response.parse()
         assert_matches_type(PaginatedTweets, list_, path=["response"])
 
@@ -368,12 +367,12 @@ class TestLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = response.parse()
             assert_matches_type(PaginatedTweets, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -415,7 +414,7 @@ class TestAsyncLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = await response.parse()
         assert_matches_type(ListRetrieveResponse, list_, path=["response"])
 
@@ -426,12 +425,12 @@ class TestAsyncLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = await response.parse()
             assert_matches_type(ListRetrieveResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -490,7 +489,7 @@ class TestAsyncLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = await response.parse()
         assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
 
@@ -501,12 +500,12 @@ class TestAsyncLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = await response.parse()
             assert_matches_type(ListRetrieveFollowersResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -565,7 +564,7 @@ class TestAsyncLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = await response.parse()
         assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
 
@@ -576,12 +575,12 @@ class TestAsyncLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = await response.parse()
             assert_matches_type(ListRetrieveMembersResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -619,7 +618,7 @@ class TestAsyncLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = await response.parse()
         assert_matches_type(ListRetrieveSearchResponse, list_, path=["response"])
 
@@ -630,12 +629,12 @@ class TestAsyncLists:
             q="q",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = await response.parse()
             assert_matches_type(ListRetrieveSearchResponse, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -720,7 +719,7 @@ class TestAsyncLists:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         list_ = await response.parse()
         assert_matches_type(PaginatedTweets, list_, path=["response"])
 
@@ -731,12 +730,12 @@ class TestAsyncLists:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             list_ = await response.parse()
             assert_matches_type(PaginatedTweets, list_, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -45,7 +44,7 @@ class TestBroadcasts:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         broadcast = response.parse()
         assert_matches_type(BroadcastRetrieveResponse, broadcast, path=["response"])
 
@@ -56,12 +55,12 @@ class TestBroadcasts:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             broadcast = response.parse()
             assert_matches_type(BroadcastRetrieveResponse, broadcast, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -103,7 +102,7 @@ class TestAsyncBroadcasts:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         broadcast = await response.parse()
         assert_matches_type(BroadcastRetrieveResponse, broadcast, path=["response"])
 
@@ -114,12 +113,12 @@ class TestAsyncBroadcasts:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             broadcast = await response.parse()
             assert_matches_type(BroadcastRetrieveResponse, broadcast, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

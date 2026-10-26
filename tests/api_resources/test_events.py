@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -35,7 +34,7 @@ class TestEvents:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         event = response.parse()
         assert_matches_type(EventDetail, event, path=["response"])
 
@@ -46,12 +45,12 @@ class TestEvents:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             event = response.parse()
             assert_matches_type(EventDetail, event, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -85,7 +84,7 @@ class TestEvents:
         response = client.events.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         event = response.parse()
         assert_matches_type(EventListResponse, event, path=["response"])
 
@@ -94,12 +93,12 @@ class TestEvents:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.events.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             event = response.parse()
             assert_matches_type(EventListResponse, event, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -120,7 +119,7 @@ class TestEvents:
     def test_raw_response_stream(self, client: XTwitterScraper) -> None:
         response = client.events.with_raw_response.stream()
 
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         stream = response.parse()
         stream.close()
 
@@ -129,12 +128,12 @@ class TestEvents:
     def test_streaming_response_stream(self, client: XTwitterScraper) -> None:
         with client.events.with_streaming_response.stream() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             stream = response.parse()
             stream.close()
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncEvents:
@@ -158,7 +157,7 @@ class TestAsyncEvents:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         event = await response.parse()
         assert_matches_type(EventDetail, event, path=["response"])
 
@@ -169,12 +168,12 @@ class TestAsyncEvents:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             event = await response.parse()
             assert_matches_type(EventDetail, event, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -208,7 +207,7 @@ class TestAsyncEvents:
         response = await async_client.events.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         event = await response.parse()
         assert_matches_type(EventListResponse, event, path=["response"])
 
@@ -217,12 +216,12 @@ class TestAsyncEvents:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.events.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             event = await response.parse()
             assert_matches_type(EventListResponse, event, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -243,7 +242,7 @@ class TestAsyncEvents:
     async def test_raw_response_stream(self, async_client: AsyncXTwitterScraper) -> None:
         response = await async_client.events.with_raw_response.stream()
 
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         stream = await response.parse()
         await stream.close()
 
@@ -252,9 +251,9 @@ class TestAsyncEvents:
     async def test_streaming_response_stream(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.events.with_streaming_response.stream() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             stream = await response.parse()
             await stream.close()
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

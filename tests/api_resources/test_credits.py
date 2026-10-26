@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -26,10 +25,9 @@ class TestCredits:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     def test_method_redirect_topup_checkout(self, client: XTwitterScraper) -> None:
-        credit = client.credits.redirect_topup_checkout(
+        client.credits.redirect_topup_checkout(
             session_id="P",
         )
-        assert credit is None
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -39,9 +37,8 @@ class TestCredits:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        credit = response.parse()
-        assert credit is None
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
+        response.parse()
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -50,12 +47,11 @@ class TestCredits:
             session_id="P",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
-            credit = response.parse()
-            assert credit is None
+            response.parse()
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -69,7 +65,7 @@ class TestCredits:
         response = client.credits.with_raw_response.retrieve_balance()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         credit = response.parse()
         assert_matches_type(CreditRetrieveBalanceResponse, credit, path=["response"])
 
@@ -78,12 +74,12 @@ class TestCredits:
     def test_streaming_response_retrieve_balance(self, client: XTwitterScraper) -> None:
         with client.credits.with_streaming_response.retrieve_balance() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             credit = response.parse()
             assert_matches_type(CreditRetrieveBalanceResponse, credit, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -101,7 +97,7 @@ class TestCredits:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         credit = response.parse()
         assert_matches_type(CreditRetrieveTopupStatusResponse, credit, path=["response"])
 
@@ -112,12 +108,12 @@ class TestCredits:
             session_id="session_id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             credit = response.parse()
             assert_matches_type(CreditRetrieveTopupStatusResponse, credit, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -144,7 +140,7 @@ class TestCredits:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         credit = response.parse()
         assert_matches_type(CreditTopupBalanceResponse, credit, path=["response"])
 
@@ -155,12 +151,12 @@ class TestCredits:
             dollars=10,
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             credit = response.parse()
             assert_matches_type(CreditTopupBalanceResponse, credit, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncCredits:
@@ -171,10 +167,9 @@ class TestAsyncCredits:
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
     async def test_method_redirect_topup_checkout(self, async_client: AsyncXTwitterScraper) -> None:
-        credit = await async_client.credits.redirect_topup_checkout(
+        await async_client.credits.redirect_topup_checkout(
             session_id="P",
         )
-        assert credit is None
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -184,9 +179,8 @@ class TestAsyncCredits:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
-        credit = await response.parse()
-        assert credit is None
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
+        await response.parse()
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -195,12 +189,11 @@ class TestAsyncCredits:
             session_id="P",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
-            credit = await response.parse()
-            assert credit is None
+            await response.parse()
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -214,7 +207,7 @@ class TestAsyncCredits:
         response = await async_client.credits.with_raw_response.retrieve_balance()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         credit = await response.parse()
         assert_matches_type(CreditRetrieveBalanceResponse, credit, path=["response"])
 
@@ -223,12 +216,12 @@ class TestAsyncCredits:
     async def test_streaming_response_retrieve_balance(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.credits.with_streaming_response.retrieve_balance() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             credit = await response.parse()
             assert_matches_type(CreditRetrieveBalanceResponse, credit, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -246,7 +239,7 @@ class TestAsyncCredits:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         credit = await response.parse()
         assert_matches_type(CreditRetrieveTopupStatusResponse, credit, path=["response"])
 
@@ -257,12 +250,12 @@ class TestAsyncCredits:
             session_id="session_id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             credit = await response.parse()
             assert_matches_type(CreditRetrieveTopupStatusResponse, credit, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -289,7 +282,7 @@ class TestAsyncCredits:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         credit = await response.parse()
         assert_matches_type(CreditTopupBalanceResponse, credit, path=["response"])
 
@@ -300,9 +293,9 @@ class TestAsyncCredits:
             dollars=10,
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             credit = await response.parse()
             assert_matches_type(CreditTopupBalanceResponse, credit, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

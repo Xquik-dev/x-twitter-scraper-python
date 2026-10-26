@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -41,7 +40,7 @@ class TestBookmarks:
         response = client.x.bookmarks.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         bookmark = response.parse()
         assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
@@ -50,12 +49,12 @@ class TestBookmarks:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.x.bookmarks.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             bookmark = response.parse()
             assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -77,7 +76,7 @@ class TestBookmarks:
         response = client.x.bookmarks.with_raw_response.retrieve_folders()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         bookmark = response.parse()
         assert_matches_type(BookmarkRetrieveFoldersResponse, bookmark, path=["response"])
 
@@ -86,12 +85,12 @@ class TestBookmarks:
     def test_streaming_response_retrieve_folders(self, client: XTwitterScraper) -> None:
         with client.x.bookmarks.with_streaming_response.retrieve_folders() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             bookmark = response.parse()
             assert_matches_type(BookmarkRetrieveFoldersResponse, bookmark, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncBookmarks:
@@ -120,7 +119,7 @@ class TestAsyncBookmarks:
         response = await async_client.x.bookmarks.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         bookmark = await response.parse()
         assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
@@ -129,12 +128,12 @@ class TestAsyncBookmarks:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.bookmarks.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             bookmark = await response.parse()
             assert_matches_type(PaginatedTweets, bookmark, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -156,7 +155,7 @@ class TestAsyncBookmarks:
         response = await async_client.x.bookmarks.with_raw_response.retrieve_folders()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         bookmark = await response.parse()
         assert_matches_type(BookmarkRetrieveFoldersResponse, bookmark, path=["response"])
 
@@ -165,9 +164,9 @@ class TestAsyncBookmarks:
     async def test_streaming_response_retrieve_folders(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.bookmarks.with_streaming_response.retrieve_folders() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             bookmark = await response.parse()
             assert_matches_type(BookmarkRetrieveFoldersResponse, bookmark, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

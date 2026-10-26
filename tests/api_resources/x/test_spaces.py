@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -49,7 +48,7 @@ class TestSpaces:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         space = response.parse()
         assert_matches_type(SpaceRetrieveResponse, space, path=["response"])
 
@@ -60,12 +59,12 @@ class TestSpaces:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             space = response.parse()
             assert_matches_type(SpaceRetrieveResponse, space, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -101,7 +100,7 @@ class TestSpaces:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         space = response.parse()
         assert_matches_type(SpaceRetrieveReplayResponse, space, path=["response"])
 
@@ -112,12 +111,12 @@ class TestSpaces:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             space = response.parse()
             assert_matches_type(SpaceRetrieveReplayResponse, space, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -156,7 +155,7 @@ class TestSpaces:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         space = response.parse()
         assert_matches_type(SpaceSearchResponse, space, path=["response"])
 
@@ -167,12 +166,12 @@ class TestSpaces:
             q="from:solana",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             space = response.parse()
             assert_matches_type(SpaceSearchResponse, space, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncSpaces:
@@ -206,7 +205,7 @@ class TestAsyncSpaces:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         space = await response.parse()
         assert_matches_type(SpaceRetrieveResponse, space, path=["response"])
 
@@ -217,12 +216,12 @@ class TestAsyncSpaces:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             space = await response.parse()
             assert_matches_type(SpaceRetrieveResponse, space, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -258,7 +257,7 @@ class TestAsyncSpaces:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         space = await response.parse()
         assert_matches_type(SpaceRetrieveReplayResponse, space, path=["response"])
 
@@ -269,12 +268,12 @@ class TestAsyncSpaces:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             space = await response.parse()
             assert_matches_type(SpaceRetrieveReplayResponse, space, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -313,7 +312,7 @@ class TestAsyncSpaces:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         space = await response.parse()
         assert_matches_type(SpaceSearchResponse, space, path=["response"])
 
@@ -324,9 +323,9 @@ class TestAsyncSpaces:
             q="from:solana",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             space = await response.parse()
             assert_matches_type(SpaceSearchResponse, space, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

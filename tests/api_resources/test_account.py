@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -35,7 +34,7 @@ class TestAccount:
         response = client.account.with_raw_response.retrieve()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account = response.parse()
         assert_matches_type(AccountRetrieveResponse, account, path=["response"])
 
@@ -44,12 +43,12 @@ class TestAccount:
     def test_streaming_response_retrieve(self, client: XTwitterScraper) -> None:
         with client.account.with_streaming_response.retrieve() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account = response.parse()
             assert_matches_type(AccountRetrieveResponse, account, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -67,7 +66,7 @@ class TestAccount:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account = response.parse()
         assert_matches_type(AccountSetXUsernameResponse, account, path=["response"])
 
@@ -78,12 +77,12 @@ class TestAccount:
             username="elonmusk",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account = response.parse()
             assert_matches_type(AccountSetXUsernameResponse, account, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -101,7 +100,7 @@ class TestAccount:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account = response.parse()
         assert_matches_type(AccountUpdateLocaleResponse, account, path=["response"])
 
@@ -112,12 +111,12 @@ class TestAccount:
             locale="en",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account = response.parse()
             assert_matches_type(AccountUpdateLocaleResponse, account, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncAccount:
@@ -137,7 +136,7 @@ class TestAsyncAccount:
         response = await async_client.account.with_raw_response.retrieve()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account = await response.parse()
         assert_matches_type(AccountRetrieveResponse, account, path=["response"])
 
@@ -146,12 +145,12 @@ class TestAsyncAccount:
     async def test_streaming_response_retrieve(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.account.with_streaming_response.retrieve() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account = await response.parse()
             assert_matches_type(AccountRetrieveResponse, account, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -169,7 +168,7 @@ class TestAsyncAccount:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account = await response.parse()
         assert_matches_type(AccountSetXUsernameResponse, account, path=["response"])
 
@@ -180,12 +179,12 @@ class TestAsyncAccount:
             username="elonmusk",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account = await response.parse()
             assert_matches_type(AccountSetXUsernameResponse, account, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -203,7 +202,7 @@ class TestAsyncAccount:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account = await response.parse()
         assert_matches_type(AccountUpdateLocaleResponse, account, path=["response"])
 
@@ -214,9 +213,9 @@ class TestAsyncAccount:
             locale="en",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account = await response.parse()
             assert_matches_type(AccountUpdateLocaleResponse, account, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

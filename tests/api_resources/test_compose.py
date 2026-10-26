@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -48,7 +47,7 @@ class TestCompose:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         compose = response.parse()
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -60,12 +59,12 @@ class TestCompose:
             topic="PostgreSQL query planning",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             compose = response.parse()
             assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -103,7 +102,7 @@ class TestCompose:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         compose = response.parse()
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -117,12 +116,12 @@ class TestCompose:
             topic="x",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             compose = response.parse()
             assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -153,7 +152,7 @@ class TestCompose:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         compose = response.parse()
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -165,12 +164,12 @@ class TestCompose:
             step="score",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             compose = response.parse()
             assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncCompose:
@@ -207,7 +206,7 @@ class TestAsyncCompose:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         compose = await response.parse()
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -219,12 +218,12 @@ class TestAsyncCompose:
             topic="PostgreSQL query planning",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             compose = await response.parse()
             assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -262,7 +261,7 @@ class TestAsyncCompose:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         compose = await response.parse()
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -276,12 +275,12 @@ class TestAsyncCompose:
             topic="x",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             compose = await response.parse()
             assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -312,7 +311,7 @@ class TestAsyncCompose:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         compose = await response.parse()
         assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
@@ -324,9 +323,9 @@ class TestAsyncCompose:
             step="score",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             compose = await response.parse()
             assert_matches_type(ComposeCreateResponse, compose, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

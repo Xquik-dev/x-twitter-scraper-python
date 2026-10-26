@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -42,7 +41,7 @@ class TestTrends:
         response = client.trends.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         trend = response.parse()
         assert_matches_type(TrendListResponse, trend, path=["response"])
 
@@ -51,12 +50,12 @@ class TestTrends:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.trends.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             trend = response.parse()
             assert_matches_type(TrendListResponse, trend, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncTrends:
@@ -87,7 +86,7 @@ class TestAsyncTrends:
         response = await async_client.trends.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         trend = await response.parse()
         assert_matches_type(TrendListResponse, trend, path=["response"])
 
@@ -96,9 +95,9 @@ class TestAsyncTrends:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.trends.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             trend = await response.parse()
             assert_matches_type(TrendListResponse, trend, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
