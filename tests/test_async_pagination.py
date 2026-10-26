@@ -8,7 +8,7 @@ from typing_extensions import override
 import httpx
 import pytest
 
-from tests.utils import json_response
+from tests.utils import query_param, json_response
 from x_twitter_scraper import InternalServerError, AsyncXTwitterScraper
 from x_twitter_scraper._models import FinalRequestOptions
 from x_twitter_scraper._base_client import PageInfo, BaseAsyncPage, AsyncPaginator
@@ -54,5 +54,5 @@ async def test_async_paginator_retains_items_and_propagates_page_failure(fail: b
                 collected.append(item)
     assert collected == ([1, 2] if fail else [1, 2, 3])
     assert len(requests) == 2
-    assert requests[0].url.params.get("cursor") is None
+    assert query_param(requests[0].url.params, "cursor") is None
     assert requests[1].url.params["cursor"] == "next-page"

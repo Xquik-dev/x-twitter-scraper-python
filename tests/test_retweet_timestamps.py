@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 import httpx
 import pytest
 
-from tests.utils import json_response
+from tests.utils import query_param, json_response
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, omit
 
 
@@ -42,7 +42,9 @@ async def test_retweet_timestamps(enabled: bool | None, asynchronous: bool) -> N
             result = sync_client.x.tweets.get_retweeters("123", cursor="previous-page", include_retweet_timestamp=flag)
     assert len(requests) == 1
     assert requests[0].url.path == "/api/v1/x/tweets/123/retweeters"
-    assert requests[0].url.params.get("includeRetweetTimestamp") == (None if enabled is None else str(enabled).lower())
+    assert query_param(requests[0].url.params, "includeRetweetTimestamp") == (
+        None if enabled is None else str(enabled).lower()
+    )
     assert requests[0].url.params["cursor"] == "previous-page"
     assert result.users[0].retweeted_at == datetime(2026, 9, 11, 20, 24, 45, tzinfo=timezone.utc)
     assert result.users[1].retweeted_at is None

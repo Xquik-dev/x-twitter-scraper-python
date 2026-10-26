@@ -46,6 +46,10 @@ def json_response(status_code: int, *, json: JsonValue) -> httpx.Response:
     return httpx.Response(status_code, json=json)
 
 
+def query_param(params: httpx.QueryParams, name: str) -> str | None:
+    return params[name] if name in params else None
+
+
 def request_timeout(request: httpx.Request) -> object:
     extensions = get_attribute(request, "extensions")
     assert is_mapping(extensions)
