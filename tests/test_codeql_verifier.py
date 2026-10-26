@@ -4,38 +4,45 @@
 from __future__ import annotations
 
 import copy
-from typing import Any
 from pathlib import Path
 
 import pytest
 
 from tests.utils import json_dumps
 from scripts.verify_codeql import main, validate
+from x_twitter_scraper._utils import is_dict, is_list
 
-REPORT: dict[str, Any] = {
-    "version": "2.1.0",
-    "runs": [
+RUN: dict[str, object] = {
+    "tool": {"driver": {"notifications": [{"id": "py/diagnostics/extraction-warnings"}]}},
+    "results": [],
+    "invocations": [
         {
-            "tool": {"driver": {"notifications": [{"id": "py/diagnostics/extraction-warnings"}]}},
-            "results": [],
-            "invocations": [
+            "executionSuccessful": True,
+            "toolExecutionNotifications": [
                 {
-                    "executionSuccessful": True,
-                    "toolExecutionNotifications": [
-                        {
-                            "level": "none",
-                            "descriptor": {"id": "py/diagnostics/successfully-extracted-files"},
-                        }
-                    ],
+                    "level": "none",
+                    "descriptor": {"id": "py/diagnostics/successfully-extracted-files"},
                 }
             ],
         }
     ],
 }
+REPORT: dict[str, object] = {"version": "2.1.0", "runs": [RUN]}
+
+
+def resolve(document: object, path: tuple[str | int, ...]) -> object:
+    for key in path:
+        if isinstance(key, int):
+            assert is_list(document)
+            document = document[key]
+        else:
+            assert is_dict(document)
+            document = document[key]
+    return document
 
 
 def test_complete_codeql_report() -> None:
-    assert validate(REPORT) is None
+    validate(REPORT)
 
 
 @pytest.mark.parametrize("report", [None, [], {}, {"version": "2.1.0", "runs": [None]}])
@@ -48,7 +55,7 @@ def test_invalid_codeql_structure(report: object) -> None:
     "path,value",
     [
         (("version",), "2.0.0"),
-        (("runs",), [REPORT["runs"][0], REPORT["runs"][0]]),
+        (("runs",), [RUN, RUN]),
         (("runs", 0, "results"), [{"ruleId": "py/unsafe-deserialization"}]),
         (("runs", 0, "results"), None),
         (("runs", 0, "invocations"), []),
@@ -65,17 +72,23 @@ def test_invalid_codeql_structure(report: object) -> None:
 )
 def test_incomplete_or_failed_codeql_report(path: tuple[str | int, ...], value: object) -> None:
     report = copy.deepcopy(REPORT)
-    target: Any = report
-    for key in path[:-1]:
-        target = target[key]
-    target[path[-1]] = value
+    target = resolve(report, path[:-1])
+    key = path[-1]
+    if isinstance(key, int):
+        assert is_list(target)
+        target[key] = value
+    else:
+        assert is_dict(target)
+        target[key] = value
     with pytest.raises(ValueError):
         validate(report)
 
 
-def with_notifications(*notifications: dict[str, object]) -> dict[str, Any]:
+def with_notifications(*notifications: dict[str, object]) -> dict[str, object]:
     report = copy.deepcopy(REPORT)
-    report["runs"][0]["invocations"][0]["toolExecutionNotifications"].extend(notifications)
+    existing = resolve(report, ("runs", 0, "invocations", 0, "toolExecutionNotifications"))
+    assert is_list(existing)
+    existing.extend(notifications)
     return report
 
 

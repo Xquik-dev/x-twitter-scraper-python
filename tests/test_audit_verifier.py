@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-from typing import Any
 from pathlib import Path
 from datetime import date
 
@@ -26,18 +25,17 @@ RUNTIME = """anyio==4.14.2 \\
 """
 
 
-def finding(advisory: str, fixes: list[str], aliases: list[str] | None = None) -> dict[str, Any]:
+def finding(advisory: str, fixes: list[str], aliases: list[str] | None = None) -> dict[str, object]:
     return {"id": advisory, "fix_versions": fixes, "aliases": aliases or [], "description": "Long text."}
 
 
-def report(**vulns: list[dict[str, Any]]) -> dict[str, Any]:
+def dependencies(**vulns: list[dict[str, object]]) -> list[dict[str, object]]:
     versions = {"anyio": "4.14.2", "pytest": "9.0.1", "pygments": "2.20.0"}
-    return {
-        "dependencies": [
-            {"name": name, "version": version, "vulns": vulns.get(name, [])} for name, version in versions.items()
-        ],
-        "fixes": [],
-    }
+    return [{"name": name, "version": version, "vulns": vulns.get(name, [])} for name, version in versions.items()]
+
+
+def report(**vulns: list[dict[str, object]]) -> dict[str, object]:
+    return {"dependencies": dependencies(**vulns), "fixes": []}
 
 
 def exception(**overrides: object) -> dict[str, object]:
@@ -114,7 +112,7 @@ def test_listed_unfixable_development_finding_passes_before_recheck(
         (
             {
                 "dependencies": [
-                    *report()["dependencies"][:2],
+                    *dependencies()[:2],
                     {"name": "Pygments", "version": "2.20.0", "skip_reason": "Not on PyPI"},
                 ]
             },
@@ -122,7 +120,7 @@ def test_listed_unfixable_development_finding_passes_before_recheck(
             "pip-audit skipped Pygments 2.20.0: Not on PyPI",
         ),
         (
-            {"dependencies": report()["dependencies"][:2]},
+            {"dependencies": dependencies()[:2]},
             {"exceptions": []},
             "pip-audit did not report pygments. Rerun scripts/audit.",
         ),
