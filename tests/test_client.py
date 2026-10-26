@@ -13,7 +13,8 @@ import inspect
 import weakref
 import dataclasses
 import tracemalloc
-from typing import Any, Union, TypeVar, Callable, Iterable, Iterator, Optional, Coroutine, cast
+import collections.abc
+from typing import Any, Union, TypeVar, Callable, Iterable, Iterator, Optional, Awaitable, cast
 from unittest import mock
 from typing_extensions import Literal, AsyncIterator, override
 
@@ -23,7 +24,7 @@ import httpcore
 from respx import MockRouter
 from pydantic import ValidationError
 
-from tests.utils import json_response
+from tests.utils import json_response, request_timeout
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, APIResponseValidationError
 from x_twitter_scraper._types import Omit, HttpxResponse
 from x_twitter_scraper._utils import asyncify, get_header
@@ -32,7 +33,6 @@ from x_twitter_scraper._constants import DEFAULT_TIMEOUT
 from x_twitter_scraper._exceptions import APIStatusError, APITimeoutError, APIResponseValidationError
 from x_twitter_scraper._base_client import (
     HTTPX_DEFAULT_TIMEOUT,
-    BaseClient,
     OtherPlatform,
     DefaultHttpxClient,
     DefaultAsyncHttpxClient,
@@ -49,7 +49,7 @@ api_key = "My API Key"
 bearer_token = "My Bearer Token"
 
 
-def _get_params(client: BaseClient[Any, Any]) -> dict[str, str]:
+def _get_params(client: XTwitterScraper | AsyncXTwitterScraper) -> dict[str, str]:
     request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
     url = httpx.URL(request.url)
     return dict(url.params.items())
@@ -127,8 +127,7 @@ def mirror_request_content(request: httpx.Request) -> httpx.Response:
 class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
     def __init__(
         self,
-        handler: Callable[[httpx.Request], httpx.Response]
-        | Callable[[httpx.Request], Coroutine[Any, Any, httpx.Response]],
+        handler: Callable[[httpx.Request], httpx.Response] | Callable[[httpx.Request], Awaitable[httpx.Response]],
     ) -> None:
         self.handler = handler
 
@@ -137,8 +136,10 @@ class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
         self,
         request: httpx.Request,
     ) -> httpx.Response:
-        assert not inspect.iscoroutinefunction(self.handler), "handler must not be a coroutine function"
-        assert inspect.isfunction(self.handler), "handler must be a function"
+        is_coroutine_function = inspect.iscoroutinefunction(self.handler)
+        assert not is_coroutine_function, "handler must not be a coroutine function"
+        is_function = inspect.isfunction(self.handler)
+        assert is_function, "handler must be a function"
         response = self.handler(request)
         assert isinstance(response, HttpxResponse)
         return response
@@ -148,10 +149,11 @@ class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
         self,
         request: httpx.Request,
     ) -> httpx.Response:
-        assert inspect.iscoroutinefunction(self.handler), "handler must be a coroutine function"
-        response = await self.handler(request)
-        assert isinstance(response, HttpxResponse)
-        return response
+        is_coroutine_function = inspect.iscoroutinefunction(self.handler)
+        assert is_coroutine_function, "handler must be a coroutine function"
+        result = self.handler(request)
+        assert isinstance(result, collections.abc.Awaitable), "handler must return an awaitable"
+        return await result
 
 
 @dataclasses.dataclass
@@ -316,12 +318,10 @@ class TestXTwitterScraper:
 
     def test_request_timeout(self, client: XTwitterScraper) -> None:
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-        assert timeout == DEFAULT_TIMEOUT
+        assert request_timeout(request) == DEFAULT_TIMEOUT.as_dict()
 
         request = client._build_request(FinalRequestOptions(method="get", url="/foo", timeout=httpx.Timeout(100.0)))
-        timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-        assert timeout == httpx.Timeout(100.0)
+        assert request_timeout(request) == httpx.Timeout(100.0).as_dict()
 
     def test_client_timeout_option(self) -> None:
         client = XTwitterScraper(
@@ -333,8 +333,7 @@ class TestXTwitterScraper:
         )
 
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-        assert timeout == httpx.Timeout(0)
+        assert request_timeout(request) == httpx.Timeout(0).as_dict()
 
         client.close()
 
@@ -349,8 +348,7 @@ class TestXTwitterScraper:
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-            timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == httpx.Timeout(None)
+            assert request_timeout(request) == httpx.Timeout(None).as_dict()
 
             client.close()
 
@@ -364,8 +362,7 @@ class TestXTwitterScraper:
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-            timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == DEFAULT_TIMEOUT
+            assert request_timeout(request) == DEFAULT_TIMEOUT.as_dict()
 
             client.close()
 
@@ -379,8 +376,7 @@ class TestXTwitterScraper:
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-            timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == DEFAULT_TIMEOUT
+            assert request_timeout(request) == DEFAULT_TIMEOUT.as_dict()
 
             client.close()
 
@@ -1241,14 +1237,12 @@ class TestAsyncXTwitterScraper:
 
     async def test_request_timeout(self, async_client: AsyncXTwitterScraper) -> None:
         request = async_client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-        assert timeout == DEFAULT_TIMEOUT
+        assert request_timeout(request) == DEFAULT_TIMEOUT.as_dict()
 
         request = async_client._build_request(
             FinalRequestOptions(method="get", url="/foo", timeout=httpx.Timeout(100.0))
         )
-        timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-        assert timeout == httpx.Timeout(100.0)
+        assert request_timeout(request) == httpx.Timeout(100.0).as_dict()
 
     async def test_client_timeout_option(self) -> None:
         client = AsyncXTwitterScraper(
@@ -1260,8 +1254,7 @@ class TestAsyncXTwitterScraper:
         )
 
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-        assert timeout == httpx.Timeout(0)
+        assert request_timeout(request) == httpx.Timeout(0).as_dict()
 
         await client.close()
 
@@ -1276,8 +1269,7 @@ class TestAsyncXTwitterScraper:
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-            timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == httpx.Timeout(None)
+            assert request_timeout(request) == httpx.Timeout(None).as_dict()
 
             await client.close()
 
@@ -1291,8 +1283,7 @@ class TestAsyncXTwitterScraper:
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-            timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == DEFAULT_TIMEOUT
+            assert request_timeout(request) == DEFAULT_TIMEOUT.as_dict()
 
             await client.close()
 
@@ -1306,8 +1297,7 @@ class TestAsyncXTwitterScraper:
             )
 
             request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-            timeout = httpx.Timeout(**request.extensions["timeout"])  # type: ignore
-            assert timeout == DEFAULT_TIMEOUT
+            assert request_timeout(request) == DEFAULT_TIMEOUT.as_dict()
 
             await client.close()
 

@@ -18,6 +18,7 @@ from x_twitter_scraper._types import Omit, NoneType, JsonValue
 from x_twitter_scraper._utils import (
     is_dict,
     is_list,
+    is_mapping,
     is_sequence,
     is_list_type,
     is_union_type,
@@ -40,6 +41,12 @@ T = TypeVar("T")
 
 def json_response(status_code: int, *, json: JsonValue) -> httpx.Response:
     return httpx.Response(status_code, json=json)
+
+
+def request_timeout(request: httpx.Request) -> object:
+    extensions = get_attribute(request, "extensions")
+    assert is_mapping(extensions)
+    return extensions["timeout"]
 
 
 def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: list[str]) -> bool:
