@@ -9,7 +9,7 @@ import httpx
 import pytest
 import pydantic
 
-from tests.utils import json_dumps, json_response
+from tests.utils import json_dumps, get_attribute, json_response
 from x_twitter_scraper import BaseModel, XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper._types import JsonValue, HttpxResponse
 from x_twitter_scraper._models import FinalRequestOptions
@@ -66,11 +66,13 @@ ResponseFactory = Callable[[httpx.Response, bool], Union[APIResponse[str], Async
 def response_factory(
     request: pytest.FixtureRequest, client: XTwitterScraper, async_client: AsyncXTwitterScraper
 ) -> ResponseFactory:
+    asynchronous = get_attribute(request, "param") is True
+
     def create(raw: httpx.Response, stream: bool) -> Union[APIResponse[str], AsyncAPIResponse[str]]:
-        response_type = AsyncAPIResponse[str] if request.param else APIResponse[str]
+        response_type = AsyncAPIResponse[str] if asynchronous else APIResponse[str]
         return response_type(
             raw=raw,
-            client=async_client if request.param else client,
+            client=async_client if asynchronous else client,
             stream=stream,
             stream_cls=None,
             cast_to=str,
