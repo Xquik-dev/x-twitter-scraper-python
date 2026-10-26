@@ -5,8 +5,8 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, Mapping
-from typing_extensions import Self, override
+from typing import TYPE_CHECKING, Mapping
+from typing_extensions import Self, TypedDict, override
 
 import httpx
 
@@ -83,6 +83,10 @@ __all__ = [
     "Client",
     "AsyncClient",
 ]
+
+
+class ClientExtraKwargs(TypedDict, total=False):
+    _strict_response_validation: bool
 
 
 class XTwitterScraper(SyncAPIClient):
@@ -325,7 +329,7 @@ class XTwitterScraper(SyncAPIClient):
         set_default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
         set_default_query: Mapping[str, object] | None = None,
-        _extra_kwargs: Mapping[str, Any] = {},
+        _extra_kwargs: ClientExtraKwargs = {},
     ) -> Self:
         """
         Create a new client instance re-using the same options given to the current client with optional overriding.
@@ -637,7 +641,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         set_default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
         set_default_query: Mapping[str, object] | None = None,
-        _extra_kwargs: Mapping[str, Any] = {},
+        _extra_kwargs: ClientExtraKwargs = {},
     ) -> Self:
         """
         Create a new client instance re-using the same options given to the current client with optional overriding.
