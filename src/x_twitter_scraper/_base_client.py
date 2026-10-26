@@ -406,22 +406,13 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
     ) -> _exceptions.APIStatusError:
         raise NotImplementedError()
 
-    def _auth_headers(
-        self,
-        security: SecurityOptions,  # noqa: ARG002
-    ) -> dict[str, str]:
+    def _auth_headers(self, _security: SecurityOptions, /) -> dict[str, str]:
         return {}
 
-    def _auth_query(
-        self,
-        security: SecurityOptions,  # noqa: ARG002
-    ) -> dict[str, str]:
+    def _auth_query(self, _security: SecurityOptions, /) -> dict[str, str]:
         return {}
 
-    def _custom_auth(
-        self,
-        security: SecurityOptions,  # noqa: ARG002
-    ) -> httpx.Auth | None:
+    def _custom_auth(self, _security: SecurityOptions, /) -> httpx.Auth | None:
         return None
 
     def _build_headers(self, options: FinalRequestOptions, *, retries_taken: int = 0) -> httpx.Headers:
@@ -627,11 +618,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
             **self._custom_query,
         }
 
-    def _validate_headers(
-        self,
-        headers: Headers,  # noqa: ARG002
-        custom_headers: Headers,  # noqa: ARG002
-    ) -> None:
+    def _validate_headers(self, _headers: Headers, _custom_headers: Headers, /) -> None:
         return
 
     @property
@@ -818,14 +805,11 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[object]]):
 
     def _prepare_options(
         self,
-        options: FinalRequestOptions,  # noqa: ARG002
+        options: FinalRequestOptions,
     ) -> FinalRequestOptions:
         return options
 
-    def _prepare_request(
-        self,
-        request: httpx.Request,  # noqa: ARG002
-    ) -> None:
+    def _prepare_request(self, _request: httpx.Request, /) -> None:
         return None
 
     @overload
@@ -1301,14 +1285,11 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[object]]):
 
     async def _prepare_options(
         self,
-        options: FinalRequestOptions,  # noqa: ARG002
+        options: FinalRequestOptions,
     ) -> FinalRequestOptions:
         return options
 
-    async def _prepare_request(
-        self,
-        request: httpx.Request,  # noqa: ARG002
-    ) -> None:
+    async def _prepare_request(self, _request: httpx.Request, /) -> None:
         return None
 
     @overload

@@ -771,10 +771,6 @@ def validate_type(*, type_: type[_T], value: object) -> _T:
     return _validate_non_model_type(type_=type_, value=value)
 
 
-def set_pydantic_config(typ: Any, config: pydantic.ConfigDict) -> None:
-    setattr(typ, "__pydantic_config__", config)  # noqa: B010
-
-
 if TYPE_CHECKING:
     GenericModel = BaseModel
 else:

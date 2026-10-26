@@ -502,8 +502,7 @@ def test_compat_method_no_error_for_warnings() -> None:
 
 
 def test_type_compat() -> None:
-    def takes_pydantic(model: pydantic.BaseModel) -> None:  # noqa: ARG001
-        ...
+    def takes_pydantic(model: pydantic.BaseModel) -> None: ...
 
     class OurModel(BaseModel):
         foo: Optional[str] = None
