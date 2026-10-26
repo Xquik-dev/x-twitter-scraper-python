@@ -755,7 +755,7 @@ class TestXTwitterScraper:
         )
         assert client.base_url == "https://example.com/from_init/"
 
-        client.base_url = "https://example.com/from_setter"  # type: ignore[assignment]
+        client.base_url = "https://example.com/from_setter"
 
         assert client.base_url == "https://example.com/from_setter/"
 
@@ -919,8 +919,8 @@ class TestXTwitterScraper:
             base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=False
         )
 
-        response = non_strict_client.get("/foo", cast_to=Model)
-        assert isinstance(response, str)  # type: ignore[unreachable]
+        response: object = non_strict_client.get("/foo", cast_to=Model)
+        assert isinstance(response, str)
 
         strict_client.close()
         non_strict_client.close()
@@ -1678,7 +1678,7 @@ class TestAsyncXTwitterScraper:
         )
         assert client.base_url == "https://example.com/from_init/"
 
-        client.base_url = "https://example.com/from_setter"  # type: ignore[assignment]
+        client.base_url = "https://example.com/from_setter"
 
         assert client.base_url == "https://example.com/from_setter/"
 
@@ -1845,8 +1845,8 @@ class TestAsyncXTwitterScraper:
             base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=False
         )
 
-        response = await non_strict_client.get("/foo", cast_to=Model)
-        assert isinstance(response, str)  # type: ignore[unreachable]
+        response: object = await non_strict_client.get("/foo", cast_to=Model)
+        assert isinstance(response, str)
 
         await strict_client.close()
         await non_strict_client.close()
