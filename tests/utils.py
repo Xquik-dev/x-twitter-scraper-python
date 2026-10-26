@@ -46,6 +46,17 @@ def json_response(status_code: int, *, json: JsonValue) -> httpx.Response:
     return httpx.Response(status_code, json=json)
 
 
+def resolve(document: object, path: tuple[str | int, ...]) -> object:
+    for key in path:
+        if isinstance(key, int):
+            assert is_list(document)
+            document = document[key]
+        else:
+            assert is_dict(document)
+            document = document[key]
+    return document
+
+
 def query_param(params: httpx.QueryParams, name: str) -> str | None:
     return params[name] if name in params else None
 

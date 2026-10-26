@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.utils import json_dumps
+from tests.utils import resolve, json_dumps
 from scripts.verify_codeql import main, validate
 from x_twitter_scraper._utils import is_dict, is_list
 
@@ -28,17 +28,6 @@ RUN: dict[str, object] = {
     ],
 }
 REPORT: dict[str, object] = {"version": "2.1.0", "runs": [RUN]}
-
-
-def resolve(document: object, path: tuple[str | int, ...]) -> object:
-    for key in path:
-        if isinstance(key, int):
-            assert is_list(document)
-            document = document[key]
-        else:
-            assert is_dict(document)
-            document = document[key]
-    return document
 
 
 def test_complete_codeql_report() -> None:
