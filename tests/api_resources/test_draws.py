@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-from typing import Any, cast
-
 import pytest
 
 from tests.utils import assert_matches_type
@@ -42,7 +40,7 @@ class TestDraws:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         draw = response.parse()
         assert_matches_type(DrawRetrieveResponse, draw, path=["response"])
 
@@ -53,12 +51,12 @@ class TestDraws:
             "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             draw = response.parse()
             assert_matches_type(DrawRetrieveResponse, draw, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -89,7 +87,7 @@ class TestDraws:
         response = client.draws.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         draw = response.parse()
         assert_matches_type(DrawListResponse, draw, path=["response"])
 
@@ -98,12 +96,12 @@ class TestDraws:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.draws.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             draw = response.parse()
             assert_matches_type(DrawListResponse, draw, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @parametrize
     def test_method_export(self, client: XTwitterScraper) -> None:
@@ -114,7 +112,7 @@ class TestDraws:
         assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
         assert draw.is_closed
         assert draw.json() == {"foo": "bar"}
-        assert cast(Any, draw.is_closed) is True
+        assert draw.is_closed is True
         assert isinstance(draw, BinaryAPIResponse)
 
     @parametrize
@@ -127,7 +125,7 @@ class TestDraws:
         assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
         assert draw.is_closed
         assert draw.json() == {"foo": "bar"}
-        assert cast(Any, draw.is_closed) is True
+        assert draw.is_closed is True
         assert isinstance(draw, BinaryAPIResponse)
 
     @parametrize
@@ -140,7 +138,7 @@ class TestDraws:
         assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
 
         assert draw.is_closed is True
-        assert draw.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert draw.http_request.headers["X-Stainless-Lang"] == "python"
         assert draw.json() == {"foo": "bar"}
         assert isinstance(draw, BinaryAPIResponse)
 
@@ -152,13 +150,13 @@ class TestDraws:
         ) as draw:
             assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
             assert not draw.is_closed
-            assert draw.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert draw.http_request.headers["X-Stainless-Lang"] == "python"
 
             assert draw.json() == {"foo": "bar"}
-            assert cast(Any, draw.is_closed) is True
+            assert draw.http_response.is_closed is True
             assert isinstance(draw, StreamedBinaryAPIResponse)
 
-        assert cast(Any, draw.is_closed) is True
+        assert draw.is_closed is True
 
     @parametrize
     def test_path_params_export(self, client: XTwitterScraper) -> None:
@@ -204,7 +202,7 @@ class TestDraws:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         draw = response.parse()
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 
@@ -215,12 +213,12 @@ class TestDraws:
             tweet_url="https://x.com/elonmusk/status/1234567890",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             draw = response.parse()
             assert_matches_type(DrawRunResponse, draw, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncDraws:
@@ -244,7 +242,7 @@ class TestAsyncDraws:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         draw = await response.parse()
         assert_matches_type(DrawRetrieveResponse, draw, path=["response"])
 
@@ -255,12 +253,12 @@ class TestAsyncDraws:
             "f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             draw = await response.parse()
             assert_matches_type(DrawRetrieveResponse, draw, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -291,7 +289,7 @@ class TestAsyncDraws:
         response = await async_client.draws.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         draw = await response.parse()
         assert_matches_type(DrawListResponse, draw, path=["response"])
 
@@ -300,12 +298,12 @@ class TestAsyncDraws:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.draws.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             draw = await response.parse()
             assert_matches_type(DrawListResponse, draw, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @parametrize
     async def test_method_export(self, async_client: AsyncXTwitterScraper) -> None:
@@ -316,7 +314,7 @@ class TestAsyncDraws:
         assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
         assert draw.is_closed
         assert await draw.json() == {"foo": "bar"}
-        assert cast(Any, draw.is_closed) is True
+        assert draw.is_closed is True
         assert isinstance(draw, AsyncBinaryAPIResponse)
 
     @parametrize
@@ -329,7 +327,7 @@ class TestAsyncDraws:
         assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
         assert draw.is_closed
         assert await draw.json() == {"foo": "bar"}
-        assert cast(Any, draw.is_closed) is True
+        assert draw.is_closed is True
         assert isinstance(draw, AsyncBinaryAPIResponse)
 
     @parametrize
@@ -342,7 +340,7 @@ class TestAsyncDraws:
         assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
 
         assert draw.is_closed is True
-        assert draw.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert draw.http_request.headers["X-Stainless-Lang"] == "python"
         assert await draw.json() == {"foo": "bar"}
         assert isinstance(draw, AsyncBinaryAPIResponse)
 
@@ -354,13 +352,13 @@ class TestAsyncDraws:
         ) as draw:
             assert draw.http_request.url.path == "/draws/f4bd00a2-7b4e-4e59-8e1b-72e2c9f12345/export"
             assert not draw.is_closed
-            assert draw.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert draw.http_request.headers["X-Stainless-Lang"] == "python"
 
             assert await draw.json() == {"foo": "bar"}
-            assert cast(Any, draw.is_closed) is True
+            assert draw.http_response.is_closed is True
             assert isinstance(draw, AsyncStreamedBinaryAPIResponse)
 
-        assert cast(Any, draw.is_closed) is True
+        assert draw.is_closed is True
 
     @parametrize
     async def test_path_params_export(self, async_client: AsyncXTwitterScraper) -> None:
@@ -406,7 +404,7 @@ class TestAsyncDraws:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         draw = await response.parse()
         assert_matches_type(DrawRunResponse, draw, path=["response"])
 
@@ -417,9 +415,9 @@ class TestAsyncDraws:
             tweet_url="https://x.com/elonmusk/status/1234567890",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             draw = await response.parse()
             assert_matches_type(DrawRunResponse, draw, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import json
 from typing import Iterator
 from pathlib import Path
 from threading import Thread
@@ -12,6 +11,7 @@ from typing_extensions import override
 
 import pytest
 
+from tests.utils import json_dumps
 from scripts.check_api_coverage import main
 
 ROOT = Path(__file__).parents[1]
@@ -49,7 +49,7 @@ PUBLIC_PATHS: dict[str, object] = {
     "/ask": {"get": {"operationId": "askDocs"}},
 }
 PUBLIC_SPEC: dict[str, object] = {"openapi": "3.1.0", "servers": [{"url": "https://xquik.com"}], "paths": PUBLIC_PATHS}
-SPEC_BODY = json.dumps(PUBLIC_SPEC).encode()
+SPEC_BODY = json_dumps(PUBLIC_SPEC).encode()
 
 
 INVALID_EXCLUSIONS: list[tuple[object, str]] = [
@@ -90,7 +90,7 @@ def write_root(tmp_path: Path, resources: dict[str, str], exclusions: object) ->
         path = tmp_path / "src/x_twitter_scraper/resources" / name
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(source)
-    (tmp_path / "excluded-operations.json").write_text(json.dumps(exclusions))
+    (tmp_path / "excluded-operations.json").write_text(json_dumps(exclusions))
     return tmp_path
 
 
@@ -104,7 +104,7 @@ def run(
     exclusions: object = EXCLUSIONS,
 ) -> tuple[int, list[str], list[str]]:
     spec_path = tmp_path / "openapi.json"
-    spec_path.write_text(json.dumps(spec))
+    spec_path.write_text(json_dumps(spec))
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     status = main(write_root(tmp_path / "repo", resources, exclusions))
     output = capsys.readouterr()
@@ -271,7 +271,7 @@ def test_unreadable_exclusion_file_fails(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     spec_path = tmp_path / "openapi.json"
-    spec_path.write_text(json.dumps(PUBLIC_SPEC))
+    spec_path.write_text(json_dumps(PUBLIC_SPEC))
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     root = write_root(tmp_path / "repo", RESOURCES, EXCLUSIONS)
     exclusions = root / "excluded-operations.json"
@@ -368,7 +368,7 @@ class SpecHandler(BaseHTTPRequestHandler):
         del format, args
 
 
-@pytest.fixture
+@pytest.fixture()
 def spec_url() -> Iterator[str]:
     server = HTTPServer(("127.0.0.1", 0), SpecHandler)
     thread = Thread(target=server.serve_forever, daemon=True)
@@ -441,7 +441,7 @@ def test_unreadable_request_names_its_file_and_line(
     root = write_root(tmp_path / "repo", RESOURCES, EXCLUSIONS)
     (root / "src/x_twitter_scraper/resources/x/broken.py").write_bytes(source)
     spec_path = tmp_path / "openapi.json"
-    spec_path.write_text(json.dumps(PUBLIC_SPEC))
+    spec_path.write_text(json_dumps(PUBLIC_SPEC))
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     assert main(root) == 1
     output = capsys.readouterr()
@@ -471,7 +471,7 @@ def test_repository_sdk_and_exclusions_are_readable(
         },
     }
     spec_path = tmp_path / "openapi.json"
-    spec_path.write_text(json.dumps(spec))
+    spec_path.write_text(json_dumps(spec))
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     assert main(ROOT) == 0
     assert capsys.readouterr().out.splitlines() == [

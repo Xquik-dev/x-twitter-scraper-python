@@ -4,12 +4,12 @@
 from __future__ import annotations
 
 import sys
-import json
 from typing import Dict, List
 from pathlib import Path
 
 import pytest
 
+from tests.utils import json_dumps
 from scripts.check_api_fields import main
 
 ROOT = Path(__file__).parents[1]
@@ -428,7 +428,7 @@ FOUND = [
 ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def sdk_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     package = f"fieldsdk_{tmp_path.name.replace('-', '_')}"
     source = tmp_path / "repo" / "src" / package
@@ -439,13 +439,13 @@ def sdk_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     (source / "resources" / "trends.py").write_text(RESOURCES.format(package=package))
     monkeypatch.setattr(sys, "path", [str(tmp_path / "repo" / "src"), *sys.path])
     spec_path = tmp_path / "openapi.json"
-    spec_path.write_text(json.dumps(SPEC))
+    spec_path.write_text(json_dumps(SPEC))
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     return tmp_path / "repo"
 
 
 def run(root: Path, capsys: pytest.CaptureFixture[str], accepted: object) -> tuple[int, List[str], List[str]]:
-    (root / "accepted-field-differences.json").write_text(json.dumps(accepted))
+    (root / "accepted-field-differences.json").write_text(json_dumps(accepted))
     package = next((root / "src").iterdir()).name
     status = main(root, package)
     output = capsys.readouterr()
@@ -566,7 +566,7 @@ def test_a_spec_with_an_unreadable_part_fails(
     spec: object, sdk_root: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     spec_path = tmp_path / "broken.json"
-    spec_path.write_text(json.dumps(spec))
+    spec_path.write_text(json_dumps(spec))
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     assert run(sdk_root, capsys, []) == (
         1,
@@ -754,7 +754,7 @@ def test_the_repository_sdk_types_are_compared(
     (root / "src").symlink_to(ROOT / "src", target_is_directory=True)
     (root / "accepted-field-differences.json").write_text("[]")
     spec_path = tmp_path / "openapi.json"
-    spec_path.write_text(json.dumps(REPOSITORY_SPEC))
+    spec_path.write_text(json_dumps(REPOSITORY_SPEC))
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     assert main(root, "x_twitter_scraper") == 1
     output = capsys.readouterr()

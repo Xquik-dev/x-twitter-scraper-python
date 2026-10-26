@@ -8,24 +8,23 @@ import io
 import os
 import base64
 import pathlib
-from typing import Any, Mapping, TypeVar, cast
+from typing import Mapping, overload
 from datetime import date, datetime
 from dataclasses import dataclass
-from typing_extensions import Literal, get_args, override, get_type_hints as _get_type_hints
-
-import pydantic
+from typing_extensions import Literal, override, get_type_hints as _get_type_hints
 
 from ._sync import to_thread
 from ._utils import (
+    is_dict,
     is_list,
+    memoize,
     is_given,
-    lru_cache,
     is_mapping,
     is_iterable,
     is_sequence,
 )
 from .._files import is_base64_file_input
-from ._compat import get_origin, is_typeddict
+from ._compat import get_args, get_origin, is_typeddict
 from ._typing import (
     is_list_type,
     is_union_type,
@@ -36,9 +35,6 @@ from ._typing import (
     is_annotated_type,
     strip_annotated_type,
 )
-
-_T = TypeVar("_T")
-
 
 PropertyFormat = Literal["iso8601", "base64", "custom"]
 
@@ -55,33 +51,52 @@ class PropertyInfo:
         return f"{self.__class__.__name__}(alias='{self.alias}', format={self.format}, format_template='{self.format_template}', discriminator='{self.discriminator}')"
 
 
+@overload
+def maybe_transform(data: Mapping[str, object], expected_type: object) -> Mapping[str, object]: ...
+
+
+@overload
+def maybe_transform(data: None, expected_type: object) -> None: ...
+
+
+@overload
+def maybe_transform(data: object, expected_type: object) -> object: ...
+
+
 def maybe_transform(
     data: object,
     expected_type: object,
-) -> Any | None:
+) -> object:
     if data is None:
         return None
     return transform(data, expected_type)
 
 
+@overload
+def transform(data: Mapping[str, object], expected_type: object) -> Mapping[str, object]: ...
+
+
+@overload
+def transform(data: object, expected_type: object) -> object: ...
+
+
 def transform(
-    data: _T,
+    data: object,
     expected_type: object,
-) -> _T:
-    transformed = _transform_recursive(data, annotation=cast(type, expected_type))
-    return cast(_T, transformed)
+) -> object:
+    return _transform_recursive(data, annotation=expected_type)
 
 
-@lru_cache(maxsize=8096)
-def _get_property_info(type_: type) -> tuple[PropertyInfo, ...]:
+@memoize
+def _get_property_info(type_: object) -> tuple[PropertyInfo, ...]:
     if is_required_type(type_):
-        type_ = cast(type, get_args(type_)[0])
+        type_ = get_args(type_)[0]
     if not is_annotated_type(type_):
         return ()
     return tuple(info for info in get_args(type_)[1:] if isinstance(info, PropertyInfo))
 
 
-def _maybe_transform_key(key: str, type_: type) -> str:
+def _maybe_transform_key(key: str, type_: object) -> str:
     for info in _get_property_info(type_):
         if info.alias is not None:
             return info.alias
@@ -92,10 +107,10 @@ def _maybe_transform_key(key: str, type_: type) -> str:
 def _transform_recursive(
     data: object,
     *,
-    annotation: type,
-    inner_type: type | None = None,
+    annotation: object,
+    inner_type: object = None,
 ) -> object:
-    from .._compat import model_dump
+    from .._compat import PydanticModel, model_dump
 
     if inner_type is None:
         inner_type = annotation
@@ -114,8 +129,8 @@ def _transform_recursive(
         or (is_iterable_type(stripped_type) and is_iterable(data) and not isinstance(data, str))
         or (is_sequence_type(stripped_type) and is_sequence(data) and not isinstance(data, str))
     ):
-        if isinstance(data, dict):
-            return cast(object, data)
+        if is_dict(data):
+            return data
 
         inner_type = extract_type_arg(stripped_type, 0)
         if inner_type == float or inner_type == int:
@@ -130,7 +145,7 @@ def _transform_recursive(
             data = _transform_recursive(data, annotation=annotation, inner_type=subtype)
         return data
 
-    if isinstance(data, pydantic.BaseModel):
+    if isinstance(data, PydanticModel):
         return model_dump(data, exclude_unset=True, mode="json")
 
     for info in _get_property_info(annotation):
@@ -175,7 +190,7 @@ def _format_data(data: object, format_: PropertyFormat, format_template: str | N
 
 def _transform_typeddict(
     data: Mapping[str, object],
-    expected_type: type,
+    expected_type: object,
 ) -> Mapping[str, object]:
     result: dict[str, object] = {}
     annotations = get_type_hints(expected_type, include_extras=True)
@@ -191,30 +206,49 @@ def _transform_typeddict(
     return result
 
 
+@overload
+async def async_maybe_transform(data: Mapping[str, object], expected_type: object) -> Mapping[str, object]: ...
+
+
+@overload
+async def async_maybe_transform(data: None, expected_type: object) -> None: ...
+
+
+@overload
+async def async_maybe_transform(data: object, expected_type: object) -> object: ...
+
+
 async def async_maybe_transform(
     data: object,
     expected_type: object,
-) -> Any | None:
+) -> object:
     if data is None:
         return None
     return await async_transform(data, expected_type)
 
 
+@overload
+async def async_transform(data: Mapping[str, object], expected_type: object) -> Mapping[str, object]: ...
+
+
+@overload
+async def async_transform(data: object, expected_type: object) -> object: ...
+
+
 async def async_transform(
-    data: _T,
+    data: object,
     expected_type: object,
-) -> _T:
-    transformed = await _async_transform_recursive(data, annotation=cast(type, expected_type))
-    return cast(_T, transformed)
+) -> object:
+    return await _async_transform_recursive(data, annotation=expected_type)
 
 
 async def _async_transform_recursive(
     data: object,
     *,
-    annotation: type,
-    inner_type: type | None = None,
+    annotation: object,
+    inner_type: object = None,
 ) -> object:
-    from .._compat import model_dump
+    from .._compat import PydanticModel, model_dump
 
     if inner_type is None:
         inner_type = annotation
@@ -233,8 +267,8 @@ async def _async_transform_recursive(
         or (is_iterable_type(stripped_type) and is_iterable(data) and not isinstance(data, str))
         or (is_sequence_type(stripped_type) and is_sequence(data) and not isinstance(data, str))
     ):
-        if isinstance(data, dict):
-            return cast(object, data)
+        if is_dict(data):
+            return data
 
         inner_type = extract_type_arg(stripped_type, 0)
         if inner_type == float or inner_type == int:
@@ -249,7 +283,7 @@ async def _async_transform_recursive(
             data = await _async_transform_recursive(data, annotation=annotation, inner_type=subtype)
         return data
 
-    if isinstance(data, pydantic.BaseModel):
+    if isinstance(data, PydanticModel):
         return model_dump(data, exclude_unset=True, mode="json")
 
     for info in _get_property_info(annotation):
@@ -267,7 +301,7 @@ async def _async_format_data(data: object, format_: PropertyFormat, format_templ
 
 async def _async_transform_typeddict(
     data: Mapping[str, object],
-    expected_type: type,
+    expected_type: object,
 ) -> Mapping[str, object]:
     result: dict[str, object] = {}
     annotations = get_type_hints(expected_type, include_extras=True)
@@ -283,11 +317,12 @@ async def _async_transform_typeddict(
     return result
 
 
-@lru_cache(maxsize=8096)
+@memoize
 def get_type_hints(
-    obj: Any,
-    globalns: dict[str, Any] | None = None,
-    localns: Mapping[str, Any] | None = None,
+    obj: object,
+    globalns: dict[str, object] | None = None,
+    localns: Mapping[str, object] | None = None,
     include_extras: bool = False,
-) -> dict[str, Any]:
-    return _get_type_hints(obj, globalns=globalns, localns=localns, include_extras=include_extras)
+) -> dict[str, object]:
+    hints: dict[str, object] = _get_type_hints(obj, globalns=globalns, localns=localns, include_extras=include_extras)
+    return hints

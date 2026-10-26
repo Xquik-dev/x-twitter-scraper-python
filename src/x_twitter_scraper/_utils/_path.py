@@ -5,10 +5,7 @@
 from __future__ import annotations
 
 import re
-from typing import (
-    Any,
-    Mapping,
-)
+from typing import Mapping
 from urllib.parse import quote
 
 _DOT_SEGMENT_RE = re.compile(r"^(?:\.|%2[eE]){1,2}$")
@@ -18,7 +15,7 @@ _PLACEHOLDER_RE = re.compile(r"\{(\w+)\}")
 
 def _interpolate(
     template: str,
-    values: Mapping[str, Any],
+    values: Mapping[str, object],
     safe: str,
 ) -> str:
     parts = _PLACEHOLDER_RE.split(template)
@@ -38,7 +35,7 @@ def _interpolate(
     return "".join(parts)
 
 
-def path_template(template: str, /, **kwargs: Any) -> str:
+def path_template(template: str, /, **kwargs: object) -> str:
     rest, fragment_separator, fragment_template = template.partition("#")
     path_template, query_separator, query_template = rest.partition("?")
 

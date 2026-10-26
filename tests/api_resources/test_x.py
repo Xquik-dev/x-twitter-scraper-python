@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -58,7 +57,7 @@ class TestX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XAutocompleteSearchResponse, x, path=["response"])
 
@@ -69,12 +68,12 @@ class TestX:
             q="nasa",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XAutocompleteSearchResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -102,7 +101,7 @@ class TestX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XGetArticleResponse, x, path=["response"])
 
@@ -113,12 +112,12 @@ class TestX:
             tweet_id="tweetId",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XGetArticleResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -152,7 +151,7 @@ class TestX:
         response = client.x.with_raw_response.get_hashflags()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XGetHashflagsResponse, x, path=["response"])
 
@@ -161,12 +160,12 @@ class TestX:
     def test_streaming_response_get_hashflags(self, client: XTwitterScraper) -> None:
         with client.x.with_streaming_response.get_hashflags() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XGetHashflagsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -189,7 +188,7 @@ class TestX:
         response = client.x.with_raw_response.get_home_timeline()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(PaginatedTweets, x, path=["response"])
 
@@ -198,12 +197,12 @@ class TestX:
     def test_streaming_response_get_home_timeline(self, client: XTwitterScraper) -> None:
         with client.x.with_streaming_response.get_home_timeline() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(PaginatedTweets, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -231,7 +230,7 @@ class TestX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
 
@@ -242,12 +241,12 @@ class TestX:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -278,7 +277,7 @@ class TestX:
         response = client.x.with_raw_response.get_notifications()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XGetNotificationsResponse, x, path=["response"])
 
@@ -287,12 +286,12 @@ class TestX:
     def test_streaming_response_get_notifications(self, client: XTwitterScraper) -> None:
         with client.x.with_streaming_response.get_notifications() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XGetNotificationsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -319,7 +318,7 @@ class TestX:
         response = client.x.with_raw_response.get_trend_locations()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XGetTrendLocationsResponse, x, path=["response"])
 
@@ -328,12 +327,12 @@ class TestX:
     def test_streaming_response_get_trend_locations(self, client: XTwitterScraper) -> None:
         with client.x.with_streaming_response.get_trend_locations() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XGetTrendLocationsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -361,7 +360,7 @@ class TestX:
         response = client.x.with_raw_response.get_trends()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
@@ -370,12 +369,12 @@ class TestX:
     def test_streaming_response_get_trends(self, client: XTwitterScraper) -> None:
         with client.x.with_streaming_response.get_trends() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -407,7 +406,7 @@ class TestX:
         response = client.x.with_raw_response.get_trends_history()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
 
@@ -416,12 +415,12 @@ class TestX:
     def test_streaming_response_get_trends_history(self, client: XTwitterScraper) -> None:
         with client.x.with_streaming_response.get_trends_history() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -450,7 +449,7 @@ class TestX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = response.parse()
         assert_matches_type(XSearchPlacesResponse, x, path=["response"])
 
@@ -461,12 +460,12 @@ class TestX:
             q="q",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = response.parse()
             assert_matches_type(XSearchPlacesResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncX:
@@ -502,7 +501,7 @@ class TestAsyncX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XAutocompleteSearchResponse, x, path=["response"])
 
@@ -513,12 +512,12 @@ class TestAsyncX:
             q="nasa",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XAutocompleteSearchResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -546,7 +545,7 @@ class TestAsyncX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XGetArticleResponse, x, path=["response"])
 
@@ -557,12 +556,12 @@ class TestAsyncX:
             tweet_id="tweetId",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XGetArticleResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -596,7 +595,7 @@ class TestAsyncX:
         response = await async_client.x.with_raw_response.get_hashflags()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XGetHashflagsResponse, x, path=["response"])
 
@@ -605,12 +604,12 @@ class TestAsyncX:
     async def test_streaming_response_get_hashflags(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.with_streaming_response.get_hashflags() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XGetHashflagsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -633,7 +632,7 @@ class TestAsyncX:
         response = await async_client.x.with_raw_response.get_home_timeline()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(PaginatedTweets, x, path=["response"])
 
@@ -642,12 +641,12 @@ class TestAsyncX:
     async def test_streaming_response_get_home_timeline(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.with_streaming_response.get_home_timeline() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(PaginatedTweets, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -675,7 +674,7 @@ class TestAsyncX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
 
@@ -686,12 +685,12 @@ class TestAsyncX:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XGetNewsStoryVersionsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -722,7 +721,7 @@ class TestAsyncX:
         response = await async_client.x.with_raw_response.get_notifications()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XGetNotificationsResponse, x, path=["response"])
 
@@ -731,12 +730,12 @@ class TestAsyncX:
     async def test_streaming_response_get_notifications(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.with_streaming_response.get_notifications() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XGetNotificationsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -763,7 +762,7 @@ class TestAsyncX:
         response = await async_client.x.with_raw_response.get_trend_locations()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XGetTrendLocationsResponse, x, path=["response"])
 
@@ -772,12 +771,12 @@ class TestAsyncX:
     async def test_streaming_response_get_trend_locations(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.with_streaming_response.get_trend_locations() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XGetTrendLocationsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -805,7 +804,7 @@ class TestAsyncX:
         response = await async_client.x.with_raw_response.get_trends()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
@@ -814,12 +813,12 @@ class TestAsyncX:
     async def test_streaming_response_get_trends(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.with_streaming_response.get_trends() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XGetTrendsResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -851,7 +850,7 @@ class TestAsyncX:
         response = await async_client.x.with_raw_response.get_trends_history()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
 
@@ -860,12 +859,12 @@ class TestAsyncX:
     async def test_streaming_response_get_trends_history(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.x.with_streaming_response.get_trends_history() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XGetTrendsHistoryResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -894,7 +893,7 @@ class TestAsyncX:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         x = await response.parse()
         assert_matches_type(XSearchPlacesResponse, x, path=["response"])
 
@@ -905,9 +904,9 @@ class TestAsyncX:
             q="q",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             x = await response.parse()
             assert_matches_type(XSearchPlacesResponse, x, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

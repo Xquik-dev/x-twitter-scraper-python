@@ -8,6 +8,7 @@ from typing_extensions import override
 import httpx
 import pytest
 
+from tests.utils import query_param, json_response
 from x_twitter_scraper import InternalServerError, AsyncXTwitterScraper
 from x_twitter_scraper._models import FinalRequestOptions
 from x_twitter_scraper._base_client import PageInfo, BaseAsyncPage, AsyncPaginator
@@ -33,8 +34,8 @@ async def test_async_paginator_retains_items_and_propagates_page_failure(fail: b
     def respond(request: httpx.Request) -> httpx.Response:
         requests.append(request)
         if len(requests) == 1:
-            return httpx.Response(200, json={"items": [1, 2], "cursor": "next-page"})
-        return httpx.Response(503, json={"error": "unavailable"}) if fail else httpx.Response(200, json={"items": [3]})
+            return json_response(200, json={"items": [1, 2], "cursor": "next-page"})
+        return json_response(503, json={"error": "unavailable"}) if fail else json_response(200, json={"items": [3]})
 
     collected: list[int] = []
     async with AsyncXTwitterScraper(
@@ -53,5 +54,5 @@ async def test_async_paginator_retains_items_and_propagates_page_failure(fail: b
                 collected.append(item)
     assert collected == ([1, 2] if fail else [1, 2, 3])
     assert len(requests) == 2
-    assert requests[0].url.params.get("cursor") is None
+    assert query_param(requests[0].url.params, "cursor") is None
     assert requests[1].url.params["cursor"] == "next-page"

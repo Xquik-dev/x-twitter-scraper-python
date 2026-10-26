@@ -5,18 +5,20 @@
 from __future__ import annotations
 
 import sys
-import json
 import subprocess
 from pathlib import Path
 
 import pytest
 
+from tests.utils import resolve, json_dumps
 from scripts.verify_coverage import verify_coverage, coverage_metrics, verify_non_regression
+from x_twitter_scraper._utils import is_dict
+from x_twitter_scraper._utils._json import json_loads
 
 
 def write_report(path: Path, *, lines: tuple[int, int], branches: tuple[int, int]) -> None:
     path.write_text(
-        json.dumps(
+        json_dumps(
             {
                 "meta": {"format": 3, "version": "test", "branch_coverage": True},
                 "totals": {
@@ -95,12 +97,15 @@ def test_coverage_non_regression_is_exact(tmp_path: Path, before: int, after: in
 def test_missing_and_uncovered_functions_cannot_pass(tmp_path: Path) -> None:
     parent, candidate = tmp_path / "parent.json", tmp_path / "candidate.json"
     write_report(parent, lines=(100, 100), branches=(100, 100))
-    report = json.loads(parent.read_text())
-    report["files"]["example.py"]["functions"]["example"]["summary"]["covered_lines"] = 0
-    candidate.write_text(json.dumps(report))
+    report = json_loads(parent.read_text())
+    summary = resolve(report, ("files", "example.py", "functions", "example", "summary"))
+    assert is_dict(summary)
+    summary["covered_lines"] = 0
+    candidate.write_text(json_dumps(report))
     assert not verify_non_regression(candidate, parent)
+    assert is_dict(report)
     report["files"] = {}
-    candidate.write_text(json.dumps(report))
+    candidate.write_text(json_dumps(report))
     with pytest.raises(ValueError, match="lacks files"):
         coverage_metrics(candidate)
 
@@ -111,9 +116,11 @@ def test_missing_and_uncovered_functions_cannot_pass(tmp_path: Path) -> None:
 def test_incompatible_parent_report_is_rejected(tmp_path: Path, field: str, value: object) -> None:
     parent, candidate = tmp_path / "parent.json", tmp_path / "candidate.json"
     write_report(candidate, lines=(100, 100), branches=(100, 100))
-    report = json.loads(candidate.read_text())
-    report["meta"][field] = value
-    parent.write_text(json.dumps(report))
+    report = json_loads(candidate.read_text())
+    meta = resolve(report, ("meta",))
+    assert is_dict(meta)
+    meta[field] = value
+    parent.write_text(json_dumps(report))
     with pytest.raises(ValueError, match="Regenerate both reports"):
         verify_non_regression(candidate, parent)
 

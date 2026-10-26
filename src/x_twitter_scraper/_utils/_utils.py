@@ -9,8 +9,6 @@ import re
 import inspect
 import functools
 from typing import (
-    Any,
-    Tuple,
     Mapping,
     TypeVar,
     Callable,
@@ -23,15 +21,13 @@ from pathlib import Path
 from datetime import date, datetime
 from typing_extensions import ParamSpec, TypeGuard, get_args
 
+import httpx
 import sniffio
 
 from .._types import Omit, NotGiven, FileTypes, ArrayFormat, HeadersLike
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
-_TupleT = TypeVar("_TupleT", bound=Tuple[object, ...])
-_MappingT = TypeVar("_MappingT", bound=Mapping[str, object])
-CallableT = TypeVar("CallableT", bound=Callable[..., Any])
 
 
 def flatten(t: Iterable[Iterable[_T]]) -> list[_T]:
@@ -140,19 +136,11 @@ def is_tuple(obj: object) -> TypeGuard[tuple[object, ...]]:
     return isinstance(obj, tuple)
 
 
-def is_tuple_t(obj: _TupleT | object) -> TypeGuard[_TupleT]:
-    return isinstance(obj, tuple)
-
-
 def is_sequence(obj: object) -> TypeGuard[Sequence[object]]:
     return isinstance(obj, Sequence)
 
 
 def is_mapping(obj: object) -> TypeGuard[Mapping[str, object]]:
-    return isinstance(obj, Mapping)
-
-
-def is_mapping_t(obj: _MappingT | object) -> TypeGuard[_MappingT]:
     return isinstance(obj, Mapping)
 
 
@@ -291,14 +279,32 @@ def file_from_path(path: str) -> FileTypes:
     return (file_name, contents)
 
 
-def get_required_header(headers: HeadersLike, header: str) -> str:
-    lower_header = header.lower()
-    if is_mapping_t(headers):
-        for k, v in headers.items():  # type: ignore
+def _upper_after_separator(match: re.Match[str]) -> str:
+    # Match.group returns str | Any, and both groups of the header pattern always match a string. https://docs.python.org/3/library/re.html#re.Match.group
+    separator: str = match.group(1)
+    letter: str = match.group(2)
+    return separator + letter.upper()
+
+
+def _find_mapping_header(headers: object, lower_header: str) -> str | None:
+    if is_mapping(headers):
+        for k, v in headers.items():
             if k.lower() == lower_header and isinstance(v, str):
                 return v
+    return None
 
-    intercaps_header = re.sub(r"([^\w])(\w)", lambda pat: pat.group(1) + pat.group(2).upper(), header.capitalize())
+
+def get_header(headers: httpx.Headers, name: str) -> str | None:
+    return headers[name] if name in headers else None
+
+
+def get_required_header(headers: HeadersLike, header: str) -> str:
+    lower_header = header.lower()
+    mapped = _find_mapping_header(headers, lower_header)
+    if mapped is not None:
+        return mapped
+
+    intercaps_header = re.sub(r"([^\w])(\w)", _upper_after_separator, header.capitalize())
 
     for normalized_header in [header, lower_header, header.upper(), intercaps_header]:
         value = headers.get(normalized_header)
@@ -315,11 +321,19 @@ def get_async_library() -> str:
         return "false"
 
 
-def lru_cache(*, maxsize: int | None = 128) -> Callable[[CallableT], CallableT]:
-    wrapper = functools.lru_cache(  # noqa: TID251
-        maxsize=maxsize,
-    )
-    return cast(Any, wrapper)  # type: ignore[no-any-return]
+def memoize(func: Callable[_P, _T]) -> Callable[_P, _T]:
+    cache: dict[tuple[tuple[object, ...], tuple[tuple[str, object], ...]], _T] = {}
+
+    @functools.wraps(func)
+    def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
+        key = (args, tuple(kwargs.items()))
+        try:
+            return cache[key]
+        except KeyError:
+            result = cache[key] = func(*args, **kwargs)
+            return result
+
+    return wrapper
 
 
 def json_safe(data: object) -> object:

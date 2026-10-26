@@ -4,15 +4,15 @@
 
 from __future__ import annotations
 
-import json
-from typing import Any, Dict, Callable, cast
+from typing import Dict, Callable, cast
 
 import pytest
 
 from x_twitter_scraper.types import Event, EventDetail
 from x_twitter_scraper._models import validate_type, construct_type_unchecked
+from x_twitter_scraper._utils._json import json_loads
 
-POST = json.loads(
+POST = json_loads(
     """{
       "id": "1900000000000000001",
       "text": "Launch day",
@@ -29,7 +29,7 @@ POST = json.loads(
       "author": {"id": "44196397", "username": "xquik", "name": "Xquik"}
     }"""
 )
-PROFILE_CHANGE = json.loads(
+PROFILE_CHANGE = json_loads(
     """{
       "field": "bio",
       "userId": "44196397",
@@ -38,7 +38,7 @@ PROFILE_CHANGE = json.loads(
       "current": "New bio"
     }"""
 )
-LEGACY_POST = json.loads(
+LEGACY_POST = json_loads(
     """{
       "id": "1900000000000000002",
       "text": "Stored post",
@@ -64,7 +64,7 @@ PARSERS = [
 ]
 
 
-def event_payload(data: Dict[str, Any]) -> Dict[str, Any]:
+def event_payload(data: Dict[str, object]) -> Dict[str, object]:
     return {
         "id": "42",
         "type": "tweet.new",
@@ -79,10 +79,10 @@ def event_payload(data: Dict[str, Any]) -> Dict[str, Any]:
 @pytest.mark.parametrize(("model", "owner"), EVENT_CASES)
 @pytest.mark.parametrize(("data", "data_type", "keys"), DATA_CASES)
 def test_event_data_keeps_dict_access(
-    parse: Callable[..., Any],
+    parse: Callable[..., object],
     model: type[Event | EventDetail],
     owner: str,
-    data: Dict[str, Any],
+    data: Dict[str, object],
     data_type: str,
     keys: list[str],
 ) -> None:

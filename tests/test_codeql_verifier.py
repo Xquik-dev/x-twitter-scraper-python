@@ -4,38 +4,34 @@
 from __future__ import annotations
 
 import copy
-import json
-from typing import Any
 from pathlib import Path
 
 import pytest
 
+from tests.utils import resolve, json_dumps
 from scripts.verify_codeql import main, validate
+from x_twitter_scraper._utils import is_dict, is_list
 
-REPORT: dict[str, Any] = {
-    "version": "2.1.0",
-    "runs": [
+RUN: dict[str, object] = {
+    "tool": {"driver": {"notifications": [{"id": "py/diagnostics/extraction-warnings"}]}},
+    "results": [],
+    "invocations": [
         {
-            "tool": {"driver": {"notifications": [{"id": "py/diagnostics/extraction-warnings"}]}},
-            "results": [],
-            "invocations": [
+            "executionSuccessful": True,
+            "toolExecutionNotifications": [
                 {
-                    "executionSuccessful": True,
-                    "toolExecutionNotifications": [
-                        {
-                            "level": "none",
-                            "descriptor": {"id": "py/diagnostics/successfully-extracted-files"},
-                        }
-                    ],
+                    "level": "none",
+                    "descriptor": {"id": "py/diagnostics/successfully-extracted-files"},
                 }
             ],
         }
     ],
 }
+REPORT: dict[str, object] = {"version": "2.1.0", "runs": [RUN]}
 
 
 def test_complete_codeql_report() -> None:
-    assert validate(REPORT) is None
+    validate(REPORT)
 
 
 @pytest.mark.parametrize("report", [None, [], {}, {"version": "2.1.0", "runs": [None]}])
@@ -48,7 +44,7 @@ def test_invalid_codeql_structure(report: object) -> None:
     "path,value",
     [
         (("version",), "2.0.0"),
-        (("runs",), [REPORT["runs"][0], REPORT["runs"][0]]),
+        (("runs",), [RUN, RUN]),
         (("runs", 0, "results"), [{"ruleId": "py/unsafe-deserialization"}]),
         (("runs", 0, "results"), None),
         (("runs", 0, "invocations"), []),
@@ -65,17 +61,23 @@ def test_invalid_codeql_structure(report: object) -> None:
 )
 def test_incomplete_or_failed_codeql_report(path: tuple[str | int, ...], value: object) -> None:
     report = copy.deepcopy(REPORT)
-    target: Any = report
-    for key in path[:-1]:
-        target = target[key]
-    target[path[-1]] = value
+    target = resolve(report, path[:-1])
+    key = path[-1]
+    if isinstance(key, int):
+        assert is_list(target)
+        target[key] = value
+    else:
+        assert is_dict(target)
+        target[key] = value
     with pytest.raises(ValueError):
         validate(report)
 
 
-def with_notifications(*notifications: dict[str, object]) -> dict[str, Any]:
+def with_notifications(*notifications: dict[str, object]) -> dict[str, object]:
     report = copy.deepcopy(REPORT)
-    report["runs"][0]["invocations"][0]["toolExecutionNotifications"].extend(notifications)
+    existing = resolve(report, ("runs", 0, "invocations", 0, "toolExecutionNotifications"))
+    assert is_list(existing)
+    existing.extend(notifications)
     return report
 
 
@@ -119,13 +121,13 @@ def test_another_diagnostic_above_note_level_is_named_with_its_message() -> None
 
 
 def test_main_passes_a_complete_report(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    (tmp_path / "report.sarif").write_text(json.dumps(REPORT))
+    (tmp_path / "report.sarif").write_text(json_dumps(REPORT))
     assert main([str(tmp_path / "report.sarif")]) == 0
     assert capsys.readouterr().out == "CodeQL completed without findings and extracted 1 Python entries.\n"
 
 
 def test_main_prints_1_line_for_a_failed_report(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
-    (tmp_path / "report.sarif").write_text(json.dumps(with_notifications(unread("src/x_twitter_scraper/_files.py", 3))))
+    (tmp_path / "report.sarif").write_text(json_dumps(with_notifications(unread("src/x_twitter_scraper/_files.py", 3))))
     assert main([str(tmp_path / "report.sarif")]) == 1
     assert capsys.readouterr().err == (
         "CodeQL could not parse src/x_twitter_scraper/_files.py at line 3, so the scan is incomplete. "

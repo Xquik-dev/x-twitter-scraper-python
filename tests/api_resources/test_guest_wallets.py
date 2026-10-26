@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -43,7 +42,7 @@ class TestGuestWallets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         guest_wallet = response.parse()
         assert_matches_type(GuestWalletCreateResponse, guest_wallet, path=["response"])
 
@@ -56,12 +55,12 @@ class TestGuestWallets:
             idempotency_key="e1cb97D8-dDF3-4AaA-ad0a-49E4A0d1CfAa",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             guest_wallet = response.parse()
             assert_matches_type(GuestWalletCreateResponse, guest_wallet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -75,7 +74,7 @@ class TestGuestWallets:
         response = client.guest_wallets.with_raw_response.retrieve_status()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         guest_wallet = response.parse()
         assert_matches_type(GuestWalletRetrieveStatusResponse, guest_wallet, path=["response"])
 
@@ -84,12 +83,12 @@ class TestGuestWallets:
     def test_streaming_response_retrieve_status(self, client: XTwitterScraper) -> None:
         with client.guest_wallets.with_streaming_response.retrieve_status() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             guest_wallet = response.parse()
             assert_matches_type(GuestWalletRetrieveStatusResponse, guest_wallet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -111,7 +110,7 @@ class TestGuestWallets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         guest_wallet = response.parse()
         assert_matches_type(GuestWalletTopupResponse, guest_wallet, path=["response"])
 
@@ -124,12 +123,12 @@ class TestGuestWallets:
             idempotency_key="e1cb97D8-dDF3-4AaA-ad0a-49E4A0d1CfAa",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             guest_wallet = response.parse()
             assert_matches_type(GuestWalletTopupResponse, guest_wallet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncGuestWallets:
@@ -157,7 +156,7 @@ class TestAsyncGuestWallets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         guest_wallet = await response.parse()
         assert_matches_type(GuestWalletCreateResponse, guest_wallet, path=["response"])
 
@@ -170,12 +169,12 @@ class TestAsyncGuestWallets:
             idempotency_key="e1cb97D8-dDF3-4AaA-ad0a-49E4A0d1CfAa",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             guest_wallet = await response.parse()
             assert_matches_type(GuestWalletCreateResponse, guest_wallet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -189,7 +188,7 @@ class TestAsyncGuestWallets:
         response = await async_client.guest_wallets.with_raw_response.retrieve_status()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         guest_wallet = await response.parse()
         assert_matches_type(GuestWalletRetrieveStatusResponse, guest_wallet, path=["response"])
 
@@ -198,12 +197,12 @@ class TestAsyncGuestWallets:
     async def test_streaming_response_retrieve_status(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.guest_wallets.with_streaming_response.retrieve_status() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             guest_wallet = await response.parse()
             assert_matches_type(GuestWalletRetrieveStatusResponse, guest_wallet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -225,7 +224,7 @@ class TestAsyncGuestWallets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         guest_wallet = await response.parse()
         assert_matches_type(GuestWalletTopupResponse, guest_wallet, path=["response"])
 
@@ -238,9 +237,9 @@ class TestAsyncGuestWallets:
             idempotency_key="e1cb97D8-dDF3-4AaA-ad0a-49E4A0d1CfAa",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             guest_wallet = await response.parse()
             assert_matches_type(GuestWalletTopupResponse, guest_wallet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

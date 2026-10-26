@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -53,7 +52,7 @@ class TestKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = response.parse()
         assert_matches_type(KeywordCreateResponse, keyword, path=["response"])
 
@@ -65,12 +64,12 @@ class TestKeywords:
             query='xquik OR "x api"',
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = response.parse()
             assert_matches_type(KeywordCreateResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -88,7 +87,7 @@ class TestKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = response.parse()
         assert_matches_type(KeywordRetrieveResponse, keyword, path=["response"])
 
@@ -99,12 +98,12 @@ class TestKeywords:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = response.parse()
             assert_matches_type(KeywordRetrieveResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -141,7 +140,7 @@ class TestKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = response.parse()
         assert_matches_type(KeywordUpdateResponse, keyword, path=["response"])
 
@@ -152,12 +151,12 @@ class TestKeywords:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = response.parse()
             assert_matches_type(KeywordUpdateResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -188,7 +187,7 @@ class TestKeywords:
         response = client.monitors.keywords.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = response.parse()
         assert_matches_type(KeywordListResponse, keyword, path=["response"])
 
@@ -197,12 +196,12 @@ class TestKeywords:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.monitors.keywords.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = response.parse()
             assert_matches_type(KeywordListResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -220,7 +219,7 @@ class TestKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = response.parse()
         assert_matches_type(KeywordDeactivateResponse, keyword, path=["response"])
 
@@ -231,12 +230,12 @@ class TestKeywords:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = response.parse()
             assert_matches_type(KeywordDeactivateResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -280,7 +279,7 @@ class TestAsyncKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = await response.parse()
         assert_matches_type(KeywordCreateResponse, keyword, path=["response"])
 
@@ -292,12 +291,12 @@ class TestAsyncKeywords:
             query='xquik OR "x api"',
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = await response.parse()
             assert_matches_type(KeywordCreateResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -315,7 +314,7 @@ class TestAsyncKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = await response.parse()
         assert_matches_type(KeywordRetrieveResponse, keyword, path=["response"])
 
@@ -326,12 +325,12 @@ class TestAsyncKeywords:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = await response.parse()
             assert_matches_type(KeywordRetrieveResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -368,7 +367,7 @@ class TestAsyncKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = await response.parse()
         assert_matches_type(KeywordUpdateResponse, keyword, path=["response"])
 
@@ -379,12 +378,12 @@ class TestAsyncKeywords:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = await response.parse()
             assert_matches_type(KeywordUpdateResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -415,7 +414,7 @@ class TestAsyncKeywords:
         response = await async_client.monitors.keywords.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = await response.parse()
         assert_matches_type(KeywordListResponse, keyword, path=["response"])
 
@@ -424,12 +423,12 @@ class TestAsyncKeywords:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.monitors.keywords.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = await response.parse()
             assert_matches_type(KeywordListResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -447,7 +446,7 @@ class TestAsyncKeywords:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         keyword = await response.parse()
         assert_matches_type(KeywordDeactivateResponse, keyword, path=["response"])
 
@@ -458,12 +457,12 @@ class TestAsyncKeywords:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             keyword = await response.parse()
             assert_matches_type(KeywordDeactivateResponse, keyword, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

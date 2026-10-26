@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -84,7 +83,7 @@ class TestMedia:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = response.parse()
         assert_matches_type(PaginatedTweets, media, path=["response"])
 
@@ -95,12 +94,12 @@ class TestMedia:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = response.parse()
             assert_matches_type(PaginatedTweets, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -180,7 +179,7 @@ class TestAsyncMedia:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         media = await response.parse()
         assert_matches_type(PaginatedTweets, media, path=["response"])
 
@@ -191,12 +190,12 @@ class TestAsyncMedia:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             media = await response.parse()
             assert_matches_type(PaginatedTweets, media, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

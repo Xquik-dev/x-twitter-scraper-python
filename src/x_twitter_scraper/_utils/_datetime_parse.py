@@ -84,7 +84,8 @@ def parse_datetime(value: Union[datetime, StrBytesIntFloat]) -> datetime:
     if match is None:
         raise ValueError("invalid datetime format")
 
-    kw = match.groupdict()
+    # Match.groupdict returns str | Any values, and a group that did not take part in the match is None. https://docs.python.org/3/library/re.html#re.Match.groupdict
+    kw: dict[str, str | None] = match.groupdict()
     if kw["microsecond"]:
         kw["microsecond"] = kw["microsecond"].ljust(6, "0")
 

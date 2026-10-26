@@ -5,11 +5,12 @@ from __future__ import annotations
 
 import os
 import sys
-import json
 import subprocess
 from pathlib import Path
 
 import pytest
+
+from tests.utils import json_dumps
 
 ROOT = Path(__file__).parents[1]
 PINS = {
@@ -27,7 +28,7 @@ if not {"--strict", "--disable-pip", "--require-hashes"} <= set(arguments):
     sys.exit(99)
 text = open(arguments[arguments.index("--requirement") + 1]).read()
 open(os.environ["AUDIT_RECEIVED"], "a").write(text)
-findings = json.loads(os.environ["AUDIT_FINDINGS"])
+findings = json_loads(os.environ["AUDIT_FINDINGS"])
 pins = [match.groups() for match in re.finditer(r"^([A-Za-z0-9._-]+)==(\S+) \\$", text, re.MULTILINE)]
 dependencies = [{"name": name, "version": version, "vulns": findings.get(f"{name} {version}", [])} for name, version in pins]
 json.dump({"dependencies": dependencies, "fixes": []}, open(arguments[arguments.index("--output") + 1], "w"))
@@ -71,7 +72,7 @@ def run_audit(
             "AUDIT_FIXTURES": str(fixtures),
             "AUDIT_PYTHON": sys.executable,
             "AUDIT_RECEIVED": str(received),
-            "AUDIT_FINDINGS": json.dumps(findings),
+            "AUDIT_FINDINGS": json_dumps(findings),
         },
         capture_output=True,
         text=True,

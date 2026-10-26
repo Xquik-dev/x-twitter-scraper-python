@@ -9,7 +9,7 @@ import datetime
 import importlib
 import collections.abc
 from types import ModuleType
-from typing import Any, Union, Mapping, Iterator, Optional, Sequence, cast, get_args, get_origin
+from typing import Any, Union, Mapping, Iterator, Optional, Sequence, cast
 from pathlib import Path
 from dataclasses import field, dataclass
 from typing_extensions import Literal, Required, Annotated, NotRequired, is_typeddict, get_type_hints
@@ -33,6 +33,7 @@ from x_twitter_scraper._types import FileTypes
 from x_twitter_scraper._utils import PropertyInfo
 from x_twitter_scraper._compat import PYDANTIC_V1, field_outer_type, get_model_fields, field_is_required
 from x_twitter_scraper._models import BaseModel
+from x_twitter_scraper._utils._compat import get_args, get_origin
 
 PACKAGE = "x_twitter_scraper"
 SIDES = ("request", "response")
@@ -52,7 +53,11 @@ UNREADABLE_NEXT = (
 BODY_TYPES = ("application/json", "multipart/form-data", "application/x-www-form-urlencoded")
 UNTYPED_RESPONSES = {"NoneType", "object", "BinaryAPIResponse", "AsyncBinaryAPIResponse"}
 LEAF_TYPES = (str, int, float, bool, bytes, datetime.datetime, datetime.date)
-SEQUENCES = (list, tuple, set, frozenset, collections.abc.Sequence, collections.abc.Iterable)
+SEQUENCES: frozenset[object] = frozenset(
+    {list, tuple, set, frozenset, collections.abc.Sequence, collections.abc.Iterable}
+)
+REQUIRED_WRAPPERS: frozenset[object] = frozenset({Required, NotRequired})
+FIELD_WRAPPERS: frozenset[object] = REQUIRED_WRAPPERS | {Annotated}
 
 
 @dataclass(frozen=True)
@@ -307,7 +312,7 @@ class Converter:
         self.unions: dict[object, Node] = {}
 
     def node(self, annotation: object, stack: tuple[type, ...] = ()) -> tuple[Node, bool]:
-        while get_origin(annotation) in (Annotated, Required, NotRequired):
+        while get_origin(annotation) in FIELD_WRAPPERS:
             annotation = get_args(annotation)[0]
         if annotation is None or annotation is type(None):
             return Unknown(), True
@@ -372,7 +377,7 @@ def _known_nullable(required: bool, nullable: bool) -> Optional[bool]:
 
 
 def wire_name(name: str, annotation: object) -> str:
-    while get_origin(annotation) in (Required, NotRequired):
+    while get_origin(annotation) in REQUIRED_WRAPPERS:
         annotation = get_args(annotation)[0]
     aliases = [meta.alias for meta in getattr(annotation, "__metadata__", ()) if isinstance(meta, PropertyInfo)]
     return next((alias for alias in aliases if alias), name)

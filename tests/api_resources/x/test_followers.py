@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -48,7 +47,7 @@ class TestFollowers:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         follower = response.parse()
         assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
@@ -60,12 +59,12 @@ class TestFollowers:
             target="target",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             follower = response.parse()
             assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncFollowers:
@@ -102,7 +101,7 @@ class TestAsyncFollowers:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         follower = await response.parse()
         assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
@@ -114,9 +113,9 @@ class TestAsyncFollowers:
             target="target",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             follower = await response.parse()
             assert_matches_type(FollowerCheckResponse, follower, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

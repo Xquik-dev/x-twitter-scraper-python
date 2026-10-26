@@ -62,7 +62,7 @@ It runs these checks in order and stops at the first failure.
 1. Locked dependency install for Python 3.10.22 and 3.14.8.
 2. API coverage against the API spec, as [API coverage](#api-coverage) describes.
 3. API fields against the API spec, as [API fields](#api-fields) describes.
-4. Ruff, Pyright, Mypy, and a package import.
+4. Ruff with `noqa` comments ignored, a ban on type checker comments, Pyright, Mypy with 0 Any expressions, and a package import.
 5. REUSE licensing lint.
 6. Reproducible wheel and source archive builds.
 7. Package metadata with twine.

@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import json
 from typing import Any, Dict, List, Union, Callable, cast
 from typing_extensions import Annotated
 
@@ -10,7 +9,10 @@ import httpx
 import pytest
 import pydantic
 
+from tests.utils import json_dumps, get_attribute, json_response
 from x_twitter_scraper import BaseModel, XTwitterScraper, AsyncXTwitterScraper
+from x_twitter_scraper._types import JsonValue, HttpxResponse
+from x_twitter_scraper._models import FinalRequestOptions
 from x_twitter_scraper._response import (
     APIResponse,
     BaseAPIResponse,
@@ -20,7 +22,7 @@ from x_twitter_scraper._response import (
     extract_response_type,
 )
 from x_twitter_scraper._streaming import Stream
-from x_twitter_scraper._base_client import FinalRequestOptions, make_request_options
+from x_twitter_scraper._base_client import make_request_options
 
 
 class ConcreteBaseAPIResponse(APIResponse[bytes]): ...
@@ -49,7 +51,7 @@ def test_extract_response_type_direct_class_missing_type_arg() -> None:
 def test_extract_response_type_concrete_subclasses() -> None:
     assert extract_response_type(ConcreteBaseAPIResponse) == bytes
     assert extract_response_type(ConcreteAPIResponse) == List[str]
-    assert extract_response_type(ConcreteAsyncAPIResponse) == httpx.Response
+    assert extract_response_type(ConcreteAsyncAPIResponse) == HttpxResponse
 
 
 def test_extract_response_type_binary_response() -> None:
@@ -64,11 +66,13 @@ ResponseFactory = Callable[[httpx.Response, bool], Union[APIResponse[str], Async
 def response_factory(
     request: pytest.FixtureRequest, client: XTwitterScraper, async_client: AsyncXTwitterScraper
 ) -> ResponseFactory:
+    asynchronous = get_attribute(request, "param") is True
+
     def create(raw: httpx.Response, stream: bool) -> Union[APIResponse[str], AsyncAPIResponse[str]]:
-        response_type = AsyncAPIResponse[str] if request.param else APIResponse[str]
+        response_type = AsyncAPIResponse[str] if asynchronous else APIResponse[str]
         return response_type(
             raw=raw,
-            client=async_client if request.param else client,
+            client=async_client if asynchronous else client,
             stream=stream,
             stream_cls=None,
             cast_to=str,
@@ -128,7 +132,7 @@ class CustomModel(BaseModel):
     "model_type", [CustomModel, Annotated[CustomModel, "random metadata"]], ids=["model", "annotated"]
 )
 async def test_response_parse_custom_model(response_factory: ResponseFactory, model_type: object) -> None:
-    response = response_factory(httpx.Response(200, content=json.dumps({"foo": "hello!", "bar": 2})), False)
+    response = response_factory(httpx.Response(200, content=json_dumps({"foo": "hello!", "bar": 2})), False)
     model = cast("type[CustomModel]", model_type)
     obj = await response.parse(to=model) if isinstance(response, AsyncAPIResponse) else response.parse(to=model)
     assert obj.foo == "hello!"
@@ -165,8 +169,8 @@ async def test_response_parse_expect_model_union_non_json_content(response_facto
 async def test_response_parse_dictionary(
     response_factory: ResponseFactory, mapping_type: type[dict[str, object]]
 ) -> None:
-    data = {"nested": {"count": 2}, "items": [True, None], "empty": {}}
-    response = response_factory(httpx.Response(200, json=data), False)
+    data: JsonValue = {"nested": {"count": 2}, "items": [True, None], "empty": {}}
+    response = response_factory(json_response(200, json=data), False)
     result = (
         await response.parse(to=mapping_type)
         if isinstance(response, AsyncAPIResponse)

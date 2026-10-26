@@ -6,10 +6,13 @@ from __future__ import annotations
 import re
 import sys
 import json
-from typing import cast
+from typing import Callable, cast
 from pathlib import Path
 from datetime import date, timedelta
 from collections.abc import Mapping
+
+# json.loads declares Any, and without an object hook it returns only JSON values. https://docs.python.org/3/library/json.html#json-to-py-table
+load_json: Callable[[str], object] = json.loads
 
 REASONS = ("build-time only", "peer dependency provided by the host")
 MAX_RECHECK = timedelta(days=30)
@@ -125,12 +128,12 @@ def main(arguments: list[str], today: date) -> int:
         return 2
     report_path, audited_path, runtime_path, exceptions_path = map(Path, arguments)
     try:
-        report = json.loads(report_path.read_text(encoding="utf-8"))
+        report = load_json(report_path.read_text(encoding="utf-8"))
     except (OSError, ValueError):
         print("pip-audit wrote no report. Fix the error above, then rerun.", file=sys.stderr)
         return 1
     try:
-        exceptions = json.loads(exceptions_path.read_text(encoding="utf-8"))
+        exceptions = load_json(exceptions_path.read_text(encoding="utf-8"))
         blocking = blocking_findings(
             report,
             requirement_names(audited_path.read_text(encoding="utf-8")),

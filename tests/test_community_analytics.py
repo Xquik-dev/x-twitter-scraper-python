@@ -41,7 +41,7 @@ async def test_community_analytics_sends_filters_and_reads_every_metric(asynchro
 
     assert request.method == "GET"
     assert request.url.path == "/api/v1/x/communities/1493446837214187523/analytics"
-    assert dict(request.url.params) == {
+    assert dict(request.url.params.items()) == {
         "fields": "id,periodEndsAt,metrics",
         "omit": "metrics.likes.changePercent",
     }

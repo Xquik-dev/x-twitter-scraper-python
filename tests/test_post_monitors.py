@@ -4,13 +4,13 @@
 
 from __future__ import annotations
 
-import json
 from datetime import datetime, timezone
 
 import pytest
 
 from tests.utils import send_with_mock_transport
 from x_twitter_scraper import XTwitterScraper
+from x_twitter_scraper._utils._json import json_loads
 from x_twitter_scraper.types.monitors import PostMonitor, PostListResponse, PostDeleteResponse, PostMonitorMetrics
 
 POST_MONITOR = {
@@ -89,7 +89,7 @@ async def test_create_sends_the_post_label_and_event_types(asynchronous: bool) -
 
     assert request.method == "POST"
     assert request.url.path == "/api/v1/monitors/posts"
-    assert json.loads(request.content) == {
+    assert json_loads(request.content) == {
         "post": "https://x.com/xquik/status/2104984505677430978",
         "name": "Launch post",
         "eventTypes": ["post.reply.new", "post.likes.changed"],
@@ -123,7 +123,7 @@ async def test_update_sends_null_to_remove_the_label(asynchronous: bool) -> None
 
     assert request.method == "PATCH"
     assert request.url.path == "/api/v1/monitors/posts/31"
-    assert json.loads(request.content) == {"isActive": False, "name": None}
+    assert json_loads(request.content) == {"isActive": False, "name": None}
     _expect_monitor(monitor)
 
 
@@ -138,7 +138,7 @@ async def test_list_passes_the_cursor_and_limit(asynchronous: bool) -> None:
 
     assert request.method == "GET"
     assert request.url.path == "/api/v1/monitors/posts"
-    assert dict(request.url.params) == {"cursor": "abc123", "limit": "20"}
+    assert dict(request.url.params.items()) == {"cursor": "abc123", "limit": "20"}
     assert isinstance(page, PostListResponse)
     assert page.total == 1
     assert page.has_more is True
@@ -174,7 +174,7 @@ async def test_retrieve_metrics_passes_hours_and_reads_buckets(asynchronous: boo
 
     assert request.method == "GET"
     assert request.url.path == "/api/v1/monitors/posts/31/metrics"
-    assert dict(request.url.params) == {"hours": "12"}
+    assert dict(request.url.params.items()) == {"hours": "12"}
     assert isinstance(metrics, PostMonitorMetrics)
     assert metrics.hours == 12
     bucket = metrics.buckets[0]
@@ -216,7 +216,7 @@ async def test_events_filter_by_post_monitor_and_carry_the_post(asynchronous: bo
     )
 
     assert request.url.path == "/api/v1/events"
-    assert dict(request.url.params) == {"postMonitorId": "31"}
+    assert dict(request.url.params.items()) == {"postMonitorId": "31"}
     event = page.events[0]
     assert event.monitor_type == "post"
     assert event.type == "post.reply.new"

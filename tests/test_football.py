@@ -491,7 +491,7 @@ async def test_list_games_sends_the_league_and_window(asynchronous: bool) -> Non
 
     assert request.method == "GET"
     assert request.url.path == "/api/v1/x/sports/nfl/games"
-    assert dict(request.url.params) == {"from": "2026-10-01", "to": "2026-10-08", "team": "689566294702555136"}
+    assert dict(request.url.params.items()) == {"from": "2026-10-01", "to": "2026-10-08", "team": "689566294702555136"}
     assert isinstance(schedule, FootballSchedule)
     game = schedule.games[0]
     assert game.id == "2055084502741811200"
@@ -515,7 +515,7 @@ async def test_retrieve_scoreboard_reads_1_game(asynchronous: bool) -> None:
     )
 
     assert request.url.path == "/api/v1/x/sports/nfl/games/2055084502741811200"
-    assert dict(request.url.params) == {"fields": "id,home"}
+    assert dict(request.url.params.items()) == {"fields": "id,home"}
     assert isinstance(scoreboard, FootballScoreboard)
     assert scoreboard.venue == "Levi's Stadium"
     assert scoreboard.situation is not None and scoreboard.situation.yards_to_go == 22
@@ -554,7 +554,7 @@ async def test_retrieve_plays_reads_drives_and_plays(asynchronous: bool) -> None
     )
 
     assert request.url.path == "/api/v1/x/sports/nfl/games/2055084502741811200/plays"
-    assert dict(request.url.params) == {"omit": "players"}
+    assert dict(request.url.params.items()) == {"omit": "players"}
     assert isinstance(plays, FootballPlays)
     drive = plays.quarters[0].drives[0]
     assert drive.start_reason == "Kickoff"
@@ -576,7 +576,7 @@ async def test_retrieve_audience_reads_viewers_team_picks_and_chat(asynchronous:
 
     assert request.method == "GET"
     assert request.url.path == "/api/v1/x/sports/ncaafb/games/2055084502741811200/audience"
-    assert dict(request.url.params) == {"fields": "viewers,chat"}
+    assert dict(request.url.params.items()) == {"fields": "viewers,chat"}
     assert isinstance(audience, SportsGameAudience)
     assert audience.viewers is not None and audience.viewers.as_of == datetime(
         2026, 10, 20, 6, 19, 50, tzinfo=timezone.utc

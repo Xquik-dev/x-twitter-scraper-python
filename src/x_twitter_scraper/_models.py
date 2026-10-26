@@ -52,15 +52,16 @@ from ._types import (
     Timeout,
     NotGiven,
     AnyMapping,
+    PostParser,
     RequestOptions,
     HttpxRequestFiles,
 )
 from ._utils import (
     PropertyInfo,
     is_list,
+    memoize,
     is_given,
     json_safe,
-    lru_cache,
     is_mapping,
     parse_date,
     is_iterable,
@@ -402,7 +403,7 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
                 raise ValueError("ensure_ascii is only supported in Pydantic v2")
             if exclude_computed_fields != False:
                 raise ValueError("exclude_computed_fields is only supported in Pydantic v2")
-            return super().json(  # type: ignore[reportDeprecated]
+            return super().json(
                 indent=indent,
                 include=include,
                 exclude=exclude,
@@ -568,7 +569,7 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
     type_ = cast("type[object]", type_)
     if is_type_alias_type(type_):
         original_type = type_  # type: ignore[unreachable]
-        type_ = type_.__value__  # type: ignore[unreachable]
+        type_ = type_.__value__
 
     if metadata is not None and len(metadata) > 0:
         meta: tuple[Any, ...] = tuple(metadata)
@@ -621,7 +622,7 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
 
         if is_mapping(value):
             if issubclass(type_, BaseModel):
-                return type_.construct(**value)  # type: ignore[arg-type]
+                return type_.construct(**value)
 
             return cast(Any, type_).construct(**value)
 
@@ -770,10 +771,6 @@ def validate_type(*, type_: type[_T], value: object) -> _T:
     return _validate_non_model_type(type_=type_, value=value)
 
 
-def set_pydantic_config(typ: Any, config: pydantic.ConfigDict) -> None:
-    setattr(typ, "__pydantic_config__", config)  # noqa: B010
-
-
 if TYPE_CHECKING:
     GenericModel = BaseModel
 else:
@@ -785,7 +782,7 @@ else:
 if not PYDANTIC_V1:
     from pydantic import TypeAdapter as _TypeAdapter
 
-    _CachedTypeAdapter = lru_cache(maxsize=None)(_TypeAdapter)
+    _CachedTypeAdapter = memoize(_TypeAdapter)
 
     if TYPE_CHECKING:
         from pydantic import TypeAdapter
@@ -831,7 +828,7 @@ class FinalRequestOptions(pydantic.BaseModel):
     timeout: Union[float, Timeout, None, NotGiven] = NotGiven()
     files: Union[HttpxRequestFiles, None] = None
     idempotency_key: Union[str, None] = None
-    post_parser: Union[Callable[[Any], Any], NotGiven] = NotGiven()
+    post_parser: Union[PostParser, NotGiven] = NotGiven()
     follow_redirects: Union[bool, None] = None
     security: SecurityOptions = {
         "api_key": True,

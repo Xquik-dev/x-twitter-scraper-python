@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -39,7 +38,7 @@ class TestAccountConnectionChallenges:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account_connection_challenge = response.parse()
         assert_matches_type(AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"])
 
@@ -51,14 +50,14 @@ class TestAccountConnectionChallenges:
             email_code="<EMAIL_VERIFICATION_CODE>",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account_connection_challenge = response.parse()
             assert_matches_type(
                 AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"]
             )
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -93,7 +92,7 @@ class TestAsyncAccountConnectionChallenges:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         account_connection_challenge = await response.parse()
         assert_matches_type(AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"])
 
@@ -105,14 +104,14 @@ class TestAsyncAccountConnectionChallenges:
             email_code="<EMAIL_VERIFICATION_CODE>",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             account_connection_challenge = await response.parse()
             assert_matches_type(
                 AccountConnectionChallengeSubmitResponse, account_connection_challenge, path=["response"]
             )
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

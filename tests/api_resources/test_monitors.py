@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -52,7 +51,7 @@ class TestMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = response.parse()
         assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
 
@@ -64,12 +63,12 @@ class TestMonitors:
             username="elonmusk",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = response.parse()
             assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -87,7 +86,7 @@ class TestMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = response.parse()
         assert_matches_type(Monitor, monitor, path=["response"])
 
@@ -98,12 +97,12 @@ class TestMonitors:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = response.parse()
             assert_matches_type(Monitor, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -140,7 +139,7 @@ class TestMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = response.parse()
         assert_matches_type(Monitor, monitor, path=["response"])
 
@@ -151,12 +150,12 @@ class TestMonitors:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = response.parse()
             assert_matches_type(Monitor, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -187,7 +186,7 @@ class TestMonitors:
         response = client.monitors.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = response.parse()
         assert_matches_type(MonitorListResponse, monitor, path=["response"])
 
@@ -196,12 +195,12 @@ class TestMonitors:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.monitors.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = response.parse()
             assert_matches_type(MonitorListResponse, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -219,7 +218,7 @@ class TestMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = response.parse()
         assert_matches_type(MonitorDeactivateResponse, monitor, path=["response"])
 
@@ -230,12 +229,12 @@ class TestMonitors:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = response.parse()
             assert_matches_type(MonitorDeactivateResponse, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -279,7 +278,7 @@ class TestAsyncMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = await response.parse()
         assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
 
@@ -291,12 +290,12 @@ class TestAsyncMonitors:
             username="elonmusk",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = await response.parse()
             assert_matches_type(MonitorCreateResponse, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -314,7 +313,7 @@ class TestAsyncMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = await response.parse()
         assert_matches_type(Monitor, monitor, path=["response"])
 
@@ -325,12 +324,12 @@ class TestAsyncMonitors:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = await response.parse()
             assert_matches_type(Monitor, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -367,7 +366,7 @@ class TestAsyncMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = await response.parse()
         assert_matches_type(Monitor, monitor, path=["response"])
 
@@ -378,12 +377,12 @@ class TestAsyncMonitors:
             id="id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = await response.parse()
             assert_matches_type(Monitor, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -414,7 +413,7 @@ class TestAsyncMonitors:
         response = await async_client.monitors.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = await response.parse()
         assert_matches_type(MonitorListResponse, monitor, path=["response"])
 
@@ -423,12 +422,12 @@ class TestAsyncMonitors:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.monitors.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = await response.parse()
             assert_matches_type(MonitorListResponse, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -446,7 +445,7 @@ class TestAsyncMonitors:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         monitor = await response.parse()
         assert_matches_type(MonitorDeactivateResponse, monitor, path=["response"])
 
@@ -457,12 +456,12 @@ class TestAsyncMonitors:
             "id",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             monitor = await response.parse()
             assert_matches_type(MonitorDeactivateResponse, monitor, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

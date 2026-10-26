@@ -5,18 +5,21 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar, Iterable, cast
-from typing_extensions import override
+from typing import Generic, TypeVar, Callable, Iterable
+from typing_extensions import Self, override
 
 T = TypeVar("T")
+
+# The builtin getattr returns Any, and an attribute of an unknown object is an unknown object. https://docs.python.org/3/library/functions.html#getattr
+_get_attribute: Callable[[object, str], object] = getattr
 
 
 class LazyProxy(Generic[T], ABC):
     def __getattr__(self, attr: str) -> object:
         proxied = self.__get_proxied__()
-        if isinstance(proxied, LazyProxy):
-            return proxied  # pyright: ignore
-        return getattr(proxied, attr)
+        if issubclass(type(proxied), LazyProxy):
+            return proxied
+        return _get_attribute(proxied, attr)
 
     @override
     def __repr__(self) -> str:
@@ -39,9 +42,9 @@ class LazyProxy(Generic[T], ABC):
             return list[str]()
         return proxied.__dir__()
 
-    @property  # type: ignore
+    @property
     @override
-    def __class__(self) -> type:  # pyright: ignore
+    def __class__(self) -> type:
         try:
             proxied = self.__get_proxied__()
         except Exception:
@@ -50,11 +53,15 @@ class LazyProxy(Generic[T], ABC):
             return type(proxied)
         return proxied.__class__
 
+    @__class__.setter
+    def __class__(self, value: type) -> None:
+        raise AttributeError(f"cannot set __class__ of {type(self).__name__} to {value.__name__}")
+
     def __get_proxied__(self) -> T:
         return self.__load__()
 
-    def __as_proxied__(self) -> T:
-        return cast(T, self)
+    def __as_proxied__(self) -> Self:
+        return self
 
     @abstractmethod
     def __load__(self) -> T: ...

@@ -11,6 +11,7 @@ from ._types import IncEx
 from ._utils import is_mapping, is_iterable
 from ._compat import PYDANTIC_V1, is_union, get_origin
 from ._models import _EagerIterable
+from ._utils._compat import is_class
 
 if TYPE_CHECKING or not PYDANTIC_V1:
     from pydantic.v1 import BaseModel
@@ -82,7 +83,7 @@ def _matches(value: object, field: ModelField) -> bool:
     if origin is _EagerIterable:
         if not is_iterable(value) or isinstance(value, str):
             return False
-    elif not (isinstance(origin, type) and isinstance(value, origin)):
+    elif not (is_class(origin) and isinstance(value, origin)):
         return False
     if field.sub_fields and is_mapping(value):
         return all(

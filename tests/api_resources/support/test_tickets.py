@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -53,7 +52,7 @@ class TestTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = response.parse()
         assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
@@ -65,12 +64,12 @@ class TestTickets:
             subject="Cannot connect X account",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = response.parse()
             assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -100,7 +99,7 @@ class TestTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = response.parse()
         assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
@@ -112,12 +111,12 @@ class TestTickets:
             subject="Cannot connect X account",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = response.parse()
             assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -135,7 +134,7 @@ class TestTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = response.parse()
         assert_matches_type(TicketRetrieveResponse, ticket, path=["response"])
 
@@ -146,12 +145,12 @@ class TestTickets:
             "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = response.parse()
             assert_matches_type(TicketRetrieveResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -179,7 +178,7 @@ class TestTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = response.parse()
         assert_matches_type(TicketUpdateResponse, ticket, path=["response"])
 
@@ -191,12 +190,12 @@ class TestTickets:
             status="resolved",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = response.parse()
             assert_matches_type(TicketUpdateResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -228,7 +227,7 @@ class TestTickets:
         response = client.support.tickets.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = response.parse()
         assert_matches_type(TicketListResponse, ticket, path=["response"])
 
@@ -237,12 +236,12 @@ class TestTickets:
     def test_streaming_response_list(self, client: XTwitterScraper) -> None:
         with client.support.tickets.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = response.parse()
             assert_matches_type(TicketListResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -272,7 +271,7 @@ class TestTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = response.parse()
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
@@ -284,12 +283,12 @@ class TestTickets:
             content="Thank you for the update.",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = response.parse()
             assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -328,7 +327,7 @@ class TestTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = response.parse()
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
@@ -340,12 +339,12 @@ class TestTickets:
             attachments=[b"raw file contents"],
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = response.parse()
             assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -390,7 +389,7 @@ class TestAsyncTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = await response.parse()
         assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
@@ -402,12 +401,12 @@ class TestAsyncTickets:
             subject="Cannot connect X account",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = await response.parse()
             assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -437,7 +436,7 @@ class TestAsyncTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = await response.parse()
         assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
@@ -449,12 +448,12 @@ class TestAsyncTickets:
             subject="Cannot connect X account",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = await response.parse()
             assert_matches_type(TicketCreateResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -472,7 +471,7 @@ class TestAsyncTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = await response.parse()
         assert_matches_type(TicketRetrieveResponse, ticket, path=["response"])
 
@@ -483,12 +482,12 @@ class TestAsyncTickets:
             "tkt_a1b2c3d4e5f6a1b2c3d4e5f6",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = await response.parse()
             assert_matches_type(TicketRetrieveResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -516,7 +515,7 @@ class TestAsyncTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = await response.parse()
         assert_matches_type(TicketUpdateResponse, ticket, path=["response"])
 
@@ -528,12 +527,12 @@ class TestAsyncTickets:
             status="resolved",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = await response.parse()
             assert_matches_type(TicketUpdateResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -565,7 +564,7 @@ class TestAsyncTickets:
         response = await async_client.support.tickets.with_raw_response.list()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = await response.parse()
         assert_matches_type(TicketListResponse, ticket, path=["response"])
 
@@ -574,12 +573,12 @@ class TestAsyncTickets:
     async def test_streaming_response_list(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.support.tickets.with_streaming_response.list() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = await response.parse()
             assert_matches_type(TicketListResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -609,7 +608,7 @@ class TestAsyncTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = await response.parse()
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
@@ -621,12 +620,12 @@ class TestAsyncTickets:
             content="Thank you for the update.",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = await response.parse()
             assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -665,7 +664,7 @@ class TestAsyncTickets:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         ticket = await response.parse()
         assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
@@ -677,12 +676,12 @@ class TestAsyncTickets:
             attachments=[b"raw file contents"],
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             ticket = await response.parse()
             assert_matches_type(TicketReplyResponse, ticket, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

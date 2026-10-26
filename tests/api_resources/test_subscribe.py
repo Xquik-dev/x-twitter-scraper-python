@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -39,7 +38,7 @@ class TestSubscribe:
         response = client.subscribe.with_raw_response.create()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         subscribe = response.parse()
         assert_matches_type(SubscribeCreateResponse, subscribe, path=["response"])
 
@@ -48,12 +47,12 @@ class TestSubscribe:
     def test_streaming_response_create(self, client: XTwitterScraper) -> None:
         with client.subscribe.with_streaming_response.create() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             subscribe = response.parse()
             assert_matches_type(SubscribeCreateResponse, subscribe, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncSubscribe:
@@ -81,7 +80,7 @@ class TestAsyncSubscribe:
         response = await async_client.subscribe.with_raw_response.create()
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         subscribe = await response.parse()
         assert_matches_type(SubscribeCreateResponse, subscribe, path=["response"])
 
@@ -90,9 +89,9 @@ class TestAsyncSubscribe:
     async def test_streaming_response_create(self, async_client: AsyncXTwitterScraper) -> None:
         async with async_client.subscribe.with_streaming_response.create() as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             subscribe = await response.parse()
             assert_matches_type(SubscribeCreateResponse, subscribe, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

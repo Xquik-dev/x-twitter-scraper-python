@@ -161,6 +161,7 @@ filterwarnings = [
 # Enable Pyright's stable strict checks.
 typeCheckingMode = "strict"
 pythonVersion = "3.10"
+enableTypeIgnoreComments = false
 
 exclude = [
     "_dev",
@@ -170,49 +171,41 @@ exclude = [
 ]
 
 reportImplicitOverride = true
-reportOverlappingOverload = false
-
-reportImportCycles = false
-reportPrivateUsage = false
 
 [tool.mypy]
+files = ["."]
+python_version = "3.10"
+plugins = ["pydantic.mypy"]
 pretty = true
 show_error_codes = true
-
-# Pyright checks `_files.py` and tests where mypy cannot infer types accurately.
-exclude = ['src/x_twitter_scraper/_files.py', '_dev/.*.py', 'tests/.*']
-
-strict_equality = true
-implicit_reexport = true
-check_untyped_defs = true
-no_implicit_optional = true
-
-warn_return_any = true
+strict = true
+strict_bytes = true
+strict_equality_for_none = true
 warn_unreachable = true
-warn_unused_configs = true
+disallow_any_expr = true
+disallow_any_explicit = true
+disallow_any_decorated = true
+disallow_any_unimported = true
+enable_error_code = [
+    "deprecated",
+    "exhaustive-match",
+    "explicit-override",
+    "ignore-without-code",
+    "mutable-override",
+    "possibly-undefined",
+    "redundant-expr",
+    "redundant-self",
+    "truthy-bool",
+    "truthy-iterable",
+    "unimported-reveal",
+    "unused-awaitable",
+    "unused-ignore",
+]
 
-# Avoid conflicts with Pyright.
-warn_unused_ignores = false
-warn_redundant_casts = false
-
-disallow_any_generics = true
-disallow_untyped_defs = true
-disallow_untyped_calls = true
-disallow_subclassing_any = true
-disallow_incomplete_defs = true
-disallow_untyped_decorators = true
-cache_fine_grained = true
-
-# By default, mypy reports an error if you assign a value to the result
-# of a function call that doesn't return anything. We do this in our test
-# cases:
-# ```
-# result = ...
-# assert result is None
-# ```
-# Changing this codegen to make mypy happy would increase complexity
-# and would not be worth it.
-disable_error_code = "func-returns-value,overload-cannot-match"
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
 
 [tool.ruff]
 line-length = 120
@@ -257,7 +250,11 @@ unfixable = [
 extend-safe-fixes = ["FA102"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
-"functools.lru_cache".msg = "This function does not retain type information for the wrapped function's arguments; The `lru_cache` function from `_utils` should be used instead"
+"functools.lru_cache".msg = "It loses the wrapped function's argument types. Use `memoize` from `_utils` instead."
+"typing.Any".msg = "Declare `object` and narrow it with isinstance, or name the real type."
+"typing.cast".msg = "Narrow the value with isinstance or annotate it, because cast skips the type check."
+"typing_extensions.Any".msg = "Declare `object` and narrow it with isinstance, or name the real type."
+"typing_extensions.cast".msg = "Narrow the value with isinstance or annotate it, because cast skips the type check."
 
 [tool.ruff.lint.isort]
 length-sort = true

@@ -4,15 +4,15 @@
 
 from __future__ import annotations
 
-from typing import Any
+from types import ModuleType
 from typing_extensions import override
 
 from ._proxy import LazyProxy
 
 
-class ResourcesProxy(LazyProxy[Any]):
+class ResourcesProxy(LazyProxy[ModuleType]):
     @override
-    def __load__(self) -> Any:
+    def __load__(self) -> ModuleType:
         import importlib
 
         mod = importlib.import_module("x_twitter_scraper.resources")

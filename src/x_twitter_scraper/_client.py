@@ -5,8 +5,8 @@
 from __future__ import annotations
 
 import os
-from typing import TYPE_CHECKING, Any, Mapping
-from typing_extensions import Self, override
+from typing import TYPE_CHECKING, Mapping
+from typing_extensions import Self, TypedDict, override
 
 import httpx
 
@@ -29,11 +29,10 @@ from ._utils import (
 from ._compat import cached_property
 from ._models import SecurityOptions
 from ._version import __version__
-from ._constants import DEFAULT_BASE_URL
+from ._constants import DEFAULT_BASE_URL, DEFAULT_MAX_RETRIES
 from ._streaming import Stream as Stream, AsyncStream as AsyncStream
 from ._exceptions import APIStatusError
 from ._base_client import (
-    DEFAULT_MAX_RETRIES,
     SyncAPIClient,
     AsyncAPIClient,
 )
@@ -84,6 +83,10 @@ __all__ = [
     "Client",
     "AsyncClient",
 ]
+
+
+class ClientExtraKwargs(TypedDict, total=False):
+    _strict_response_validation: bool
 
 
 class XTwitterScraper(SyncAPIClient):
@@ -326,7 +329,7 @@ class XTwitterScraper(SyncAPIClient):
         set_default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
         set_default_query: Mapping[str, object] | None = None,
-        _extra_kwargs: Mapping[str, Any] = {},
+        _extra_kwargs: ClientExtraKwargs = {},
     ) -> Self:
         """
         Create a new client instance re-using the same options given to the current client with optional overriding.
@@ -638,7 +641,7 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         set_default_headers: Mapping[str, str] | None = None,
         default_query: Mapping[str, object] | None = None,
         set_default_query: Mapping[str, object] | None = None,
-        _extra_kwargs: Mapping[str, Any] = {},
+        _extra_kwargs: ClientExtraKwargs = {},
     ) -> Self:
         """
         Create a new client instance re-using the same options given to the current client with optional overriding.

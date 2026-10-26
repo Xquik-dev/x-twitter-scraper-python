@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -42,7 +41,7 @@ class TestRetweet:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         retweet = response.parse()
         assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
@@ -55,12 +54,12 @@ class TestRetweet:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             retweet = response.parse()
             assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -92,7 +91,7 @@ class TestRetweet:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         retweet = response.parse()
         assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
@@ -105,12 +104,12 @@ class TestRetweet:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             retweet = response.parse()
             assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -148,7 +147,7 @@ class TestAsyncRetweet:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         retweet = await response.parse()
         assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
@@ -161,12 +160,12 @@ class TestAsyncRetweet:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             retweet = await response.parse()
             assert_matches_type(RetweetCreateResponse, retweet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -198,7 +197,7 @@ class TestAsyncRetweet:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         retweet = await response.parse()
         assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
@@ -211,12 +210,12 @@ class TestAsyncRetweet:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             retweet = await response.parse()
             assert_matches_type(RetweetDeleteResponse, retweet, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

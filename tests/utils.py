@@ -5,20 +5,21 @@
 from __future__ import annotations
 
 import os
-import inspect
+import json
 import traceback
 import contextlib
-from typing import Any, Tuple, TypeVar, Callable, Awaitable, Generator, cast
+from typing import Tuple, TypeVar, Callable, Awaitable, Generator
 from datetime import date, datetime
-from typing_extensions import Literal, get_args, get_origin
+from typing_extensions import Literal
 
 import httpx
 
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper._types import Omit, NoneType
+from x_twitter_scraper._types import Omit, NoneType, JsonValue
 from x_twitter_scraper._utils import (
     is_dict,
     is_list,
+    is_mapping,
     is_sequence,
     is_list_type,
     is_union_type,
@@ -29,16 +30,48 @@ from x_twitter_scraper._utils import (
 )
 from x_twitter_scraper._compat import PYDANTIC_V1, field_outer_type, get_model_fields
 from x_twitter_scraper._models import BaseModel
+from x_twitter_scraper._utils._compat import get_args, is_class, get_origin
+
+# json.dumps takes Any, so a literal passed to it infers Any members. https://docs.python.org/3/library/json.html#json.dumps
+json_dumps: Callable[[object], str] = json.dumps
+# The builtin getattr returns Any, and an attribute of an unknown object is an unknown object. https://docs.python.org/3/library/functions.html#getattr
+get_attribute: Callable[[object, str], object] = getattr
+get_attribute_or: Callable[[object, str, object], object] = getattr
 
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 T = TypeVar("T")
 
 
+def json_response(status_code: int, *, json: JsonValue) -> httpx.Response:
+    return httpx.Response(status_code, json=json)
+
+
+def resolve(document: object, path: tuple[str | int, ...]) -> object:
+    for key in path:
+        if isinstance(key, int):
+            assert is_list(document)
+            document = document[key]
+        else:
+            assert is_dict(document)
+            document = document[key]
+    return document
+
+
+def query_param(params: httpx.QueryParams, name: str) -> str | None:
+    return params[name] if name in params else None
+
+
+def request_timeout(request: httpx.Request) -> object:
+    extensions = get_attribute(request, "extensions")
+    assert is_mapping(extensions)
+    return extensions["timeout"]
+
+
 def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: list[str]) -> bool:
     for name, field in get_model_fields(model).items():
-        field_value = getattr(value, name)
+        field_value = get_attribute(value, name)
         if PYDANTIC_V1:
-            allow_none = getattr(field, "allow_none", False)
+            allow_none = bool(get_attribute_or(field, "allow_none", False))
         else:
             allow_none = False
 
@@ -53,14 +86,14 @@ def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: li
 
 
 def assert_matches_type(
-    type_: Any,
+    type_: object,
     value: object,
     *,
     path: list[str],
     allow_none: bool = False,
 ) -> None:
     if is_type_alias_type(type_):
-        type_ = type_.__value__
+        type_ = get_attribute(type_, "__value__")
 
     if is_annotated_type(type_):
         type_ = extract_type_arg(type_, 0)
@@ -83,7 +116,7 @@ def assert_matches_type(
             assert_matches_type(inner_type, entry, path=[*path, str(index)])
         return
 
-    if origin in (str, int, bool, float, bytes, datetime, date):
+    if is_class(origin) and origin in (str, int, bool, float, bytes, datetime, date):
         assert isinstance(value, origin)
     elif origin == object:
         pass
@@ -116,12 +149,12 @@ def assert_matches_type(
                 continue
 
         raise AssertionError("Did not match any variants")
-    elif issubclass(origin, BaseModel):
-        assert isinstance(value, type_)
-        assert isinstance(value, BaseModel)
-        assert assert_matches_model(cast(type[BaseModel], type_), value, path=path)
-    elif inspect.isclass(origin) and origin.__name__ == "HttpxBinaryResponseContent":
+    elif is_class(origin) and origin.__name__ == "HttpxBinaryResponseContent":
         assert value.__class__.__name__ == "HttpxBinaryResponseContent"
+    elif is_class(origin) and issubclass(origin, BaseModel):
+        assert is_class(type_) and issubclass(type_, BaseModel)
+        assert isinstance(value, type_)
+        assert assert_matches_model(type_, value, path=path)
     else:
         assert None, f"Unhandled field type: {type_}"
 

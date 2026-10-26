@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -49,7 +48,7 @@ class TestJobs:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         job = response.parse()
         assert_matches_type(JobRetrieveResponse, job, path=["response"])
 
@@ -60,12 +59,12 @@ class TestJobs:
             id="1899202395210649861",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             job = response.parse()
             assert_matches_type(JobRetrieveResponse, job, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -102,7 +101,7 @@ class TestJobs:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         job = response.parse()
         assert_matches_type(JobListLocationsResponse, job, path=["response"])
 
@@ -113,12 +112,12 @@ class TestJobs:
             q="new york",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             job = response.parse()
             assert_matches_type(JobListLocationsResponse, job, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -154,7 +153,7 @@ class TestJobs:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         job = response.parse()
         assert_matches_type(JobSearchResponse, job, path=["response"])
 
@@ -165,12 +164,12 @@ class TestJobs:
             q="engineer",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             job = response.parse()
             assert_matches_type(JobSearchResponse, job, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncJobs:
@@ -204,7 +203,7 @@ class TestAsyncJobs:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         job = await response.parse()
         assert_matches_type(JobRetrieveResponse, job, path=["response"])
 
@@ -215,12 +214,12 @@ class TestAsyncJobs:
             id="1899202395210649861",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             job = await response.parse()
             assert_matches_type(JobRetrieveResponse, job, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -257,7 +256,7 @@ class TestAsyncJobs:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         job = await response.parse()
         assert_matches_type(JobListLocationsResponse, job, path=["response"])
 
@@ -268,12 +267,12 @@ class TestAsyncJobs:
             q="new york",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             job = await response.parse()
             assert_matches_type(JobListLocationsResponse, job, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -309,7 +308,7 @@ class TestAsyncJobs:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         job = await response.parse()
         assert_matches_type(JobSearchResponse, job, path=["response"])
 
@@ -320,9 +319,9 @@ class TestAsyncJobs:
             q="engineer",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             job = await response.parse()
             assert_matches_type(JobSearchResponse, job, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

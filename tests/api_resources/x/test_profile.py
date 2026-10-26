@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-from typing import Any, cast
 
 import pytest
 
@@ -54,7 +53,7 @@ class TestProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = response.parse()
         assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
@@ -66,12 +65,12 @@ class TestProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = response.parse()
             assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -93,7 +92,7 @@ class TestProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = response.parse()
         assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
@@ -106,12 +105,12 @@ class TestProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = response.parse()
             assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -133,7 +132,7 @@ class TestProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = response.parse()
         assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
@@ -146,12 +145,12 @@ class TestProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = response.parse()
             assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -173,7 +172,7 @@ class TestProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = response.parse()
         assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
@@ -186,12 +185,12 @@ class TestProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = response.parse()
             assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -213,7 +212,7 @@ class TestProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = response.parse()
         assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
@@ -226,12 +225,12 @@ class TestProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = response.parse()
             assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
 
 class TestAsyncProfile:
@@ -270,7 +269,7 @@ class TestAsyncProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = await response.parse()
         assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
@@ -282,12 +281,12 @@ class TestAsyncProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = await response.parse()
             assert_matches_type(ProfileUpdateResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -309,7 +308,7 @@ class TestAsyncProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = await response.parse()
         assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
@@ -322,12 +321,12 @@ class TestAsyncProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = await response.parse()
             assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -349,7 +348,7 @@ class TestAsyncProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = await response.parse()
         assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
@@ -362,12 +361,12 @@ class TestAsyncProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = await response.parse()
             assert_matches_type(ProfileUpdateAvatarResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -389,7 +388,7 @@ class TestAsyncProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = await response.parse()
         assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
@@ -402,12 +401,12 @@ class TestAsyncProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = await response.parse()
             assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -429,7 +428,7 @@ class TestAsyncProfile:
         )
 
         assert response.is_closed is True
-        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        assert response.http_request.headers["X-Stainless-Lang"] == "python"
         profile = await response.parse()
         assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
@@ -442,9 +441,9 @@ class TestAsyncProfile:
             idempotency_key="Idempotency-Key",
         ) as response:
             assert not response.is_closed
-            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+            assert response.http_request.headers["X-Stainless-Lang"] == "python"
 
             profile = await response.parse()
             assert_matches_type(ProfileUpdateBannerResponse, profile, path=["response"])
 
-        assert cast(Any, response.is_closed) is True
+        assert response.is_closed is True

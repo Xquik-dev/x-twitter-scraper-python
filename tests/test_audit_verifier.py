@@ -3,13 +3,12 @@
 
 from __future__ import annotations
 
-import json
-from typing import Any
 from pathlib import Path
 from datetime import date
 
 import pytest
 
+from tests.utils import json_dumps
 from scripts.verify_audit import main
 
 TODAY = date(2026, 10, 13)
@@ -26,18 +25,17 @@ RUNTIME = """anyio==4.14.2 \\
 """
 
 
-def finding(advisory: str, fixes: list[str], aliases: list[str] | None = None) -> dict[str, Any]:
+def finding(advisory: str, fixes: list[str], aliases: list[str] | None = None) -> dict[str, object]:
     return {"id": advisory, "fix_versions": fixes, "aliases": aliases or [], "description": "Long text."}
 
 
-def report(**vulns: list[dict[str, Any]]) -> dict[str, Any]:
+def dependencies(**vulns: list[dict[str, object]]) -> list[dict[str, object]]:
     versions = {"anyio": "4.14.2", "pytest": "9.0.1", "pygments": "2.20.0"}
-    return {
-        "dependencies": [
-            {"name": name, "version": version, "vulns": vulns.get(name, [])} for name, version in versions.items()
-        ],
-        "fixes": [],
-    }
+    return [{"name": name, "version": version, "vulns": vulns.get(name, [])} for name, version in versions.items()]
+
+
+def report(**vulns: list[dict[str, object]]) -> dict[str, object]:
+    return {"dependencies": dependencies(**vulns), "fixes": []}
 
 
 def exception(**overrides: object) -> dict[str, object]:
@@ -53,10 +51,10 @@ def exception(**overrides: object) -> dict[str, object]:
 
 def run(tmp_path: Path, audit_report: object, exceptions: object, *, audited: str = AUDITED) -> int:
     paths = {name: tmp_path / name for name in ("report.json", "audited.txt", "runtime.txt", "exceptions.json")}
-    paths["report.json"].write_text(json.dumps(audit_report))
+    paths["report.json"].write_text(json_dumps(audit_report))
     paths["audited.txt"].write_text(audited)
     paths["runtime.txt"].write_text(RUNTIME)
-    paths["exceptions.json"].write_text(json.dumps(exceptions))
+    paths["exceptions.json"].write_text(json_dumps(exceptions))
     return main([str(path) for path in paths.values()], TODAY)
 
 
@@ -114,7 +112,7 @@ def test_listed_unfixable_development_finding_passes_before_recheck(
         (
             {
                 "dependencies": [
-                    *report()["dependencies"][:2],
+                    *dependencies()[:2],
                     {"name": "Pygments", "version": "2.20.0", "skip_reason": "Not on PyPI"},
                 ]
             },
@@ -122,7 +120,7 @@ def test_listed_unfixable_development_finding_passes_before_recheck(
             "pip-audit skipped Pygments 2.20.0: Not on PyPI",
         ),
         (
-            {"dependencies": report()["dependencies"][:2]},
+            {"dependencies": dependencies()[:2]},
             {"exceptions": []},
             "pip-audit did not report pygments. Rerun scripts/audit.",
         ),
@@ -212,7 +210,7 @@ def test_missing_report_fails(tmp_path: Path, capsys: pytest.CaptureFixture[str]
 
 def test_missing_exceptions_file_fails(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
     files = [tmp_path / name for name in ("report.json", "audited.txt", "runtime.txt", "exceptions.json")]
-    files[0].write_text(json.dumps(report()))
+    files[0].write_text(json_dumps(report()))
     assert main([str(path) for path in files], TODAY) == 1
     assert capsys.readouterr().err.startswith("Dependency audit failed: [Errno 2] No such file or directory")
 
