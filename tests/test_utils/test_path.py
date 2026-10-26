@@ -4,8 +4,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 import pytest
 
 from x_twitter_scraper._utils._path import path_template
@@ -56,7 +54,7 @@ from x_twitter_scraper._utils._path import path_template
         ("/v1/{val}", dict(val="x#admin"), "/v1/x%23admin"),
     ],
 )
-def test_interpolation(template: str, kwargs: dict[str, Any], expected: str) -> None:
+def test_interpolation(template: str, kwargs: dict[str, object], expected: str) -> None:
     assert path_template(template, **kwargs) == expected
 
 
@@ -84,6 +82,6 @@ def test_missing_kwarg_raises_key_error() -> None:
         ("/v1/{v}#frag", dict(v="..")),
     ],
 )
-def test_dot_segment_rejected(template: str, kwargs: dict[str, Any]) -> None:
+def test_dot_segment_rejected(template: str, kwargs: dict[str, object]) -> None:
     with pytest.raises(ValueError, match="dot-segment"):
         path_template(template, **kwargs)

@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Callable, cast
+from typing import Dict, Callable, cast
 
 import pytest
 
@@ -64,7 +64,7 @@ PARSERS = [
 ]
 
 
-def event_payload(data: Dict[str, Any]) -> Dict[str, Any]:
+def event_payload(data: Dict[str, object]) -> Dict[str, object]:
     return {
         "id": "42",
         "type": "tweet.new",
@@ -79,10 +79,10 @@ def event_payload(data: Dict[str, Any]) -> Dict[str, Any]:
 @pytest.mark.parametrize(("model", "owner"), EVENT_CASES)
 @pytest.mark.parametrize(("data", "data_type", "keys"), DATA_CASES)
 def test_event_data_keeps_dict_access(
-    parse: Callable[..., Any],
+    parse: Callable[..., object],
     model: type[Event | EventDetail],
     owner: str,
-    data: Dict[str, Any],
+    data: Dict[str, object],
     data_type: str,
     keys: list[str],
 ) -> None:

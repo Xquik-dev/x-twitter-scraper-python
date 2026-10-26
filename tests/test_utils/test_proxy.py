@@ -14,7 +14,7 @@ class RecursiveLazyProxy(LazyProxy[Any]):
     def __load__(self) -> Any:
         return self
 
-    def __call__(self, *_args: Any, **_kwds: Any) -> Any:
+    def __call__(self, *_args: object, **_kwds: object) -> Any:
         raise RuntimeError("This should never be called!")
 
 
