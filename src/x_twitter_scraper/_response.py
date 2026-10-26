@@ -38,7 +38,7 @@ from ._exceptions import XTwitterScraperError, APIResponseValidationError
 
 if TYPE_CHECKING:
     from ._models import FinalRequestOptions
-    from ._base_client import BaseClient
+    from ._base_client import SyncAPIClient, AsyncAPIClient
 
 
 P = ParamSpec("P")
@@ -52,10 +52,10 @@ log: logging.Logger = logging.getLogger(__name__)
 
 class BaseAPIResponse(Generic[R]):
     _cast_to: type[R]
-    _client: BaseClient[Any, Any]
+    _client: "SyncAPIClient | AsyncAPIClient"
     _parsed_by_type: dict[type, object]
     _is_sse_stream: bool
-    _stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None
+    _stream_cls: type[Stream[object]] | type[AsyncStream[object]] | None
     _options: FinalRequestOptions
 
     http_response: httpx.Response
@@ -68,9 +68,9 @@ class BaseAPIResponse(Generic[R]):
         *,
         raw: httpx.Response,
         cast_to: type[R],
-        client: BaseClient[Any, Any],
+        client: "SyncAPIClient | AsyncAPIClient",
         stream: bool,
-        stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None,
+        stream_cls: type[Stream[object]] | type[AsyncStream[object]] | None,
         options: FinalRequestOptions,
         retries_taken: int = 0,
     ) -> None:
@@ -142,7 +142,7 @@ class BaseAPIResponse(Generic[R]):
         origin = get_origin(cast_to) or cast_to
 
         if self._is_sse_stream:
-            stream_cls: type[Stream[Any]] | type[AsyncStream[Any]] | None
+            stream_cls: type[Stream[object]] | type[AsyncStream[object]] | None
             if to:
                 if not is_stream_class_type(to):
                     raise TypeError(f"Expected custom parse type to be a subclass of {Stream} or {AsyncStream}")
