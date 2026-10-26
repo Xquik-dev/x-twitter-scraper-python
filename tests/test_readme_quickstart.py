@@ -4,10 +4,10 @@
 
 from __future__ import annotations
 
-import httpx
 import pytest
 from respx import MockRouter
 
+from tests.utils import json_response
 from tests.conftest import base_url
 from x_twitter_scraper import XTwitterScraper
 
@@ -15,7 +15,7 @@ from x_twitter_scraper import XTwitterScraper
 @pytest.mark.respx(base_url=base_url)
 def test_readme_quickstart_search(respx_mock: MockRouter) -> None:
     route = respx_mock.get("/x/tweets/search").mock(
-        return_value=httpx.Response(
+        return_value=json_response(
             200,
             json={
                 "has_next_page": False,

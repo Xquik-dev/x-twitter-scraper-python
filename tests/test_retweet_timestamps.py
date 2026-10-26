@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 import httpx
 import pytest
 
+from tests.utils import json_response
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, omit
 
 
@@ -17,7 +18,7 @@ async def test_retweet_timestamps(enabled: bool | None, asynchronous: bool) -> N
 
     def respond(request: httpx.Request) -> httpx.Response:
         requests.append(request)
-        return httpx.Response(
+        return json_response(
             200,
             json={
                 "users": [
