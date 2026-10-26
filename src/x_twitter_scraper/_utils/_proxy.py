@@ -17,7 +17,7 @@ _get_attribute: Callable[[object, str], object] = getattr
 class LazyProxy(Generic[T], ABC):
     def __getattr__(self, attr: str) -> object:
         proxied = self.__get_proxied__()
-        if isinstance(proxied, LazyProxy):
+        if issubclass(type(proxied), LazyProxy):
             return proxied
         return _get_attribute(proxied, attr)
 
@@ -52,6 +52,10 @@ class LazyProxy(Generic[T], ABC):
         if issubclass(type(proxied), LazyProxy):
             return type(proxied)
         return proxied.__class__
+
+    @__class__.setter
+    def __class__(self, value: type) -> None:
+        raise AttributeError(f"cannot set __class__ of {type(self).__name__} to {value.__name__}")
 
     def __get_proxied__(self) -> T:
         return self.__load__()
