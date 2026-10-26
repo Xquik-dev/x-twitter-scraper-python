@@ -5,17 +5,27 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any, Callable
+from typing import Callable
+from typing_extensions import Protocol, ParamSpec
+
+_P = ParamSpec("_P")
+_Q = ParamSpec("_Q")
 
 
-def function_has_argument(func: Callable[..., Any], arg_name: str) -> bool:
+class _AnnotatedParameter(Protocol):
+    # inspect.Parameter declares its annotation as Any, and an annotation can be any object. https://docs.python.org/3/library/inspect.html#inspect.Parameter.annotation
+    @property
+    def annotation(self) -> object: ...
+
+
+def function_has_argument(func: Callable[_P, object], arg_name: str) -> bool:
     sig = inspect.signature(func)
     return arg_name in sig.parameters
 
 
 def assert_signatures_in_sync(
-    source_func: Callable[..., Any],
-    check_func: Callable[..., Any],
+    source_func: Callable[_P, object],
+    check_func: Callable[_Q, object],
     *,
     exclude_params: set[str] = set(),
 ) -> None:
@@ -33,9 +43,13 @@ def assert_signatures_in_sync(
             errors.append(f"the `{name}` param is missing")
             continue
 
-        if custom_param.annotation != source_param.annotation:
+        custom_parameter: _AnnotatedParameter = custom_param
+        source_parameter: _AnnotatedParameter = source_param
+        custom_annotation = custom_parameter.annotation
+        source_annotation = source_parameter.annotation
+        if custom_annotation != source_annotation:
             errors.append(
-                f"types for the `{name}` param are do not match; source={repr(source_param.annotation)} checking={repr(custom_param.annotation)}"
+                f"types for the `{name}` param are do not match; source={repr(source_annotation)} checking={repr(custom_annotation)}"
             )
             continue
 

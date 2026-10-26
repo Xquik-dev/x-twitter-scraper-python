@@ -291,14 +291,28 @@ def file_from_path(path: str) -> FileTypes:
     return (file_name, contents)
 
 
-def get_required_header(headers: HeadersLike, header: str) -> str:
-    lower_header = header.lower()
-    if is_mapping_t(headers):
-        for k, v in headers.items():  # type: ignore
+def _upper_after_separator(match: re.Match[str]) -> str:
+    # Match.group returns str | Any, and both groups of the header pattern always match a string. https://docs.python.org/3/library/re.html#re.Match.group
+    separator: str = match.group(1)
+    letter: str = match.group(2)
+    return separator + letter.upper()
+
+
+def _find_mapping_header(headers: object, lower_header: str) -> str | None:
+    if is_mapping(headers):
+        for k, v in headers.items():
             if k.lower() == lower_header and isinstance(v, str):
                 return v
+    return None
 
-    intercaps_header = re.sub(r"([^\w])(\w)", lambda pat: pat.group(1) + pat.group(2).upper(), header.capitalize())
+
+def get_required_header(headers: HeadersLike, header: str) -> str:
+    lower_header = header.lower()
+    mapped = _find_mapping_header(headers, lower_header)
+    if mapped is not None:
+        return mapped
+
+    intercaps_header = re.sub(r"([^\w])(\w)", _upper_after_separator, header.capitalize())
 
     for normalized_header in [header, lower_header, header.upper(), intercaps_header]:
         value = headers.get(normalized_header)

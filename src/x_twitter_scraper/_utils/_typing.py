@@ -7,49 +7,50 @@ from __future__ import annotations
 import sys
 import typing
 import typing_extensions
-from typing import Any, TypeVar, Iterable, cast
+from typing import TypeVar, Iterable
 from collections import abc as _c_abc
 from typing_extensions import (
     TypeIs,
     Required,
     Annotated,
-    get_args,
-    get_origin,
 )
 
-from ._utils import lru_cache
-from .._types import InheritsGeneric
-from ._compat import is_union as _is_union
+from ._utils import is_tuple, lru_cache
+from ._compat import get_args, get_origin, is_union as _is_union
 
 
 def is_annotated_type(typ: object) -> bool:
     return get_origin(typ) is Annotated
 
 
-def is_list_type(typ: type) -> bool:
+def is_list_type(typ: object) -> bool:
     return (get_origin(typ) or typ) == list
 
 
-def is_sequence_type(typ: type) -> bool:
+def is_sequence_type(typ: object) -> bool:
     origin = get_origin(typ) or typ
     return origin == typing_extensions.Sequence or origin == typing.Sequence or origin == _c_abc.Sequence
 
 
-def is_iterable_type(typ: type) -> bool:
+def is_iterable_type(typ: object) -> bool:
     origin = get_origin(typ) or typ
     return origin == Iterable or origin == _c_abc.Iterable
 
 
-def is_union_type(typ: type) -> bool:
+def is_union_type(typ: object) -> bool:
     return _is_union(get_origin(typ))
 
 
-def is_required_type(typ: type) -> bool:
+def is_required_type(typ: object) -> bool:
     return get_origin(typ) is Required
 
 
+# TypeVar's constructor takes Any, so mypy reads the bare class as containing Any. A name typed as the class keeps the comparison free of it. https://mypy.readthedocs.io/en/stable/command_line.html#cmdoption-mypy-disallow-any-expr
+_TYPE_VAR: type[TypeVar] = TypeVar
+
+
 def is_typevar(typ: object) -> bool:
-    return type(typ) == TypeVar
+    return type(typ) == _TYPE_VAR
 
 
 _TYPE_ALIAS_TYPES: tuple[type, ...] = (typing_extensions.TypeAliasType,)
@@ -57,41 +58,47 @@ if sys.version_info >= (3, 12):
     _TYPE_ALIAS_TYPES = (*_TYPE_ALIAS_TYPES, typing.TypeAliasType)
 
 
-def is_type_alias_type(tp: Any, /) -> TypeIs[typing_extensions.TypeAliasType]:
+def is_type_alias_type(tp: object, /) -> TypeIs[typing_extensions.TypeAliasType]:
     return isinstance(tp, _TYPE_ALIAS_TYPES)
 
 
 @lru_cache(maxsize=8096)
-def strip_annotated_type(typ: type) -> type:
+def strip_annotated_type(typ: object) -> object:
     if is_required_type(typ) or is_annotated_type(typ):
-        return strip_annotated_type(cast(type, get_args(typ)[0]))
+        return strip_annotated_type(get_args(typ)[0])
 
     return typ
 
 
-def extract_type_arg(typ: object, index: int) -> type:
+def extract_type_arg(typ: object, index: int) -> object:
     args = get_args(typ)
     try:
-        return cast(type, args[index])
+        return args[index]
     except IndexError as err:
         raise RuntimeError(f"Expected type {typ} to have a type argument at index {index} but it did not") from err
 
 
+def _is_one_of(value: object, classes: tuple[type, ...]) -> bool:
+    return any(value is cls for cls in classes)
+
+
 def extract_type_var_from_base(
-    typ: type,
+    typ: object,
     *,
     generic_bases: tuple[type, ...],
     index: int,
     failure_message: str | None = None,
-) -> type:
-    cls = cast(object, get_origin(typ) or typ)
-    if cls in generic_bases:  # pyright: ignore[reportUnnecessaryContains]
+) -> object:
+    cls = get_origin(typ) or typ
+    if _is_one_of(cls, generic_bases):
         return extract_type_arg(typ, index)
 
-    if hasattr(cls, "__orig_bases__"):
-        target_base_class: Any | None = None
-        for base in cast(InheritsGeneric, cls).__orig_bases__:
-            if base.__origin__ in generic_bases:
+    orig_bases: object = getattr(cls, "__orig_bases__", None)
+    if is_tuple(orig_bases):
+        target_base_class: object = None
+        for base in orig_bases:
+            base_origin: object = getattr(base, "__origin__", None)
+            if _is_one_of(base_origin, generic_bases):
                 target_base_class = base
                 break
 

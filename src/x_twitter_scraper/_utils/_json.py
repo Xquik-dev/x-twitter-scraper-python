@@ -3,30 +3,26 @@
 # SPDX-License-Identifier: Apache-2.0
 
 import json
-from typing import Any
 from datetime import datetime
 from typing_extensions import override
 
-import pydantic
-
-from .._compat import model_dump
+from .._compat import PydanticModel, model_dump
 
 
-def openapi_dumps(obj: Any) -> bytes:
-    return json.dumps(
-        obj,
-        cls=_CustomEncoder,
+def openapi_dumps(obj: object) -> bytes:
+    return _CustomEncoder(
         ensure_ascii=False,
         separators=(",", ":"),
         allow_nan=False,
-    ).encode()
+    ).encode(obj).encode()
 
 
 class _CustomEncoder(json.JSONEncoder):
     @override
-    def default(self, o: Any) -> Any:
+    def default(self, o: object) -> object:
         if isinstance(o, datetime):
             return o.isoformat()
-        if isinstance(o, pydantic.BaseModel):
+        if isinstance(o, PydanticModel):
             return model_dump(o, exclude_unset=True, mode="json", by_alias=True)
-        return super().default(o)
+        default: object = super().default(o)
+        return default
