@@ -8,13 +8,14 @@ import re
 import ast
 import importlib
 from enum import Enum
-from typing import get_args
 from pathlib import Path
 from dataclasses import dataclass
 
+from tests.utils import get_attribute_or
 from x_twitter_scraper import resources
 from tests.resource_requests import request_calls
 from x_twitter_scraper._models import BaseModel
+from x_twitter_scraper._utils._compat import get_args, is_class
 
 
 class ResponseKind(Enum):
@@ -47,7 +48,7 @@ def _cast_name(node: ast.expr) -> str:
 
 
 def _route_pattern(template: str) -> re.Pattern[str]:
-    parts = re.split(r"(\{[^{}]+\})", template)
+    parts = [part for part in re.split(r"(\{[^{}]+\})", template) if isinstance(part, str)]
     expression = "".join(r"[^/]+" if part.startswith("{") else re.escape(part) for part in parts)
     return re.compile(f"^{expression}$")
 
@@ -61,12 +62,13 @@ def _response_type(module_name: str, name: str) -> ResponseType:
         return ResponseKind.JSON_OBJECT
 
     module = importlib.import_module(module_name)
-    pending = [getattr(module, name, None)]
+    pending = [get_attribute_or(module, name, None)]
     while pending:
         variant = pending.pop(0)
-        if isinstance(variant, type) and issubclass(variant, BaseModel):
+        arguments = get_args(variant)
+        if is_class(variant) and issubclass(variant, BaseModel):
             return variant
-        pending.extend(get_args(variant))
+        pending.extend(arguments)
     raise TypeError(f"{module_name}.{name} is not a response model")
 
 
