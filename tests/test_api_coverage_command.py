@@ -368,7 +368,7 @@ class SpecHandler(BaseHTTPRequestHandler):
         del format, args
 
 
-@pytest.fixture
+@pytest.fixture()
 def spec_url() -> Iterator[str]:
     server = HTTPServer(("127.0.0.1", 0), SpecHandler)
     thread = Thread(target=server.serve_forever, daemon=True)

@@ -6,17 +6,17 @@ from __future__ import annotations
 import os
 import hashlib
 import subprocess
-from typing import Any
 from pathlib import Path
 
 import pytest
 
 from scripts.verify_release import verify_files
+from x_twitter_scraper._utils import is_dict, is_list
 from x_twitter_scraper._utils._json import json_loads
 
 
-@pytest.fixture
-def release(tmp_path: Path) -> tuple[dict[str, Any], Path]:
+@pytest.fixture()
+def release(tmp_path: Path) -> tuple[dict[str, object], Path]:
     names = ["x_twitter_scraper-0.12.0-py3-none-any.whl", "x_twitter_scraper-0.12.0.tar.gz"]
     for name in names:
         (tmp_path / name).write_bytes(name.encode())
@@ -29,18 +29,18 @@ def release(tmp_path: Path) -> tuple[dict[str, Any], Path]:
     }, tmp_path
 
 
-def test_verified_artifacts(release: tuple[dict[str, Any], Path]) -> None:
+def test_verified_artifacts(release: tuple[dict[str, object], Path]) -> None:
     report, directory = release
-    assert verify_files(report, directory, "0.12.0") is None
+    verify_files(report, directory, "0.12.0")
     (directory / "extra.whl").touch()
     with pytest.raises(ValueError, match="exactly"):
         verify_files(report, directory, "0.12.0")
 
 
-def test_ignores_the_gitignore_that_uv_build_writes(release: tuple[dict[str, Any], Path]) -> None:
+def test_ignores_the_gitignore_that_uv_build_writes(release: tuple[dict[str, object], Path]) -> None:
     report, directory = release
     (directory / ".gitignore").write_text("*")
-    assert verify_files(report, directory, "0.12.0") is None
+    verify_files(report, directory, "0.12.0")
     (directory / ".env").touch()
     with pytest.raises(ValueError, match="exactly"):
         verify_files(report, directory, "0.12.0")
@@ -55,24 +55,30 @@ def test_invalid_release_metadata(report: object, tmp_path: Path) -> None:
 @pytest.mark.parametrize(
     "change", ["partial", "hash", "yanked", "invalid-file", "missing-name", "missing-digests", "extra", "duplicate"]
 )
-def test_rejects_unsafe_publication(release: tuple[dict[str, Any], Path], change: str) -> None:
+def test_rejects_unsafe_publication(release: tuple[dict[str, object], Path], change: str) -> None:
     report, directory = release
+    urls = report["urls"]
+    assert is_list(urls)
+    first = urls[0]
+    assert is_dict(first)
     if change == "partial":
-        report["urls"].pop()
+        urls.pop()
     elif change == "hash":
-        report["urls"][0]["digests"]["sha256"] = "wrong"
+        digests = first["digests"]
+        assert is_dict(digests)
+        digests["sha256"] = "wrong"
     elif change == "yanked":
-        report["urls"][0]["yanked"] = True
+        first["yanked"] = True
     elif change == "invalid-file":
-        report["urls"][0] = None
+        urls[0] = None
     elif change == "extra":
-        report["urls"].append({"filename": "unexpected.whl", "digests": {"sha256": "other"}})
+        urls.append({"filename": "unexpected.whl", "digests": {"sha256": "other"}})
     elif change == "duplicate":
-        report["urls"].append(report["urls"][0])
+        urls.append(first)
     elif change == "missing-name":
-        del report["urls"][0]["filename"]
+        del first["filename"]
     else:
-        del report["urls"][0]["digests"]
+        del first["digests"]
     with pytest.raises(ValueError):
         verify_files(report, directory, "0.12.0")
 

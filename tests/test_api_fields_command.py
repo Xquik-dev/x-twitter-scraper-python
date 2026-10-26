@@ -428,7 +428,7 @@ FOUND = [
 ]
 
 
-@pytest.fixture
+@pytest.fixture()
 def sdk_root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     package = f"fieldsdk_{tmp_path.name.replace('-', '_')}"
     source = tmp_path / "repo" / "src" / package
