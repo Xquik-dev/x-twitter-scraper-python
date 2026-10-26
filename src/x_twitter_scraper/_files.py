@@ -7,7 +7,7 @@ from __future__ import annotations
 import io
 import os
 import pathlib
-from typing import Sequence, cast, overload
+from typing import Mapping, Sequence, cast, overload
 from typing_extensions import TypeVar, TypeGuard
 
 import anyio
@@ -21,7 +21,7 @@ from ._types import (
     HttpxFileContent,
     HttpxRequestFiles,
 )
-from ._utils import is_list, is_mapping, is_tuple_t, is_mapping_t
+from ._utils import is_list, is_mapping
 
 _T = TypeVar("_T")
 
@@ -54,7 +54,7 @@ def to_httpx_files(files: RequestFiles | None) -> HttpxRequestFiles | None:
     if files is None:
         return None
 
-    if is_mapping_t(files):
+    if isinstance(files, Mapping):
         return {key: _transform_file(file) for key, file in files.items()}
     if _is_file_sequence(files):
         return [(key, _transform_file(file)) for key, file in files]
@@ -72,8 +72,9 @@ def _string_path(value: object) -> str:
 
 
 def _transform_file(file: FileTypes) -> HttpxFileTypes:
-    if is_tuple_t(file):
-        return cast(HttpxFileTypes, (file[0], read_file_content(file[1]), *file[2:]))
+    if isinstance(file, tuple):
+        name, content, *rest = file
+        return cast(HttpxFileTypes, (name, read_file_content(content), *rest))
 
     if is_file_content(file):
         if isinstance(file, os.PathLike):
@@ -103,7 +104,7 @@ async def async_to_httpx_files(files: RequestFiles | None) -> HttpxRequestFiles 
     if files is None:
         return None
 
-    if is_mapping_t(files):
+    if isinstance(files, Mapping):
         return {key: await _async_transform_file(file) for key, file in files.items()}
     if _is_file_sequence(files):
         return [(key, await _async_transform_file(file)) for key, file in files]
@@ -111,8 +112,9 @@ async def async_to_httpx_files(files: RequestFiles | None) -> HttpxRequestFiles 
 
 
 async def _async_transform_file(file: FileTypes) -> HttpxFileTypes:
-    if is_tuple_t(file):
-        return cast(HttpxFileTypes, (file[0], await async_read_file_content(file[1]), *file[2:]))
+    if isinstance(file, tuple):
+        name, content, *rest = file
+        return cast(HttpxFileTypes, (name, await async_read_file_content(content), *rest))
 
     if is_file_content(file):
         if isinstance(file, os.PathLike):

@@ -9,7 +9,6 @@ import re
 import inspect
 import functools
 from typing import (
-    Tuple,
     Mapping,
     TypeVar,
     Callable,
@@ -29,8 +28,6 @@ from .._types import Omit, NotGiven, FileTypes, ArrayFormat, HeadersLike
 
 _T = TypeVar("_T")
 _P = ParamSpec("_P")
-_TupleT = TypeVar("_TupleT", bound=Tuple[object, ...])
-_MappingT = TypeVar("_MappingT", bound=Mapping[str, object])
 
 
 def flatten(t: Iterable[Iterable[_T]]) -> list[_T]:
@@ -139,19 +136,11 @@ def is_tuple(obj: object) -> TypeGuard[tuple[object, ...]]:
     return isinstance(obj, tuple)
 
 
-def is_tuple_t(obj: _TupleT | object) -> TypeGuard[_TupleT]:
-    return isinstance(obj, tuple)
-
-
 def is_sequence(obj: object) -> TypeGuard[Sequence[object]]:
     return isinstance(obj, Sequence)
 
 
 def is_mapping(obj: object) -> TypeGuard[Mapping[str, object]]:
-    return isinstance(obj, Mapping)
-
-
-def is_mapping_t(obj: _MappingT | object) -> TypeGuard[_MappingT]:
     return isinstance(obj, Mapping)
 
 
