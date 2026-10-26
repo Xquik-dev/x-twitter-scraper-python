@@ -403,7 +403,7 @@ class BaseModel(pydantic.BaseModel, metaclass=_ModelMetaclass):
                 raise ValueError("ensure_ascii is only supported in Pydantic v2")
             if exclude_computed_fields != False:
                 raise ValueError("exclude_computed_fields is only supported in Pydantic v2")
-            return super().json(  # type: ignore[reportDeprecated]
+            return super().json(
                 indent=indent,
                 include=include,
                 exclude=exclude,
@@ -569,7 +569,7 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
     type_ = cast("type[object]", type_)
     if is_type_alias_type(type_):
         original_type = type_  # type: ignore[unreachable]
-        type_ = type_.__value__  # type: ignore[unreachable]
+        type_ = type_.__value__
 
     if metadata is not None and len(metadata) > 0:
         meta: tuple[Any, ...] = tuple(metadata)
@@ -622,7 +622,7 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
 
         if is_mapping(value):
             if issubclass(type_, BaseModel):
-                return type_.construct(**value)  # type: ignore[arg-type]
+                return type_.construct(**value)
 
             return cast(Any, type_).construct(**value)
 
