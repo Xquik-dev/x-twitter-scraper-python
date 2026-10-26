@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import os
-import json
 import hashlib
 import subprocess
 from typing import Any
@@ -13,6 +12,7 @@ from pathlib import Path
 import pytest
 
 from scripts.verify_release import verify_files
+from x_twitter_scraper._utils._json import json_loads
 
 
 @pytest.fixture
@@ -101,4 +101,4 @@ def test_release_command_rejects_dirty_sources(tmp_path: Path, mode: str) -> Non
         check=False,
     )
     assert result.returncode == (2 if mode == "invalid" else 1)
-    assert json.loads(result.stdout) == {"status": "failed", "exitCode": result.returncode}
+    assert json_loads(result.stdout) == {"status": "failed", "exitCode": result.returncode}

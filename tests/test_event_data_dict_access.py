@@ -4,15 +4,15 @@
 
 from __future__ import annotations
 
-import json
 from typing import Any, Dict, Callable, cast
 
 import pytest
 
 from x_twitter_scraper.types import Event, EventDetail
 from x_twitter_scraper._models import validate_type, construct_type_unchecked
+from x_twitter_scraper._utils._json import json_loads
 
-POST = json.loads(
+POST = json_loads(
     """{
       "id": "1900000000000000001",
       "text": "Launch day",
@@ -29,7 +29,7 @@ POST = json.loads(
       "author": {"id": "44196397", "username": "xquik", "name": "Xquik"}
     }"""
 )
-PROFILE_CHANGE = json.loads(
+PROFILE_CHANGE = json_loads(
     """{
       "field": "bio",
       "userId": "44196397",
@@ -38,7 +38,7 @@ PROFILE_CHANGE = json.loads(
       "current": "New bio"
     }"""
 )
-LEGACY_POST = json.loads(
+LEGACY_POST = json_loads(
     """{
       "id": "1900000000000000002",
       "text": "Stored post",

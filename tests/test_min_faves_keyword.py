@@ -9,6 +9,7 @@ from typing import Any, Dict
 import httpx
 import pytest
 
+from tests.utils import json_response
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 
 MESSAGE = r"min_faves is deprecated & goes away in a later minor version\. Use min_likes\."
@@ -33,7 +34,7 @@ async def send(
 
     def respond(request: httpx.Request) -> httpx.Response:
         requests.append(request)
-        return httpx.Response(200, json={"tweets": [], "has_next_page": False, "next_cursor": ""})
+        return json_response(200, json={"tweets": [], "has_next_page": False, "next_cursor": ""})
 
     transport = httpx.MockTransport(respond)
     if asynchronous:

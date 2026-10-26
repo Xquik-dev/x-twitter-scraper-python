@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import os
-import json
 
 import pytest
 
@@ -19,6 +18,7 @@ from x_twitter_scraper.types.x import (
     AccountReauthResponse,
     AccountBulkRetryResponse,
 )
+from x_twitter_scraper._utils._json import json_loads
 
 base_url = os.environ.get("TEST_API_BASE_URL", "http://127.0.0.1:4010")
 
@@ -542,7 +542,7 @@ async def test_bulk_retry_sends_account_ids(asynchronous: bool) -> None:
     )
 
     assert request.url.path == "/api/v1/x/accounts/bulk-retry"
-    assert json.loads(request.content) == {"accountIds": ["1", "xacct_2"]}
+    assert json_loads(request.content) == {"accountIds": ["1", "xacct_2"]}
     assert account.cleared == 2
 
 
@@ -557,5 +557,5 @@ async def test_bulk_retry_omits_account_ids(asynchronous: bool) -> None:
     )
 
     assert request.url.path == "/api/v1/x/accounts/bulk-retry"
-    assert json.loads(request.content) == {}
+    assert json_loads(request.content) == {}
     assert account.cleared == 3

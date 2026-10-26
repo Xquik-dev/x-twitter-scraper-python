@@ -23,6 +23,7 @@ import httpcore
 from respx import MockRouter
 from pydantic import ValidationError
 
+from tests.utils import header, json_response
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, APIResponseValidationError
 from x_twitter_scraper._types import Omit
 from x_twitter_scraper._utils import asyncify
@@ -38,6 +39,7 @@ from x_twitter_scraper._base_client import (
     get_platform,
     make_request_options,
 )
+from x_twitter_scraper._utils._json import json_loads
 
 from .utils import update_env
 
@@ -50,7 +52,7 @@ bearer_token = "My Bearer Token"
 def _get_params(client: BaseClient[Any, Any]) -> dict[str, str]:
     request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
     url = httpx.URL(request.url)
-    return dict(url.params)
+    return dict(url.params.items())
 
 
 def _collect_uncached_objects() -> None:
@@ -114,7 +116,7 @@ def _assert_request_copies_collected(client: XTwitterScraper | AsyncXTwitterScra
         raise AssertionError()
 
 
-def _low_retry_timeout(*_args: Any, **_kwargs: Any) -> float:
+def _low_retry_timeout(*_args: object, **_kwargs: object) -> float:
     return 0.1
 
 
@@ -183,12 +185,12 @@ def _get_open_connections(client: XTwitterScraper | AsyncXTwitterScraper) -> int
 class TestXTwitterScraper:
     @pytest.mark.respx(base_url=base_url)
     def test_raw_response(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
-        respx_mock.post("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.post("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
         response = client.post("/foo", cast_to=httpx.Response)
         assert response.status_code == 200
         assert isinstance(response, httpx.Response)
-        assert response.json() == {"foo": "bar"}
+        assert json_loads(response.content) == {"foo": "bar"}
 
     @pytest.mark.respx(base_url=base_url)
     def test_raw_response_for_binary(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
@@ -199,7 +201,7 @@ class TestXTwitterScraper:
         response = client.post("/foo", cast_to=httpx.Response)
         assert response.status_code == 200
         assert isinstance(response, httpx.Response)
-        assert response.json() == {"foo": "bar"}
+        assert json_loads(response.content) == {"foo": "bar"}
 
     def test_copy(self, client: XTwitterScraper) -> None:
         copied = client.copy()
@@ -402,9 +404,9 @@ class TestXTwitterScraper:
             default_headers={"X-Foo": "bar"},
         )
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-foo") == "bar"
-        assert request.headers.get("x-stainless-lang") == "python"
-        assert request.headers.get("x-xquik-sdk") == "python"
+        assert header(request.headers, "x-foo") == "bar"
+        assert header(request.headers, "x-stainless-lang") == "python"
+        assert header(request.headers, "x-xquik-sdk") == "python"
 
         test_client2 = XTwitterScraper(
             base_url=base_url,
@@ -417,8 +419,8 @@ class TestXTwitterScraper:
             },
         )
         request = test_client2._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-foo") == "stainless"
-        assert request.headers.get("x-stainless-lang") == "my-overriding-header"
+        assert header(request.headers, "x-foo") == "stainless"
+        assert header(request.headers, "x-stainless-lang") == "my-overriding-header"
 
         test_client.close()
         test_client2.close()
@@ -428,7 +430,7 @@ class TestXTwitterScraper:
             base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-api-key") == api_key
+        assert header(request.headers, "x-api-key") == api_key
 
         with update_env(
             **{
@@ -447,7 +449,7 @@ class TestXTwitterScraper:
             client2._build_request(FinalRequestOptions(method="get", url="/foo"))
 
         request2 = client2._build_request(FinalRequestOptions(method="get", url="/foo", headers={"x-api-key": Omit()}))
-        assert request2.headers.get("x-api-key") is None
+        assert header(request2.headers, "x-api-key") is None
 
     def test_default_query_option(self) -> None:
         client = XTwitterScraper(
@@ -459,7 +461,7 @@ class TestXTwitterScraper:
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"query_param": "bar"}
+        assert dict(url.params.items()) == {"query_param": "bar"}
 
         request = client._build_request(
             FinalRequestOptions(
@@ -469,14 +471,14 @@ class TestXTwitterScraper:
             )
         )
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"foo": "baz", "query_param": "overridden"}
+        assert dict(url.params.items()) == {"foo": "baz", "query_param": "overridden"}
 
         client.close()
 
     def test_hardcoded_query_params_in_url(self, client: XTwitterScraper) -> None:
         request = client._build_request(FinalRequestOptions(method="get", url="/foo?beta=true"))
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"beta": "true"}
+        assert dict(url.params.items()) == {"beta": "true"}
 
         request = client._build_request(
             FinalRequestOptions(
@@ -486,7 +488,7 @@ class TestXTwitterScraper:
             )
         )
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"beta": "true", "limit": "10", "page": "abc"}
+        assert dict(url.params.items()) == {"beta": "true", "limit": "10", "page": "abc"}
 
         request = client._build_request(
             FinalRequestOptions(
@@ -513,7 +515,7 @@ class TestXTwitterScraper:
                 extra_json={"baz": False},
             ),
         )
-        data = json.loads(request.content.decode("utf-8"))
+        data = json_loads(request.content.decode("utf-8"))
         assert data == {"foo": "bar", "baz": False}
 
         request = client._build_request(
@@ -523,7 +525,7 @@ class TestXTwitterScraper:
                 extra_json={"baz": False},
             ),
         )
-        data = json.loads(request.content.decode("utf-8"))
+        data = json_loads(request.content.decode("utf-8"))
         assert data == {"baz": False}
 
         request = client._build_request(
@@ -534,7 +536,7 @@ class TestXTwitterScraper:
                 extra_json={"baz": None},
             ),
         )
-        data = json.loads(request.content.decode("utf-8"))
+        data = json_loads(request.content.decode("utf-8"))
         assert data == {"foo": "bar", "baz": None}
 
     def test_request_extra_headers(self, client: XTwitterScraper) -> None:
@@ -545,7 +547,7 @@ class TestXTwitterScraper:
                 **make_request_options(extra_headers={"X-Foo": "Foo"}),
             ),
         )
-        assert request.headers.get("X-Foo") == "Foo"
+        assert header(request.headers, "X-Foo") == "Foo"
 
         request = client.with_options(default_headers={"X-Bar": "true"})._build_request(
             FinalRequestOptions(
@@ -556,7 +558,7 @@ class TestXTwitterScraper:
                 ),
             ),
         )
-        assert request.headers.get("X-Bar") == "false"
+        assert header(request.headers, "X-Bar") == "false"
 
     def test_request_extra_query(self, client: XTwitterScraper) -> None:
         request = client._build_request(
@@ -568,7 +570,7 @@ class TestXTwitterScraper:
                 ),
             ),
         )
-        params = dict(request.url.params)
+        params = dict(request.url.params.items())
         assert params == {"my_query_param": "Foo"}
 
         request = client._build_request(
@@ -581,7 +583,7 @@ class TestXTwitterScraper:
                 ),
             ),
         )
-        params = dict(request.url.params)
+        params = dict(request.url.params.items())
         assert params == {"bar": "1", "foo": "2"}
 
         request = client._build_request(
@@ -594,7 +596,7 @@ class TestXTwitterScraper:
                 ),
             ),
         )
-        params = dict(request.url.params)
+        params = dict(request.url.params.items())
         assert params == {"foo": "2"}
 
     def test_multipart_repeating_array(self, client: XTwitterScraper) -> None:
@@ -704,7 +706,7 @@ class TestXTwitterScraper:
         class Model2(BaseModel):
             foo: str
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
         response = client.get("/foo", cast_to=cast(Any, Union[Model1, Model2]))
         assert isinstance(response, Model2)
@@ -718,13 +720,13 @@ class TestXTwitterScraper:
         class Model2(BaseModel):
             foo: str
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
         response = client.get("/foo", cast_to=cast(Any, Union[Model1, Model2]))
         assert isinstance(response, Model2)
         assert response.foo == "bar"
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": 1}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": 1}))
 
         response = client.get("/foo", cast_to=cast(Any, Union[Model1, Model2]))
         assert isinstance(response, Model1)
@@ -887,7 +889,7 @@ class TestXTwitterScraper:
         class Model(BaseModel):
             foo: str
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": {"invalid": True}}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": {"invalid": True}}))
 
         with pytest.raises(APIResponseValidationError) as exc:
             client.get("/foo", cast_to=Model)
@@ -1006,7 +1008,7 @@ class TestXTwitterScraper:
         response = client.account.with_raw_response.retrieve()
 
         assert response.retries_taken == failures_before_success
-        assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
+        assert int(response.http_request.headers["x-stainless-retry-count"]) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
     @mock.patch("x_twitter_scraper._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
@@ -1052,7 +1054,7 @@ class TestXTwitterScraper:
 
         response = client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
 
-        assert response.http_request.headers.get("x-stainless-retry-count") == "42"
+        assert header(response.http_request.headers, "x-stainless-retry-count") == "42"
 
     def test_proxy_environment_variables(self, monkeypatch: pytest.MonkeyPatch) -> None:
         monkeypatch.setenv("HTTPS_PROXY", "https://example.org")
@@ -1086,11 +1088,11 @@ class TestXTwitterScraper:
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
         )
-        respx_mock.get("/redirected").mock(return_value=httpx.Response(200, json={"status": "ok"}))
+        respx_mock.get("/redirected").mock(return_value=json_response(200, json={"status": "ok"}))
 
         response = client.post("/redirect", body={"key": "value"}, cast_to=httpx.Response)
         assert response.status_code == 200
-        assert response.json() == {"status": "ok"}
+        assert json_loads(response.content) == {"status": "ok"}
 
     @pytest.mark.respx(base_url=base_url)
     def test_follow_redirects_disabled(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
@@ -1108,12 +1110,12 @@ class TestXTwitterScraper:
 class TestAsyncXTwitterScraper:
     @pytest.mark.respx(base_url=base_url)
     async def test_raw_response(self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper) -> None:
-        respx_mock.post("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.post("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
         response = await async_client.post("/foo", cast_to=httpx.Response)
         assert response.status_code == 200
         assert isinstance(response, httpx.Response)
-        assert response.json() == {"foo": "bar"}
+        assert json_loads(response.content) == {"foo": "bar"}
 
     @pytest.mark.respx(base_url=base_url)
     async def test_raw_response_for_binary(self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper) -> None:
@@ -1124,7 +1126,7 @@ class TestAsyncXTwitterScraper:
         response = await async_client.post("/foo", cast_to=httpx.Response)
         assert response.status_code == 200
         assert isinstance(response, httpx.Response)
-        assert response.json() == {"foo": "bar"}
+        assert json_loads(response.content) == {"foo": "bar"}
 
     def test_copy(self, async_client: AsyncXTwitterScraper) -> None:
         copied = async_client.copy()
@@ -1329,9 +1331,9 @@ class TestAsyncXTwitterScraper:
             default_headers={"X-Foo": "bar"},
         )
         request = test_client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-foo") == "bar"
-        assert request.headers.get("x-stainless-lang") == "python"
-        assert request.headers.get("x-xquik-sdk") == "python"
+        assert header(request.headers, "x-foo") == "bar"
+        assert header(request.headers, "x-stainless-lang") == "python"
+        assert header(request.headers, "x-xquik-sdk") == "python"
 
         test_client2 = AsyncXTwitterScraper(
             base_url=base_url,
@@ -1344,8 +1346,8 @@ class TestAsyncXTwitterScraper:
             },
         )
         request = test_client2._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-foo") == "stainless"
-        assert request.headers.get("x-stainless-lang") == "my-overriding-header"
+        assert header(request.headers, "x-foo") == "stainless"
+        assert header(request.headers, "x-stainless-lang") == "my-overriding-header"
 
         await test_client.close()
         await test_client2.close()
@@ -1355,7 +1357,7 @@ class TestAsyncXTwitterScraper:
             base_url=base_url, api_key=api_key, bearer_token=bearer_token, _strict_response_validation=True
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
-        assert request.headers.get("x-api-key") == api_key
+        assert header(request.headers, "x-api-key") == api_key
 
         with update_env(
             **{
@@ -1374,7 +1376,7 @@ class TestAsyncXTwitterScraper:
             client2._build_request(FinalRequestOptions(method="get", url="/foo"))
 
         request2 = client2._build_request(FinalRequestOptions(method="get", url="/foo", headers={"x-api-key": Omit()}))
-        assert request2.headers.get("x-api-key") is None
+        assert header(request2.headers, "x-api-key") is None
 
     async def test_default_query_option(self) -> None:
         client = AsyncXTwitterScraper(
@@ -1386,7 +1388,7 @@ class TestAsyncXTwitterScraper:
         )
         request = client._build_request(FinalRequestOptions(method="get", url="/foo"))
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"query_param": "bar"}
+        assert dict(url.params.items()) == {"query_param": "bar"}
 
         request = client._build_request(
             FinalRequestOptions(
@@ -1396,14 +1398,14 @@ class TestAsyncXTwitterScraper:
             )
         )
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"foo": "baz", "query_param": "overridden"}
+        assert dict(url.params.items()) == {"foo": "baz", "query_param": "overridden"}
 
         await client.close()
 
     async def test_hardcoded_query_params_in_url(self, async_client: AsyncXTwitterScraper) -> None:
         request = async_client._build_request(FinalRequestOptions(method="get", url="/foo?beta=true"))
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"beta": "true"}
+        assert dict(url.params.items()) == {"beta": "true"}
 
         request = async_client._build_request(
             FinalRequestOptions(
@@ -1413,7 +1415,7 @@ class TestAsyncXTwitterScraper:
             )
         )
         url = httpx.URL(request.url)
-        assert dict(url.params) == {"beta": "true", "limit": "10", "page": "abc"}
+        assert dict(url.params.items()) == {"beta": "true", "limit": "10", "page": "abc"}
 
         request = async_client._build_request(
             FinalRequestOptions(
@@ -1440,7 +1442,7 @@ class TestAsyncXTwitterScraper:
                 extra_json={"baz": False},
             ),
         )
-        data = json.loads(request.content.decode("utf-8"))
+        data = json_loads(request.content.decode("utf-8"))
         assert data == {"foo": "bar", "baz": False}
 
         request = client._build_request(
@@ -1450,7 +1452,7 @@ class TestAsyncXTwitterScraper:
                 extra_json={"baz": False},
             ),
         )
-        data = json.loads(request.content.decode("utf-8"))
+        data = json_loads(request.content.decode("utf-8"))
         assert data == {"baz": False}
 
         request = client._build_request(
@@ -1461,7 +1463,7 @@ class TestAsyncXTwitterScraper:
                 extra_json={"baz": None},
             ),
         )
-        data = json.loads(request.content.decode("utf-8"))
+        data = json_loads(request.content.decode("utf-8"))
         assert data == {"foo": "bar", "baz": None}
 
     def test_request_extra_headers(self, client: XTwitterScraper) -> None:
@@ -1472,7 +1474,7 @@ class TestAsyncXTwitterScraper:
                 **make_request_options(extra_headers={"X-Foo": "Foo"}),
             ),
         )
-        assert request.headers.get("X-Foo") == "Foo"
+        assert header(request.headers, "X-Foo") == "Foo"
 
         request = client.with_options(default_headers={"X-Bar": "true"})._build_request(
             FinalRequestOptions(
@@ -1483,7 +1485,7 @@ class TestAsyncXTwitterScraper:
                 ),
             ),
         )
-        assert request.headers.get("X-Bar") == "false"
+        assert header(request.headers, "X-Bar") == "false"
 
     def test_request_extra_query(self, client: XTwitterScraper) -> None:
         request = client._build_request(
@@ -1495,7 +1497,7 @@ class TestAsyncXTwitterScraper:
                 ),
             ),
         )
-        params = dict(request.url.params)
+        params = dict(request.url.params.items())
         assert params == {"my_query_param": "Foo"}
 
         request = client._build_request(
@@ -1508,7 +1510,7 @@ class TestAsyncXTwitterScraper:
                 ),
             ),
         )
-        params = dict(request.url.params)
+        params = dict(request.url.params.items())
         assert params == {"bar": "1", "foo": "2"}
 
         request = client._build_request(
@@ -1521,7 +1523,7 @@ class TestAsyncXTwitterScraper:
                 ),
             ),
         )
-        params = dict(request.url.params)
+        params = dict(request.url.params.items())
         assert params == {"foo": "2"}
 
     def test_multipart_repeating_array(self, async_client: AsyncXTwitterScraper) -> None:
@@ -1631,7 +1633,7 @@ class TestAsyncXTwitterScraper:
         class Model2(BaseModel):
             foo: str
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
         response = await async_client.get("/foo", cast_to=cast(Any, Union[Model1, Model2]))
         assert isinstance(response, Model2)
@@ -1647,13 +1649,13 @@ class TestAsyncXTwitterScraper:
         class Model2(BaseModel):
             foo: str
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": "bar"}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
         response = await async_client.get("/foo", cast_to=cast(Any, Union[Model1, Model2]))
         assert isinstance(response, Model2)
         assert response.foo == "bar"
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": 1}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": 1}))
 
         response = await async_client.get("/foo", cast_to=cast(Any, Union[Model1, Model2]))
         assert isinstance(response, Model1)
@@ -1819,7 +1821,7 @@ class TestAsyncXTwitterScraper:
         class Model(BaseModel):
             foo: str
 
-        respx_mock.get("/foo").mock(return_value=httpx.Response(200, json={"foo": {"invalid": True}}))
+        respx_mock.get("/foo").mock(return_value=json_response(200, json={"foo": {"invalid": True}}))
 
         with pytest.raises(APIResponseValidationError) as exc:
             await async_client.get("/foo", cast_to=Model)
@@ -1942,7 +1944,7 @@ class TestAsyncXTwitterScraper:
         response = await client.account.with_raw_response.retrieve()
 
         assert response.retries_taken == failures_before_success
-        assert int(response.http_request.headers.get("x-stainless-retry-count")) == failures_before_success
+        assert int(response.http_request.headers["x-stainless-retry-count"]) == failures_before_success
 
     @pytest.mark.parametrize("failures_before_success", [0, 2, 4])
     @mock.patch("x_twitter_scraper._base_client.BaseClient._calculate_retry_timeout", _low_retry_timeout)
@@ -1988,7 +1990,7 @@ class TestAsyncXTwitterScraper:
 
         response = await client.account.with_raw_response.retrieve(extra_headers={"x-stainless-retry-count": "42"})
 
-        assert response.http_request.headers.get("x-stainless-retry-count") == "42"
+        assert header(response.http_request.headers, "x-stainless-retry-count") == "42"
 
     async def test_get_platform(self) -> None:
         platform = await asyncify(get_platform)()
@@ -2026,11 +2028,11 @@ class TestAsyncXTwitterScraper:
         respx_mock.post("/redirect").mock(
             return_value=httpx.Response(302, headers={"Location": f"{base_url}/redirected"})
         )
-        respx_mock.get("/redirected").mock(return_value=httpx.Response(200, json={"status": "ok"}))
+        respx_mock.get("/redirected").mock(return_value=json_response(200, json={"status": "ok"}))
 
         response = await async_client.post("/redirect", body={"key": "value"}, cast_to=httpx.Response)
         assert response.status_code == 200
-        assert response.json() == {"status": "ok"}
+        assert json_loads(response.content) == {"status": "ok"}
 
     @pytest.mark.respx(base_url=base_url)
     async def test_follow_redirects_disabled(self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper) -> None:

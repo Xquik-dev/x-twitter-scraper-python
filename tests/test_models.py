@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-import json
 from typing import TYPE_CHECKING, Any, Dict, List, Union, Iterable, Optional, cast
 from datetime import datetime, timezone
 from collections import deque
@@ -16,6 +15,7 @@ from x_twitter_scraper._utils import PropertyInfo
 from x_twitter_scraper._compat import PYDANTIC_V1, parse_obj, model_dump, model_json
 from x_twitter_scraper._models import DISCRIMINATOR_CACHE, BaseModel, EagerIterable, construct_type
 from x_twitter_scraper._base_client import BasePage
+from x_twitter_scraper._utils._json import json_loads
 
 
 class BasicModel(BaseModel):
@@ -447,7 +447,7 @@ def test_model_serialization(as_json: bool, api_defaults: bool) -> None:
         dump = BaseModel.model_dump_json if as_json else BaseModel.model_dump
 
     def decode(value: object) -> object:
-        decoded: object = json.loads(value) if isinstance(value, str) else value
+        decoded: object = json_loads(value) if isinstance(value, str) else value
         assert isinstance(value, str if as_json else dict)
         return decoded
 
@@ -822,7 +822,7 @@ def test_eager_iterable_union_preserves_scalar(value: str | int) -> None:
     assert model.items == value
     assert model.model_dump() == {"items": value}
     assert model.model_dump(mode="json") == {"items": value}
-    assert json.loads(model.model_dump_json()) == {"items": value}
+    assert json_loads(model.model_dump_json()) == {"items": value}
 
 
 @pytest.mark.parametrize("invalid", [None, "invalid"])
@@ -843,7 +843,7 @@ def test_eager_iterable_preserves_default_exclusions(exclude_unset: bool, exclud
 
     model = Model()
     assert model.model_dump(exclude_unset=exclude_unset, exclude_defaults=exclude_defaults) == {}
-    assert json.loads(model.model_dump_json(exclude_unset=exclude_unset, exclude_defaults=exclude_defaults)) == {}
+    assert json_loads(model.model_dump_json(exclude_unset=exclude_unset, exclude_defaults=exclude_defaults)) == {}
     assert model.items == (1, 2)
 
 

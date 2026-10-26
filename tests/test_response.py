@@ -10,7 +10,9 @@ import httpx
 import pytest
 import pydantic
 
+from tests.utils import json_response
 from x_twitter_scraper import BaseModel, XTwitterScraper, AsyncXTwitterScraper
+from x_twitter_scraper._types import JsonValue
 from x_twitter_scraper._models import FinalRequestOptions
 from x_twitter_scraper._response import (
     APIResponse,
@@ -166,8 +168,8 @@ async def test_response_parse_expect_model_union_non_json_content(response_facto
 async def test_response_parse_dictionary(
     response_factory: ResponseFactory, mapping_type: type[dict[str, object]]
 ) -> None:
-    data = {"nested": {"count": 2}, "items": [True, None], "empty": {}}
-    response = response_factory(httpx.Response(200, json=data), False)
+    data: JsonValue = {"nested": {"count": 2}, "items": [True, None], "empty": {}}
+    response = response_factory(json_response(200, json=data), False)
     result = (
         await response.parse(to=mapping_type)
         if isinstance(response, AsyncAPIResponse)

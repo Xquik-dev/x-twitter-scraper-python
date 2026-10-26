@@ -15,7 +15,7 @@ from typing_extensions import Literal, get_args, get_origin
 import httpx
 
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper._types import Omit, NoneType
+from x_twitter_scraper._types import Omit, NoneType, JsonValue
 from x_twitter_scraper._utils import (
     is_dict,
     is_list,
@@ -32,6 +32,14 @@ from x_twitter_scraper._models import BaseModel
 
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 T = TypeVar("T")
+
+
+def header(headers: httpx.Headers, name: str) -> str | None:
+    return headers[name] if name in headers else None
+
+
+def json_response(status_code: int, *, json: JsonValue) -> httpx.Response:
+    return httpx.Response(status_code, json=json)
 
 
 def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: list[str]) -> bool:

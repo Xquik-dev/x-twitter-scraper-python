@@ -7,16 +7,21 @@ from __future__ import annotations
 import httpx
 import pytest
 
+from tests.utils import json_response
 from x_twitter_scraper import ConflictError, XTwitterScraper
 from x_twitter_scraper.types import Error
+from x_twitter_scraper._types import JsonValue
 from x_twitter_scraper._models import validate_type
 from x_twitter_scraper.types.shared.error import ErrorValueStructuredError
 
 MESSAGE = "A top-up is already running. Check your balance before you try again."
 
 
-def conflict_error(body: object) -> Error:
-    transport = httpx.MockTransport(lambda _request: httpx.Response(409, json=body))
+def conflict_error(body: JsonValue) -> Error:
+    def respond(_request: httpx.Request) -> httpx.Response:
+        return json_response(409, json=body)
+
+    transport = httpx.MockTransport(respond)
     http_client = httpx.Client(transport=transport)
     with XTwitterScraper(api_key="isolated-test", http_client=http_client, max_retries=0) as client:
         with pytest.raises(ConflictError) as raised:

@@ -27,7 +27,7 @@ if not {"--strict", "--disable-pip", "--require-hashes"} <= set(arguments):
     sys.exit(99)
 text = open(arguments[arguments.index("--requirement") + 1]).read()
 open(os.environ["AUDIT_RECEIVED"], "a").write(text)
-findings = json.loads(os.environ["AUDIT_FINDINGS"])
+findings = json_loads(os.environ["AUDIT_FINDINGS"])
 pins = [match.groups() for match in re.finditer(r"^([A-Za-z0-9._-]+)==(\S+) \\$", text, re.MULTILINE)]
 dependencies = [{"name": name, "version": version, "vulns": findings.get(f"{name} {version}", [])} for name, version in pins]
 json.dump({"dependencies": dependencies, "fixes": []}, open(arguments[arguments.index("--output") + 1], "w"))

@@ -327,7 +327,7 @@ async def test_trends_history_sends_every_filter_and_reads_the_snapshots(asynchr
     )
 
     assert request.url.path == "/api/v1/x/trends/history"
-    assert dict(request.url.params) == {
+    assert dict(request.url.params.items()) == {
         "woeid": "23424969",
         "country": "Turkey",
         "location": "Istanbul",
@@ -474,7 +474,7 @@ async def test_contributor_note_lists_send_the_alias_and_paging(
     )
 
     assert request.url.raw_path.partition(b"?")[0] == raw_path + suffix
-    assert dict(request.url.params) == {
+    assert dict(request.url.params.items()) == {
         "cursor": "-1767098234260",
         "pageSize": "10",
         "fields": "notes.text",

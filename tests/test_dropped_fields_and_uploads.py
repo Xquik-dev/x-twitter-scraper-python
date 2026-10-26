@@ -158,7 +158,7 @@ async def test_follower_and_count_events_parse_with_their_data(asynchronous: boo
         asynchronous,
     )
 
-    assert dict(request.url.params) == {"eventType": "follower.added"}
+    assert dict(request.url.params.items()) == {"eventType": "follower.added"}
     added, removed, changed = page.events
     assert (added.type, removed.type) == ("follower.added", "follower.removed")
     if PYDANTIC_V1:

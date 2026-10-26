@@ -76,7 +76,7 @@ async def test_trends_at_a_past_time_read_the_stored_list_times(asynchronous: bo
     )
 
     assert request.url.path == "/api/v1/x/trends"
-    assert dict(request.url.params) == {"at": "2026-10-13T14:00:00Z", "location": "Istanbul", "count": "30"}
+    assert dict(request.url.params.items()) == {"at": "2026-10-13T14:00:00Z", "location": "Istanbul", "count": "30"}
     assert trends.captured_at == datetime(2026, 10, 13, 14, 0, 26, tzinfo=timezone.utc)
     assert trends.requested_at == datetime(2026, 10, 13, 14, 0, tzinfo=timezone.utc)
     assert (trends.count, trends.woeid) == (30, 1)
@@ -117,7 +117,7 @@ async def test_spaces_search_sends_each_query_type(query_type: QueryType, asynch
     )
 
     assert request.url.path == "/api/v1/x/spaces/search"
-    assert dict(request.url.params) == {"q": "solana", "pageSize": "20", "queryType": query_type}
+    assert dict(request.url.params.items()) == {"q": "solana", "pageSize": "20", "queryType": query_type}
     assert page.spaces[0].id == "1OGwblLjnQMKB"
 
 
