@@ -5,9 +5,12 @@ from __future__ import annotations
 
 import sys
 import json
-from typing import cast
+from typing import Callable, cast
 from pathlib import Path
 from collections.abc import Mapping
+
+# json.loads declares Any, and without an object hook it returns only JSON values. https://docs.python.org/3/library/json.html#json-to-py-table
+load_json: Callable[[str], object] = json.loads
 
 EXTRACTION_DIAGNOSTIC = "py/diagnostics/extraction-warnings"
 
@@ -78,7 +81,7 @@ def validate(report: object) -> None:
 
 def main(arguments: list[str]) -> int:
     try:
-        validate(json.loads(Path(arguments[0]).read_text()))
+        validate(load_json(Path(arguments[0]).read_text()))
     except ValueError as error:
         print(error, file=sys.stderr)
         return 1

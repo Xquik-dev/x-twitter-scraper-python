@@ -8,13 +8,16 @@ from __future__ import annotations
 
 import sys
 import json
-from typing import cast
+from typing import Callable, cast
 from pathlib import Path
 from fractions import Fraction
 from collections.abc import Mapping
 
 import pytest
 from _pytest.terminal import TerminalReporter
+
+# json.loads declares Any, and without an object hook it returns only JSON values. https://docs.python.org/3/library/json.html#json-to-py-table
+load_json: Callable[[str], object] = json.loads
 
 METRICS = (
     ("Statement", "covered_lines", "num_statements"),
@@ -30,7 +33,7 @@ def _integer(mapping: Mapping[str, object], key: str) -> int:
 
 
 def verify_coverage(report_path: Path) -> bool:
-    report = _mapping(json.loads(report_path.read_text(encoding="utf-8")), "root must be an object")
+    report = _mapping(load_json(report_path.read_text(encoding="utf-8")), "root must be an object")
     totals = _mapping(report.get("totals"), "lacks totals")
 
     for label, covered_key, total_key in METRICS:
@@ -52,7 +55,7 @@ def _mapping(value: object, message: str = "requires an object") -> Mapping[str,
 
 
 def coverage_metrics(report_path: Path) -> dict[str, Fraction]:
-    report = _mapping(json.loads(report_path.read_text(encoding="utf-8")))
+    report = _mapping(load_json(report_path.read_text(encoding="utf-8")))
     totals = _mapping(report.get("totals"))
     counts = {name: (_integer(totals, covered), _integer(totals, total)) for name, covered, total in METRICS}
     covered_functions = total_functions = declarations = 0
@@ -84,7 +87,7 @@ def coverage_metrics(report_path: Path) -> dict[str, Fraction]:
 
 def verify_non_regression(report_path: Path, parent_path: Path) -> bool:
     metadata = [
-        _mapping(_mapping(json.loads(path.read_text(encoding="utf-8"))).get("meta"))
+        _mapping(_mapping(load_json(path.read_text(encoding="utf-8"))).get("meta"))
         for path in (report_path, parent_path)
     ]
     if any(meta.get("branch_coverage") is not True or meta.get("format") != 3 for meta in metadata):
