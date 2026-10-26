@@ -25,7 +25,7 @@ from pydantic import ValidationError
 
 from tests.utils import header, json_response
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, APIResponseValidationError
-from x_twitter_scraper._types import Omit
+from x_twitter_scraper._types import Omit, HttpxResponse
 from x_twitter_scraper._utils import asyncify
 from x_twitter_scraper._models import BaseModel, FinalRequestOptions
 from x_twitter_scraper._constants import DEFAULT_TIMEOUT
@@ -140,7 +140,7 @@ class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
         assert not inspect.iscoroutinefunction(self.handler), "handler must not be a coroutine function"
         assert inspect.isfunction(self.handler), "handler must be a function"
         response = self.handler(request)
-        assert isinstance(response, httpx.Response)
+        assert isinstance(response, HttpxResponse)
         return response
 
     @override
@@ -150,7 +150,7 @@ class MockTransport(httpx.BaseTransport, httpx.AsyncBaseTransport):
     ) -> httpx.Response:
         assert inspect.iscoroutinefunction(self.handler), "handler must be a coroutine function"
         response = await self.handler(request)
-        assert isinstance(response, httpx.Response)
+        assert isinstance(response, HttpxResponse)
         return response
 
 
@@ -187,9 +187,9 @@ class TestXTwitterScraper:
     def test_raw_response(self, respx_mock: MockRouter, client: XTwitterScraper) -> None:
         respx_mock.post("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
-        response = client.post("/foo", cast_to=httpx.Response)
+        response = client.post("/foo", cast_to=HttpxResponse)
         assert response.status_code == 200
-        assert isinstance(response, httpx.Response)
+        assert isinstance(response, HttpxResponse)
         assert json_loads(response.content) == {"foo": "bar"}
 
     @pytest.mark.respx(base_url=base_url)
@@ -198,9 +198,9 @@ class TestXTwitterScraper:
             return_value=httpx.Response(200, headers={"Content-Type": "application/binary"}, content='{"foo": "bar"}')
         )
 
-        response = client.post("/foo", cast_to=httpx.Response)
+        response = client.post("/foo", cast_to=HttpxResponse)
         assert response.status_code == 200
-        assert isinstance(response, httpx.Response)
+        assert isinstance(response, HttpxResponse)
         assert json_loads(response.content) == {"foo": "bar"}
 
     def test_copy(self, client: XTwitterScraper) -> None:
@@ -637,7 +637,7 @@ class TestXTwitterScraper:
         response = client.post(
             "/upload",
             content=file_content,
-            cast_to=httpx.Response,
+            cast_to=HttpxResponse,
             options={"headers": {"Content-Type": "application/octet-stream"}},
         )
 
@@ -664,7 +664,7 @@ class TestXTwitterScraper:
             response = client.post(
                 "/upload",
                 content=iterator,
-                cast_to=httpx.Response,
+                cast_to=HttpxResponse,
                 options={"headers": {"Content-Type": "application/octet-stream"}},
             )
 
@@ -688,7 +688,7 @@ class TestXTwitterScraper:
             response = getattr(client, method)(
                 "/upload",
                 body=file_content,
-                cast_to=httpx.Response,
+                cast_to=HttpxResponse,
                 options={"headers": {"Content-Type": "application/octet-stream"}},
             )
 
@@ -1090,7 +1090,7 @@ class TestXTwitterScraper:
         )
         respx_mock.get("/redirected").mock(return_value=json_response(200, json={"status": "ok"}))
 
-        response = client.post("/redirect", body={"key": "value"}, cast_to=httpx.Response)
+        response = client.post("/redirect", body={"key": "value"}, cast_to=HttpxResponse)
         assert response.status_code == 200
         assert json_loads(response.content) == {"status": "ok"}
 
@@ -1101,7 +1101,7 @@ class TestXTwitterScraper:
         )
 
         with pytest.raises(APIStatusError) as exc_info:
-            client.post("/redirect", body={"key": "value"}, options={"follow_redirects": False}, cast_to=httpx.Response)
+            client.post("/redirect", body={"key": "value"}, options={"follow_redirects": False}, cast_to=HttpxResponse)
 
         assert exc_info.value.response.status_code == 302
         assert exc_info.value.response.headers["Location"] == f"{base_url}/redirected"
@@ -1112,9 +1112,9 @@ class TestAsyncXTwitterScraper:
     async def test_raw_response(self, respx_mock: MockRouter, async_client: AsyncXTwitterScraper) -> None:
         respx_mock.post("/foo").mock(return_value=json_response(200, json={"foo": "bar"}))
 
-        response = await async_client.post("/foo", cast_to=httpx.Response)
+        response = await async_client.post("/foo", cast_to=HttpxResponse)
         assert response.status_code == 200
-        assert isinstance(response, httpx.Response)
+        assert isinstance(response, HttpxResponse)
         assert json_loads(response.content) == {"foo": "bar"}
 
     @pytest.mark.respx(base_url=base_url)
@@ -1123,9 +1123,9 @@ class TestAsyncXTwitterScraper:
             return_value=httpx.Response(200, headers={"Content-Type": "application/binary"}, content='{"foo": "bar"}')
         )
 
-        response = await async_client.post("/foo", cast_to=httpx.Response)
+        response = await async_client.post("/foo", cast_to=HttpxResponse)
         assert response.status_code == 200
-        assert isinstance(response, httpx.Response)
+        assert isinstance(response, HttpxResponse)
         assert json_loads(response.content) == {"foo": "bar"}
 
     def test_copy(self, async_client: AsyncXTwitterScraper) -> None:
@@ -1564,7 +1564,7 @@ class TestAsyncXTwitterScraper:
         response = await async_client.post(
             "/upload",
             content=file_content,
-            cast_to=httpx.Response,
+            cast_to=HttpxResponse,
             options={"headers": {"Content-Type": "application/octet-stream"}},
         )
 
@@ -1591,7 +1591,7 @@ class TestAsyncXTwitterScraper:
             response = await client.post(
                 "/upload",
                 content=iterator,
-                cast_to=httpx.Response,
+                cast_to=HttpxResponse,
                 options={"headers": {"Content-Type": "application/octet-stream"}},
             )
 
@@ -1615,7 +1615,7 @@ class TestAsyncXTwitterScraper:
             response = await getattr(async_client, method)(
                 "/upload",
                 body=file_content,
-                cast_to=httpx.Response,
+                cast_to=HttpxResponse,
                 options={"headers": {"Content-Type": "application/octet-stream"}},
             )
 
@@ -2030,7 +2030,7 @@ class TestAsyncXTwitterScraper:
         )
         respx_mock.get("/redirected").mock(return_value=json_response(200, json={"status": "ok"}))
 
-        response = await async_client.post("/redirect", body={"key": "value"}, cast_to=httpx.Response)
+        response = await async_client.post("/redirect", body={"key": "value"}, cast_to=HttpxResponse)
         assert response.status_code == 200
         assert json_loads(response.content) == {"status": "ok"}
 
@@ -2042,7 +2042,7 @@ class TestAsyncXTwitterScraper:
 
         with pytest.raises(APIStatusError) as exc_info:
             await async_client.post(
-                "/redirect", body={"key": "value"}, options={"follow_redirects": False}, cast_to=httpx.Response
+                "/redirect", body={"key": "value"}, options={"follow_redirects": False}, cast_to=HttpxResponse
             )
 
         assert exc_info.value.response.status_code == 302

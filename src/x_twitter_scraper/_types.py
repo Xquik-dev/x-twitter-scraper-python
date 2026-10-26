@@ -165,6 +165,9 @@ HeadersLike = Union[Headers, HeadersLikeProtocol]
 
 ResponseT = TypeVar("ResponseT")
 
+# httpx annotates the json argument of Response.__init__ as Any, so the bare class reads as Any. https://www.python-httpx.org/api/#response
+HttpxResponse: type[Response] = Response
+
 StrBytesIntFloat = Union[str, bytes, int, float]
 
 JsonValue: TypeAlias = Union[str, int, float, bool, List["JsonValue"], Dict[str, "JsonValue"], None]

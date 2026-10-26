@@ -57,6 +57,7 @@ from ._types import (
     PostParser,
     BinaryTypes,
     RequestFiles,
+    HttpxResponse,
     HttpxSendArgs,
     RequestOptions,
     AsyncBinaryTypes,
@@ -982,7 +983,7 @@ class SyncAPIClient(BaseClient[httpx.Client, Stream[object]]):
                 raise TypeError(f"API Response types must subclass {APIResponse}; Received {origin}")
             response_cls = cast("type[APIResponse[ResponseT]]", cast_to)
             cast_to = cast("type[ResponseT]", extract_response_type(response_cls))
-        elif cast_to == httpx.Response:
+        elif cast_to == HttpxResponse:
             return cast(ResponseT, response)
         else:
             response_cls = APIResponse
@@ -1467,7 +1468,7 @@ class AsyncAPIClient(BaseClient[httpx.AsyncClient, AsyncStream[object]]):
                 raise TypeError(f"API Response types must subclass {AsyncAPIResponse}; Received {origin}")
             response_cls = cast("type[AsyncAPIResponse[ResponseT]]", cast_to)
             cast_to = cast("type[ResponseT]", extract_response_type(response_cls))
-        elif cast_to == httpx.Response:
+        elif cast_to == HttpxResponse:
             return cast(ResponseT, response)
         else:
             response_cls = AsyncAPIResponse

@@ -12,7 +12,7 @@ import pydantic
 
 from tests.utils import json_response
 from x_twitter_scraper import BaseModel, XTwitterScraper, AsyncXTwitterScraper
-from x_twitter_scraper._types import JsonValue
+from x_twitter_scraper._types import JsonValue, HttpxResponse
 from x_twitter_scraper._models import FinalRequestOptions
 from x_twitter_scraper._response import (
     APIResponse,
@@ -52,7 +52,7 @@ def test_extract_response_type_direct_class_missing_type_arg() -> None:
 def test_extract_response_type_concrete_subclasses() -> None:
     assert extract_response_type(ConcreteBaseAPIResponse) == bytes
     assert extract_response_type(ConcreteAPIResponse) == List[str]
-    assert extract_response_type(ConcreteAsyncAPIResponse) == httpx.Response
+    assert extract_response_type(ConcreteAsyncAPIResponse) == HttpxResponse
 
 
 def test_extract_response_type_binary_response() -> None:

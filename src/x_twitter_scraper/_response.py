@@ -29,7 +29,7 @@ import anyio
 import httpx
 import pydantic
 
-from ._types import NoneType
+from ._types import NoneType, HttpxResponse
 from ._utils import is_given, extract_type_arg, is_annotated_type, is_type_alias_type, extract_type_var_from_base
 from ._models import BaseModel, is_basemodel
 from ._constants import RAW_RESPONSE_HEADER, OVERRIDE_CAST_TO_HEADER
@@ -191,8 +191,8 @@ class BaseAPIResponse(Generic[R]):
         if origin == APIResponse:
             raise RuntimeError("Unexpected state - cast_to is `APIResponse`")
 
-        if inspect.isclass(origin) and issubclass(origin, httpx.Response):
-            if cast_to != httpx.Response:
+        if inspect.isclass(origin) and issubclass(origin, HttpxResponse):
+            if cast_to != HttpxResponse:
                 raise ValueError(f"Subclasses of httpx.Response cannot be passed to `cast_to`")
             return cast(R, response)
 
@@ -215,7 +215,7 @@ class BaseAPIResponse(Generic[R]):
             and not issubclass(origin, BaseModel)
         ):
             raise RuntimeError(
-                f"Unsupported type, expected {cast_to} to be a subclass of {BaseModel}, {dict}, {list}, {Union}, {NoneType}, {str} or {httpx.Response}."
+                f"Unsupported type, expected {cast_to} to be a subclass of {BaseModel}, {dict}, {list}, {Union}, {NoneType}, {str} or {HttpxResponse}."
             )
 
         content_type, *_ = response.headers.get("content-type", "*").split(";")
