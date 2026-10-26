@@ -52,6 +52,7 @@ from ._types import (
     Timeout,
     NotGiven,
     AnyMapping,
+    PostParser,
     RequestOptions,
     HttpxRequestFiles,
 )
@@ -831,7 +832,7 @@ class FinalRequestOptions(pydantic.BaseModel):
     timeout: Union[float, Timeout, None, NotGiven] = NotGiven()
     files: Union[HttpxRequestFiles, None] = None
     idempotency_key: Union[str, None] = None
-    post_parser: Union[Callable[[Any], Any], NotGiven] = NotGiven()
+    post_parser: Union[PostParser, NotGiven] = NotGiven()
     follow_redirects: Union[bool, None] = None
     security: SecurityOptions = {
         "api_key": True,

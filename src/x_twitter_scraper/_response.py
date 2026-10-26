@@ -288,7 +288,7 @@ class APIResponse(BaseAPIResponse[R]):
         if not self._is_sse_stream:
             self.read()
 
-        parsed = self._parse(to=to)
+        parsed: object = self._parse(to=to)
         if is_given(self._options.post_parser):
             parsed = self._options.post_parser(parsed)
 
@@ -384,7 +384,7 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
         if not self._is_sse_stream:
             await self.read()
 
-        parsed = self._parse(to=to)
+        parsed: object = self._parse(to=to)
         if is_given(self._options.post_parser):
             parsed = self._options.post_parser(parsed)
 
