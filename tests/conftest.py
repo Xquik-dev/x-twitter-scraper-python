@@ -13,9 +13,10 @@ import httpx
 import pytest
 from pytest_asyncio import is_async_test
 
+from tests.utils import get_attribute, get_attribute_or
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper, DefaultAioHttpClient
 from tests.mock_api_server import MockAPIServer
-from x_twitter_scraper._utils import is_dict
+from x_twitter_scraper._utils import is_dict, is_mapping
 
 if TYPE_CHECKING:
     from _pytest.fixtures import FixtureRequest  # pyright: ignore[reportPrivateImportUsage]
@@ -39,6 +40,11 @@ else:
     base_url = configured_base_url
 
 
+def _mark_reason(marker: pytest.Mark) -> object:
+    kwargs = get_attribute(marker, "kwargs")
+    return kwargs.get("reason") if is_mapping(kwargs) else None
+
+
 def pytest_collection_modifyitems(items: list[pytest.Function]) -> None:
     pytest_asyncio_tests = (item for item in items if is_async_test(item))
     session_scope_marker = pytest.mark.asyncio(loop_scope="session")
@@ -49,7 +55,7 @@ def pytest_collection_modifyitems(items: list[pytest.Function]) -> None:
         item.own_markers[:] = [
             marker
             for marker in item.own_markers
-            if marker.name != "skip" or marker.kwargs.get("reason") != disabled_mock_reason
+            if marker.name != "skip" or _mark_reason(marker) != disabled_mock_reason
         ]
 
         if "async_client" not in item.fixturenames or "respx_mock" not in item.fixturenames:
@@ -75,7 +81,7 @@ bearer_token = "My Bearer Token"
 
 @pytest.fixture(scope="session")
 def client(request: FixtureRequest) -> Iterator[XTwitterScraper]:
-    strict = getattr(request, "param", True)
+    strict = get_attribute_or(request, "param", True)
     if not isinstance(strict, bool):
         raise TypeError(f"Unexpected fixture parameter type {type(strict)}, expected {bool}")
 
@@ -90,7 +96,7 @@ def client(request: FixtureRequest) -> Iterator[XTwitterScraper]:
 
 @pytest.fixture(scope="session")
 async def async_client(request: FixtureRequest) -> AsyncIterator[AsyncXTwitterScraper]:
-    param = getattr(request, "param", True)
+    param = get_attribute_or(request, "param", True)
 
     strict = True
     http_client: None | httpx.AsyncClient = None
@@ -98,8 +104,9 @@ async def async_client(request: FixtureRequest) -> AsyncIterator[AsyncXTwitterSc
     if isinstance(param, bool):
         strict = param
     elif is_dict(param):
-        strict = param.get("strict", True)
-        assert isinstance(strict, bool)
+        strict_param = param.get("strict", True)
+        assert isinstance(strict_param, bool)
+        strict = strict_param
 
         http_client_type = param.get("http_client", "httpx")
         if http_client_type == "aiohttp":

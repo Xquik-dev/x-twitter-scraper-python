@@ -31,8 +31,8 @@ from x_twitter_scraper._models import BaseModel
 from x_twitter_scraper._utils._compat import get_args, is_class, get_origin
 
 # The builtin getattr returns Any, and an attribute of an unknown object is an unknown object. https://docs.python.org/3/library/functions.html#getattr
-_get_attribute: Callable[[object, str], object] = getattr
-_get_attribute_or: Callable[[object, str, object], object] = getattr
+get_attribute: Callable[[object, str], object] = getattr
+get_attribute_or: Callable[[object, str, object], object] = getattr
 
 BaseModelT = TypeVar("BaseModelT", bound=BaseModel)
 T = TypeVar("T")
@@ -44,9 +44,9 @@ def json_response(status_code: int, *, json: JsonValue) -> httpx.Response:
 
 def assert_matches_model(model: type[BaseModelT], value: BaseModelT, *, path: list[str]) -> bool:
     for name, field in get_model_fields(model).items():
-        field_value = _get_attribute(value, name)
+        field_value = get_attribute(value, name)
         if PYDANTIC_V1:
-            allow_none = bool(_get_attribute_or(field, "allow_none", False))
+            allow_none = bool(get_attribute_or(field, "allow_none", False))
         else:
             allow_none = False
 
@@ -68,7 +68,7 @@ def assert_matches_type(
     allow_none: bool = False,
 ) -> None:
     if is_type_alias_type(type_):
-        type_ = _get_attribute(type_, "__value__")
+        type_ = get_attribute(type_, "__value__")
 
     if is_annotated_type(type_):
         type_ = extract_type_arg(type_, 0)
