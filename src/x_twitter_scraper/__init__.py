@@ -90,7 +90,9 @@ if not _t.TYPE_CHECKING:
 
 _setup_logging()
 
-__locals = locals()
+# globals declares dict[str, Any], and the module namespace maps each name to an object. https://docs.python.org/3/library/functions.html#globals
+_module_namespace: _t.Callable[[], dict[str, object]] = globals
+__locals = _module_namespace()
 for __name in __all__:
     if not __name.startswith("__"):
         try:
