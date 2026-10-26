@@ -58,9 +58,9 @@ from ._types import (
 from ._utils import (
     PropertyInfo,
     is_list,
+    memoize,
     is_given,
     json_safe,
-    lru_cache,
     is_mapping,
     parse_date,
     is_iterable,
@@ -785,7 +785,7 @@ else:
 if not PYDANTIC_V1:
     from pydantic import TypeAdapter as _TypeAdapter
 
-    _CachedTypeAdapter = lru_cache(maxsize=None)(_TypeAdapter)
+    _CachedTypeAdapter = memoize(_TypeAdapter)
 
     if TYPE_CHECKING:
         from pydantic import TypeAdapter

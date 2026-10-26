@@ -64,7 +64,7 @@ from ._types import (
     ModelBuilderProtocol,
     not_given,
 )
-from ._utils import is_dict, is_list, asyncify, is_given, is_tuple, lru_cache, is_mapping
+from ._utils import is_dict, is_list, memoize, asyncify, is_given, is_tuple, is_mapping
 from ._compat import PYDANTIC_V1, model_copy, model_dump
 from ._models import GenericModel, SecurityOptions, FinalRequestOptions, validate_type, construct_type
 from ._response import (
@@ -646,7 +646,7 @@ class BaseClient(Generic[_HttpxClientT, _DefaultStreamT]):
         self._base_url = self._enforce_trailing_slash(url if isinstance(url, URL) else URL(url))
 
     def platform_headers(self) -> Dict[str, str]:
-        # lru_cache on a method keeps every instance alive.
+        # A cache on a method keeps every instance alive.
         # https://github.com/python/cpython/issues/88476
         return platform_headers(self._version, platform=self._platform)
 
@@ -1780,7 +1780,7 @@ def get_platform() -> Platform:
     return "Unknown"
 
 
-@lru_cache(maxsize=None)
+@memoize
 def platform_headers(version: str, *, platform: Platform | None) -> Dict[str, str]:
     return {
         "X-Xquik-SDK": "python",

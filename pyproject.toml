@@ -250,7 +250,7 @@ unfixable = [
 extend-safe-fixes = ["FA102"]
 
 [tool.ruff.lint.flake8-tidy-imports.banned-api]
-"functools.lru_cache".msg = "This function does not retain type information for the wrapped function's arguments; The `lru_cache` function from `_utils` should be used instead"
+"functools.lru_cache".msg = "It loses the wrapped function's argument types. Use `memoize` from `_utils` instead."
 "typing.Any".msg = "Declare `object` and narrow it with isinstance, or name the real type."
 "typing.cast".msg = "Narrow the value with isinstance or annotate it, because cast skips the type check."
 "typing_extensions.Any".msg = "Declare `object` and narrow it with isinstance, or name the real type."

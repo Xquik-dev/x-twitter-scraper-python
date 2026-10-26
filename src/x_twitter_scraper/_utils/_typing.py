@@ -15,7 +15,7 @@ from typing_extensions import (
     Annotated,
 )
 
-from ._utils import is_tuple, lru_cache
+from ._utils import memoize, is_tuple
 from ._compat import get_args, is_union as _is_union, get_origin
 
 
@@ -62,7 +62,7 @@ def is_type_alias_type(tp: object, /) -> TypeIs[typing_extensions.TypeAliasType]
     return isinstance(tp, _TYPE_ALIAS_TYPES)
 
 
-@lru_cache(maxsize=8096)
+@memoize
 def strip_annotated_type(typ: object) -> object:
     if is_required_type(typ) or is_annotated_type(typ):
         return strip_annotated_type(get_args(typ)[0])

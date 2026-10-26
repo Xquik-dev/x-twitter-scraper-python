@@ -9,7 +9,6 @@ import re
 import inspect
 import functools
 from typing import (
-    Any,
     Tuple,
     Mapping,
     TypeVar,
@@ -31,7 +30,6 @@ _T = TypeVar("_T")
 _P = ParamSpec("_P")
 _TupleT = TypeVar("_TupleT", bound=Tuple[object, ...])
 _MappingT = TypeVar("_MappingT", bound=Mapping[str, object])
-CallableT = TypeVar("CallableT", bound=Callable[..., Any])
 
 
 def flatten(t: Iterable[Iterable[_T]]) -> list[_T]:
@@ -329,11 +327,19 @@ def get_async_library() -> str:
         return "false"
 
 
-def lru_cache(*, maxsize: int | None = 128) -> Callable[[CallableT], CallableT]:
-    wrapper = functools.lru_cache(  # noqa: TID251
-        maxsize=maxsize,
-    )
-    return cast(Any, wrapper)  # type: ignore[no-any-return]
+def memoize(func: Callable[_P, _T]) -> Callable[_P, _T]:
+    cache: dict[tuple[tuple[object, ...], tuple[tuple[str, object], ...]], _T] = {}
+
+    @functools.wraps(func)
+    def wrapper(*args: _P.args, **kwargs: _P.kwargs) -> _T:
+        key = (args, tuple(kwargs.items()))
+        try:
+            return cache[key]
+        except KeyError:
+            result = cache[key] = func(*args, **kwargs)
+            return result
+
+    return wrapper
 
 
 def json_safe(data: object) -> object:

@@ -17,8 +17,8 @@ from ._sync import to_thread
 from ._utils import (
     is_dict,
     is_list,
+    memoize,
     is_given,
-    lru_cache,
     is_mapping,
     is_iterable,
     is_sequence,
@@ -87,7 +87,7 @@ def transform(
     return _transform_recursive(data, annotation=expected_type)
 
 
-@lru_cache(maxsize=8096)
+@memoize
 def _get_property_info(type_: object) -> tuple[PropertyInfo, ...]:
     if is_required_type(type_):
         type_ = get_args(type_)[0]
@@ -317,7 +317,7 @@ async def _async_transform_typeddict(
     return result
 
 
-@lru_cache(maxsize=8096)
+@memoize
 def get_type_hints(
     obj: object,
     globalns: dict[str, object] | None = None,
