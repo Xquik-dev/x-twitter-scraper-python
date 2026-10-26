@@ -43,15 +43,16 @@ if TYPE_CHECKING:
 
 P = ParamSpec("P")
 R = TypeVar("R")
+_R_co = TypeVar("_R_co", covariant=True)
 _T = TypeVar("_T")
-_APIResponseT = TypeVar("_APIResponseT", bound="APIResponse[Any]")
-_AsyncAPIResponseT = TypeVar("_AsyncAPIResponseT", bound="AsyncAPIResponse[Any]")
+_APIResponseT = TypeVar("_APIResponseT", bound="APIResponse[object]")
+_AsyncAPIResponseT = TypeVar("_AsyncAPIResponseT", bound="AsyncAPIResponse[object]")
 
 log: logging.Logger = logging.getLogger(__name__)
 
 
-class BaseAPIResponse(Generic[R]):
-    _cast_to: type[R]
+class BaseAPIResponse(Generic[_R_co]):
+    _cast_to: type[_R_co]
     _client: "SyncAPIClient | AsyncAPIClient"
     _parsed_by_type: dict[type, object]
     _is_sse_stream: bool
@@ -67,7 +68,7 @@ class BaseAPIResponse(Generic[R]):
         self,
         *,
         raw: httpx.Response,
-        cast_to: type[R],
+        cast_to: type[_R_co],
         client: "SyncAPIClient | AsyncAPIClient",
         stream: bool,
         stream_cls: type[Stream[object]] | type[AsyncStream[object]] | None,
@@ -130,7 +131,7 @@ class BaseAPIResponse(Generic[R]):
             f"<{self.__class__.__name__} [{self.status_code} {self.http_response.reason_phrase}] type={self._cast_to}>"
         )
 
-    def _parse(self, *, to: type[_T] | None = None) -> R | _T:
+    def _parse(self, *, to: type[_T] | None = None) -> _R_co | _T:
         cast_to = to if to is not None else self._cast_to
 
         if is_type_alias_type(cast_to):
@@ -160,7 +161,7 @@ class BaseAPIResponse(Generic[R]):
                     raise MissingStreamClassError()
 
             return cast(
-                Union[R, _T],
+                Union[_R_co, _T],
                 stream_cls(
                     cast_to=cast_to,
                     response=self.http_response,
@@ -170,23 +171,23 @@ class BaseAPIResponse(Generic[R]):
             )
 
         if cast_to is NoneType:
-            return cast(R, None)
+            return cast(_R_co, None)
 
         response = self.http_response
         if cast_to == str:
-            return cast(R, response.text)
+            return cast(_R_co, response.text)
 
         if cast_to == bytes:
-            return cast(R, response.content)
+            return cast(_R_co, response.content)
 
         if cast_to == int:
-            return cast(R, int(response.text))
+            return cast(_R_co, int(response.text))
 
         if cast_to == float:
-            return cast(R, float(response.text))
+            return cast(_R_co, float(response.text))
 
         if cast_to == bool:
-            return cast(R, response.text.lower() == "true")
+            return cast(_R_co, response.text.lower() == "true")
 
         if origin == APIResponse:
             raise RuntimeError("Unexpected state - cast_to is `APIResponse`")
@@ -194,7 +195,7 @@ class BaseAPIResponse(Generic[R]):
         if inspect.isclass(origin) and issubclass(origin, HttpxResponse):
             if cast_to != HttpxResponse:
                 raise ValueError(f"Subclasses of httpx.Response cannot be passed to `cast_to`")
-            return cast(R, response)
+            return cast(_R_co, response)
 
         if (
             inspect.isclass(
@@ -230,7 +231,7 @@ class BaseAPIResponse(Generic[R]):
             else:
                 return self._client._process_response_data(
                     data=data,
-                    cast_to=cast("type[R | _T]", cast_to),
+                    cast_to=cast("type[_R_co | _T]", cast_to),
                     response=response,
                 )
 
@@ -241,17 +242,17 @@ class BaseAPIResponse(Generic[R]):
                 body=response.text,
             )
 
-        return cast(R, response.text)
+        return cast(_R_co, response.text)
 
 
-class APIResponse(BaseAPIResponse[R]):
+class APIResponse(BaseAPIResponse[_R_co]):
     @overload
     def parse(self, *, to: type[_T]) -> _T: ...
 
     @overload
-    def parse(self) -> R: ...
+    def parse(self) -> _R_co: ...
 
-    def parse(self, *, to: type[_T] | None = None) -> R | _T:
+    def parse(self, *, to: type[_T] | None = None) -> _R_co | _T:
         """Returns the rich python representation of this response's data.
 
         For lower-level control, see `.read()`, `.json()`, `.iter_bytes()`.
@@ -283,7 +284,7 @@ class APIResponse(BaseAPIResponse[R]):
         """
         cache_key = to if to is not None else self._cast_to
         if cache_key in self._parsed_by_type:
-            return cast("R | _T", self._parsed_by_type[cache_key])
+            return cast("_R_co | _T", self._parsed_by_type[cache_key])
 
         if not self._is_sse_stream:
             self.read()
@@ -293,7 +294,7 @@ class APIResponse(BaseAPIResponse[R]):
             parsed = self._options.post_parser(parsed)
 
         self._parsed_by_type[cache_key] = parsed
-        return cast("R | _T", parsed)
+        return cast("_R_co | _T", parsed)
 
     def read(self) -> bytes:
         """Read and return the binary response content."""
@@ -342,14 +343,14 @@ class APIResponse(BaseAPIResponse[R]):
             yield chunk
 
 
-class AsyncAPIResponse(BaseAPIResponse[R]):
+class AsyncAPIResponse(BaseAPIResponse[_R_co]):
     @overload
     async def parse(self, *, to: type[_T]) -> _T: ...
 
     @overload
-    async def parse(self) -> R: ...
+    async def parse(self) -> _R_co: ...
 
-    async def parse(self, *, to: type[_T] | None = None) -> R | _T:
+    async def parse(self, *, to: type[_T] | None = None) -> _R_co | _T:
         """Returns the rich python representation of this response's data.
 
         For lower-level control, see `.read()`, `.json()`, `.iter_bytes()`.
@@ -379,7 +380,7 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
         """
         cache_key = to if to is not None else self._cast_to
         if cache_key in self._parsed_by_type:
-            return cast("R | _T", self._parsed_by_type[cache_key])
+            return cast("_R_co | _T", self._parsed_by_type[cache_key])
 
         if not self._is_sse_stream:
             await self.read()
@@ -389,7 +390,7 @@ class AsyncAPIResponse(BaseAPIResponse[R]):
             parsed = self._options.post_parser(parsed)
 
         self._parsed_by_type[cache_key] = parsed
-        return cast("R | _T", parsed)
+        return cast("_R_co | _T", parsed)
 
     async def read(self) -> bytes:
         """Read and return the binary response content."""
@@ -680,7 +681,7 @@ def async_to_custom_raw_response_wrapper(
     return wrapped
 
 
-def extract_response_type(typ: type[BaseAPIResponse[Any]]) -> type:
+def extract_response_type(typ: type[BaseAPIResponse[object]]) -> type:
     return extract_type_var_from_base(
         typ,
         generic_bases=cast("tuple[type, ...]", (BaseAPIResponse, APIResponse, AsyncAPIResponse)),
