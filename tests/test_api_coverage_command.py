@@ -458,7 +458,17 @@ def test_repository_sdk_and_exclusions_are_readable(
         "servers": [{"url": "https://xquik.com"}],
         "paths": {
             "/ask": {"get": {"operationId": "askXquik"}, "post": {"operationId": "askXquikPost"}},
-            "/api/v1/api-keys": {"get": {"operationId": "listApiKeys"}, "post": {"operationId": "createApiKey"}},
+            "/api/oauth/authorize": {"get": {"operationId": "authorizeOAuthClient"}},
+            "/api/oauth/token": {"post": {"operationId": "createOAuthToken"}},
+            "/api/oauth/revoke": {"post": {"operationId": "revokeOAuthToken"}},
+            "/api/oauth/register": {"post": {"operationId": "registerOAuthClient"}},
+            "/agent/identity": {"post": {"operationId": "registerAgentIdentity"}},
+            "/agent/identity/claim": {"post": {"operationId": "refreshAgentIdentityClaim"}},
+            "/api/v1/api-keys": {
+                "get": {"operationId": "listApiKeys"},
+                "post": {"operationId": "createApiKey"},
+                "patch": {"operationId": "pauseApiKeys"},
+            },
             "/api/v1/api-keys/bulk-revoke": {"post": {"operationId": "bulkRevokeApiKeys"}},
             "/api/v1/api-keys/{keyId}": {
                 "delete": {"operationId": "revokeApiKey"},
@@ -475,5 +485,5 @@ def test_repository_sdk_and_exclusions_are_readable(
     monkeypatch.setenv("XQUIK_OPENAPI_SPEC", str(spec_path))
     assert main(ROOT) == 0
     assert capsys.readouterr().out.splitlines() == [
-        "The SDK covers 3 of 11 API operations, and excluded-operations.json lists the other 8."
+        "The SDK covers 3 of 18 API operations, and excluded-operations.json lists the other 15."
     ]
