@@ -4,6 +4,7 @@
 
 <!-- prettier-ignore -->
 [![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
+[![Convex Component](https://www.convex.dev/components/badge/convex-xquik)](https://www.convex.dev/components/convex-xquik)
 
 Scrape Twitter from Python with this X API & Twitter API alternative.
 It is a typed Twitter scraper & tweet scraper for Python 3.10 & later.
