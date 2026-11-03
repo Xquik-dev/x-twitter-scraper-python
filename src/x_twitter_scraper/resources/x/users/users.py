@@ -2989,14 +2989,18 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ShadowbanReport:
         """
-        Checks 1 X account for a search ban, a search suggestion ban & reply deboosting.
-        It also says if the account is active, protected or suspended.
+        Checks 1 X account for a search ban, a search suggestion ban, reply deboosting &
+        a reply lock. It also tests timeline visibility & early engagement, reads the
+        sensitive flag & the countries that withhold the account, and says if the
+        account is active, protected or suspended.
 
-        Each check answers pass, fail or unknown, with its reason & the posts,
-        suggestions or replies it read. The reply check answers pass or unknown, since X
-        ranks replies for each viewer. A protected account gets the suggestion check
-        only, and a suspended account gets the account check only. Each profile, post,
-        suggestion & reply in the answer costs 1 credit.
+        Each check answers pass, fail or unknown, with its reason & what it read.
+        `overall` sums up the checks, and `checkedAt` holds the time of the check. The
+        reply checks and the engagement check answer pass or unknown, since X ranks
+        replies for each viewer and a drop alone proves nothing. A protected account
+        skips the checks that need public posts, and a suspended account gets the
+        account check only. Each profile, post, suggestion & reply in the answer costs 1
+        credit.
 
         Args:
           fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
@@ -6767,14 +6771,18 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ShadowbanReport:
         """
-        Checks 1 X account for a search ban, a search suggestion ban & reply deboosting.
-        It also says if the account is active, protected or suspended.
+        Checks 1 X account for a search ban, a search suggestion ban, reply deboosting &
+        a reply lock. It also tests timeline visibility & early engagement, reads the
+        sensitive flag & the countries that withhold the account, and says if the
+        account is active, protected or suspended.
 
-        Each check answers pass, fail or unknown, with its reason & the posts,
-        suggestions or replies it read. The reply check answers pass or unknown, since X
-        ranks replies for each viewer. A protected account gets the suggestion check
-        only, and a suspended account gets the account check only. Each profile, post,
-        suggestion & reply in the answer costs 1 credit.
+        Each check answers pass, fail or unknown, with its reason & what it read.
+        `overall` sums up the checks, and `checkedAt` holds the time of the check. The
+        reply checks and the engagement check answer pass or unknown, since X ranks
+        replies for each viewer and a drop alone proves nothing. A protected account
+        skips the checks that need public posts, and a suspended account gets the
+        account check only. Each profile, post, suggestion & reply in the answer costs 1
+        credit.
 
         Args:
           fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
