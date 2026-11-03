@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased
+
+- `client.activity.list` returns the account's activity rows as `ActivityLogRow`, and `client.activity.retrieve` returns 1 full record as `ActivityRecord`.
+- `client.activity.export` downloads the same rows as a CSV, Excel, JSON, Markdown, PDF or text file.
+- `client.x.users.retrieve_shadowban` checks 1 account for search, suggestion & reply limits and returns `ShadowbanReport`.
+- `client.x.sports` adds `retrieve_roster`, `retrieve_player_props` & `list_posts`. `SportsTeam` adds `recent_games`, and each player's X account adds `protected`, `super_follow_eligible` & `label_type`.
+- Posts & embedded posts return `live_event_context`, the live event a post belongs to, and `unknown_fields`, the fields X did not send. `reaction_context.reacted_to_post` holds the post a reaction refers to.
+- Media return `edited_with_native_editor`, and affiliation labels return `auxiliary_labels`.
+- Post monitors return `author_avatar_url`, `author_verified`, the post's `media` and the `baseline` counts.
+- `credits.topup_balance` takes `currency` & `return_path`, and `subscribe.create` takes `currency`. Both return the currency charged, and top-ups return the amount charged. `Currency` lists the 32 codes Xquik charges in.
+- `events.stream` takes `look_back` & `include`, and `account.update_locale` takes `ja`, `ko` & `zh`.
+- Media downloads return the saved gallery `items`, replies return `unreached_replies` and flat extraction rows return `verified_type`.
+
 ## 0.19.0 (2026-10-23)
 
 This release adds a game's audience read and each team's season record. Code written for 0.18.0 keeps working.
