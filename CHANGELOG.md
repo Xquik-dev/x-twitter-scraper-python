@@ -6,7 +6,7 @@ This release adds the activity log, the shadowban check, the game roster, player
 
 - `client.activity.list` returns the account's activity rows as `ActivityLogRow`, and `client.activity.retrieve` returns 1 full record as `ActivityRecord`.
 - `client.activity.export` downloads the same rows as a CSV, Excel, JSON, Markdown, PDF or text file.
-- `client.x.users.retrieve_shadowban` checks 1 account for search, suggestion & reply limits and returns `ShadowbanReport`.
+- `client.x.users.retrieve_shadowban` runs 9 checks on 1 account, for search, suggestions, replies, a reply lock, its timeline, engagement, the sensitive flag & withheld countries. It returns `ShadowbanReport` with each check, `overall` & `checked_at`.
 - `client.x.sports` adds `retrieve_roster`, `retrieve_player_props` & `list_posts`. `SportsTeam` adds `recent_games`, and each player's X account adds `protected`, `super_follow_eligible` & `label_type`.
 - Posts & embedded posts return `live_event_context`, the live event a post belongs to, and `unknown_fields`, the fields X did not send. `reaction_context.reacted_to_post` holds the post a reaction refers to.
 - Media return `edited_with_native_editor`, and affiliation labels return `auxiliary_labels`.
