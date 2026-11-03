@@ -103,7 +103,7 @@ class AccountResource(SyncAPIResource):
     def update_locale(
         self,
         *,
-        locale: Literal["en", "tr", "es"],
+        locale: Literal["en", "tr", "es", "ja", "ko", "zh"],
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -209,7 +209,7 @@ class AsyncAccountResource(AsyncAPIResource):
     async def update_locale(
         self,
         *,
-        locale: Literal["en", "tr", "es"],
+        locale: Literal["en", "tr", "es", "ja", "ko", "zh"],
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,

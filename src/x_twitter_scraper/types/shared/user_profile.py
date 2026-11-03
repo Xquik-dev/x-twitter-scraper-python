@@ -14,6 +14,7 @@ __all__ = [
     "UserProfile",
     "AccountBasedIn",
     "AffiliatesHighlightedLabel",
+    "AffiliatesHighlightedLabelAuxiliaryLabel",
     "Birthdate",
     "ContactInfo",
     "ContactInfoEmail",
@@ -40,8 +41,27 @@ class AccountBasedIn(BaseModel):
     value: str
 
 
+class AffiliatesHighlightedLabelAuxiliaryLabel(BaseModel):
+    """A label X shows on an X profile beside its affiliation label."""
+
+    badge_url: Optional[str] = FieldInfo(alias="badgeUrl", default=None)
+
+    description: Optional[str] = None
+
+    url: Optional[str] = None
+
+    user_label_display_type: Optional[str] = FieldInfo(alias="userLabelDisplayType", default=None)
+
+    user_label_type: Optional[str] = FieldInfo(alias="userLabelType", default=None)
+
+
 class AffiliatesHighlightedLabel(BaseModel):
     """Organization affiliation label shown on an X profile."""
+
+    auxiliary_labels: Optional[List[AffiliatesHighlightedLabelAuxiliaryLabel]] = FieldInfo(
+        alias="auxiliaryLabels", default=None
+    )
+    """More labels X shows beside the affiliation, such as an automated account's owner."""
 
     badge_url: Optional[str] = FieldInfo(alias="badgeUrl", default=None)
 

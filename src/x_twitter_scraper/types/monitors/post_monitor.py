@@ -18,6 +18,8 @@ __all__ = [
     "PostEventType",
     "PostMetricReading",
     "PostMetrics",
+    "PostMonitorBaseline",
+    "PostMonitorMedia",
     "PostMonitor",
     "PostMetricPoint",
     "PostMonitorMetricsBucketMetrics",
@@ -83,6 +85,37 @@ class PostMetrics(BaseModel):
     """
 
 
+class PostMonitorBaseline(BaseModel):
+    """Counts Xquik read when tracking began.
+
+    Each metric's gain counts from here. views is null when X showed no view count.
+    """
+
+    at: datetime
+    """When Xquik read these counts from X."""
+
+    views: Optional[int]
+
+    likes: int
+
+    retweets: int
+
+    replies: int
+
+    quotes: int
+
+    bookmarks: int
+
+
+class PostMonitorMedia(BaseModel):
+    """1 photo, video or GIF on the post."""
+
+    kind: Literal["gif", "photo", "video"]
+
+    url: str
+    """The image URL. For a video or GIF, its preview image."""
+
+
 class PostMonitor(BaseModel):
     """Post monitor that tracks 1 X post's replies, quotes, edits & metrics."""
 
@@ -99,6 +132,9 @@ class PostMonitor(BaseModel):
     author_username: str = FieldInfo(alias="authorUsername")
 
     author_name: str = FieldInfo(alias="authorName")
+
+    media: List[PostMonitorMedia]
+    """Photos, videos & GIFs on the post, in X's order."""
 
     text: str
     """Text of the newest version Xquik read."""
@@ -117,8 +153,22 @@ class PostMonitor(BaseModel):
     next_billing_at: datetime = FieldInfo(alias="nextBillingAt")
     """Next hourly credit charge time for this post monitor."""
 
+    baseline: PostMonitorBaseline
+    """Counts Xquik read when tracking began.
+
+    Each metric's gain counts from here. views is null when X showed no view count.
+    """
+
     metrics: PostMetrics
     """The 6 metrics of a post."""
+
+    author_avatar_url: Optional[str] = FieldInfo(alias="authorAvatarUrl", default=None)
+    """The author's profile picture. Omitted when X shows none."""
+
+    author_verified: Optional[Literal["blue", "business", "government"]] = FieldInfo(
+        alias="authorVerified", default=None
+    )
+    """The author's verified badge on X. Omitted when the author has none."""
 
     name: Optional[str] = None
     """Customer-set label of the post monitor, when set."""

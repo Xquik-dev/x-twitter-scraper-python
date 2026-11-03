@@ -21,6 +21,9 @@ POST_MONITOR = {
     "authorId": "1661816432185823232",
     "authorUsername": "xquik",
     "authorName": "Xquik",
+    "authorAvatarUrl": "https://pbs.twimg.com/profile_images/1321163587679784960/0ZxKlEKB_normal.jpg",
+    "authorVerified": "business",
+    "media": [{"kind": "photo", "url": "https://pbs.twimg.com/media/GxPhoto.jpg"}],
     "text": "We shipped post monitors.",
     "postedAt": "2026-09-29T17:19:49.000Z",
     "eventTypes": ["post.reply.new", "post.quote.new", "post.likes.changed"],
@@ -29,6 +32,15 @@ POST_MONITOR = {
     "nextBillingAt": "2026-10-22T12:00:00Z",
     "pausedReason": "x_post_deleted",
     "pausedAt": "2026-10-22T12:00:00Z",
+    "baseline": {
+        "at": "2026-10-22T11:00:00Z",
+        "views": None,
+        "likes": 1885,
+        "retweets": 112,
+        "replies": 85,
+        "quotes": 87,
+        "bookmarks": 470,
+    },
     "metrics": {
         "views": {"current": 1885, "gain": 12},
         "likes": {"current": 1885, "gain": 12},
@@ -67,6 +79,12 @@ def _expect_monitor(monitor: object) -> None:
     assert monitor.paused_reason == "x_post_deleted"
     assert monitor.metrics.views.current == 1885
     assert monitor.metrics.bookmarks.gain == 12
+    assert monitor.author_avatar_url == "https://pbs.twimg.com/profile_images/1321163587679784960/0ZxKlEKB_normal.jpg"
+    assert monitor.author_verified == "business"
+    assert [(item.kind, item.url) for item in monitor.media] == [("photo", "https://pbs.twimg.com/media/GxPhoto.jpg")]
+    assert monitor.baseline.at == datetime(2026, 10, 22, 11, tzinfo=timezone.utc)
+    assert monitor.baseline.views is None
+    assert monitor.baseline.bookmarks == 470
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])

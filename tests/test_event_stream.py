@@ -45,6 +45,19 @@ def test_event_stream_yields_each_event(respx_mock: MockRouter) -> None:
     request = route.calls.last.request
     assert request.headers["Accept"] == "text/event-stream"
     assert request.headers["Last-Event-ID"] == "40"
+    assert not request.url.params
+
+
+@pytest.mark.respx(base_url=base_url)
+def test_event_stream_sends_look_back_and_include(respx_mock: MockRouter) -> None:
+    route = respx_mock.get("/events/stream").mock(return_value=stream_response())
+
+    with XTwitterScraper(base_url=base_url, api_key="My API Key", _strict_response_validation=False) as client:
+        list(client.events.stream(last_event_id="40", look_back=True, include="post_metrics"))
+
+    request = route.calls.last.request
+    assert dict(request.url.params) == {"lookBack": "true", "include": "post_metrics"}
+    assert request.headers["Last-Event-ID"] == "40"
 
 
 @pytest.mark.respx(base_url=base_url)
@@ -62,3 +75,16 @@ async def test_async_event_stream_yields_each_event(respx_mock: MockRouter) -> N
     request = route.calls.last.request
     assert request.headers["Accept"] == "text/event-stream"
     assert "Last-Event-ID" not in request.headers
+
+
+@pytest.mark.respx(base_url=base_url)
+async def test_async_event_stream_sends_look_back_and_include(respx_mock: MockRouter) -> None:
+    route = respx_mock.get("/events/stream").mock(return_value=stream_response())
+
+    async with AsyncXTwitterScraper(
+        base_url=base_url, api_key="My API Key", _strict_response_validation=False
+    ) as client:
+        stream = await client.events.stream(look_back=True, include="post_metrics")
+        [event async for event in stream]
+
+    assert dict(route.calls.last.request.url.params) == {"lookBack": "true", "include": "post_metrics"}

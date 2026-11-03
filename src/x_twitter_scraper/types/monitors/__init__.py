@@ -9,8 +9,10 @@ from .post_monitor import (
     PostMonitor as PostMonitor,
     PostEventType as PostEventType,
     PostMetricPoint as PostMetricPoint,
+    PostMonitorMedia as PostMonitorMedia,
     PostMetricReading as PostMetricReading,
     PostMonitorMetrics as PostMonitorMetrics,
+    PostMonitorBaseline as PostMonitorBaseline,
 )
 from .post_list_params import PostListParams as PostListParams
 from .post_create_params import PostCreateParams as PostCreateParams

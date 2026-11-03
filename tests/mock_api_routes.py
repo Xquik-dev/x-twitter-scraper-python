@@ -81,12 +81,12 @@ def _build_routes() -> tuple[Route, ...]:
         key = (call.method, call.template)
         previous = route_types.get(key)
         if previous is not None and previous[0] != name:
-            binary_names = {"BinaryAPIResponse", "AsyncBinaryAPIResponse"}
-            if {previous[0], name} != binary_names:
+            if response_type is ResponseKind.BINARY:
+                continue
+            if previous[1] is not ResponseKind.BINARY:
                 raise ValueError(
                     f"Conflicting response types for {call.method} {call.template}: {previous[0]} and {name}"
                 )
-            continue
         route_types[key] = (name, response_type)
 
     return tuple(

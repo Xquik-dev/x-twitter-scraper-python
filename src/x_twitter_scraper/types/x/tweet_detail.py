@@ -16,6 +16,7 @@ from ..shared.user_profile import UserProfile
 from ..shared.embedded_tweet import EmbeddedTweet
 from ..shared.soft_intervention import SoftIntervention
 from ..shared.content_disclosure import ContentDisclosure
+from ..shared.live_event_context import LiveEventContext
 
 __all__ = [
     "TweetDetail",
@@ -833,6 +834,13 @@ class QuotedTweetUnavailable(BaseModel):
 class ReactionContext(BaseModel):
     """Public post & user this reaction references."""
 
+    reacted_to_post: Optional[Dict[str, object]] = FieldInfo(alias="reactedToPost", default=None)
+    """The post this one reacts to, with the same fields.
+
+    X often sends only its ID, author & edit history. Then unknownFields lists text,
+    and the flags X did not send are left out.
+    """
+
     reacted_to_post_id: Optional[str] = FieldInfo(alias="reactedToPostId", default=None)
     """Referenced post ID."""
 
@@ -1090,6 +1098,9 @@ class TweetDetail(BaseModel):
     limited_actions: Optional[List[LimitedAction]] = FieldInfo(alias="limitedActions", default=None)
     """Public restrictions & prompts."""
 
+    live_event_context: Optional[LiveEventContext] = FieldInfo(alias="liveEventContext", default=None)
+    """The live event the post belongs to, such as an election."""
+
     media: Optional[List[TweetMedia]] = None
     """Media, omitted when unavailable."""
 
@@ -1182,6 +1193,13 @@ class TweetDetail(BaseModel):
 
     unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
     """X did not send these counts, so each 0 means unknown."""
+
+    unknown_fields: Optional[List[Literal["text"]]] = FieldInfo(alias="unknownFields", default=None)
+    """The fields X did not send for this post.
+
+    text reads empty, so treat it as unknown rather than empty. Left out when X sent
+    the text.
+    """
 
     unmentioned_user_ids: Optional[List[str]] = FieldInfo(alias="unmentionedUserIds", default=None)
     """User IDs that left this conversation."""

@@ -5,10 +5,11 @@
 from __future__ import annotations
 
 from typing import Union
+from typing_extensions import Literal
 
 import httpx
 
-from ..types import event_list_params
+from ..types import event_list_params, event_stream_params
 from .._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from .._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from .._compat import cached_property
@@ -147,7 +148,9 @@ class EventsResource(SyncAPIResource):
     def stream(
         self,
         *,
+        include: Literal["post_metrics"] | Omit = omit,
         last_event_id: str | Omit = omit,
+        look_back: bool | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -162,6 +165,13 @@ class EventsResource(SyncAPIResource):
         credits.
 
         Args:
+          include: Set to post_metrics to also get each post monitor's saved numbers. Any other
+              value is refused.
+
+          look_back: Set to true to resume 30 seconds before Last-Event-ID, so late events still
+              arrive. Events you have can arrive again, so skip IDs you've seen. An ID the
+              stream can't find starts 5 minutes back, not 30 days.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -178,7 +188,17 @@ class EventsResource(SyncAPIResource):
         return self._get(
             "/events/stream",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "include": include,
+                        "look_back": look_back,
+                    },
+                    event_stream_params.EventStreamParams,
+                ),
             ),
             cast_to=Event,
             stream=True,
@@ -303,7 +323,9 @@ class AsyncEventsResource(AsyncAPIResource):
     async def stream(
         self,
         *,
+        include: Literal["post_metrics"] | Omit = omit,
         last_event_id: str | Omit = omit,
+        look_back: bool | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -318,6 +340,13 @@ class AsyncEventsResource(AsyncAPIResource):
         credits.
 
         Args:
+          include: Set to post_metrics to also get each post monitor's saved numbers. Any other
+              value is refused.
+
+          look_back: Set to true to resume 30 seconds before Last-Event-ID, so late events still
+              arrive. Events you have can arrive again, so skip IDs you've seen. An ID the
+              stream can't find starts 5 minutes back, not 30 days.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -334,7 +363,17 @@ class AsyncEventsResource(AsyncAPIResource):
         return await self._get(
             "/events/stream",
             options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "include": include,
+                        "look_back": look_back,
+                    },
+                    event_stream_params.EventStreamParams,
+                ),
             ),
             cast_to=Event,
             stream=True,

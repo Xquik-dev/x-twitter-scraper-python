@@ -12,11 +12,25 @@ from tests.utils import send_with_mock_transport
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
 from x_twitter_scraper.types.x import (
     FootballPlays,
+    FootballProps,
+    FootballRoster,
+    SportsGamePosts,
     FootballBoxScore,
     FootballSchedule,
     FootballScoreboard,
     SportsGameAudience,
 )
+
+GAME_METHODS = [
+    "retrieve_scoreboard",
+    "retrieve_box_score",
+    "retrieve_plays",
+    "retrieve_audience",
+    "retrieve_roster",
+    "retrieve_player_props",
+    "list_posts",
+]
+
 
 SCHEDULE = {
     "league": "nfl",
@@ -55,6 +69,7 @@ SCHEDULE = {
             },
             "xUserId": "43403778",
             "record": {"wins": 7, "losses": 1, "ties": 0},
+            "recentGames": [],
         }
     },
 }
@@ -130,6 +145,7 @@ SCOREBOARD = {
             },
             "xUserId": "43403778",
             "record": None,
+            "recentGames": [],
         }
     },
     "players": {
@@ -149,7 +165,14 @@ SCOREBOARD = {
                 "medium": "https://pbs.twimg.com/semantic_core_img/1960514226075602944/OZ6rz5aH?format=png&name=orig",
                 "small": "https://pbs.twimg.com/semantic_core_img/1960202905849405441/OnS0Xdd9?format=png&name=orig",
             },
-            "xUser": {"id": "723177170382647296", "username": "brockpurdy13", "blueVerified": True},
+            "xUser": {
+                "id": "723177170382647296",
+                "username": "brockpurdy13",
+                "blueVerified": True,
+                "protected": None,
+                "superFollowEligible": None,
+                "labelType": None,
+            },
         }
     },
 }
@@ -309,6 +332,7 @@ BOX_SCORE = {
             },
             "xUserId": "43403778",
             "record": None,
+            "recentGames": [],
         }
     },
     "players": {
@@ -328,7 +352,14 @@ BOX_SCORE = {
                 "medium": "https://pbs.twimg.com/semantic_core_img/1960514226075602944/OZ6rz5aH?format=png&name=orig",
                 "small": "https://pbs.twimg.com/semantic_core_img/1960202905849405441/OnS0Xdd9?format=png&name=orig",
             },
-            "xUser": {"id": "723177170382647296", "username": "brockpurdy13", "blueVerified": True},
+            "xUser": {
+                "id": "723177170382647296",
+                "username": "brockpurdy13",
+                "blueVerified": True,
+                "protected": None,
+                "superFollowEligible": None,
+                "labelType": None,
+            },
         }
     },
 }
@@ -418,6 +449,7 @@ PLAYS = {
             },
             "xUserId": "43403778",
             "record": None,
+            "recentGames": [],
         }
     },
     "players": {
@@ -437,7 +469,14 @@ PLAYS = {
                 "medium": "https://pbs.twimg.com/semantic_core_img/1960514226075602944/OZ6rz5aH?format=png&name=orig",
                 "small": "https://pbs.twimg.com/semantic_core_img/1960202905849405441/OnS0Xdd9?format=png&name=orig",
             },
-            "xUser": {"id": "723177170382647296", "username": "brockpurdy13", "blueVerified": True},
+            "xUser": {
+                "id": "723177170382647296",
+                "username": "brockpurdy13",
+                "blueVerified": True,
+                "protected": None,
+                "superFollowEligible": None,
+                "labelType": None,
+            },
         }
     },
 }
@@ -471,8 +510,144 @@ AUDIENCE = {
             "logos": {"default": None, "light": None, "dark": None},
             "xUserId": None,
             "record": None,
+            "recentGames": [
+                {
+                    "id": "2083346094763671552",
+                    "startsAt": "2026-10-17T23:30:00.000Z",
+                    "venue": None,
+                    "status": "Closed",
+                    "clock": None,
+                    "quarter": None,
+                    "home": {"teamId": "895666234712244224", "points": 26},
+                    "away": {"teamId": "898300623782727680", "points": 34},
+                }
+            ],
         }
     },
+}
+
+
+ROSTER = {
+    "id": "2055084502741811200",
+    "league": "nfl",
+    "rosters": [{"teamId": "689566294702555136", "playerIds": ["1520565710329499648"]}],
+    "teams": {
+        "689566294702555136": {
+            "id": "689566294702555136",
+            "name": "San Francisco 49ers",
+            "shortName": "49ers",
+            "abbreviation": "SF",
+            "alternateId": "f0e724b0-4cbf-495a-be47-013907608da9",
+            "location": None,
+            "colors": [{"r": 170, "g": 0, "b": 0}],
+            "logos": {
+                "default": "https://pbs.twimg.com/semantic_core_img/2094846255792873472/BUi2WqsC?format=png&name=orig",
+                "light": None,
+                "dark": None,
+            },
+            "xUserId": "43403778",
+            "record": None,
+            "recentGames": [],
+        }
+    },
+    "players": {
+        "1520565710329499648": {
+            "id": "1520565710329499648",
+            "teamId": "689566294702555136",
+            "name": "Brock Purdy",
+            "shortName": "B.Purdy",
+            "jersey": "13",
+            "position": "QB",
+            "college": None,
+            "birthPlace": None,
+            "birthDate": None,
+            "headshots": {
+                "original": None,
+                "large": None,
+                "medium": "https://pbs.twimg.com/semantic_core_img/1960514226075602944/OZ6rz5aH?format=png&name=orig",
+                "small": None,
+            },
+            "xUser": {
+                "id": "723177170382647296",
+                "username": "brockpurdy13",
+                "blueVerified": True,
+                "protected": False,
+                "superFollowEligible": False,
+                "labelType": None,
+            },
+        }
+    },
+}
+
+
+PLAYER_PROPS = {
+    "id": "2055084502741929984",
+    "league": "nfl",
+    "sportsbookUrl": None,
+    "categories": [
+        {
+            "key": "passing_yards",
+            "name": "Passing Yards",
+            "rank": 1,
+            "props": [
+                {
+                    "playerId": "1520565710329499648",
+                    "rank": 1,
+                    "line": 248.5,
+                    "odds": -115,
+                    "alternateOdds": -105,
+                    "openForBetting": True,
+                }
+            ],
+        }
+    ],
+    "players": {
+        "1520565710329499648": {
+            "id": "1520565710329499648",
+            "teamId": "689566294702555136",
+            "name": "Brock Purdy",
+            "shortName": None,
+            "jersey": "13",
+            "position": None,
+            "college": None,
+            "birthPlace": None,
+            "birthDate": None,
+            "headshots": {"original": None, "large": None, "medium": None, "small": None},
+            "xUser": None,
+        }
+    },
+}
+
+
+GAME_POSTS_QUERY = (
+    '(#WASvsSF OR #WASatSF OR #SFvsWAS OR WASvsSF OR WASatSF OR SFvsWAS OR "San Francisco 49ers" OR '
+    '"Washington Commanders" OR 49ers OR Commanders OR #FTTB OR #RaiseHail OR @49ers OR @Commanders OR '
+    'from:49ers OR from:Commanders OR "Brock Purdy" OR "Jayden Daniels" OR "Christian McCaffrey" OR '
+    '"Terry McLaurin" OR "George Kittle" OR "Stefon Diggs" OR "Fred Warner" OR "Nick Bosa") '
+    "since_time:1792455300 until_time:1792541700 -filter:nativeretweets"
+)
+
+GAME_POSTS = {
+    "tweets": [
+        {
+            "id": "2102761519985332442",
+            "text": "This galaxy is a little extra.",
+            "retweetCount": 1364,
+            "replyCount": 271,
+            "likeCount": 9775,
+            "quoteCount": 85,
+            "viewCount": 962488,
+            "bookmarkCount": 599,
+            "conversationId": "2102761519985332442",
+            "lang": "en",
+            "url": "https://x.com/NASA/status/2102761519985332442",
+            "createdAt": "Wed Sep 23 14:06:28 +0000 2026",
+            "author": {"id": "11348282", "username": "NASA", "name": "NASA"},
+        }
+    ],
+    "has_next_page": True,
+    "next_cursor": "DAACCgACHVOxUHMAJxAKAAMdU7FQcv_Y8AgABAAAAAI",
+    "query": GAME_POSTS_QUERY,
 }
 
 
@@ -587,9 +762,93 @@ async def test_retrieve_audience_reads_viewers_team_picks_and_chat(asynchronous:
     team = audience.teams["689566294702555136"]
     assert team.location == "Virginia Tech"
     assert team.record is None
+    game = team.recent_games[0]
+    assert (game.id, game.status, game.venue) == ("2083346094763671552", "Closed", None)
+    assert game.starts_at == datetime(2026, 10, 17, 23, 30, tzinfo=timezone.utc)
+    assert (game.home.points, game.away.points) == (26, 34)
 
 
-@pytest.mark.parametrize("method", ["retrieve_scoreboard", "retrieve_box_score", "retrieve_plays", "retrieve_audience"])
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_retrieve_roster_reads_each_team_and_player(asynchronous: bool) -> None:
+    request, roster = await send_with_mock_transport(
+        lambda client: client.x.sports.retrieve_roster(
+            "2055084502741811200", league="nfl", fields="id,league,rosters,teams,players"
+        ),
+        lambda client: client.x.sports.retrieve_roster(
+            "2055084502741811200", league="nfl", fields="id,league,rosters,teams,players"
+        ),
+        ROSTER,
+        asynchronous,
+    )
+
+    assert request.method == "GET"
+    assert request.url.path == "/api/v1/x/sports/nfl/games/2055084502741811200/roster"
+    assert dict(request.url.params) == {"fields": "id,league,rosters,teams,players"}
+    assert isinstance(roster, FootballRoster)
+    assert roster.league == "nfl"
+    assert roster.rosters[0].team_id == "689566294702555136"
+    assert roster.rosters[0].player_ids == ["1520565710329499648"]
+    assert roster.teams["689566294702555136"].recent_games == []
+    player = roster.players["1520565710329499648"]
+    assert (player.name, player.jersey, player.position, player.college) == ("Brock Purdy", "13", "QB", None)
+    assert player.headshots.medium is not None and player.headshots.large is None
+    assert player.x_user is not None
+    assert (player.x_user.protected, player.x_user.super_follow_eligible, player.x_user.label_type) == (
+        False,
+        False,
+        None,
+    )
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_retrieve_player_props_reads_lines_and_odds(asynchronous: bool) -> None:
+    request, props = await send_with_mock_transport(
+        lambda client: client.x.sports.retrieve_player_props("2055084502741929984", league="nfl"),
+        lambda client: client.x.sports.retrieve_player_props("2055084502741929984", league="nfl"),
+        PLAYER_PROPS,
+        asynchronous,
+    )
+
+    assert request.method == "GET"
+    assert request.url.path == "/api/v1/x/sports/nfl/games/2055084502741929984/player-props"
+    assert dict(request.url.params) == {}
+    assert isinstance(props, FootballProps)
+    assert props.sportsbook_url is None
+    category = props.categories[0]
+    assert (category.key, category.name, category.rank) == ("passing_yards", "Passing Yards", 1)
+    prop = category.props[0]
+    assert (prop.player_id, prop.line, prop.odds, prop.alternate_odds) == ("1520565710329499648", 248.5, -115, -105)
+    assert prop.open_for_betting is True
+    assert props.players["1520565710329499648"].name == "Brock Purdy"
+    assert props.players["1520565710329499648"].x_user is None
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_list_posts_sends_the_order_and_page(asynchronous: bool) -> None:
+    request, page = await send_with_mock_transport(
+        lambda client: client.x.sports.list_posts(
+            "2055084502741811200", league="nfl", query_type="Latest", page_size=20, cursor="DAACCgACHVOx"
+        ),
+        lambda client: client.x.sports.list_posts(
+            "2055084502741811200", league="nfl", query_type="Latest", page_size=20, cursor="DAACCgACHVOx"
+        ),
+        GAME_POSTS,
+        asynchronous,
+    )
+
+    assert request.method == "GET"
+    assert request.url.path == "/api/v1/x/sports/nfl/games/2055084502741811200/posts"
+    assert dict(request.url.params) == {"queryType": "Latest", "pageSize": "20", "cursor": "DAACCgACHVOx"}
+    assert isinstance(page, SportsGamePosts)
+    assert page.query == GAME_POSTS_QUERY
+    assert page.has_next_page is True
+    assert page.next_cursor == "DAACCgACHVOxUHMAJxAKAAMdU7FQcv_Y8AgABAAAAAI"
+    post = page.tweets[0]
+    assert (post.id, post.like_count, post.view_count) == ("2102761519985332442", 9775, 962488)
+    assert post.author is not None and post.author.username == "NASA"
+
+
+@pytest.mark.parametrize("method", GAME_METHODS)
 def test_an_empty_id_or_league_raises_before_any_request(client: XTwitterScraper, method: str) -> None:
     with pytest.raises(ValueError, match="`id`"):
         getattr(client.x.sports, method)("", league="nfl")
@@ -599,7 +858,7 @@ def test_an_empty_id_or_league_raises_before_any_request(client: XTwitterScraper
         client.x.sports.list_games("")
 
 
-@pytest.mark.parametrize("method", ["retrieve_scoreboard", "retrieve_box_score", "retrieve_plays", "retrieve_audience"])
+@pytest.mark.parametrize("method", GAME_METHODS)
 async def test_an_async_empty_id_or_league_raises_before_any_request(
     async_client: AsyncXTwitterScraper, method: str
 ) -> None:

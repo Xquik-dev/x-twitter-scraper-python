@@ -51,6 +51,7 @@ if TYPE_CHECKING:
         compose as compose_resources,
         credits as credits_resources,
         support as support_resources,
+        activity as activity_resources,
         monitors as monitors_resources,
         webhooks as webhooks_resources,
         subscribe as subscribe_resources,
@@ -67,6 +68,7 @@ if TYPE_CHECKING:
     from .resources.account import AccountResource, AsyncAccountResource
     from .resources.compose import ComposeResource, AsyncComposeResource
     from .resources.credits import CreditsResource, AsyncCreditsResource
+    from .resources.activity import ActivityResource, AsyncActivityResource
     from .resources.webhooks import WebhooksResource, AsyncWebhooksResource
     from .resources.subscribe import SubscribeResource, AsyncSubscribeResource
     from .resources.extractions import ExtractionsResource, AsyncExtractionsResource
@@ -150,6 +152,13 @@ class XTwitterScraper(SyncAPIClient):
         from .resources.account import AccountResource
 
         return AccountResource(self)
+
+    @cached_property
+    def activity(self) -> ActivityResource:
+        """Account activity log"""
+        from .resources.activity import ActivityResource
+
+        return ActivityResource(self)
 
     @cached_property
     def subscribe(self) -> SubscribeResource:
@@ -464,6 +473,13 @@ class AsyncXTwitterScraper(AsyncAPIClient):
         return AsyncAccountResource(self)
 
     @cached_property
+    def activity(self) -> AsyncActivityResource:
+        """Account activity log"""
+        from .resources.activity import AsyncActivityResource
+
+        return AsyncActivityResource(self)
+
+    @cached_property
     def subscribe(self) -> AsyncSubscribeResource:
         """Subscription, billing, and credits"""
         from .resources.subscribe import AsyncSubscribeResource
@@ -724,6 +740,13 @@ class XTwitterScraperWithRawResponse:
         return AccountResourceWithRawResponse(self._client.account)
 
     @cached_property
+    def activity(self) -> activity_resources.ActivityResourceWithRawResponse:
+        """Account activity log"""
+        from .resources.activity import ActivityResourceWithRawResponse
+
+        return ActivityResourceWithRawResponse(self._client.activity)
+
+    @cached_property
     def subscribe(self) -> subscribe_resources.SubscribeResourceWithRawResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithRawResponse
@@ -839,6 +862,13 @@ class AsyncXTwitterScraperWithRawResponse:
         from .resources.account import AsyncAccountResourceWithRawResponse
 
         return AsyncAccountResourceWithRawResponse(self._client.account)
+
+    @cached_property
+    def activity(self) -> activity_resources.AsyncActivityResourceWithRawResponse:
+        """Account activity log"""
+        from .resources.activity import AsyncActivityResourceWithRawResponse
+
+        return AsyncActivityResourceWithRawResponse(self._client.activity)
 
     @cached_property
     def subscribe(self) -> subscribe_resources.AsyncSubscribeResourceWithRawResponse:
@@ -958,6 +988,13 @@ class XTwitterScraperWithStreamedResponse:
         return AccountResourceWithStreamingResponse(self._client.account)
 
     @cached_property
+    def activity(self) -> activity_resources.ActivityResourceWithStreamingResponse:
+        """Account activity log"""
+        from .resources.activity import ActivityResourceWithStreamingResponse
+
+        return ActivityResourceWithStreamingResponse(self._client.activity)
+
+    @cached_property
     def subscribe(self) -> subscribe_resources.SubscribeResourceWithStreamingResponse:
         """Subscription, billing, and credits"""
         from .resources.subscribe import SubscribeResourceWithStreamingResponse
@@ -1073,6 +1110,13 @@ class AsyncXTwitterScraperWithStreamedResponse:
         from .resources.account import AsyncAccountResourceWithStreamingResponse
 
         return AsyncAccountResourceWithStreamingResponse(self._client.account)
+
+    @cached_property
+    def activity(self) -> activity_resources.AsyncActivityResourceWithStreamingResponse:
+        """Account activity log"""
+        from .resources.activity import AsyncActivityResourceWithStreamingResponse
+
+        return AsyncActivityResourceWithStreamingResponse(self._client.activity)
 
     @cached_property
     def subscribe(self) -> subscribe_resources.AsyncSubscribeResourceWithStreamingResponse:

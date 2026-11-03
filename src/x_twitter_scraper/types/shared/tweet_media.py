@@ -124,6 +124,12 @@ class TweetMedia(BaseModel):
     duration_millis: Optional[int] = FieldInfo(alias="durationMillis", default=None)
     """Video duration in milliseconds."""
 
+    edited_with_native_editor: Optional[bool] = FieldInfo(alias="editedWithNativeEditor", default=None)
+    """True when the author edited this media in X's own editor before posting.
+
+    Absent when X sends no editor info.
+    """
+
     embeddable: Optional[bool] = None
     """Embeddable status."""
 

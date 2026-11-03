@@ -8,10 +8,12 @@ from x_twitter_scraper.types import (
     CommunityPage,
     CommunityTopic,
     ContentDisclosure,
+    Currency,
     EmbeddedTweet,
     Error,
     ErrorCode,
     EventType,
+    LiveEventContext,
     PaginatedTweets,
     PaginatedUsers,
     SearchTweet,
@@ -38,6 +40,20 @@ Methods
 - <code title="get /account">client.account.<a href="./src/x_twitter_scraper/resources/account.py">retrieve</a>() -> <a href="./src/x_twitter_scraper/types/account_retrieve_response.py">AccountRetrieveResponse</a></code>
 - <code title="put /account/x-identity">client.account.<a href="./src/x_twitter_scraper/resources/account.py">set_x_username</a>(\*\*<a href="src/x_twitter_scraper/types/account_set_x_username_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/account_set_x_username_response.py">AccountSetXUsernameResponse</a></code>
 - <code title="patch /account">client.account.<a href="./src/x_twitter_scraper/resources/account.py">update_locale</a>(\*\*<a href="src/x_twitter_scraper/types/account_update_locale_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/account_update_locale_response.py">AccountUpdateLocaleResponse</a></code>
+
+# Activity
+
+Types
+
+```python
+from x_twitter_scraper.types import ActivityLogRow, ActivityRecord, ActivityListResponse
+```
+
+Methods
+
+- <code title="get /activity">client.activity.<a href="./src/x_twitter_scraper/resources/activity.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/activity_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/activity_list_response.py">ActivityListResponse</a></code>
+- <code title="get /activity/{id}">client.activity.<a href="./src/x_twitter_scraper/resources/activity.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/activity_record.py">ActivityRecord</a></code>
+- <code title="get /activity">client.activity.<a href="./src/x_twitter_scraper/resources/activity.py">export</a>(\*\*<a href="src/x_twitter_scraper/types/activity_export_params.py">params</a>) -> BinaryAPIResponse</code>
 
 # Subscribe
 
@@ -191,7 +207,7 @@ Methods
 
 - <code title="get /events/{id}">client.events.<a href="./src/x_twitter_scraper/resources/events.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/event_detail.py">EventDetail</a></code>
 - <code title="get /events">client.events.<a href="./src/x_twitter_scraper/resources/events.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/event_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/event_list_response.py">EventListResponse</a></code>
-- <code title="get /events/stream">client.events.<a href="./src/x_twitter_scraper/resources/events.py">stream</a>() -> Stream[<a href="./src/x_twitter_scraper/types/event.py">Event</a>]</code>
+- <code title="get /events/stream">client.events.<a href="./src/x_twitter_scraper/resources/events.py">stream</a>(\*\*<a href="src/x_twitter_scraper/types/event_stream_params.py">params</a>) -> Stream[<a href="./src/x_twitter_scraper/types/event.py">Event</a>]</code>
 
 # Extractions
 
@@ -426,6 +442,7 @@ from x_twitter_scraper.types.x import (
     UserRetrieveLiveResponse,
     UserRetrieveVerifiedFollowersResponse,
     UserTranslateBioResponse,
+    ShadowbanReport,
 )
 ```
 
@@ -452,6 +469,7 @@ Methods
 - <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_mentions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_mentions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_replies</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_replies_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/users/search">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_search</a>(\*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_search_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
+- <code title="get /x/users/{id}/shadowban">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_shadowban</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_shadowban_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/shadowban_report.py">ShadowbanReport</a></code>
 - <code title="get /x/users/{id}/similar">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_similar</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_similar_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/subscriptions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_subscriptions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_subscriptions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_tweets</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
@@ -735,6 +753,9 @@ from x_twitter_scraper.types.x import (
     FootballBoxScore,
     FootballPlays,
     SportsGameAudience,
+    FootballRoster,
+    FootballProps,
+    SportsGamePosts,
 )
 ```
 
@@ -745,6 +766,9 @@ Methods
 - <code title="get /x/sports/{league}/games/{id}/box-score">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_box_score</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_box_score_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballBoxScore</a></code>
 - <code title="get /x/sports/{league}/games/{id}/plays">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_plays</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_plays_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballPlays</a></code>
 - <code title="get /x/sports/{league}/games/{id}/audience">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_audience</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_audience_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">SportsGameAudience</a></code>
+- <code title="get /x/sports/{league}/games/{id}/roster">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_roster</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_roster_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballRoster</a></code>
+- <code title="get /x/sports/{league}/games/{id}/player-props">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_player_props</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_player_props_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballProps</a></code>
+- <code title="get /x/sports/{league}/games/{id}/posts">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">list_posts</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_list_posts_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">SportsGamePosts</a></code>
 
 # Trends
 
