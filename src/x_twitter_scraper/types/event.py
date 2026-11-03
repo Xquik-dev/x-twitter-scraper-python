@@ -90,7 +90,6 @@ __all__ = [
     "DataMonitorPostQuotedTweetPermalink",
     "DataMonitorPostQuotedTweetUnavailable",
     "DataMonitorPostReactionContext",
-    "DataMonitorPostReactionContextReactedToPost",
     "DataMonitorPostReactionContextReactedToUser",
     "DataMonitorPostRetweetedTweet",
     "DataMonitorPostRetweetedTweetAuthor",
@@ -892,18 +891,13 @@ class DataMonitorPostReactionContextReactedToUser(UserProfile):
     """Legacy username alias. Read username instead."""
 
 
-class DataMonitorPostReactionContextReactedToPost(EmbeddedTweet):
-    """Embedded post with public fields and legacy profile aliases."""
-
-    author: Optional[DataMonitorPostReactionContextReactedToUser] = None  # type: ignore
-    """Public profile with retained legacy monitor fields."""
-
-
 class DataMonitorPostReactionContext(BaseModel):
-    reacted_to_post: Optional[DataMonitorPostReactionContextReactedToPost] = FieldInfo(
-        alias="reactedToPost", default=None
-    )
-    """Embedded post with public fields and legacy profile aliases."""
+    reacted_to_post: Optional[Dict[str, object]] = FieldInfo(alias="reactedToPost", default=None)
+    """The post this one reacts to, with the same fields.
+
+    X often sends only its ID, author & edit history. Then unknownFields lists text,
+    and the flags X did not send are left out.
+    """
 
     reacted_to_post_id: Optional[str] = FieldInfo(alias="reactedToPostId", default=None)
 

@@ -25,6 +25,8 @@ AUTHOR = {
     "id": "11348282",
     "username": "NASA",
     "name": "NASA",
+    "followers": 89000000,
+    "verified": True,
     "affiliatesHighlightedLabel": {"description": "NASA", "auxiliaryLabels": [AUXILIARY_LABEL]},
 }
 COUNTS = {"likeCount": 42, "retweetCount": 5, "replyCount": 3, "quoteCount": 1, "viewCount": 1500, "bookmarkCount": 2}
@@ -151,29 +153,17 @@ async def test_post_authors_carry_the_auxiliary_labels(
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
-@pytest.mark.parametrize("read", [liked_posts, post_detail])
+@pytest.mark.parametrize("read", READS)
 async def test_reactions_keep_the_post_they_react_to(
     read: Callable[[bool], Awaitable[List[Post]]], asynchronous: bool
 ) -> None:
     for post in await read(asynchronous):
         assert post.reaction_context is not None
-        assert post.reaction_context.reacted_to_post == REACTED_TO
-
-
-@pytest.mark.parametrize("asynchronous", [False, True])
-@pytest.mark.parametrize("read", [listed_event, event_detail])
-async def test_monitor_reactions_type_the_post_they_react_to(
-    read: Callable[[bool], Awaitable[List[Post]]], asynchronous: bool
-) -> None:
-    post = (await read(asynchronous))[0]
-    assert isinstance(post, (EventPost, EventDetailPost))
-    assert post.reaction_context is not None
-    reacted = post.reaction_context.reacted_to_post
-    assert reacted is not None
-    assert reacted.id == "1900000000000000000"
-    assert reacted.unknown_fields == ["text"]
-    assert reacted.author is not None
-    assert reacted.author.username == "NASA"
+        assert post.reaction_context.reacted_to_post == {
+            "id": "1900000000000000000",
+            "author": {"id": "11348282", "username": "NASA"},
+            "unknownFields": ["text"],
+        }
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
