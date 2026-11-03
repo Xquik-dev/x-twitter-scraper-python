@@ -10,4 +10,4 @@ __all__ = ["AccountUpdateLocaleParams"]
 
 
 class AccountUpdateLocaleParams(TypedDict, total=False):
-    locale: Required[Literal["en", "tr", "es"]]
+    locale: Required[Literal["en", "tr", "es", "ja", "ko", "zh"]]

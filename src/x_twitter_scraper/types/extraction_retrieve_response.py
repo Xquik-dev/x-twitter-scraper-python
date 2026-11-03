@@ -63,6 +63,15 @@ class Result(ExtractionResultDictAccess):
 
     tweet_url: Optional[str] = FieldInfo(alias="tweetUrl", default=None)
 
+    verified_type: Optional[str] = FieldInfo(alias="verifiedType", default=None)
+    """Badge type X shows on the account, with outputPreset=flat.
+
+    Business is the gold badge of a verified organization. Government is the grey
+    badge of a government or multilateral account. Blue is the badge of X Premium.
+    Default nested output uses enrichmentData.user.verifiedType. Absent when the
+    account has none of these badges.
+    """
+
     view_count: Optional[int] = FieldInfo(alias="viewCount", default=None)
     """Whole number from 0."""
 

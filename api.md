@@ -8,10 +8,12 @@ from x_twitter_scraper.types import (
     CommunityPage,
     CommunityTopic,
     ContentDisclosure,
+    Currency,
     EmbeddedTweet,
     Error,
     ErrorCode,
     EventType,
+    LiveEventContext,
     PaginatedTweets,
     PaginatedUsers,
     SearchTweet,
@@ -205,7 +207,7 @@ Methods
 
 - <code title="get /events/{id}">client.events.<a href="./src/x_twitter_scraper/resources/events.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/event_detail.py">EventDetail</a></code>
 - <code title="get /events">client.events.<a href="./src/x_twitter_scraper/resources/events.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/event_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/event_list_response.py">EventListResponse</a></code>
-- <code title="get /events/stream">client.events.<a href="./src/x_twitter_scraper/resources/events.py">stream</a>() -> Stream[<a href="./src/x_twitter_scraper/types/event.py">Event</a>]</code>
+- <code title="get /events/stream">client.events.<a href="./src/x_twitter_scraper/resources/events.py">stream</a>(\*\*<a href="src/x_twitter_scraper/types/event_stream_params.py">params</a>) -> Stream[<a href="./src/x_twitter_scraper/types/event.py">Event</a>]</code>
 
 # Extractions
 

@@ -9,7 +9,7 @@ from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 from ..shared.search_tweet import SearchTweet
-from ..shared.user_profile import UserProfile
+from ..shared.user_profile import UserProfile, AffiliatesHighlightedLabelAuxiliaryLabel
 
 __all__ = [
     "SpaceRetrieveResponse",
@@ -26,6 +26,11 @@ __all__ = [
 
 class SpaceAdminAffiliatesHighlightedLabel(BaseModel):
     """Organization affiliation label shown on an X profile."""
+
+    auxiliary_labels: Optional[List[AffiliatesHighlightedLabelAuxiliaryLabel]] = FieldInfo(
+        alias="auxiliaryLabels", default=None
+    )
+    """More labels X shows beside the affiliation, such as an automated account's owner."""
 
     badge_url: Optional[str] = FieldInfo(alias="badgeUrl", default=None)
 
@@ -89,6 +94,11 @@ class SpaceAdmin(BaseModel):
 class SpaceListenerAffiliatesHighlightedLabel(BaseModel):
     """Organization affiliation label shown on an X profile."""
 
+    auxiliary_labels: Optional[List[AffiliatesHighlightedLabelAuxiliaryLabel]] = FieldInfo(
+        alias="auxiliaryLabels", default=None
+    )
+    """More labels X shows beside the affiliation, such as an automated account's owner."""
+
     badge_url: Optional[str] = FieldInfo(alias="badgeUrl", default=None)
 
     description: Optional[str] = None
@@ -150,6 +160,11 @@ class SpaceListener(BaseModel):
 
 class SpaceSpeakerAffiliatesHighlightedLabel(BaseModel):
     """Organization affiliation label shown on an X profile."""
+
+    auxiliary_labels: Optional[List[AffiliatesHighlightedLabelAuxiliaryLabel]] = FieldInfo(
+        alias="auxiliaryLabels", default=None
+    )
+    """More labels X shows beside the affiliation, such as an automated account's owner."""
 
     badge_url: Optional[str] = FieldInfo(alias="badgeUrl", default=None)
 

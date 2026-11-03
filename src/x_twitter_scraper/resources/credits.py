@@ -22,6 +22,7 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.shared.currency import Currency
 from ..types.credit_topup_balance_response import CreditTopupBalanceResponse
 from ..types.credit_retrieve_balance_response import CreditRetrieveBalanceResponse
 from ..types.credit_retrieve_topup_status_response import CreditRetrieveTopupStatusResponse
@@ -147,7 +148,9 @@ class CreditsResource(SyncAPIResource):
         self,
         *,
         dollars: int,
+        currency: Currency | Omit = omit,
         locale: str | Omit = omit,
+        return_path: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -161,8 +164,16 @@ class CreditsResource(SyncAPIResource):
         Args:
           dollars: Amount to top up in US dollars. Minimum 10.
 
+          currency: Currency to pay in, USD by default. Xquik converts the dollar amount at the
+              latest daily ECB rate. If the newest rates are more than 3 ECB working days old,
+              it charges USD instead, and Checkout shows that before payment. charged_currency
+              shows the currency charged. Credits always match the dollar amount.
+
           locale: Optional site language for Stripe's return page. An unsupported 1 uses en, the
               default.
+
+          return_path: Optional Xquik tool page to return to after Checkout, such as
+              /en/x-article-reader.
 
           extra_headers: Send extra headers
 
@@ -177,7 +188,9 @@ class CreditsResource(SyncAPIResource):
             body=maybe_transform(
                 {
                     "dollars": dollars,
+                    "currency": currency,
                     "locale": locale,
+                    "return_path": return_path,
                 },
                 credit_topup_balance_params.CreditTopupBalanceParams,
             ),
@@ -306,7 +319,9 @@ class AsyncCreditsResource(AsyncAPIResource):
         self,
         *,
         dollars: int,
+        currency: Currency | Omit = omit,
         locale: str | Omit = omit,
+        return_path: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -320,8 +335,16 @@ class AsyncCreditsResource(AsyncAPIResource):
         Args:
           dollars: Amount to top up in US dollars. Minimum 10.
 
+          currency: Currency to pay in, USD by default. Xquik converts the dollar amount at the
+              latest daily ECB rate. If the newest rates are more than 3 ECB working days old,
+              it charges USD instead, and Checkout shows that before payment. charged_currency
+              shows the currency charged. Credits always match the dollar amount.
+
           locale: Optional site language for Stripe's return page. An unsupported 1 uses en, the
               default.
+
+          return_path: Optional Xquik tool page to return to after Checkout, such as
+              /en/x-article-reader.
 
           extra_headers: Send extra headers
 
@@ -336,7 +359,9 @@ class AsyncCreditsResource(AsyncAPIResource):
             body=await async_maybe_transform(
                 {
                     "dollars": dollars,
+                    "currency": currency,
                     "locale": locale,
+                    "return_path": return_path,
                 },
                 credit_topup_balance_params.CreditTopupBalanceParams,
             ),

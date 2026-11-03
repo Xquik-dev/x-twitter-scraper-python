@@ -20,6 +20,7 @@ from .._response import (
     async_to_streamed_response_wrapper,
 )
 from .._base_client import make_request_options
+from ..types.shared.currency import Currency
 from ..types.subscribe_create_response import SubscribeCreateResponse
 
 __all__ = ["SubscribeResource", "AsyncSubscribeResource"]
@@ -49,6 +50,7 @@ class SubscribeResource(SyncAPIResource):
     def create(
         self,
         *,
+        currency: Currency | Omit = omit,
         tier: Literal["starter", "pro", "business"] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -60,6 +62,12 @@ class SubscribeResource(SyncAPIResource):
         confirms. The request never completes payment by itself.
 
         Args:
+          currency: Currency to pay in, USD by default. Xquik converts the USD plan price at the
+              latest daily ECB rate, and each renewal charges the same amount before tax. An
+              account that already pays in USD gets a USD checkout. With rates over 3 ECB
+              working days old, the checkout charges USD. charged_currency shows the currency
+              charged.
+
           tier: Subscription tier to pre-select.
 
           extra_headers: Send extra headers
@@ -72,7 +80,7 @@ class SubscribeResource(SyncAPIResource):
         """
         return self._post(
             "/subscribe",
-            body=maybe_transform({"tier": tier}, subscribe_create_params.SubscribeCreateParams),
+            body=maybe_transform({"currency": currency, "tier": tier}, subscribe_create_params.SubscribeCreateParams),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
@@ -104,6 +112,7 @@ class AsyncSubscribeResource(AsyncAPIResource):
     async def create(
         self,
         *,
+        currency: Currency | Omit = omit,
         tier: Literal["starter", "pro", "business"] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -115,6 +124,12 @@ class AsyncSubscribeResource(AsyncAPIResource):
         confirms. The request never completes payment by itself.
 
         Args:
+          currency: Currency to pay in, USD by default. Xquik converts the USD plan price at the
+              latest daily ECB rate, and each renewal charges the same amount before tax. An
+              account that already pays in USD gets a USD checkout. With rates over 3 ECB
+              working days old, the checkout charges USD. charged_currency shows the currency
+              charged.
+
           tier: Subscription tier to pre-select.
 
           extra_headers: Send extra headers
@@ -127,7 +142,9 @@ class AsyncSubscribeResource(AsyncAPIResource):
         """
         return await self._post(
             "/subscribe",
-            body=await async_maybe_transform({"tier": tier}, subscribe_create_params.SubscribeCreateParams),
+            body=await async_maybe_transform(
+                {"currency": currency, "tier": tier}, subscribe_create_params.SubscribeCreateParams
+            ),
             options=make_request_options(
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),

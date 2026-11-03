@@ -234,3 +234,11 @@ class TweetGetRepliesResponse(PaginatedTweets):
     """
 
     tweets: Optional[List[TweetGetRepliesResponseTweet]] = None  # type: ignore
+
+    unreached_replies: Optional[int] = FieldInfo(alias="unreachedReplies", default=None)
+    """
+    Present on automatic pages without filters while X counts replies the read
+    hasn't reached. If a reply that belongs in your rows is missing, it's among
+    them. The count drops as you read more pages. On the last page, it counts the
+    replies the read can't reach.
+    """
