@@ -771,15 +771,19 @@ async def test_retrieve_audience_reads_viewers_team_picks_and_chat(asynchronous:
 @pytest.mark.parametrize("asynchronous", [False, True])
 async def test_retrieve_roster_reads_each_team_and_player(asynchronous: bool) -> None:
     request, roster = await send_with_mock_transport(
-        lambda client: client.x.sports.retrieve_roster("2055084502741811200", league="nfl", omit="players.*.college"),
-        lambda client: client.x.sports.retrieve_roster("2055084502741811200", league="nfl", omit="players.*.college"),
+        lambda client: client.x.sports.retrieve_roster(
+            "2055084502741811200", league="nfl", fields="id,league,rosters,teams,players"
+        ),
+        lambda client: client.x.sports.retrieve_roster(
+            "2055084502741811200", league="nfl", fields="id,league,rosters,teams,players"
+        ),
         ROSTER,
         asynchronous,
     )
 
     assert request.method == "GET"
     assert request.url.path == "/api/v1/x/sports/nfl/games/2055084502741811200/roster"
-    assert dict(request.url.params) == {"omit": "players.*.college"}
+    assert dict(request.url.params) == {"fields": "id,league,rosters,teams,players"}
     assert isinstance(roster, FootballRoster)
     assert roster.league == "nfl"
     assert roster.rosters[0].team_id == "689566294702555136"
