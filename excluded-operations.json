@@ -4,10 +4,22 @@
     "operations": ["GET /ask", "POST /ask"]
   },
   {
+    "reason": "OAuth 2.1 and agent sign-up endpoints that issue the tokens the SDK sends. They live at https://xquik.com, outside the SDK base URL https://xquik.com/api/v1.",
+    "operations": [
+      "GET /api/oauth/authorize",
+      "POST /api/oauth/token",
+      "POST /api/oauth/revoke",
+      "POST /api/oauth/register",
+      "POST /agent/identity",
+      "POST /agent/identity/claim"
+    ]
+  },
+  {
     "reason": "Needs a dashboard sign-in cookie, which API keys and bearer tokens cannot use.",
     "operations": [
       "GET /api/v1/api-keys",
       "POST /api/v1/api-keys",
+      "PATCH /api/v1/api-keys",
       "POST /api/v1/api-keys/bulk-revoke",
       "DELETE /api/v1/api-keys/{id}",
       "PATCH /api/v1/api-keys/{id}",
