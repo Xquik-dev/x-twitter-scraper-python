@@ -426,6 +426,7 @@ from x_twitter_scraper.types.x import (
     UserRetrieveLiveResponse,
     UserRetrieveVerifiedFollowersResponse,
     UserTranslateBioResponse,
+    ShadowbanReport,
 )
 ```
 
@@ -452,6 +453,7 @@ Methods
 - <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_mentions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_mentions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_replies</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_replies_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/users/search">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_search</a>(\*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_search_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
+- <code title="get /x/users/{id}/shadowban">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_shadowban</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_shadowban_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/shadowban_report.py">ShadowbanReport</a></code>
 - <code title="get /x/users/{id}/similar">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_similar</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_similar_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/subscriptions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_subscriptions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_subscriptions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_tweets</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>

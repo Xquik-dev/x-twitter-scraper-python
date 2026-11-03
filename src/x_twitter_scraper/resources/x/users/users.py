@@ -39,6 +39,7 @@ from ....types.x import (
     user_retrieve_mentions_params,
     user_retrieve_followers_params,
     user_retrieve_following_params,
+    user_retrieve_shadowban_params,
     user_retrieve_affiliates_params,
     user_retrieve_highlights_params,
     user_retrieve_batch_tweets_params,
@@ -58,6 +59,7 @@ from ...._response import (
 )
 from ...._base_client import make_request_options
 from ...._deprecated_keywords import min_likes_or_min_faves
+from ....types.x.shadowban_report import ShadowbanReport
 from ....types.shared.user_profile import UserProfile
 from ....types.shared.paginated_users import PaginatedUsers
 from ....types.shared.paginated_tweets import PaginatedTweets
@@ -2973,6 +2975,66 @@ class UsersResource(SyncAPIResource):
                 ),
             ),
             cast_to=PaginatedUsers,
+        )
+
+    def retrieve_shadowban(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ShadowbanReport:
+        """
+        Checks 1 X account for a search ban, a search suggestion ban & reply deboosting.
+        It also says if the account is active, protected or suspended.
+
+        Each check answers pass, fail or unknown, with its reason & the posts,
+        suggestions or replies it read. The reply check answers pass or unknown, since X
+        ranks replies for each viewer. A protected account gets the suggestion check
+        only, and a suspended account gets the account check only. Each profile, post,
+        suggestion & reply in the answer costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/users/{id}/shadowban", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    user_retrieve_shadowban_params.UserRetrieveShadowbanParams,
+                ),
+            ),
+            cast_to=ShadowbanReport,
         )
 
     def retrieve_similar(
@@ -6693,6 +6755,66 @@ class AsyncUsersResource(AsyncAPIResource):
             cast_to=PaginatedUsers,
         )
 
+    async def retrieve_shadowban(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> ShadowbanReport:
+        """
+        Checks 1 X account for a search ban, a search suggestion ban & reply deboosting.
+        It also says if the account is active, protected or suspended.
+
+        Each check answers pass, fail or unknown, with its reason & the posts,
+        suggestions or replies it read. The reply check answers pass or unknown, since X
+        ranks replies for each viewer. A protected account gets the suggestion check
+        only, and a suspended account gets the account check only. Each profile, post,
+        suggestion & reply in the answer costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/users/{id}/shadowban", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    user_retrieve_shadowban_params.UserRetrieveShadowbanParams,
+                ),
+            ),
+            cast_to=ShadowbanReport,
+        )
+
     async def retrieve_similar(
         self,
         id: str,
@@ -7579,6 +7701,9 @@ class UsersResourceWithRawResponse:
         self.retrieve_search = to_raw_response_wrapper(
             users.retrieve_search,
         )
+        self.retrieve_shadowban = to_raw_response_wrapper(
+            users.retrieve_shadowban,
+        )
         self.retrieve_similar = to_raw_response_wrapper(
             users.retrieve_similar,
         )
@@ -7667,6 +7792,9 @@ class AsyncUsersResourceWithRawResponse:
         )
         self.retrieve_search = async_to_raw_response_wrapper(
             users.retrieve_search,
+        )
+        self.retrieve_shadowban = async_to_raw_response_wrapper(
+            users.retrieve_shadowban,
         )
         self.retrieve_similar = async_to_raw_response_wrapper(
             users.retrieve_similar,
@@ -7757,6 +7885,9 @@ class UsersResourceWithStreamingResponse:
         self.retrieve_search = to_streamed_response_wrapper(
             users.retrieve_search,
         )
+        self.retrieve_shadowban = to_streamed_response_wrapper(
+            users.retrieve_shadowban,
+        )
         self.retrieve_similar = to_streamed_response_wrapper(
             users.retrieve_similar,
         )
@@ -7845,6 +7976,9 @@ class AsyncUsersResourceWithStreamingResponse:
         )
         self.retrieve_search = async_to_streamed_response_wrapper(
             users.retrieve_search,
+        )
+        self.retrieve_shadowban = async_to_streamed_response_wrapper(
+            users.retrieve_shadowban,
         )
         self.retrieve_similar = async_to_streamed_response_wrapper(
             users.retrieve_similar,

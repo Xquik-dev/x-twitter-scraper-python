@@ -23,6 +23,7 @@ from .tweet_author import TweetAuthor as TweetAuthor
 from .tweet_detail import TweetDetail as TweetDetail
 from .dm_send_params import DmSendParams as DmSendParams
 from .dm_send_response import DmSendResponse as DmSendResponse
+from .shadowban_report import ShadowbanReport as ShadowbanReport
 from .x_account_detail import XAccountDetail as XAccountDetail
 from .job_search_params import JobSearchParams as JobSearchParams
 from .tweet_list_params import TweetListParams as TweetListParams
@@ -149,6 +150,7 @@ from .sport_retrieve_audience_params import SportRetrieveAudienceParams as Sport
 from .tweet_get_retweeter_ids_params import TweetGetRetweeterIdsParams as TweetGetRetweeterIdsParams
 from .user_retrieve_followers_params import UserRetrieveFollowersParams as UserRetrieveFollowersParams
 from .user_retrieve_following_params import UserRetrieveFollowingParams as UserRetrieveFollowingParams
+from .user_retrieve_shadowban_params import UserRetrieveShadowbanParams as UserRetrieveShadowbanParams
 from .write_action_retrieve_response import WriteActionRetrieveResponse as WriteActionRetrieveResponse
 from .community_list_suggested_params import CommunityListSuggestedParams as CommunityListSuggestedParams
 from .community_search_members_params import CommunitySearchMembersParams as CommunitySearchMembersParams
