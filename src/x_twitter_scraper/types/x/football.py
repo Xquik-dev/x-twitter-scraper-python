@@ -9,6 +9,7 @@ from typing_extensions import Literal, TypeAlias
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
+from ..shared.paginated_tweets import PaginatedTweets
 
 __all__ = [
     "FootballLeague",
@@ -20,6 +21,7 @@ __all__ = [
     "SportsTeamColor",
     "SportsTeamLogos",
     "SportsTeamRecord",
+    "SportsTeamGame",
     "SportsTeam",
     "FootballSchedule",
     "FootballScoreboardSituation",
@@ -62,6 +64,12 @@ __all__ = [
     "SportsGameAudienceChatOpensIn",
     "SportsGameAudienceChat",
     "SportsGameAudience",
+    "FootballRosterTeam",
+    "FootballRoster",
+    "FootballPlayerProp",
+    "FootballPropCategory",
+    "FootballProps",
+    "SportsGamePosts",
 ]
 
 FootballLeague: TypeAlias = Literal["nfl", "ncaafb"]
@@ -187,6 +195,34 @@ class SportsTeamRecord(BaseModel):
     """Games the team tied this season."""
 
 
+class SportsTeamGame(BaseModel):
+    """A recent game of a team, as X lists it with the team."""
+
+    id: str
+    """The game ID, which the game routes take."""
+
+    starts_at: Optional[datetime] = FieldInfo(alias="startsAt")
+    """When this game kicked off, in UTC. Null when Xquik cannot read X's time."""
+
+    venue: Optional[str]
+    """The stadium. X has sent none in recent games so far."""
+
+    status: Optional[str]
+    """This game's status as X names it, such as Closed."""
+
+    clock: Optional[str]
+    """The game clock, as X writes it. X has sent none so far."""
+
+    quarter: Optional[int]
+    """The current or last quarter. X has sent none so far."""
+
+    home: FootballTeamScore
+    """A team's side of a game & its points."""
+
+    away: FootballTeamScore
+    """A team's side of a game & its points."""
+
+
 class SportsTeam(BaseModel):
     """A team, as X's sports pages show it."""
 
@@ -224,6 +260,13 @@ class SportsTeam(BaseModel):
     """The team's wins, losses & ties this season.
 
     X sends it only in college football games.
+    """
+
+    recent_games: List[SportsTeamGame] = FieldInfo(alias="recentGames")
+    """The team's recent games, newest first. Games without a kickoff time come last.
+
+    X sends them only with the teams of a college football game. The list is empty
+    elsewhere.
     """
 
 
@@ -484,6 +527,18 @@ class FootballPlayerXUser(BaseModel):
 
     blue_verified: Optional[bool] = FieldInfo(alias="blueVerified")
     """Whether the account has a blue check."""
+
+    protected: Optional[bool]
+    """Whether the account protects its posts. Only rosters carry it."""
+
+    super_follow_eligible: Optional[bool] = FieldInfo(alias="superFollowEligible")
+    """Whether the account can offer subscriptions. Only rosters carry it."""
+
+    label_type: Optional[str] = FieldInfo(alias="labelType")
+    """The label X highlights on the account, such as BusinessLabel.
+
+    Only rosters carry it.
+    """
 
 
 class FootballPlayer(BaseModel):
@@ -1073,4 +1128,114 @@ class SportsGameAudience(BaseModel):
 
     X's team picker sends no short name, alternate ID, X account or record, so
     those are null.
+    """
+
+
+class FootballRosterTeam(BaseModel):
+    """1 team's roster."""
+
+    team_id: str = FieldInfo(alias="teamId")
+    """The team this roster belongs to, a key of teams."""
+
+    player_ids: List[str] = FieldInfo(alias="playerIds")
+    """The team's players in X's order, keys of players."""
+
+
+class FootballRoster(BaseModel):
+    """Both teams' rosters for 1 NFL game."""
+
+    id: str
+    """The ID of the game these rosters cover."""
+
+    league: Literal["nfl"]
+    """The league of the game these rosters cover."""
+
+    rosters: List[FootballRosterTeam]
+    """Each team's roster, in X's order."""
+
+    teams: Dict[str, SportsTeam]
+    """The 2 teams, by team ID."""
+
+    players: Dict[str, FootballPlayer]
+    """Every rostered player, by player ID.
+
+    Rosters carry no college or birth details & only a medium headshot, so the rest
+    are null.
+    """
+
+
+class FootballPlayerProp(BaseModel):
+    """1 player's line & odds in a prop category."""
+
+    player_id: Optional[str] = FieldInfo(alias="playerId")
+    """The player the line is for, a key of players."""
+
+    rank: Optional[float]
+    """The line's place in its category, from 1."""
+
+    line: Optional[float]
+    """The line the odds price, such as 248.5 yards.
+
+    Null when the prop has no line, such as the first touchdown scorer.
+    """
+
+    odds: Optional[float]
+    """The American odds X shows first, such as -115 or 240."""
+
+    alternate_odds: Optional[float] = FieldInfo(alias="alternateOdds")
+    """The American odds X shows second. Null for a prop with 1 price."""
+
+    open_for_betting: Optional[bool] = FieldInfo(alias="openForBetting")
+    """Whether the sportsbook takes bets on the line."""
+
+
+class FootballPropCategory(BaseModel):
+    """1 kind of player prop & its lines."""
+
+    key: Optional[str]
+    """X's key for the prop, such as passing_yards."""
+
+    name: Optional[str]
+    """The name X shows for the prop."""
+
+    rank: Optional[float]
+    """The category's place in X's order, from 1."""
+
+    props: List[FootballPlayerProp]
+    """Each player's line, in X's order."""
+
+
+class FootballProps(BaseModel):
+    """The player props X shows for 1 NFL game."""
+
+    id: str
+    """The ID of the game these props cover."""
+
+    league: Literal["nfl"]
+    """The league of the game these props cover."""
+
+    sportsbook_url: Optional[str] = FieldInfo(alias="sportsbookUrl")
+    """The sportsbook page X links for these props."""
+
+    categories: List[FootballPropCategory]
+    """Each kind of prop, such as passing yards, in X's order.
+
+    A game without props has none.
+    """
+
+    players: Dict[str, FootballPlayer]
+    """The players these props name, by player ID.
+
+    X sends only each player's name, jersey & team, so other fields are null.
+    """
+
+
+class SportsGamePosts(PaginatedTweets):
+    """A page of 1 game's posts. Pass next_cursor as cursor for the next page."""
+
+    query: Optional[str]
+    """An X search for this game's posts, in the order asked.
+
+    Send it to client.x.tweets.search for more filters. Null when no search is
+    available.
     """

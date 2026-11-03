@@ -735,6 +735,9 @@ from x_twitter_scraper.types.x import (
     FootballBoxScore,
     FootballPlays,
     SportsGameAudience,
+    FootballRoster,
+    FootballProps,
+    SportsGamePosts,
 )
 ```
 
@@ -745,6 +748,9 @@ Methods
 - <code title="get /x/sports/{league}/games/{id}/box-score">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_box_score</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_box_score_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballBoxScore</a></code>
 - <code title="get /x/sports/{league}/games/{id}/plays">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_plays</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_plays_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballPlays</a></code>
 - <code title="get /x/sports/{league}/games/{id}/audience">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_audience</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_audience_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">SportsGameAudience</a></code>
+- <code title="get /x/sports/{league}/games/{id}/roster">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_roster</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_roster_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballRoster</a></code>
+- <code title="get /x/sports/{league}/games/{id}/player-props">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">retrieve_player_props</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_retrieve_player_props_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">FootballProps</a></code>
+- <code title="get /x/sports/{league}/games/{id}/posts">client.x.sports.<a href="./src/x_twitter_scraper/resources/x/sports.py">list_posts</a>(id, \*, league, \*\*<a href="src/x_twitter_scraper/types/x/sport_list_posts_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/football.py">SportsGamePosts</a></code>
 
 # Trends
 

@@ -4,6 +4,8 @@
 
 from __future__ import annotations
 
+from typing_extensions import Literal
+
 import httpx
 
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
@@ -11,10 +13,13 @@ from ..._utils import path_template, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import (
     sport_list_games_params,
+    sport_list_posts_params,
     sport_retrieve_plays_params,
+    sport_retrieve_roster_params,
     sport_retrieve_audience_params,
     sport_retrieve_box_score_params,
     sport_retrieve_scoreboard_params,
+    sport_retrieve_player_props_params,
 )
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
@@ -26,6 +31,9 @@ from ..._response import (
 from ..._base_client import make_request_options
 from ...types.x.football import (
     FootballPlays,
+    FootballProps,
+    FootballRoster,
+    SportsGamePosts,
     FootballBoxScore,
     FootballSchedule,
     FootballScoreboard,
@@ -36,7 +44,7 @@ __all__ = ["SportsResource", "AsyncSportsResource"]
 
 
 class SportsResource(SyncAPIResource):
-    """NFL & college football games, scoreboards, plays, box scores & audiences"""
+    """NFL & college football games, scoreboards, plays, box scores, audiences, rosters, player props & posts"""
 
     @cached_property
     def with_raw_response(self) -> SportsResourceWithRawResponse:
@@ -357,9 +365,199 @@ class SportsResource(SyncAPIResource):
             cast_to=SportsGameAudience,
         )
 
+    def retrieve_roster(
+        self,
+        id: str,
+        *,
+        league: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> FootballRoster:
+        """
+        Returns both teams' players for 1 NFL game. Each player has a jersey, position,
+        headshot & X account. Each request costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return self._get(
+            path_template("/x/sports/{league}/games/{id}/roster", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    sport_retrieve_roster_params.SportRetrieveRosterParams,
+                ),
+            ),
+            cast_to=FootballRoster,
+        )
+
+    def retrieve_player_props(
+        self,
+        id: str,
+        *,
+        league: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> FootballProps:
+        """
+        Returns the player prop lines & American odds X shows for 1 NFL game. X lists
+        props before & during a game. Other games return no categories. Each request
+        costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return self._get(
+            path_template("/x/sports/{league}/games/{id}/player-props", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    sport_retrieve_player_props_params.SportRetrievePlayerPropsParams,
+                ),
+            ),
+            cast_to=FootballProps,
+        )
+
+    def list_posts(
+        self,
+        id: str,
+        *,
+        league: str,
+        cursor: str | Omit = omit,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Top", "Latest"] | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> SportsGamePosts:
+        """
+        Returns a game's top or latest posts, plus an X search you can run for more.
+        Works before, during & after the game. Pages hold up to 20 posts, & each post
+        costs 1 credit.
+
+        Args:
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
+              Follow next_cursor for more pages. Its aliases are limit, count, max_results,
+              maxItems, max_items & per_page.
+
+          query_type: Top for the posts X ranks highest, or Latest for the newest. Any case works,
+              & so do Relevance & Recency. Alias order or sort. Send the same value with each
+              cursor.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return self._get(
+            path_template("/x/sports/{league}/games/{id}/posts", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "fields": fields,
+                        "omit": omit,
+                        "page_size": page_size,
+                        "query_type": query_type,
+                    },
+                    sport_list_posts_params.SportListPostsParams,
+                ),
+            ),
+            cast_to=SportsGamePosts,
+        )
+
 
 class AsyncSportsResource(AsyncAPIResource):
-    """NFL & college football games, scoreboards, plays, box scores & audiences"""
+    """NFL & college football games, scoreboards, plays, box scores, audiences, rosters, player props & posts"""
 
     @cached_property
     def with_raw_response(self) -> AsyncSportsResourceWithRawResponse:
@@ -680,6 +878,196 @@ class AsyncSportsResource(AsyncAPIResource):
             cast_to=SportsGameAudience,
         )
 
+    async def retrieve_roster(
+        self,
+        id: str,
+        *,
+        league: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> FootballRoster:
+        """
+        Returns both teams' players for 1 NFL game. Each player has a jersey, position,
+        headshot & X account. Each request costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return await self._get(
+            path_template("/x/sports/{league}/games/{id}/roster", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    sport_retrieve_roster_params.SportRetrieveRosterParams,
+                ),
+            ),
+            cast_to=FootballRoster,
+        )
+
+    async def retrieve_player_props(
+        self,
+        id: str,
+        *,
+        league: str,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> FootballProps:
+        """
+        Returns the player prop lines & American odds X shows for 1 NFL game. X lists
+        props before & during a game. Other games return no categories. Each request
+        costs 1 credit.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return await self._get(
+            path_template("/x/sports/{league}/games/{id}/player-props", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "omit": omit,
+                    },
+                    sport_retrieve_player_props_params.SportRetrievePlayerPropsParams,
+                ),
+            ),
+            cast_to=FootballProps,
+        )
+
+    async def list_posts(
+        self,
+        id: str,
+        *,
+        league: str,
+        cursor: str | Omit = omit,
+        fields: str | Omit = omit,
+        omit: str | Omit = omit,
+        page_size: int | Omit = omit,
+        query_type: Literal["Top", "Latest"] | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> SportsGamePosts:
+        """
+        Returns a game's top or latest posts, plus an X search you can run for more.
+        Works before, during & after the game. Pages hold up to 20 posts, & each post
+        costs 1 credit.
+
+        Args:
+          cursor: Pagination cursor for collection results. Also read as next_cursor, next_token,
+              pagination_token or continuation_token.
+
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields,
+              such as author.username. A list keeps the field in each item. Case &
+              underscores do not matter. A row that lacks a field leaves it out.
+              Cursors, counts & diagnostics always stay. An unknown name answers 400
+              unknown_field with the valid names, before any read. The price stays the
+              same. SDK row types then hold only the named fields.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
+              Follow next_cursor for more pages. Its aliases are limit, count, max_results,
+              maxItems, max_items & per_page.
+
+          query_type: Top for the posts X ranks highest, or Latest for the newest. Any case works,
+              & so do Relevance & Recency. Alias order or sort. Send the same value with each
+              cursor.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        if not league:
+            raise ValueError(f"Expected a non-empty value for `league` but received {league!r}")
+        return await self._get(
+            path_template("/x/sports/{league}/games/{id}/posts", id=id, league=league),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "fields": fields,
+                        "omit": omit,
+                        "page_size": page_size,
+                        "query_type": query_type,
+                    },
+                    sport_list_posts_params.SportListPostsParams,
+                ),
+            ),
+            cast_to=SportsGamePosts,
+        )
+
 
 class SportsResourceWithRawResponse:
     def __init__(self, sports: SportsResource) -> None:
@@ -699,6 +1087,15 @@ class SportsResourceWithRawResponse:
         )
         self.retrieve_audience = to_raw_response_wrapper(
             sports.retrieve_audience,
+        )
+        self.retrieve_roster = to_raw_response_wrapper(
+            sports.retrieve_roster,
+        )
+        self.retrieve_player_props = to_raw_response_wrapper(
+            sports.retrieve_player_props,
+        )
+        self.list_posts = to_raw_response_wrapper(
+            sports.list_posts,
         )
 
 
@@ -721,6 +1118,15 @@ class AsyncSportsResourceWithRawResponse:
         self.retrieve_audience = async_to_raw_response_wrapper(
             sports.retrieve_audience,
         )
+        self.retrieve_roster = async_to_raw_response_wrapper(
+            sports.retrieve_roster,
+        )
+        self.retrieve_player_props = async_to_raw_response_wrapper(
+            sports.retrieve_player_props,
+        )
+        self.list_posts = async_to_raw_response_wrapper(
+            sports.list_posts,
+        )
 
 
 class SportsResourceWithStreamingResponse:
@@ -742,6 +1148,15 @@ class SportsResourceWithStreamingResponse:
         self.retrieve_audience = to_streamed_response_wrapper(
             sports.retrieve_audience,
         )
+        self.retrieve_roster = to_streamed_response_wrapper(
+            sports.retrieve_roster,
+        )
+        self.retrieve_player_props = to_streamed_response_wrapper(
+            sports.retrieve_player_props,
+        )
+        self.list_posts = to_streamed_response_wrapper(
+            sports.list_posts,
+        )
 
 
 class AsyncSportsResourceWithStreamingResponse:
@@ -762,4 +1177,13 @@ class AsyncSportsResourceWithStreamingResponse:
         )
         self.retrieve_audience = async_to_streamed_response_wrapper(
             sports.retrieve_audience,
+        )
+        self.retrieve_roster = async_to_streamed_response_wrapper(
+            sports.retrieve_roster,
+        )
+        self.retrieve_player_props = async_to_streamed_response_wrapper(
+            sports.retrieve_player_props,
+        )
+        self.list_posts = async_to_streamed_response_wrapper(
+            sports.list_posts,
         )

@@ -8,8 +8,11 @@ from .football import (
     SportsTeam as SportsTeam,
     FootballPlay as FootballPlay,
     FootballPlays as FootballPlays,
+    FootballProps as FootballProps,
     FootballLeague as FootballLeague,
     FootballPlayer as FootballPlayer,
+    FootballRoster as FootballRoster,
+    SportsGamePosts as SportsGamePosts,
     FootballBoxScore as FootballBoxScore,
     FootballSchedule as FootballSchedule,
     FootballScoreboard as FootballScoreboard,
@@ -69,6 +72,7 @@ from .media_download_response import MediaDownloadResponse as MediaDownloadRespo
 from .profile_update_response import ProfileUpdateResponse as ProfileUpdateResponse
 from .space_retrieve_response import SpaceRetrieveResponse as SpaceRetrieveResponse
 from .sport_list_games_params import SportListGamesParams as SportListGamesParams
+from .sport_list_posts_params import SportListPostsParams as SportListPostsParams
 from .tweet_get_quotes_params import TweetGetQuotesParams as TweetGetQuotesParams
 from .tweet_get_thread_params import TweetGetThreadParams as TweetGetThreadParams
 from .tweet_retrieve_response import TweetRetrieveResponse as TweetRetrieveResponse
@@ -119,6 +123,7 @@ from .list_retrieve_members_params import ListRetrieveMembersParams as ListRetri
 from .profile_update_avatar_params import ProfileUpdateAvatarParams as ProfileUpdateAvatarParams
 from .profile_update_banner_params import ProfileUpdateBannerParams as ProfileUpdateBannerParams
 from .space_retrieve_replay_params import SpaceRetrieveReplayParams as SpaceRetrieveReplayParams
+from .sport_retrieve_roster_params import SportRetrieveRosterParams as SportRetrieveRosterParams
 from .tweet_get_subtitles_response import TweetGetSubtitlesResponse as TweetGetSubtitlesResponse
 from .tweet_resolve_links_response import TweetResolveLinksResponse as TweetResolveLinksResponse
 from .user_retrieve_batch_response import UserRetrieveBatchResponse as UserRetrieveBatchResponse
@@ -166,6 +171,7 @@ from .community_retrieve_members_params import CommunityRetrieveMembersParams as
 from .user_retrieve_batch_tweets_params import UserRetrieveBatchTweetsParams as UserRetrieveBatchTweetsParams
 from .user_retrieve_follower_ids_params import UserRetrieveFollowerIdsParams as UserRetrieveFollowerIdsParams
 from .bookmark_retrieve_folders_response import BookmarkRetrieveFoldersResponse as BookmarkRetrieveFoldersResponse
+from .sport_retrieve_player_props_params import SportRetrievePlayerPropsParams as SportRetrievePlayerPropsParams
 from .user_retrieve_following_ids_params import UserRetrieveFollowingIdsParams as UserRetrieveFollowingIdsParams
 from .user_retrieve_subscriptions_params import UserRetrieveSubscriptionsParams as UserRetrieveSubscriptionsParams
 from .community_retrieve_analytics_params import CommunityRetrieveAnalyticsParams as CommunityRetrieveAnalyticsParams
