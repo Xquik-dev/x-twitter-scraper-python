@@ -76,15 +76,15 @@ SUSPENDED = {
 @pytest.mark.parametrize("asynchronous", [False, True])
 async def test_retrieve_shadowban_reads_each_check_and_its_evidence(asynchronous: bool) -> None:
     request, report = await send_with_mock_transport(
-        lambda client: client.x.users.retrieve_shadowban("NASA", omit="checks.account"),
-        lambda client: client.x.users.retrieve_shadowban("NASA", omit="checks.account"),
+        lambda client: client.x.users.retrieve_shadowban("NASA", fields="username,userId,account,checks"),
+        lambda client: client.x.users.retrieve_shadowban("NASA", fields="username,userId,account,checks"),
         ACTIVE,
         asynchronous,
     )
 
     assert request.method == "GET"
     assert request.url.path == "/api/v1/x/users/NASA/shadowban"
-    assert dict(request.url.params) == {"omit": "checks.account"}
+    assert dict(request.url.params) == {"fields": "username,userId,account,checks"}
     assert isinstance(report, ShadowbanReport)
     assert (report.username, report.user_id, report.account) == ("NASA", "11348282", "active")
     checks = report.checks
