@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.20.0 (2026-11-03)
+
+This release adds the activity log, the shadowban check, the game roster, player props & posts reads, and the fields the API added since 0.19.0. Code written for 0.19.0 keeps working.
 
 - `client.activity.list` returns the account's activity rows as `ActivityLogRow`, and `client.activity.retrieve` returns 1 full record as `ActivityRecord`.
 - `client.activity.export` downloads the same rows as a CSV, Excel, JSON, Markdown, PDF or text file.
