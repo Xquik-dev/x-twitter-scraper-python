@@ -39,6 +39,20 @@ Methods
 - <code title="put /account/x-identity">client.account.<a href="./src/x_twitter_scraper/resources/account.py">set_x_username</a>(\*\*<a href="src/x_twitter_scraper/types/account_set_x_username_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/account_set_x_username_response.py">AccountSetXUsernameResponse</a></code>
 - <code title="patch /account">client.account.<a href="./src/x_twitter_scraper/resources/account.py">update_locale</a>(\*\*<a href="src/x_twitter_scraper/types/account_update_locale_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/account_update_locale_response.py">AccountUpdateLocaleResponse</a></code>
 
+# Activity
+
+Types
+
+```python
+from x_twitter_scraper.types import ActivityLogRow, ActivityRecord, ActivityListResponse
+```
+
+Methods
+
+- <code title="get /activity">client.activity.<a href="./src/x_twitter_scraper/resources/activity.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/activity_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/activity_list_response.py">ActivityListResponse</a></code>
+- <code title="get /activity/{id}">client.activity.<a href="./src/x_twitter_scraper/resources/activity.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/activity_record.py">ActivityRecord</a></code>
+- <code title="get /activity">client.activity.<a href="./src/x_twitter_scraper/resources/activity.py">export</a>(\*\*<a href="src/x_twitter_scraper/types/activity_export_params.py">params</a>) -> BinaryAPIResponse</code>
+
 # Subscribe
 
 Types

@@ -90,6 +90,14 @@ from .support import (
     SupportResourceWithStreamingResponse,
     AsyncSupportResourceWithStreamingResponse,
 )
+from .activity import (
+    ActivityResource,
+    AsyncActivityResource,
+    ActivityResourceWithRawResponse,
+    AsyncActivityResourceWithRawResponse,
+    ActivityResourceWithStreamingResponse,
+    AsyncActivityResourceWithStreamingResponse,
+)
 from .monitors import (
     MonitorsResource,
     AsyncMonitorsResource,
@@ -138,6 +146,12 @@ __all__ = [
     "AsyncAccountResourceWithRawResponse",
     "AccountResourceWithStreamingResponse",
     "AsyncAccountResourceWithStreamingResponse",
+    "ActivityResource",
+    "AsyncActivityResource",
+    "ActivityResourceWithRawResponse",
+    "AsyncActivityResourceWithRawResponse",
+    "ActivityResourceWithStreamingResponse",
+    "AsyncActivityResourceWithStreamingResponse",
     "SubscribeResource",
     "AsyncSubscribeResource",
     "SubscribeResourceWithRawResponse",
