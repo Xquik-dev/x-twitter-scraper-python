@@ -27,16 +27,21 @@ logging.getLogger("x_twitter_scraper").setLevel(logging.DEBUG)
 disabled_mock_reason = "Mock server tests are disabled"
 mock_api_server: MockAPIServer | None = None
 
-configured_base_url = os.environ.get("TEST_API_BASE_URL")
-if configured_base_url is None:
-    mock_api_server = MockAPIServer()
-    base_url = mock_api_server.base_url
-    os.environ["TEST_API_BASE_URL"] = base_url
-else:
-    parsed_base_url = urlsplit(configured_base_url)
-    if parsed_base_url.scheme not in {"http", "https"} or parsed_base_url.hostname not in {"127.0.0.1", "::1"}:
-        raise RuntimeError("TEST_API_BASE_URL must use the 127.0.0.1 or ::1 loopback address")
-    base_url = configured_base_url
+base_url = os.environ.get("TEST_API_BASE_URL", "")
+parsed_base_url = urlsplit(base_url)
+if base_url and (
+    parsed_base_url.scheme not in {"http", "https"} or parsed_base_url.hostname not in {"127.0.0.1", "::1"}
+):
+    raise RuntimeError("TEST_API_BASE_URL must use the 127.0.0.1 or ::1 loopback address")
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    global base_url, mock_api_server
+    controller = not hasattr(config, "workerinput") and config.getoption("dist", "no") != "no"
+    if not base_url and not controller:
+        mock_api_server = MockAPIServer()
+        base_url = mock_api_server.base_url
+        os.environ["TEST_API_BASE_URL"] = base_url
 
 
 def pytest_collection_modifyitems(items: list[pytest.Function]) -> None:
