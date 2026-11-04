@@ -535,7 +535,7 @@ def test_remote_fuzz_sigint_stops_its_caller_before_the_next_command(tmp_path: P
             "bash",
             "-c",
             """tar() { head -c 131072 /dev/zero; }
-ssh() { printf '%s\\n' "$3" > "$CLEANUP_REMOTE"; }
+ssh() { cat > /dev/null; printf '%s\\n' "$3" > "$CLEANUP_REMOTE"; }
 export -f tar ssh
 bash "$1"
 """,
