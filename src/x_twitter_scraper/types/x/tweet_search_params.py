@@ -240,6 +240,13 @@ class TweetSearchParams(TypedDict, total=False):
     A Tweet search with it answers 424 & charges nothing.
     """
 
+    text_only_terms: Annotated[str, PropertyInfo(alias="textOnlyTerms")]
+    """
+    Keeps a post only when at least 1 of these words or quoted phrases appears outside
+    the author's name and username, such as in its text, a link, its card or a quoted
+    post.
+    """
+
     to_user: Annotated[str, PropertyInfo(alias="toUser")]
     """Filter replies sent to a username."""
 

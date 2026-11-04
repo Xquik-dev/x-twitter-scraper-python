@@ -375,6 +375,14 @@ class ExtractionRunParams(TypedDict, total=False):
     skip a protected profile & end with partial_failure.
     """
 
+    text_only_terms: Annotated[str, PropertyInfo(alias="textOnlyTerms")]
+    """
+    Collects a post only when 1 of these words or quoted phrases is in its text, a link,
+    its card or a quoted post.
+
+    The author's name and username don't count.
+    """
+
     to_user: Annotated[str, PropertyInfo(alias="toUser")]
     """Replies to this username (tweet_search_extractor)."""
 

@@ -188,6 +188,7 @@
       "GET /api/v1/x/users/{id}/insights response required insights.averages",
       "GET /api/v1/x/users/{id}/insights response required insights.engagementPerView",
       "GET /api/v1/x/users/{id}/insights response required insights.engagementRate",
+      "GET /api/v1/x/users/{id}/insights response required insights.medianViews",
       "GET /api/v1/x/users/{id}/insights response required insights.postsPerDay",
       "GET /api/v1/x/users/{id}/insights response required insights.sample.newestAt",
       "GET /api/v1/x/users/{id}/insights response required insights.sample.oldestAt",

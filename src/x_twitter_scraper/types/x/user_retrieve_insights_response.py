@@ -74,6 +74,12 @@ class Insights(BaseModel):
     following: float
     """Accounts the user follows."""
 
+    median_views: Optional[float] = FieldInfo(alias="medianViews", default=None)
+    """
+    Middle view count of the sample, so 1 viral post moves it less than the average.
+    Null without posts.
+    """
+
     posts: float
     """Posts the user has made."""
 

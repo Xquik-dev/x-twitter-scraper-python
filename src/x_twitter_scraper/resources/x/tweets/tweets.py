@@ -2141,6 +2141,7 @@ class TweetsResource(SyncAPIResource):
         since_id: str | Omit = omit,
         since_time: str | Omit = omit,
         source: str | Omit = omit,
+        text_only_terms: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -2300,6 +2301,10 @@ class TweetsResource(SyncAPIResource):
           source: X search no longer supports source. A Tweet search with it answers 424 & charges
               nothing.
 
+          text_only_terms: Keeps a post only when at least 1 of these words or quoted phrases
+              appears outside the author's name and username, such as in its text, a link, its card
+              or a quoted post.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date as a UTC day, inclusive, so its own posts count. It takes the same date
@@ -2390,6 +2395,7 @@ class TweetsResource(SyncAPIResource):
                             "since_id": since_id,
                             "since_time": since_time,
                             "source": source,
+                            "text_only_terms": text_only_terms,
                             "to_user": to_user,
                             "until_date": until_date,
                             "until_time": until_time,
@@ -4528,6 +4534,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         since_id: str | Omit = omit,
         since_time: str | Omit = omit,
         source: str | Omit = omit,
+        text_only_terms: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -4687,6 +4694,10 @@ class AsyncTweetsResource(AsyncAPIResource):
           source: X search no longer supports source. A Tweet search with it answers 424 & charges
               nothing.
 
+          text_only_terms: Keeps a post only when at least 1 of these words or quoted phrases
+              appears outside the author's name and username, such as in its text, a link, its card
+              or a quoted post.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date as a UTC day, inclusive, so its own posts count. It takes the same date
@@ -4777,6 +4788,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                             "since_id": since_id,
                             "since_time": since_time,
                             "source": source,
+                            "text_only_terms": text_only_terms,
                             "to_user": to_user,
                             "until_date": until_date,
                             "until_time": until_time,

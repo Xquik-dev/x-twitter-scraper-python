@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, List, Optional
 from datetime import datetime
 from typing_extensions import Literal
 
@@ -53,12 +53,21 @@ class Metadata(BaseModel):
 
     selftext: Optional[str] = None
 
+    sentiment: Optional[Literal["positive", "neutral", "negative"]] = None
+    """Tone of an English post title, from the VADER word list."""
+
     source_format: Optional[Literal["html", "json", "rss"]] = FieldInfo(alias="sourceFormat", default=None)
     """Current items use html. json and rss are retained for legacy rows."""
 
     subreddit: Optional[str] = None
 
     upvote_ratio: Optional[float] = FieldInfo(alias="upvoteRatio", default=None)
+
+    windows: Optional[List[Literal["now", "hour", "day", "week", "month", "year"]]] = None
+    """Reddit lists the post ranks in.
+
+    now is the popular feed, and the rest are top lists of that window.
+    """
 
     if TYPE_CHECKING:
         # Pydantic <2.8 rejects a value on __pydantic_extra__ at runtime.

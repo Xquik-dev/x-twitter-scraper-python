@@ -22,6 +22,22 @@ class ExtractionExportResultsParams(TypedDict, total=False):
     Require an email outside free webmail, such as Gmail, in the row's Email column.
     """
 
+    change: Literal["added", "removed"]
+    """
+    With compare, `added` keeps this run's new rows and `removed` keeps the earlier
+    run's rows that this run lacks.
+
+    The default is `added`. A run of another account ignores it.
+    """
+
+    compare: str
+    """ID of another run of this tool.
+
+    For an earlier whole run of the same account, the export holds only the rows that
+    differ. For a run of another account, it holds only this run's rows that the other
+    run also lists.
+    """
+
     email_domains: Annotated[str, PropertyInfo(alias="emailDomains")]
     """Require the row's email at one of these domains.
 
@@ -40,8 +56,33 @@ class ExtractionExportResultsParams(TypedDict, total=False):
     has_media: Annotated[bool, PropertyInfo(alias="hasMedia")]
     """Require media."""
 
+    has_website: Annotated[bool, PropertyInfo(alias="hasWebsite")]
+    """Require a website on the profile."""
+
+    hide_fake: Annotated[bool, PropertyInfo(alias="hideFake")]
+    """Drop accounts with at least 3 of these signs.
+
+    No posts, a default picture, an empty bio, or following at least 100 accounts and 10
+    times their followers.
+    """
+
+    hide_inactive: Annotated[bool, PropertyInfo(alias="hideInactive")]
+    """
+    Drop accounts with under 1 post a month since joining that are at least 180 days
+    old.
+    """
+
+    joined_since: Annotated[Union[str, date], PropertyInfo(alias="joinedSince", format="iso8601")]
+    """Keep accounts that joined X on this UTC day or later."""
+
+    joined_until: Annotated[Union[str, date], PropertyInfo(alias="joinedUntil", format="iso8601")]
+    """Keep accounts that joined X before this UTC day."""
+
     lang: str
     """Filter by language code."""
+
+    location: str
+    """Keep accounts whose location contains this text."""
 
     max_followers: Annotated[int, PropertyInfo(alias="maxFollowers")]
     """Maximum follower count."""

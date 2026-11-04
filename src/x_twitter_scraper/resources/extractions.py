@@ -364,6 +364,7 @@ class ExtractionsResource(SyncAPIResource):
         target_tweet_ids: SequenceNotStr[str] | Omit = omit,
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
+        text_only_terms: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -582,6 +583,9 @@ class ExtractionsResource(SyncAPIResource):
               username collects posts. Post & media jobs skip a protected profile & end with
               partial_failure.
 
+          text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
+              text, a link, its card or a quoted post. The author's name and username don't count.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -704,6 +708,7 @@ class ExtractionsResource(SyncAPIResource):
                     "target_tweet_ids": target_tweet_ids,
                     "target_username": target_username,
                     "target_usernames": target_usernames,
+                    "text_only_terms": text_only_terms,
                     "to_user": to_user,
                     "until_date": until_date,
                     "until_time": until_time,
@@ -728,12 +733,20 @@ class ExtractionsResource(SyncAPIResource):
         *,
         format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
         business_email_only: bool | Omit = omit,
+        change: Literal["added", "removed"] | Omit = omit,
+        compare: str | Omit = omit,
         email_domains: str | Omit = omit,
         has_description: bool | Omit = omit,
         has_email: bool | Omit = omit,
         has_location: bool | Omit = omit,
         has_media: bool | Omit = omit,
+        has_website: bool | Omit = omit,
+        hide_fake: bool | Omit = omit,
+        hide_inactive: bool | Omit = omit,
+        joined_since: Union[str, date] | Omit = omit,
+        joined_until: Union[str, date] | Omit = omit,
         lang: str | Omit = omit,
+        location: str | Omit = omit,
         max_followers: int | Omit = omit,
         max_following: int | Omit = omit,
         max_posts: int | Omit = omit,
@@ -764,6 +777,14 @@ class ExtractionsResource(SyncAPIResource):
 
           business_email_only: Require an email outside free webmail, such as Gmail, in the row's Email column.
 
+          change: With compare, `added` keeps this run's new rows and `removed` keeps the earlier
+              run's rows that this run lacks. The default is `added`. A run of another account
+              ignores it.
+
+          compare: ID of another run of this tool. For an earlier whole run of the same account, the
+              export holds only the rows that differ. For a run of another account, it holds only
+              this run's rows that the other run also lists.
+
           email_domains: Require the row's email at one of these domains. Separate domains with commas.
               Subdomains match.
 
@@ -775,7 +796,21 @@ class ExtractionsResource(SyncAPIResource):
 
           has_media: Require media.
 
+          has_website: Require a website on the profile.
+
+          hide_fake: Drop accounts with at least 3 of these signs. No posts, a default picture, an
+              empty bio, or following at least 100 accounts and 10 times their followers.
+
+          hide_inactive: Drop accounts with under 1 post a month since joining that are at least 180
+              days old.
+
+          joined_since: Keep accounts that joined X on this UTC day or later.
+
+          joined_until: Keep accounts that joined X before this UTC day.
+
           lang: Filter by language code.
+
+          location: Keep accounts whose location contains this text.
 
           max_followers: Maximum follower count.
 
@@ -831,12 +866,20 @@ class ExtractionsResource(SyncAPIResource):
                     {
                         "format": format,
                         "business_email_only": business_email_only,
+                        "change": change,
+                        "compare": compare,
                         "email_domains": email_domains,
                         "has_description": has_description,
                         "has_email": has_email,
                         "has_location": has_location,
                         "has_media": has_media,
+                        "has_website": has_website,
+                        "hide_fake": hide_fake,
+                        "hide_inactive": hide_inactive,
+                        "joined_since": joined_since,
+                        "joined_until": joined_until,
                         "lang": lang,
+                        "location": location,
                         "max_followers": max_followers,
                         "max_following": max_following,
                         "max_posts": max_posts,
@@ -977,6 +1020,7 @@ class ExtractionsResource(SyncAPIResource):
         target_tweet_ids: SequenceNotStr[str] | Omit = omit,
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
+        text_only_terms: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -1200,6 +1244,9 @@ class ExtractionsResource(SyncAPIResource):
               username collects posts. Post & media jobs skip a protected profile & end with
               partial_failure.
 
+          text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
+              text, a link, its card or a quoted post. The author's name and username don't count.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -1328,6 +1375,7 @@ class ExtractionsResource(SyncAPIResource):
                         "target_tweet_ids": target_tweet_ids,
                         "target_username": target_username,
                         "target_usernames": target_usernames,
+                        "text_only_terms": text_only_terms,
                         "to_user": to_user,
                         "until_date": until_date,
                         "until_time": until_time,
@@ -1671,6 +1719,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         target_tweet_ids: SequenceNotStr[str] | Omit = omit,
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
+        text_only_terms: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -1889,6 +1938,9 @@ class AsyncExtractionsResource(AsyncAPIResource):
               username collects posts. Post & media jobs skip a protected profile & end with
               partial_failure.
 
+          text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
+              text, a link, its card or a quoted post. The author's name and username don't count.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -2011,6 +2063,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     "target_tweet_ids": target_tweet_ids,
                     "target_username": target_username,
                     "target_usernames": target_usernames,
+                    "text_only_terms": text_only_terms,
                     "to_user": to_user,
                     "until_date": until_date,
                     "until_time": until_time,
@@ -2035,12 +2088,20 @@ class AsyncExtractionsResource(AsyncAPIResource):
         *,
         format: Literal["csv", "json", "md", "md-document", "pdf", "txt", "xlsx"],
         business_email_only: bool | Omit = omit,
+        change: Literal["added", "removed"] | Omit = omit,
+        compare: str | Omit = omit,
         email_domains: str | Omit = omit,
         has_description: bool | Omit = omit,
         has_email: bool | Omit = omit,
         has_location: bool | Omit = omit,
         has_media: bool | Omit = omit,
+        has_website: bool | Omit = omit,
+        hide_fake: bool | Omit = omit,
+        hide_inactive: bool | Omit = omit,
+        joined_since: Union[str, date] | Omit = omit,
+        joined_until: Union[str, date] | Omit = omit,
         lang: str | Omit = omit,
+        location: str | Omit = omit,
         max_followers: int | Omit = omit,
         max_following: int | Omit = omit,
         max_posts: int | Omit = omit,
@@ -2071,6 +2132,14 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           business_email_only: Require an email outside free webmail, such as Gmail, in the row's Email column.
 
+          change: With compare, `added` keeps this run's new rows and `removed` keeps the earlier
+              run's rows that this run lacks. The default is `added`. A run of another account
+              ignores it.
+
+          compare: ID of another run of this tool. For an earlier whole run of the same account, the
+              export holds only the rows that differ. For a run of another account, it holds only
+              this run's rows that the other run also lists.
+
           email_domains: Require the row's email at one of these domains. Separate domains with commas.
               Subdomains match.
 
@@ -2082,7 +2151,21 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           has_media: Require media.
 
+          has_website: Require a website on the profile.
+
+          hide_fake: Drop accounts with at least 3 of these signs. No posts, a default picture, an
+              empty bio, or following at least 100 accounts and 10 times their followers.
+
+          hide_inactive: Drop accounts with under 1 post a month since joining that are at least 180
+              days old.
+
+          joined_since: Keep accounts that joined X on this UTC day or later.
+
+          joined_until: Keep accounts that joined X before this UTC day.
+
           lang: Filter by language code.
+
+          location: Keep accounts whose location contains this text.
 
           max_followers: Maximum follower count.
 
@@ -2138,12 +2221,20 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     {
                         "format": format,
                         "business_email_only": business_email_only,
+                        "change": change,
+                        "compare": compare,
                         "email_domains": email_domains,
                         "has_description": has_description,
                         "has_email": has_email,
                         "has_location": has_location,
                         "has_media": has_media,
+                        "has_website": has_website,
+                        "hide_fake": hide_fake,
+                        "hide_inactive": hide_inactive,
+                        "joined_since": joined_since,
+                        "joined_until": joined_until,
                         "lang": lang,
+                        "location": location,
                         "max_followers": max_followers,
                         "max_following": max_following,
                         "max_posts": max_posts,
@@ -2284,6 +2375,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         target_tweet_ids: SequenceNotStr[str] | Omit = omit,
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
+        text_only_terms: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -2507,6 +2599,9 @@ class AsyncExtractionsResource(AsyncAPIResource):
               username collects posts. Post & media jobs skip a protected profile & end with
               partial_failure.
 
+          text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
+              text, a link, its card or a quoted post. The author's name and username don't count.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -2635,6 +2730,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                         "target_tweet_ids": target_tweet_ids,
                         "target_username": target_username,
                         "target_usernames": target_usernames,
+                        "text_only_terms": text_only_terms,
                         "to_user": to_user,
                         "until_date": until_date,
                         "until_time": until_time,
