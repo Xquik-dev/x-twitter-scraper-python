@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.20.0 (2026-11-03)
+## 0.20.0 (2026-11-04)
 
 This release adds the activity log, the shadowban check, the game roster, player props & posts reads, and the fields the API added since 0.19.0. Code written for 0.19.0 keeps working.
 
@@ -14,6 +14,9 @@ This release adds the activity log, the shadowban check, the game roster, player
 - `credits.topup_balance` takes `currency` & `return_path`, and `subscribe.create` takes `currency`. Both return the currency charged, and top-ups return the amount charged. `Currency` lists the 32 codes Xquik charges in.
 - `events.stream` takes `look_back` & `include`, and `account.update_locale` takes `ja`, `ko` & `zh`.
 - Media downloads return the saved gallery `items`, replies return `unreached_replies` and flat extraction rows return `verified_type`.
+- `extractions.export_results` takes `compare` & `change` to keep only the rows that differ from another run. It also takes `has_website`, `location`, `joined_since`, `joined_until`, `hide_inactive` & `hide_fake` to filter accounts.
+- `extractions.run`, `extractions.estimate_cost` & `x.tweets.search` take `text_only_terms`, which matches words outside the author's name and username.
+- `radar.retrieve_trending_topics` returns `sentiment` & `windows` in a Reddit item's `metadata`, and `x.users.retrieve_insights` returns `median_views`.
 
 ## 0.19.0 (2026-10-23)
 
