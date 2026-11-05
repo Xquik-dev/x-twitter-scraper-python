@@ -17,6 +17,56 @@ Xquik charges only for delivered, unique, filter-matching results and never pads
 > Xquik is an independent third-party service. Not affiliated with X Corp.
 > "Twitter" and "X" are trademarks of X Corp.
 
+## Install the Twitter API for Python
+
+```sh
+pip install x_twitter_scraper
+```
+
+## Search tweets with the Python Twitter API
+
+See [api.md](api.md) for the complete API.
+
+```python
+import os
+from x_twitter_scraper import XTwitterScraper
+
+client = XTwitterScraper(
+    api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # Optional. The client reads this variable.
+)
+
+response = client.x.tweets.search(
+    q="from:elonmusk",
+    limit=10,
+)
+```
+
+Pass `api_key` directly or load `X_TWITTER_SCRAPER_API_KEY` with
+[python-dotenv](https://pypi.org/project/python-dotenv/). Keep credentials out of source control.
+
+## Move from Tweepy
+
+Tweepy calls the official X API, so it needs an X developer account & a bearer
+token. This SDK reads public X data with an Xquik API key. You need no X
+developer account. This call replaces a Tweepy `search_recent_tweets` call.
+
+```python
+# Tweepy: client.search_recent_tweets(query="from:NASA", max_results=10)
+response = client.x.tweets.search(q="from:NASA", limit=10)
+```
+
+## Replace snscrape for Twitter search
+
+Code built on snscrape's `TwitterSearchScraper` maps to 1 SDK call. The SDK
+takes the same X search operators & returns typed tweets.
+
+```python
+# snscrape: TwitterSearchScraper("from:NASA since:2026-10-01").get_items()
+response = client.x.tweets.search(q="from:NASA since:2026-10-01", limit=25)
+for tweet in response.tweets:
+    print(tweet.id, tweet.text)
+```
+
 [Python SDK guide](https://docs.xquik.com/sdks/python) | [API map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP guide](https://docs.xquik.com/mcp/overview)
 
 <!-- trust:start -->
@@ -78,33 +128,6 @@ Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authenti
 - Apache-2.0 license
 - [Citation metadata in CITATION.cff](CITATION.cff)
 - [Security policy in SECURITY.md](SECURITY.md)
-
-## Installation
-
-```sh
-pip install x_twitter_scraper
-```
-
-## Usage
-
-See [api.md](api.md) for the complete API.
-
-```python
-import os
-from x_twitter_scraper import XTwitterScraper
-
-client = XTwitterScraper(
-    api_key=os.environ.get("X_TWITTER_SCRAPER_API_KEY"),  # Optional. The client reads this variable.
-)
-
-response = client.x.tweets.search(
-    q="from:elonmusk",
-    limit=10,
-)
-```
-
-Pass `api_key` directly or load `X_TWITTER_SCRAPER_API_KEY` with
-[python-dotenv](https://pypi.org/project/python-dotenv/). Keep credentials out of source control.
 
 ## Async usage
 
@@ -325,7 +348,7 @@ tweet = response.parse()  # Parse the regular x.tweets.search() result.
 print(tweet.has_next_page)
 ```
 
-Sync methods return [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py).
+Sync methods return [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/blob/main/src/x_twitter_scraper/_response.py).
 Async methods return `AsyncAPIResponse` with awaitable content readers.
 
 #### `.with_streaming_response`
@@ -447,12 +470,25 @@ print(x_twitter_scraper.__version__)
 
 The SDK requires Python 3.10 or later.
 
+## Questions
+
+### Do I need an X developer account?
+
+No. Public reads need only an Xquik API key. Private reads & X account actions
+need a connected X account.
+
+### Is this the official X API?
+
+No. Xquik is an independent third-party service with its own REST API. This SDK
+calls that API, not the official X API.
+
 ## More Xquik tools
 
 - [X (Twitter) scraper API & Twitter MCP server](https://github.com/Xquik-dev/x-twitter-scraper) with REST, MCP & Skill setup.
 - Twitter API SDKs for [TypeScript](https://github.com/Xquik-dev/x-twitter-scraper-typescript), [Go](https://github.com/Xquik-dev/x-twitter-scraper-go), [Ruby](https://github.com/Xquik-dev/x-twitter-scraper-ruby), [Java](https://github.com/Xquik-dev/x-twitter-scraper-java), [Kotlin](https://github.com/Xquik-dev/x-twitter-scraper-kotlin), [C#](https://github.com/Xquik-dev/x-twitter-scraper-csharp) & [PHP](https://github.com/Xquik-dev/x-twitter-scraper-php).
 - [Twitter CLI & X CLI](https://github.com/Xquik-dev/x-twitter-scraper-cli) for terminal workflows.
 - [Twitter advanced search operators](https://github.com/Xquik-dev/x-twitter-advanced-search) with tested examples.
+- Twitter agent plugins for [OpenClaw](https://github.com/Xquik-dev/tweetclaw) & [Hermes Agent](https://github.com/Xquik-dev/hermes-tweet), and the [Twitter API documentation source](https://github.com/Xquik-dev/xquik-docs).
 - [Xquik X API & Twitter scraper](https://xquik.com) and the [Twitter API documentation](https://docs.xquik.com/api-reference/overview).
 
 ## Contributing
