@@ -24,5 +24,12 @@ class PostCreateParams(TypedDict, total=False):
     like & retweet changes, edits & deletion.
     """
 
+    is_active: Annotated[bool, PropertyInfo(alias="isActive")]
+    """Send false to create the monitor paused.
+
+    A paused monitor reads nothing & costs nothing until a PATCH sets isActive to
+    true.
+    """
+
     name: Optional[str]
     """Your own label for the post monitor. Its events carry it as monitorName."""

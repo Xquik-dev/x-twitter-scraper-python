@@ -39,6 +39,7 @@ class TestAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -112,6 +113,7 @@ class TestAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -185,6 +187,7 @@ class TestAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -258,6 +261,7 @@ class TestAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -331,6 +335,7 @@ class TestAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -404,6 +409,7 @@ class TestAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -483,6 +489,7 @@ class TestAsyncAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -556,6 +563,7 @@ class TestAsyncAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -629,6 +637,7 @@ class TestAsyncAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -702,6 +711,7 @@ class TestAsyncAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -775,6 +785,7 @@ class TestAsyncAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [
@@ -848,6 +859,7 @@ class TestAsyncAnalysis:
             analysis={
                 "concurrency": 1,
                 "context": "context",
+                "images": True,
                 "max_context_bytes": 219,
                 "preset": "brand",
                 "questions": [

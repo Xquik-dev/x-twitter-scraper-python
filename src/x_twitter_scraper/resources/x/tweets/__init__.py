@@ -26,8 +26,22 @@ from .retweet import (
     RetweetResourceWithStreamingResponse,
     AsyncRetweetResourceWithStreamingResponse,
 )
+from .bookmark import (
+    BookmarkResource,
+    AsyncBookmarkResource,
+    BookmarkResourceWithRawResponse,
+    AsyncBookmarkResourceWithRawResponse,
+    BookmarkResourceWithStreamingResponse,
+    AsyncBookmarkResourceWithStreamingResponse,
+)
 
 __all__ = [
+    "BookmarkResource",
+    "AsyncBookmarkResource",
+    "BookmarkResourceWithRawResponse",
+    "AsyncBookmarkResourceWithRawResponse",
+    "BookmarkResourceWithStreamingResponse",
+    "AsyncBookmarkResourceWithStreamingResponse",
     "LikeResource",
     "AsyncLikeResource",
     "LikeResourceWithRawResponse",

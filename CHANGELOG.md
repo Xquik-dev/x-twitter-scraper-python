@@ -1,5 +1,22 @@
 # Changelog
 
+## Unreleased
+
+- The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `False` keeps it to the text.
+- `context_availability.media` returns `images` when the AI read the post's images.
+- `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.
+- `client.x.tweets.bookmark.create` & `delete` add & remove a bookmark through a connected X account. Only that account sees its bookmarks.
+- `client.x.users.block.create` & `delete` block & unblock a user. A block removes follows both ways, and an unblock doesn't restore them.
+- `client.x.users.mute.create` & `delete` mute & unmute a user. X doesn't tell the muted user.
+- Write records' `action` gains `bookmark`, `unbookmark`, `block`, `unblock`, `mute` & `unmute`. A `match` that lists every action needs a case for each.
+- Monitor follow events return `follow_kind`, which says why a removed account is back, as `refollow` or `return`.
+- Media download items return `poster_url`, a video's cover image, & `qualities`, its MP4 sizes. Code that builds an item by hand must set both.
+- Article reads return `unknown_counts`, the counts X did not send, so each 0 means unknown.
+- Extraction results return `quoted_media`, `quoted_post`, `quoted_possibly_sensitive` & `possibly_sensitive` with `outputPreset=flat`.
+- `PostMonitor.author_affiliate` returns the organization badge X shows beside the author's name.
+- `monitors.posts.create` takes `is_active`. Send `False` to create the monitor paused.
+- `q` is optional on `client.x.tweets.search` when `from_user`, `keywords` or another field forms the search.
+
 ## 0.20.0 (2026-11-04)
 
 This release adds the activity log, the shadowban check, the game roster, player props & posts reads, and the fields the API added since 0.19.0. Code written for 0.19.0 keeps working.

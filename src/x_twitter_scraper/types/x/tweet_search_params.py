@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from typing import Union
 from datetime import date
-from typing_extensions import Literal, Required, Annotated, TypedDict
+from typing_extensions import Literal, Annotated, TypedDict
 
 from ..._utils import PropertyInfo
 
@@ -14,11 +14,12 @@ __all__ = ["TweetSearchParams"]
 
 
 class TweetSearchParams(TypedDict, total=False):
-    q: Required[str]
+    q: str
     """Query, Tweet ID, or URL.
 
-    Alias query. Hyphens negate terms. Use exactPhrase for literals. Valid bounds
-    apply per page. `since:` & `until:` dates are UTC days, written YYYY-MM-DD.
+    Alias query. Optional when fromUser, keywords or another field forms the search.
+    Without either, it answers 400 missing_query. Hyphens negate terms. Use
+    exactPhrase for literals. Valid bounds apply per page. `since:` & `until:` dates are UTC days, written YYYY-MM-DD.
     25/12/2026 & 12/25/2026 also work, since each has 1 reading. 04/01/2026 has 2 &
     answers 424 with the form to write. `since_time:` & `until_time:` take Unix
     seconds or an ISO 8601 time. `list:` takes a public List's ID. A private List
