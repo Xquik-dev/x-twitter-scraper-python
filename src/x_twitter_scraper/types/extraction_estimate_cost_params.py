@@ -38,6 +38,7 @@ class ExtractionEstimateCostParams(TypedDict, total=False):
                 "space_explorer",
                 "thread_extractor",
                 "tweet_search_extractor",
+                "user_affiliates",
                 "user_likes",
                 "user_media",
                 "verified_follower_explorer",

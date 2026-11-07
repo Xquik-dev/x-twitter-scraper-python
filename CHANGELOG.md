@@ -14,6 +14,7 @@
 - Article reads return `unknown_counts`, the counts X did not send, so each 0 means unknown.
 - Extraction results return `is_deleted` on a post its author deleted after Xquik saw it.
 - `client.x.users.retrieve_insights` and `retrieve_shadowban` take `limit`, the recent posts to read.
+- Extraction tool types gain `user_affiliates`.
 - Extraction results return `quoted_media`, `quoted_post`, `quoted_possibly_sensitive` & `possibly_sensitive` with `outputPreset=flat`.
 - `PostMonitor.author_affiliate` returns the organization badge X shows beside the author's name.
 - `monitors.posts.create` takes `is_active`. Send `False` to create the monitor paused.
