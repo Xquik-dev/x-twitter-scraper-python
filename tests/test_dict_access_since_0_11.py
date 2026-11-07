@@ -44,7 +44,8 @@ EXTRACTION = json.loads(
         "completedAt": "2026-10-13T12:00:09.250Z",
         "status": "completed",
         "toolType": "follower_explorer",
-        "totalResults": 1
+        "totalResults": 1,
+        "url": "https://dashboard.xquik.com/activity/77"
       },
       "results": [
         {

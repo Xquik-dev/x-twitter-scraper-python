@@ -53,6 +53,7 @@ class PostsResource(SyncAPIResource):
         *,
         post: str,
         event_types: List[PostEventType] | Omit = omit,
+        is_active: bool | Omit = omit,
         name: Optional[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -72,6 +73,9 @@ class PostsResource(SyncAPIResource):
           event_types: Post event types to send. Without it, a monitor sends new replies,
               new quotes, like & retweet changes, edits & deletion.
 
+          is_active: Send false to create the monitor paused. A paused monitor reads nothing &
+              costs nothing until a PATCH sets isActive to true.
+
           name: Your own label for the post monitor. Its events carry it as monitorName.
 
           extra_headers: Send extra headers
@@ -88,6 +92,7 @@ class PostsResource(SyncAPIResource):
                 {
                     "post": post,
                     "event_types": event_types,
+                    "is_active": is_active,
                     "name": name,
                 },
                 post_create_params.PostCreateParams,
@@ -343,6 +348,7 @@ class AsyncPostsResource(AsyncAPIResource):
         *,
         post: str,
         event_types: List[PostEventType] | Omit = omit,
+        is_active: bool | Omit = omit,
         name: Optional[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -362,6 +368,9 @@ class AsyncPostsResource(AsyncAPIResource):
           event_types: Post event types to send. Without it, a monitor sends new replies,
               new quotes, like & retweet changes, edits & deletion.
 
+          is_active: Send false to create the monitor paused. A paused monitor reads nothing &
+              costs nothing until a PATCH sets isActive to true.
+
           name: Your own label for the post monitor. Its events carry it as monitorName.
 
           extra_headers: Send extra headers
@@ -378,6 +387,7 @@ class AsyncPostsResource(AsyncAPIResource):
                 {
                     "post": post,
                     "event_types": event_types,
+                    "is_active": is_active,
                     "name": name,
                 },
                 post_create_params.PostCreateParams,

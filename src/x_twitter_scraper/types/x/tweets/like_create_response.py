@@ -109,6 +109,12 @@ class LikeCreateResponse(BaseModel):
         "delete_community",
         "join_community",
         "leave_community",
+        "bookmark",
+        "unbookmark",
+        "block",
+        "unblock",
+        "mute",
+        "unmute",
     ]
 
     billing: Billing

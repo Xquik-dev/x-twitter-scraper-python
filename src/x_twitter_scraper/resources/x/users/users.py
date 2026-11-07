@@ -10,6 +10,22 @@ from typing_extensions import Literal
 
 import httpx
 
+from .mute import (
+    MuteResource,
+    AsyncMuteResource,
+    MuteResourceWithRawResponse,
+    AsyncMuteResourceWithRawResponse,
+    MuteResourceWithStreamingResponse,
+    AsyncMuteResourceWithStreamingResponse,
+)
+from .block import (
+    BlockResource,
+    AsyncBlockResource,
+    BlockResourceWithRawResponse,
+    AsyncBlockResourceWithRawResponse,
+    BlockResourceWithStreamingResponse,
+    AsyncBlockResourceWithStreamingResponse,
+)
 from .follow import (
     FollowResource,
     AsyncFollowResource,
@@ -81,6 +97,16 @@ __all__ = ["UsersResource", "AsyncUsersResource"]
 
 
 class UsersResource(SyncAPIResource):
+    @cached_property
+    def block(self) -> BlockResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BlockResource(self._client)
+
+    @cached_property
+    def mute(self) -> MuteResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return MuteResource(self._client)
+
     @cached_property
     def follow(self) -> FollowResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -1547,6 +1573,7 @@ class UsersResource(SyncAPIResource):
         id: str,
         *,
         fields: str | Omit = omit,
+        limit: int | Omit = omit,
         omit: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -1555,7 +1582,7 @@ class UsersResource(SyncAPIResource):
     ) -> UserRetrieveInsightsResponse:
         """
         Returns engagement insights for one profile: engagement rate, averages per post
-        and posting rate, from its counts and its last 20 posts. Reposts and the pinned
+        and posting rate, from its counts and its most recent posts. It reads 20 posts unless limit names another number. Reposts and the pinned
         post stay out of the averages. Each report costs 1 credit, whatever it reads.
 
         Args:
@@ -1565,6 +1592,10 @@ class UsersResource(SyncAPIResource):
               always stay. An unknown name answers 400 unknown_field with the valid names,
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
+
+          limit: Recent posts to read for the averages and rates. The read stops at this count,
+              at the end of the timeline or after about 40 seconds, and `sample.posts` says how
+              many it read.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
@@ -1589,6 +1620,7 @@ class UsersResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "fields": fields,
+                        "limit": limit,
                         "omit": omit,
                     },
                     user_retrieve_insights_params.UserRetrieveInsightsParams,
@@ -2982,6 +3014,7 @@ class UsersResource(SyncAPIResource):
         id: str,
         *,
         fields: str | Omit = omit,
+        limit: int | Omit = omit,
         omit: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -3010,6 +3043,9 @@ class UsersResource(SyncAPIResource):
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
 
+          limit: Recent posts to read for the timeline, engagement & reply checks. The read stops
+              at this count, at the end of the timeline or after about 40 seconds.
+
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
@@ -3033,6 +3069,7 @@ class UsersResource(SyncAPIResource):
                 query=maybe_transform(
                     {
                         "fields": fields,
+                        "limit": limit,
                         "omit": omit,
                     },
                     user_retrieve_shadowban_params.UserRetrieveShadowbanParams,
@@ -3861,6 +3898,16 @@ class UsersResource(SyncAPIResource):
 
 
 class AsyncUsersResource(AsyncAPIResource):
+    @cached_property
+    def block(self) -> AsyncBlockResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBlockResource(self._client)
+
+    @cached_property
+    def mute(self) -> AsyncMuteResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncMuteResource(self._client)
+
     @cached_property
     def follow(self) -> AsyncFollowResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -5329,6 +5376,7 @@ class AsyncUsersResource(AsyncAPIResource):
         id: str,
         *,
         fields: str | Omit = omit,
+        limit: int | Omit = omit,
         omit: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -5337,7 +5385,7 @@ class AsyncUsersResource(AsyncAPIResource):
     ) -> UserRetrieveInsightsResponse:
         """
         Returns engagement insights for one profile: engagement rate, averages per post
-        and posting rate, from its counts and its last 20 posts. Reposts and the pinned
+        and posting rate, from its counts and its most recent posts. It reads 20 posts unless limit names another number. Reposts and the pinned
         post stay out of the averages. Each report costs 1 credit, whatever it reads.
 
         Args:
@@ -5347,6 +5395,10 @@ class AsyncUsersResource(AsyncAPIResource):
               always stay. An unknown name answers 400 unknown_field with the valid names,
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
+
+          limit: Recent posts to read for the averages and rates. The read stops at this count,
+              at the end of the timeline or after about 40 seconds, and `sample.posts` says how
+              many it read.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
@@ -5371,6 +5423,7 @@ class AsyncUsersResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "fields": fields,
+                        "limit": limit,
                         "omit": omit,
                     },
                     user_retrieve_insights_params.UserRetrieveInsightsParams,
@@ -6764,6 +6817,7 @@ class AsyncUsersResource(AsyncAPIResource):
         id: str,
         *,
         fields: str | Omit = omit,
+        limit: int | Omit = omit,
         omit: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
@@ -6792,6 +6846,9 @@ class AsyncUsersResource(AsyncAPIResource):
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
 
+          limit: Recent posts to read for the timeline, engagement & reply checks. The read stops
+              at this count, at the end of the timeline or after about 40 seconds.
+
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
@@ -6815,6 +6872,7 @@ class AsyncUsersResource(AsyncAPIResource):
                 query=await async_maybe_transform(
                     {
                         "fields": fields,
+                        "limit": limit,
                         "omit": omit,
                     },
                     user_retrieve_shadowban_params.UserRetrieveShadowbanParams,
@@ -7729,6 +7787,16 @@ class UsersResourceWithRawResponse:
         )
 
     @cached_property
+    def block(self) -> BlockResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BlockResourceWithRawResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> MuteResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return MuteResourceWithRawResponse(self._users.mute)
+
+    @cached_property
     def follow(self) -> FollowResourceWithRawResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return FollowResourceWithRawResponse(self._users.follow)
@@ -7819,6 +7887,16 @@ class AsyncUsersResourceWithRawResponse:
         self.translate_bio = async_to_raw_response_wrapper(
             users.translate_bio,
         )
+
+    @cached_property
+    def block(self) -> AsyncBlockResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBlockResourceWithRawResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> AsyncMuteResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncMuteResourceWithRawResponse(self._users.mute)
 
     @cached_property
     def follow(self) -> AsyncFollowResourceWithRawResponse:
@@ -7913,6 +7991,16 @@ class UsersResourceWithStreamingResponse:
         )
 
     @cached_property
+    def block(self) -> BlockResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BlockResourceWithStreamingResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> MuteResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return MuteResourceWithStreamingResponse(self._users.mute)
+
+    @cached_property
     def follow(self) -> FollowResourceWithStreamingResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return FollowResourceWithStreamingResponse(self._users.follow)
@@ -8003,6 +8091,16 @@ class AsyncUsersResourceWithStreamingResponse:
         self.translate_bio = async_to_streamed_response_wrapper(
             users.translate_bio,
         )
+
+    @cached_property
+    def block(self) -> AsyncBlockResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBlockResourceWithStreamingResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> AsyncMuteResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncMuteResourceWithStreamingResponse(self._users.mute)
 
     @cached_property
     def follow(self) -> AsyncFollowResourceWithStreamingResponse:

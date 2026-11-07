@@ -2,6 +2,22 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+from .mute import (
+    MuteResource,
+    AsyncMuteResource,
+    MuteResourceWithRawResponse,
+    AsyncMuteResourceWithRawResponse,
+    MuteResourceWithStreamingResponse,
+    AsyncMuteResourceWithStreamingResponse,
+)
+from .block import (
+    BlockResource,
+    AsyncBlockResource,
+    BlockResourceWithRawResponse,
+    AsyncBlockResourceWithRawResponse,
+    BlockResourceWithStreamingResponse,
+    AsyncBlockResourceWithStreamingResponse,
+)
 from .users import (
     UsersResource,
     AsyncUsersResource,
@@ -20,6 +36,18 @@ from .follow import (
 )
 
 __all__ = [
+    "MuteResource",
+    "AsyncMuteResource",
+    "MuteResourceWithRawResponse",
+    "AsyncMuteResourceWithRawResponse",
+    "MuteResourceWithStreamingResponse",
+    "AsyncMuteResourceWithStreamingResponse",
+    "BlockResource",
+    "AsyncBlockResource",
+    "BlockResourceWithRawResponse",
+    "AsyncBlockResourceWithRawResponse",
+    "BlockResourceWithStreamingResponse",
+    "AsyncBlockResourceWithStreamingResponse",
     "FollowResource",
     "AsyncFollowResource",
     "FollowResourceWithRawResponse",

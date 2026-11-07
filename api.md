@@ -397,6 +397,19 @@ Methods
 - <code title="get /x/tweets/search">client.x.tweets.<a href="./src/x_twitter_scraper/resources/x/tweets/tweets.py">search</a>(\*\*<a href="src/x_twitter_scraper/types/x/tweet_search_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweet_search_response.py">TweetSearchResponse</a></code>
 - <code title="get /x/tweets/{id}/translation">client.x.tweets.<a href="./src/x_twitter_scraper/resources/x/tweets/tweets.py">translate</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweet_translate_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweet_translate_response.py">TweetTranslateResponse</a></code>
 
+### Bookmark
+
+Types
+
+```python
+from x_twitter_scraper.types.x.tweets import BookmarkCreateResponse, BookmarkDeleteResponse
+```
+
+Methods
+
+- <code title="post /x/tweets/{id}/bookmark">client.x.tweets.bookmark.<a href="./src/x_twitter_scraper/resources/x/tweets/bookmark.py">create</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweets/bookmark_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweets/bookmark_create_response.py">BookmarkCreateResponse</a></code>
+- <code title="delete /x/tweets/{id}/bookmark">client.x.tweets.bookmark.<a href="./src/x_twitter_scraper/resources/x/tweets/bookmark.py">delete</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/tweets/bookmark_delete_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/tweets/bookmark_delete_response.py">BookmarkDeleteResponse</a></code>
+
 ### Like
 
 Types
@@ -475,6 +488,32 @@ Methods
 - <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_tweets</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_verified_followers</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_verified_followers_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_verified_followers_response.py">UserRetrieveVerifiedFollowersResponse</a></code>
 - <code title="get /x/users/{id}/translation">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">translate_bio</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_translate_bio_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_translate_bio_response.py">UserTranslateBioResponse</a></code>
+
+### Block
+
+Types
+
+```python
+from x_twitter_scraper.types.x.users import BlockCreateResponse, BlockDeleteResponse
+```
+
+Methods
+
+- <code title="post /x/users/{id}/block">client.x.users.block.<a href="./src/x_twitter_scraper/resources/x/users/block.py">create</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/users/block_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/users/block_create_response.py">BlockCreateResponse</a></code>
+- <code title="delete /x/users/{id}/block">client.x.users.block.<a href="./src/x_twitter_scraper/resources/x/users/block.py">delete</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/users/block_delete_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/users/block_delete_response.py">BlockDeleteResponse</a></code>
+
+### Mute
+
+Types
+
+```python
+from x_twitter_scraper.types.x.users import MuteCreateResponse, MuteDeleteResponse
+```
+
+Methods
+
+- <code title="post /x/users/{id}/mute">client.x.users.mute.<a href="./src/x_twitter_scraper/resources/x/users/mute.py">create</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/users/mute_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/users/mute_create_response.py">MuteCreateResponse</a></code>
+- <code title="delete /x/users/{id}/mute">client.x.users.mute.<a href="./src/x_twitter_scraper/resources/x/users/mute.py">delete</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/users/mute_delete_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/users/mute_delete_response.py">MuteDeleteResponse</a></code>
 
 ### Follow
 

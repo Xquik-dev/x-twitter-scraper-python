@@ -830,6 +830,7 @@ class TestUsers:
         user = client.x.users.retrieve_insights(
             id="id",
             fields="id,text,author.username",
+            limit=50,
             omit="entities,media",
         )
         assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])
@@ -2687,6 +2688,7 @@ class TestAsyncUsers:
         user = await async_client.x.users.retrieve_insights(
             id="id",
             fields="id,text,author.username",
+            limit=50,
             omit="entities,media",
         )
         assert_matches_type(UserRetrieveInsightsResponse, user, path=["response"])

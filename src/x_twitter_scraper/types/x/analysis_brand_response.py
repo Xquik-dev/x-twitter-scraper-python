@@ -191,7 +191,11 @@ class ResultAnalysisContextAvailability(BaseModel):
 
     author: Literal["available", "missing"]
 
-    media: Literal["text_descriptions_only", "not_supplied"]
+    media: Literal["images", "text_descriptions_only", "not_supplied"]
+    """images when the AI read the post's images.
+
+    text_descriptions_only when it read only their alt text.
+    """
 
     post_text: Literal["full", "truncated"] = FieldInfo(alias="postText")
     """truncated when the post was cut to fit."""

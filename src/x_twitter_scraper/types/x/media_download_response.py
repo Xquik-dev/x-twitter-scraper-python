@@ -10,7 +10,19 @@ from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 
-__all__ = ["MediaDownloadResponse", "Item"]
+__all__ = ["MediaDownloadResponse", "Item", "ItemQuality"]
+
+
+class ItemQuality(BaseModel):
+    """1 MP4 size X stores for a video."""
+
+    bitrate: int
+
+    height: int
+
+    url: str
+
+    width: int
 
 
 class Item(BaseModel):
@@ -40,6 +52,18 @@ class Item(BaseModel):
 
     It goes to X when X flagged the post or its media at save time, or sent no post
     flag. Xquik keeps no copy of those files.
+    """
+
+    poster_url: Optional[str] = FieldInfo(alias="posterUrl")
+    """Cover image of a video or GIF.
+
+    Null for photos & files first saved to Xquik before 2026-11-03.
+    """
+
+    qualities: List[ItemQuality]
+    """The MP4 sizes X stores for a video, highest bitrate first.
+
+    Empty for photos, GIFs & files first saved to Xquik before 2026-11-03.
     """
 
     retweets: Optional[int]

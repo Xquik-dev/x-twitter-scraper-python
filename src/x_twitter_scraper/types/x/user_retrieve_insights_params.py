@@ -20,6 +20,13 @@ class UserRetrieveInsightsParams(TypedDict, total=False):
     SDK row types then hold only the named fields.
     """
 
+    limit: int
+    """Recent posts to read for the averages and rates.
+
+    The read stops at this count, at the end of the timeline or after about 40
+    seconds, and `sample.posts` says how many it read.
+    """
+
     omit: str
     """Fields to drop from each row, comma-separated.
 
