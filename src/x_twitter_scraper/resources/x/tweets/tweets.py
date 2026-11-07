@@ -26,6 +26,14 @@ from .retweet import (
     RetweetResourceWithStreamingResponse,
     AsyncRetweetResourceWithStreamingResponse,
 )
+from .bookmark import (
+    BookmarkResource,
+    AsyncBookmarkResource,
+    BookmarkResourceWithRawResponse,
+    AsyncBookmarkResourceWithRawResponse,
+    BookmarkResourceWithStreamingResponse,
+    AsyncBookmarkResourceWithStreamingResponse,
+)
 from ...._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
 from ...._utils import path_template, maybe_transform, async_maybe_transform
 from ...._compat import cached_property
@@ -79,6 +87,11 @@ __all__ = ["TweetsResource", "AsyncTweetsResource"]
 
 
 class TweetsResource(SyncAPIResource):
+    @cached_property
+    def bookmark(self) -> BookmarkResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BookmarkResource(self._client)
+
     @cached_property
     def like(self) -> LikeResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -2087,7 +2100,7 @@ class TweetsResource(SyncAPIResource):
     def search(
         self,
         *,
-        q: str,
+        q: str | Omit = omit,
         advanced_query: str | Omit = omit,
         any_words: str | Omit = omit,
         blue_verified_only: bool | Omit = omit,
@@ -2160,14 +2173,15 @@ class TweetsResource(SyncAPIResource):
         maximum coverage. Reuse next_cursor with unchanged filters.
 
         Args:
-          q: Query, Tweet ID, or URL. Alias query. Hyphens negate terms. Use exactPhrase for
-              literals. Valid bounds apply per page. `since:` & `until:` dates are UTC days,
-              written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also work, since each has 1 reading.
-              04/01/2026 has 2 & answers 424 with the form to write. `since_time:` &
-              `until_time:` take Unix seconds or an ISO 8601 time. `list:` takes a public
-              List's ID. A private List answers 404 list_not_found. X searches up to 512
-              characters. A longer query answers 424 before any read, unless a term of its
-              first OR group fits alone.
+          q: Query, Tweet ID, or URL. Alias query. Optional when fromUser, keywords or another
+              field forms the search. Without either, it answers 400 missing_query. Hyphens
+              negate terms. Use exactPhrase for literals. Valid bounds apply per page. `since:`
+              & `until:` dates are UTC days, written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also
+              work, since each has 1 reading. 04/01/2026 has 2 & answers 424 with the form to
+              write. `since_time:` & `until_time:` take Unix seconds or an ISO 8601 time.
+              `list:` takes a public List's ID. A private List answers 404 list_not_found. X
+              searches up to 512 characters. A longer query answers 424 before any read, unless
+              a term of its first OR group fits alone.
 
           advanced_query: Raw advanced search query appended as-is.
 
@@ -2472,6 +2486,11 @@ class TweetsResource(SyncAPIResource):
 
 
 class AsyncTweetsResource(AsyncAPIResource):
+    @cached_property
+    def bookmark(self) -> AsyncBookmarkResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBookmarkResource(self._client)
+
     @cached_property
     def like(self) -> AsyncLikeResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -4480,7 +4499,7 @@ class AsyncTweetsResource(AsyncAPIResource):
     async def search(
         self,
         *,
-        q: str,
+        q: str | Omit = omit,
         advanced_query: str | Omit = omit,
         any_words: str | Omit = omit,
         blue_verified_only: bool | Omit = omit,
@@ -4553,14 +4572,15 @@ class AsyncTweetsResource(AsyncAPIResource):
         maximum coverage. Reuse next_cursor with unchanged filters.
 
         Args:
-          q: Query, Tweet ID, or URL. Alias query. Hyphens negate terms. Use exactPhrase for
-              literals. Valid bounds apply per page. `since:` & `until:` dates are UTC days,
-              written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also work, since each has 1 reading.
-              04/01/2026 has 2 & answers 424 with the form to write. `since_time:` &
-              `until_time:` take Unix seconds or an ISO 8601 time. `list:` takes a public
-              List's ID. A private List answers 404 list_not_found. X searches up to 512
-              characters. A longer query answers 424 before any read, unless a term of its
-              first OR group fits alone.
+          q: Query, Tweet ID, or URL. Alias query. Optional when fromUser, keywords or another
+              field forms the search. Without either, it answers 400 missing_query. Hyphens
+              negate terms. Use exactPhrase for literals. Valid bounds apply per page. `since:`
+              & `until:` dates are UTC days, written YYYY-MM-DD. 25/12/2026 & 12/25/2026 also
+              work, since each has 1 reading. 04/01/2026 has 2 & answers 424 with the form to
+              write. `since_time:` & `until_time:` take Unix seconds or an ISO 8601 time.
+              `list:` takes a public List's ID. A private List answers 404 list_not_found. X
+              searches up to 512 characters. A longer query answers 424 before any read, unless
+              a term of its first OR group fits alone.
 
           advanced_query: Raw advanced search query appended as-is.
 
@@ -4927,6 +4947,11 @@ class TweetsResourceWithRawResponse:
         )
 
     @cached_property
+    def bookmark(self) -> BookmarkResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BookmarkResourceWithRawResponse(self._tweets.bookmark)
+
+    @cached_property
     def like(self) -> LikeResourceWithRawResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return LikeResourceWithRawResponse(self._tweets.like)
@@ -4998,6 +5023,11 @@ class AsyncTweetsResourceWithRawResponse:
         self.translate = async_to_raw_response_wrapper(
             tweets.translate,
         )
+
+    @cached_property
+    def bookmark(self) -> AsyncBookmarkResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBookmarkResourceWithRawResponse(self._tweets.bookmark)
 
     @cached_property
     def like(self) -> AsyncLikeResourceWithRawResponse:
@@ -5073,6 +5103,11 @@ class TweetsResourceWithStreamingResponse:
         )
 
     @cached_property
+    def bookmark(self) -> BookmarkResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BookmarkResourceWithStreamingResponse(self._tweets.bookmark)
+
+    @cached_property
     def like(self) -> LikeResourceWithStreamingResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return LikeResourceWithStreamingResponse(self._tweets.like)
@@ -5144,6 +5179,11 @@ class AsyncTweetsResourceWithStreamingResponse:
         self.translate = async_to_streamed_response_wrapper(
             tweets.translate,
         )
+
+    @cached_property
+    def bookmark(self) -> AsyncBookmarkResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBookmarkResourceWithStreamingResponse(self._tweets.bookmark)
 
     @cached_property
     def like(self) -> AsyncLikeResourceWithStreamingResponse:

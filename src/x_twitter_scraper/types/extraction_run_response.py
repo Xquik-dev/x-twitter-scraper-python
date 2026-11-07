@@ -81,6 +81,14 @@ class Accepted(BaseModel):
     ] = FieldInfo(alias="toolType")
     """Identifier for the extraction tool used to run a job."""
 
+    url: str
+    """Dashboard page of the job.
+
+    A signed-in user follows its progress there and downloads every row as CSV,
+    XLSX, JSON, Markdown, PDF or text, so give this link to a person who wants the
+    whole list as a file.
+    """
+
     wait_url: str = FieldInfo(alias="waitUrl")
 
 

@@ -1334,6 +1334,13 @@ class DataMonitorFollow(EventDetailDataDictAccess):
     id: str
     """The other account's X user ID."""
 
+    follow_kind: Optional[Literal["refollow", "return"]] = FieldInfo(alias="followKind", default=None)
+    """Why a removed account is back, on following.added & follower.added.
+
+    refollow means the account followed again. return means X lists the old follow
+    again, so it never ended.
+    """
+
     followed_at: Optional[datetime] = FieldInfo(alias="followedAt", default=None)
     """X's time of the follow, on following.added & follower.added.
 

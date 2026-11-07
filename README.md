@@ -1,93 +1,31 @@
 # X API & Twitter API Python SDK by Xquik
 
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
+Use this Twitter API Python SDK by Xquik to read tweets as Pydantic models.
+Sync & async clients share every method.
+Public reads need no X developer account.
 
-<!-- prettier-ignore -->
-[![PyPI version](https://img.shields.io/pypi/v/x_twitter_scraper.svg?label=pypi%20(stable))](https://pypi.org/project/x_twitter_scraper/)
-[![Convex Component](https://www.convex.dev/components/badge/convex-xquik)](https://www.convex.dev/components/convex-xquik)
-
-Scrape Twitter from Python with this X API & Twitter API alternative.
-It is a typed Twitter scraper & tweet scraper for Python 3.10 & later.
-Use the Xquik Python SDK for Twitter search, timelines, profiles & followers.
-Manage media, webhooks & X automation through documented Xquik REST routes.
-
-Xquik is the world's fastest and cheapest X Twitter scraper service with the most complete X data.
+Xquik is the world's fastest and cheapest X (Twitter) scraper service with the most complete X (Twitter) data.
+Most other Apify Actors charge before filtering or deduplication.
 Xquik charges only for delivered, unique, filter-matching results and never pads rows.
+Xquik is independent and not affiliated with X Corp.
 
-> Xquik is an independent third-party service. Not affiliated with X Corp.
-> "Twitter" and "X" are trademarks of X Corp.
+<!-- trust:win:start -->
 
-[Python SDK guide](https://docs.xquik.com/sdks/python) | [API map](api.md) | [REST API](https://docs.xquik.com/api-reference/overview) | [Webhooks](https://docs.xquik.com/api-reference/webhooks/create) | [MCP guide](https://docs.xquik.com/mcp/overview)
+The Xquik REST API read 45 tweets per second on 2026-10-15. That cost $0.15 per 1,000. The fastest of 4 rival Actors read 12.5 per second. The cheapest cost $0.173 per 1,000. [Compare each run](https://xquik.com/benchmarks#benchmark-x-tweet-scraper).
 
-<!-- trust:start -->
+<!-- trust:win:end -->
 
-## Trust & usage
+## Install the Twitter API for Python
 
-[![Twitter API package downloads](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fdownloads.json)](https://xquik.com/trust#downloads)
-[![Twitter scraper users on Apify](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fapify-users.json)](https://apify.com/xquik)
-[![Twitter scraper runs on Apify](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fapify-runs.json)](https://apify.com/xquik)
-[![Tweet scraper rating on Apify](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fapify-rating.json)](https://apify.com/xquik/x-tweet-scraper/reviews)
-[![Xquik Twitter API accounts](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Faccounts.json)](https://xquik.com/trust#accounts)
-[![Twitter Skill installs](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fskill-installs.json)](https://xquik.com/trust#skill-installs)
-[![Xquik verified revenue on TrustMRR](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Frevenue.json)](https://trustmrr.com/startup/xquik)
-[![Twitter API median response time](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Frest-p50.json)](https://xquik.com/trust#speed)
-[![Xquik GitHub stars](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fgithub-stars.json)](https://github.com/Xquik-dev)
-[![x-twitter-scraper downloads on PyPI](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fpypi-x-twitter-scraper.json)](https://pypistats.org/packages/x-twitter-scraper)
-[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
-
-- 51,000+ downloads of Xquik's Twitter API packages on npm, PyPI, RubyGems, NuGet, Packagist & Terraform ([source](https://xquik.com/trust#downloads)) <!-- trust:downloads 51020 -->
-- 7,800+ users of Xquik's Twitter scraper Actors on Apify ([source](https://apify.com/xquik)) <!-- trust:apify-users 7800 -->
-- 5,700,000+ runs of Xquik's Twitter scraper Actors on Apify ([source](https://apify.com/xquik)) <!-- trust:apify-runs 5704701 -->
-- 4.66 of 5 for the X Tweet Scraper from 16 Apify reviews ([source](https://apify.com/xquik/x-tweet-scraper/reviews)) <!-- trust:apify-rating 4.66 16 -->
-- 3,900+ accounts on xquik.com ([source](https://xquik.com/trust#accounts)) <!-- trust:accounts 3924 -->
-- 1,600+ installs of Xquik's Twitter Skills on skills.sh ([source](https://xquik.com/trust#skill-installs)) <!-- trust:skill-installs 1612 -->
-- $38,000+ in revenue verified by TrustMRR ([source](https://trustmrr.com/startup/xquik)) <!-- trust:revenue 38115 -->
-- 501 ms median REST API read time over the last 7 days ([source](https://xquik.com/trust#speed)) <!-- trust:rest-p50 501 -->
-- 370+ GitHub stars across Xquik's repos ([source](https://github.com/Xquik-dev)) <!-- trust:github-stars 374 -->
-- 3,400+ downloads of x-twitter-scraper on PyPI ([source](https://pypistats.org/packages/x-twitter-scraper)) <!-- trust:pypi-x-twitter-scraper 3465 -->
-- This repo meets the OpenSSF Best Practices passing criteria ([source](https://www.bestpractices.dev/projects/13738)) <!-- trust:openssf-x-twitter-scraper-python 1 -->
-
-Checked on 2026-10-15. See each number with its date & source on [xquik.com/trust](https://xquik.com/trust) or as [JSON](https://xquik.com/trust.json).
-
-<!-- trust:end -->
-
-## Common Twitter & X tasks
-
-| Task | REST route | Usage |
-| --- | --- | --- |
-| Search tweets without the X API | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
-| Read an X profile timeline | `GET /x/users/{id}/tweets` | Paginate bounded results. |
-| Scrape Twitter followers | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
-| Scrape following accounts | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
-| Read a home timeline | `GET /x/timeline` | Approve this private read. |
-| Export large X datasets | `POST /extractions` | Poll status, then download results. |
-| Run giveaway draws | `POST /draws` | Pick winners from post replies. |
-| Download or upload media | `/x/media/*` | Use typed file helpers. |
-| Monitor an account | `POST /monitors` | Deliver events through HMAC webhooks. |
-| Post or reply | `POST /x/tweets` | Confirm the account and payload. |
-
-## AI agent workflows with MCP
-
-Use the typed REST SDK in application code. Add `https://xquik.com/mcp` to MCP clients.
-Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authentication support.
-
-## Package & registry trust
-
-- [PyPI package `x_twitter_scraper`](https://pypi.org/project/x_twitter_scraper/)
-- [Source in Xquik-dev/x-twitter-scraper-python](https://github.com/Xquik-dev/x-twitter-scraper-python)
-- Apache-2.0 license
-- [Citation metadata in CITATION.cff](CITATION.cff)
-- [Security policy in SECURITY.md](SECURITY.md)
-
-## Installation
+The SDK requires Python 3.10 or later.
 
 ```sh
 pip install x_twitter_scraper
 ```
 
-## Usage
+## Search tweets with the Python Twitter API
 
-See [api.md](api.md) for the complete API.
+Set `X_TWITTER_SCRAPER_API_KEY`, then run this search.
 
 ```python
 import os
@@ -101,10 +39,70 @@ response = client.x.tweets.search(
     q="from:elonmusk",
     limit=10,
 )
+for tweet in response.tweets:
+    print(tweet.id, tweet.text)
 ```
 
-Pass `api_key` directly or load `X_TWITTER_SCRAPER_API_KEY` with
-[python-dotenv](https://pypi.org/project/python-dotenv/). Keep credentials out of source control.
+Next, read the [Python SDK guide](https://docs.xquik.com/sdks/python), [API map](api.md) or [REST reference](https://docs.xquik.com/api-reference/overview).
+
+<!-- trust:start -->
+
+## Benchmarks & usage
+
+[![x-twitter-scraper downloads on PyPI](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Fpypi-x-twitter-scraper.json)](https://pypistats.org/packages/x-twitter-scraper)
+[![X (Twitter) API p99 server read time](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Frest-p99.json)](https://xquik.com/benchmarks#speed)
+[![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
+
+- 4,400+ downloads of x-twitter-scraper on PyPI ([source](https://pypistats.org/packages/x-twitter-scraper)) <!-- trust:pypi-x-twitter-scraper 4460 -->
+- 5.8 s p99 REST server read time over 7 days, failures included ([source](https://xquik.com/benchmarks#speed)) <!-- trust:rest-p99 5793 -->
+- This repo meets the OpenSSF Best Practices passing criteria ([source](https://www.bestpractices.dev/projects/13738)) <!-- trust:openssf-x-twitter-scraper-python 1 -->
+
+Checked on 2026-11-07. See each number with its date & source on [xquik.com/benchmarks](https://xquik.com/benchmarks) or as [JSON](https://xquik.com/trust.json).
+
+<!-- trust:end -->
+
+## Move from Tweepy
+
+Tweepy calls the official X API, which needs a developer account & bearer token.
+This SDK reads public X data with an Xquik API key.
+This call replaces a Tweepy `search_recent_tweets` call.
+
+```python
+# Tweepy: client.search_recent_tweets(query="from:NASA", max_results=10)
+response = client.x.tweets.search(q="from:NASA", limit=10)
+```
+
+## Replace snscrape for Twitter search
+
+Code built on snscrape's `TwitterSearchScraper` maps to 1 SDK call.
+The SDK takes the same X search operators & returns typed tweets.
+
+```python
+# snscrape: TwitterSearchScraper("from:NASA since:2026-10-01").get_items()
+response = client.x.tweets.search(q="from:NASA since:2026-10-01", limit=25)
+for tweet in response.tweets:
+    print(tweet.id, tweet.text)
+```
+
+## Common Twitter & X tasks
+
+| Task | REST route | Usage |
+| --- | --- | --- |
+| Search tweets without the X API | `GET /x/tweets/search` | Use keyword or advanced operator queries. |
+| Read an X profile timeline | `GET /x/users/{id}/tweets` | Pass the cursor to read the next page. |
+| Scrape Twitter followers | `GET /x/users/{id}/followers` | Use an extraction for complete datasets. |
+| Scrape following accounts | `GET /x/users/{id}/following` | Use an extraction for complete datasets. |
+| Read a home timeline | `GET /x/timeline` | Connect an X account first. |
+| Export large X datasets | `POST /extractions` | Poll status, then download results. |
+| Run giveaway draws | `POST /draws` | Pick winners from post replies. |
+| Download or upload media | `/x/media/*` | Use typed file helpers. |
+| Monitor an account | `POST /monitors` | Deliver events through HMAC webhooks. |
+| Post or reply | `POST /x/tweets` | Confirm the account and payload. |
+
+## AI agent workflows with MCP
+
+Use the typed REST SDK in application code. Add `https://xquik.com/mcp` to MCP clients.
+Follow the [MCP guide](https://docs.xquik.com/mcp/overview) for current authentication support.
 
 ## Async usage
 
@@ -194,9 +192,9 @@ The async client uses the same interface and reads `PathLike` content asynchrono
 
 ## Handling errors
 
-Connection failures raise an `x_twitter_scraper.APIConnectionError` subclass.
+Connection failures raise an `APIConnectionError` subclass.
 Non-2xx responses raise an `APIStatusError` subclass with `status_code` and `response`.
-Every SDK error inherits from `x_twitter_scraper.APIError`.
+Every SDK error inherits from `APIError`.
 
 ```python
 import x_twitter_scraper
@@ -228,6 +226,7 @@ The SDK uses these error classes.
 | 401         | `AuthenticationError`      |
 | 403         | `PermissionDeniedError`    |
 | 404         | `NotFoundError`            |
+| 409         | `ConflictError`            |
 | 422         | `UnprocessableEntityError` |
 | 429         | `RateLimitError`           |
 | >=500       | `InternalServerError`      |
@@ -256,11 +255,12 @@ client.with_options(max_retries=5).x.tweets.search(
 
 ### Timeouts
 
-Requests time out after 1 minute.
+Requests time out after 1 minute, and connections after 5 seconds.
 Set a float or [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) through `timeout`.
 Set it on the client, or on 1 request through `with_options`.
 
 ```python
+import httpx
 from x_twitter_scraper import XTwitterScraper
 
 client = XTwitterScraper(
@@ -325,12 +325,12 @@ tweet = response.parse()  # Parse the regular x.tweets.search() result.
 print(tweet.has_next_page)
 ```
 
-Sync methods return [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/tree/main/src/x_twitter_scraper/_response.py).
+Sync methods return [`APIResponse`](https://github.com/Xquik-dev/x-twitter-scraper-python/blob/main/src/x_twitter_scraper/_response.py).
 Async methods return `AsyncAPIResponse` with awaitable content readers.
 
 #### `.with_streaming_response`
 
-The raw-response interface reads the complete body immediately.
+The raw-response interface reads the complete body when you make the request.
 Use `.with_streaming_response` and a context manager to read it on demand.
 Call `.read()`, `.text()`, `.json()`, an iterator, or `.parse()`.
 The async client provides async versions of these methods.
@@ -427,10 +427,10 @@ with XTwitterScraper() as client:
 This package follows [SemVer](https://semver.org/spec/v2.0.0.html) with these exceptions.
 
 1. Static type changes that preserve runtime behavior.
-2. Changes to undocumented internals that remain technically public.
+2. Changes to undocumented internals that stay public.
 3. Changes unlikely to affect normal use.
 
-Open an [issue](https://www.github.com/Xquik-dev/x-twitter-scraper-python/issues) with questions, bugs, or suggestions.
+Open an [issue](https://github.com/Xquik-dev/x-twitter-scraper-python/issues) with questions, bugs or suggestions.
 
 ### Determining the installed version
 
@@ -443,20 +443,35 @@ import x_twitter_scraper
 print(x_twitter_scraper.__version__)
 ```
 
-## Requirements
+## Questions
 
-The SDK requires Python 3.10 or later.
+### Do I need an X developer account?
+
+No. Public reads need only an Xquik API key.
+Private reads & X account actions need a connected X account.
+
+### Is this the official X API?
+
+No. Xquik runs its own REST API. This SDK calls that API, not the official X API.
 
 ## More Xquik tools
 
 - [X (Twitter) scraper API & Twitter MCP server](https://github.com/Xquik-dev/x-twitter-scraper) with REST, MCP & Skill setup.
-- Twitter API SDKs for [TypeScript](https://github.com/Xquik-dev/x-twitter-scraper-typescript), [Go](https://github.com/Xquik-dev/x-twitter-scraper-go), [Ruby](https://github.com/Xquik-dev/x-twitter-scraper-ruby), [Java](https://github.com/Xquik-dev/x-twitter-scraper-java), [Kotlin](https://github.com/Xquik-dev/x-twitter-scraper-kotlin), [C#](https://github.com/Xquik-dev/x-twitter-scraper-csharp) & [PHP](https://github.com/Xquik-dev/x-twitter-scraper-php).
+- Twitter API SDKs for [TypeScript](https://github.com/Xquik-dev/x-twitter-scraper-typescript), [Go](https://github.com/Xquik-dev/x-twitter-scraper-go), [Ruby](https://github.com/Xquik-dev/x-twitter-scraper-ruby) & [Java](https://github.com/Xquik-dev/x-twitter-scraper-java).
+- More Twitter API SDKs for [Kotlin](https://github.com/Xquik-dev/x-twitter-scraper-kotlin), [C#](https://github.com/Xquik-dev/x-twitter-scraper-csharp) & [PHP](https://github.com/Xquik-dev/x-twitter-scraper-php).
 - [Twitter CLI & X CLI](https://github.com/Xquik-dev/x-twitter-scraper-cli) for terminal workflows.
 - [Twitter advanced search operators](https://github.com/Xquik-dev/x-twitter-advanced-search) with tested examples.
-- [Xquik X API & Twitter scraper](https://xquik.com) and the [Twitter API documentation](https://docs.xquik.com/api-reference/overview).
+- Twitter agent plugins for [OpenClaw](https://github.com/Xquik-dev/tweetclaw) & [Hermes Agent](https://github.com/Xquik-dev/hermes-tweet).
+- Twitter integrations for [n8n](https://github.com/Xquik-dev/n8n-nodes-xquik), [Prefect](https://github.com/Xquik-dev/prefect-xquik), [Haystack](https://github.com/Xquik-dev/xquik-haystack) & [Paperclip](https://github.com/Xquik-dev/paperclip-plugin-xquik).
+- More Twitter integrations for [Terraform](https://github.com/Xquik-dev/terraform-provider-x-twitter-scraper), [Convex](https://github.com/Xquik-dev/xquik-convex), [Supabase](https://github.com/Xquik-dev/xquik-supabase) & [Strapi](https://github.com/Xquik-dev/strapi-plugin-xquik).
+- Twitter MCP for [AI agents](https://github.com/Xquik-dev/xquik-mcp), [VS Code](https://github.com/Xquik-dev/xquik-vscode) & [Raycast](https://github.com/Xquik-dev/xquik-raycast).
+- [Xquik X API & Twitter scraper](https://xquik.com), [Twitter API docs](https://docs.xquik.com/api-reference/overview) & [docs source](https://github.com/Xquik-dev/xquik-docs).
 
-## Contributing
+## Help & contributing
 
-See [the contributing documentation](./CONTRIBUTING.md).
+- Report vulnerabilities through the [security policy](SECURITY.md).
+- Ask usage questions through the [organization support policy](https://github.com/Xquik-dev/.github/blob/main/SUPPORT.md).
+- Read the [contribution guide](CONTRIBUTING.md) & [governance policy](GOVERNANCE.md).
+- Read the [OpenSSF evidence](OPENSSF.md) & [citation metadata](CITATION.cff).
 
 Xquik is an independent third-party service. Not affiliated with X Corp. "Twitter" and "X" are trademarks of X Corp.

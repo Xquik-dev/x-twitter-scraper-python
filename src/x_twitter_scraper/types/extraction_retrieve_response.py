@@ -12,7 +12,27 @@ from .._dict_access import ExtractionResultDictAccess
 from .extraction_job import ExtractionJob
 from .shared.tweet_media import TweetMedia
 
-__all__ = ["ExtractionRetrieveResponse", "Result"]
+__all__ = ["ExtractionRetrieveResponse", "Result", "ResultQuotedPost", "ResultQuotedPostAuthor"]
+
+
+class ResultQuotedPostAuthor(BaseModel):
+    name: Optional[str] = None
+
+    profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
+
+    user_name: Optional[str] = FieldInfo(alias="userName", default=None)
+
+
+class ResultQuotedPost(BaseModel):
+    """The quoted post's ID, text, date & author with outputPreset=flat."""
+
+    id: Optional[str] = None
+
+    author: Optional[ResultQuotedPostAuthor] = None
+
+    created_at: Optional[str] = FieldInfo(alias="createdAt", default=None)
+
+    text: Optional[str] = None
 
 
 class Result(ExtractionResultDictAccess):
@@ -40,14 +60,46 @@ class Result(ExtractionResultDictAccess):
     like_count: Optional[int] = FieldInfo(alias="likeCount", default=None)
     """Whole number from 0."""
 
+    is_deleted: Optional[bool] = FieldInfo(alias="isDeleted", default=None)
+    """True on a post its author deleted from X after Xquik saw it, with outputPreset=flat.
+
+    Default nested output uses enrichmentData.tweet.isDeleted. An account post list
+    with a date range adds such posts from the last 30 days. Absent on every other
+    row.
+    """
+
     media: Optional[List[TweetMedia]] = None
     """Attached media with outputPreset=flat.
 
     Default nested output uses enrichmentData.tweet.media.
     """
 
+    possibly_sensitive: Optional[bool] = FieldInfo(alias="possiblySensitive", default=None)
+    """X's sensitive flag on the post with outputPreset=flat.
+
+    Default nested output uses enrichmentData.tweet.possiblySensitive.
+    """
+
     quote_count: Optional[int] = FieldInfo(alias="quoteCount", default=None)
     """Whole number from 0."""
+
+    quoted_media: Optional[List[TweetMedia]] = FieldInfo(alias="quotedMedia", default=None)
+    """Media of the quoted post with outputPreset=flat.
+
+    Default nested output uses enrichmentData.tweet.quotedMedia.
+    """
+
+    quoted_possibly_sensitive: Optional[bool] = FieldInfo(alias="quotedPossiblySensitive", default=None)
+    """X's sensitive flag on the quoted post with outputPreset=flat.
+
+    Default nested output uses enrichmentData.tweet.quotedPossiblySensitive.
+    """
+
+    quoted_post: Optional[ResultQuotedPost] = FieldInfo(alias="quotedPost", default=None)
+    """The quoted post's ID, text, date & author with outputPreset=flat.
+
+    Default nested output uses enrichmentData.tweet.quotedPost.
+    """
 
     reply_count: Optional[int] = FieldInfo(alias="replyCount", default=None)
     """Whole number from 0."""

@@ -17,11 +17,13 @@ from x_twitter_scraper._models import BaseModel
 from x_twitter_scraper.types.x import TweetGetRepliesResponse
 from x_twitter_scraper.types.extraction_retrieve_response import Result, ExtractionRetrieveResponse
 
-GALLERY_ITEM = {
+GALLERY_ITEM: Dict[str, object] = {
     "id": "42",
     "tweetId": "1234567890",
     "mediaType": "photo",
     "mediaUrl": "https://media.xquik.com/tweet_1234567890/0.jpg",
+    "posterUrl": None,
+    "qualities": [],
     "fileSize": None,
     "createdAt": "2026-10-16T11:00:00.000Z",
     "authorUsername": "NASA",
@@ -59,6 +61,7 @@ async def test_downloads_list_the_files_saved_to_the_gallery(asynchronous: bool)
     assert item.created_at == datetime(2026, 10, 16, 11, tzinfo=timezone.utc)
     assert (item.file_size, item.author_avatar, item.views) == (None, None, None)
     assert (item.likes, item.retweets) == (1200, 340)
+    assert (item.poster_url, item.qualities) == (None, [])
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])

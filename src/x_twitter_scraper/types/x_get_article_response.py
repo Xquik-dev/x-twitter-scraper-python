@@ -144,6 +144,9 @@ class Article(BaseModel):
 
     title: Optional[str] = None
 
+    unknown_counts: Optional[List[str]] = FieldInfo(alias="unknownCounts", default=None)
+    """X did not send these counts, so each 0 means unknown."""
+
     view_count: Optional[int] = FieldInfo(alias="viewCount", default=None)
 
 
