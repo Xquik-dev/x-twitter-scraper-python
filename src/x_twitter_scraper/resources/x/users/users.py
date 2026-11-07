@@ -10,6 +10,22 @@ from typing_extensions import Literal
 
 import httpx
 
+from .mute import (
+    MuteResource,
+    AsyncMuteResource,
+    MuteResourceWithRawResponse,
+    AsyncMuteResourceWithRawResponse,
+    MuteResourceWithStreamingResponse,
+    AsyncMuteResourceWithStreamingResponse,
+)
+from .block import (
+    BlockResource,
+    AsyncBlockResource,
+    BlockResourceWithRawResponse,
+    AsyncBlockResourceWithRawResponse,
+    BlockResourceWithStreamingResponse,
+    AsyncBlockResourceWithStreamingResponse,
+)
 from .follow import (
     FollowResource,
     AsyncFollowResource,
@@ -81,6 +97,16 @@ __all__ = ["UsersResource", "AsyncUsersResource"]
 
 
 class UsersResource(SyncAPIResource):
+    @cached_property
+    def block(self) -> BlockResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BlockResource(self._client)
+
+    @cached_property
+    def mute(self) -> MuteResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return MuteResource(self._client)
+
     @cached_property
     def follow(self) -> FollowResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -3861,6 +3887,16 @@ class UsersResource(SyncAPIResource):
 
 
 class AsyncUsersResource(AsyncAPIResource):
+    @cached_property
+    def block(self) -> AsyncBlockResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBlockResource(self._client)
+
+    @cached_property
+    def mute(self) -> AsyncMuteResource:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncMuteResource(self._client)
+
     @cached_property
     def follow(self) -> AsyncFollowResource:
         """X write actions (tweets, likes, follows, DMs)"""
@@ -7729,6 +7765,16 @@ class UsersResourceWithRawResponse:
         )
 
     @cached_property
+    def block(self) -> BlockResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BlockResourceWithRawResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> MuteResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return MuteResourceWithRawResponse(self._users.mute)
+
+    @cached_property
     def follow(self) -> FollowResourceWithRawResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return FollowResourceWithRawResponse(self._users.follow)
@@ -7819,6 +7865,16 @@ class AsyncUsersResourceWithRawResponse:
         self.translate_bio = async_to_raw_response_wrapper(
             users.translate_bio,
         )
+
+    @cached_property
+    def block(self) -> AsyncBlockResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBlockResourceWithRawResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> AsyncMuteResourceWithRawResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncMuteResourceWithRawResponse(self._users.mute)
 
     @cached_property
     def follow(self) -> AsyncFollowResourceWithRawResponse:
@@ -7913,6 +7969,16 @@ class UsersResourceWithStreamingResponse:
         )
 
     @cached_property
+    def block(self) -> BlockResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return BlockResourceWithStreamingResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> MuteResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return MuteResourceWithStreamingResponse(self._users.mute)
+
+    @cached_property
     def follow(self) -> FollowResourceWithStreamingResponse:
         """X write actions (tweets, likes, follows, DMs)"""
         return FollowResourceWithStreamingResponse(self._users.follow)
@@ -8003,6 +8069,16 @@ class AsyncUsersResourceWithStreamingResponse:
         self.translate_bio = async_to_streamed_response_wrapper(
             users.translate_bio,
         )
+
+    @cached_property
+    def block(self) -> AsyncBlockResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncBlockResourceWithStreamingResponse(self._users.block)
+
+    @cached_property
+    def mute(self) -> AsyncMuteResourceWithStreamingResponse:
+        """X write actions (tweets, likes, follows, DMs)"""
+        return AsyncMuteResourceWithStreamingResponse(self._users.mute)
 
     @cached_property
     def follow(self) -> AsyncFollowResourceWithStreamingResponse:

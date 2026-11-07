@@ -52,6 +52,12 @@ class ExtractionJob(ExtractionJobDictAccess):
     total_results: int = FieldInfo(alias="totalResults")
     """Whole number from 0."""
 
+    url: str
+    """
+    Dashboard page where a signed-in user follows this job & downloads its rows as
+    CSV, XLSX, JSON, Markdown, PDF or text.
+    """
+
     completed_at: Optional[datetime] = FieldInfo(alias="completedAt", default=None)
 
     completion_reason: Optional[

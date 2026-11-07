@@ -144,6 +144,13 @@ class Analysis(TypedDict, total=False):
     context: str
     """Background the AI reads with every post."""
 
+    images: bool
+    """Reads up to 4 images per post with its text, at no extra cost.
+
+    Images of posts X marks sensitive stay unread. Send false to analyze the text
+    alone.
+    """
+
     max_context_bytes: Annotated[int, PropertyInfo(alias="maxContextBytes")]
     """Bytes of post, quote & settings the AI reads.
 

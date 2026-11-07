@@ -19,6 +19,7 @@ __all__ = [
     "PostMetricReading",
     "PostMetrics",
     "PostMonitorBaseline",
+    "PostMonitorAuthorAffiliate",
     "PostMonitorMedia",
     "PostMonitor",
     "PostMetricPoint",
@@ -107,6 +108,19 @@ class PostMonitorBaseline(BaseModel):
     bookmarks: int
 
 
+class PostMonitorAuthorAffiliate(BaseModel):
+    """The organization badge X shows beside the author's name."""
+
+    badge_url: str = FieldInfo(alias="badgeUrl")
+    """The organization's badge image."""
+
+    description: str
+    """The organization's name, as X shows it."""
+
+    url: Optional[str] = None
+    """The organization's X profile, when X links one."""
+
+
 class PostMonitorMedia(BaseModel):
     """1 photo, video or GIF on the post."""
 
@@ -161,6 +175,12 @@ class PostMonitor(BaseModel):
 
     metrics: PostMetrics
     """The 6 metrics of a post."""
+
+    author_affiliate: Optional[PostMonitorAuthorAffiliate] = FieldInfo(alias="authorAffiliate", default=None)
+    """The organization badge X shows beside the author's name.
+
+    Omitted when X shows none.
+    """
 
     author_avatar_url: Optional[str] = FieldInfo(alias="authorAvatarUrl", default=None)
     """The author's profile picture. Omitted when X shows none."""
