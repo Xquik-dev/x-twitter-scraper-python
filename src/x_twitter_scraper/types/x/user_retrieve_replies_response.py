@@ -11,5 +11,4 @@ from ..shared.topic_filtered_tweets import TopicFilteredTweets
 
 __all__ = ["UserRetrieveRepliesResponse"]
 
-# Pydantic 1 keeps the first member that validates, and PaginatedTweets also accepts a filtered page.
 UserRetrieveRepliesResponse: TypeAlias = Union[TopicFilteredTweets, ImageFilteredTweets, PaginatedTweets]

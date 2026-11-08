@@ -618,7 +618,7 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchResponse:
-        """Returns public profiles for up to 100 user IDs, usernames or profile links.
+        """Returns public profiles for user IDs, usernames or profile links.
 
         Send
         ids or usernames, not both. Each returned profile costs 1 credit.
@@ -647,7 +647,7 @@ class UsersResource(SyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric user IDs. Duplicate IDs are ignored while
               preserving first-seen order.
 
           location_contains: Match a location substring, ignoring case.
@@ -672,7 +672,7 @@ class UsersResource(SyncAPIResource):
           username_contains: Match a username substring, ignoring case.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-100 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           verified_only: Only return verified profiles.
@@ -739,7 +739,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchTweetsResponse:
         """
-        Returns the newest posts of up to 20 users, named by user ID, username or
+        Returns the newest posts of users named by user ID, username or
         profile link, in the order named. Send ids or usernames, not both. Each post
         costs 1 credit. A user in unavailable_ids or unprocessed_ids costs nothing.
 
@@ -751,17 +751,17 @@ class UsersResource(SyncAPIResource):
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
 
-          ids: Comma-separated numeric user IDs (1-20 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric IDs of the users to read posts from. Duplicate IDs are ignored while
               preserving first-seen order.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
-          page_size: Posts per user (1-20, default 20). Credits can return fewer. Aliases: limit,
+          page_size: Posts per user (1-300, default 20). Credits can return fewer. Aliases: limit,
               count, max_results, maxItems, max_items & per_page.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-20 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           extra_headers: Send extra headers
@@ -4556,7 +4556,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchResponse:
-        """Returns public profiles for up to 100 user IDs, usernames or profile links.
+        """Returns public profiles for user IDs, usernames or profile links.
 
         Send
         ids or usernames, not both. Each returned profile costs 1 credit.
@@ -4585,7 +4585,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric user IDs. Duplicate IDs are ignored while
               preserving first-seen order.
 
           location_contains: Match a location substring, ignoring case.
@@ -4610,7 +4610,7 @@ class AsyncUsersResource(AsyncAPIResource):
           username_contains: Match a username substring, ignoring case.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-100 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           verified_only: Only return verified profiles.
@@ -4677,7 +4677,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchTweetsResponse:
         """
-        Returns the newest posts of up to 20 users, named by user ID, username or
+        Returns the newest posts of users named by user ID, username or
         profile link, in the order named. Send ids or usernames, not both. Each post
         costs 1 credit. A user in unavailable_ids or unprocessed_ids costs nothing.
 
@@ -4689,17 +4689,17 @@ class AsyncUsersResource(AsyncAPIResource):
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
 
-          ids: Comma-separated numeric user IDs (1-20 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric IDs of the users to read posts from. Duplicate IDs are ignored while
               preserving first-seen order.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
-          page_size: Posts per user (1-20, default 20). Credits can return fewer. Aliases: limit,
+          page_size: Posts per user (1-300, default 20). Credits can return fewer. Aliases: limit,
               count, max_results, maxItems, max_items & per_page.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-20 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           extra_headers: Send extra headers

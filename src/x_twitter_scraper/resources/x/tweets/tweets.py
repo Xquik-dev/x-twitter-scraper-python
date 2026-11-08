@@ -259,7 +259,7 @@ class TweetsResource(SyncAPIResource):
         Returns public tweet records for the requested IDs.
 
         Args:
-          ids: 1 to 100 posts, separated by commas. Each is a tweet ID or a tweet URL, such as
+          ids: Posts, separated by commas. Each is a tweet ID or a tweet URL, such as
               x.com/nasa/status/20. A post named twice is read once. Any other entry is
               skipped & listed under `skipped` with why. A batch without 1 post gets 400
               `invalid_tweet_id`.
@@ -2695,7 +2695,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         Returns public tweet records for the requested IDs.
 
         Args:
-          ids: 1 to 100 posts, separated by commas. Each is a tweet ID or a tweet URL, such as
+          ids: Posts, separated by commas. Each is a tweet ID or a tweet URL, such as
               x.com/nasa/status/20. A post named twice is read once. Any other entry is
               skipped & listed under `skipped` with why. A batch without 1 post gets 400
               `invalid_tweet_id`.

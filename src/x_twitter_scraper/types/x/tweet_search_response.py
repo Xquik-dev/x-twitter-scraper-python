@@ -111,7 +111,6 @@ class TweetSearchCoverageResponse(PaginatedTweets):
     next_cursor: Optional[Literal[""]] = None  # type: ignore
 
 
-# Pydantic 1 keeps the first member that validates, and PaginatedTweets also accepts a filtered page.
 TweetSearchResponse: TypeAlias = Union[
     TopicFilteredTweets, ImageFilteredTweets, PaginatedTweets, TweetSearchCoverageResponse
 ]

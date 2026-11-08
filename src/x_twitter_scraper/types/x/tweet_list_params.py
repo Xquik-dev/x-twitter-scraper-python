@@ -11,7 +11,7 @@ __all__ = ["TweetListParams"]
 
 class TweetListParams(TypedDict, total=False):
     ids: Required[str]
-    """1 to 100 posts, separated by commas.
+    """Posts, separated by commas.
 
     Each is a tweet ID or a tweet URL, such as x.com/nasa/status/20. A post named
     twice is read once. Any other entry is skipped & listed under `skipped` with
