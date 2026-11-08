@@ -13,11 +13,17 @@ from x_twitter_scraper.types import (
     Error,
     ErrorCode,
     EventType,
+    ImageFilterSummary,
+    ImageFilteredTweets,
+    ImageScoredTweet,
     LiveEventContext,
     PaginatedTweets,
     PaginatedUsers,
     SearchTweet,
     SoftIntervention,
+    TopicFilterSummary,
+    TopicFilteredTweets,
+    TopicScoredTweet,
     TweetMedia,
     UserProfile,
 )
@@ -453,6 +459,9 @@ from x_twitter_scraper.types.x import (
     UserRetrieveListMembershipsResponse,
     UserRetrieveListsResponse,
     UserRetrieveLiveResponse,
+    UserRetrieveMediaResponse,
+    UserRetrieveRepliesResponse,
+    UserRetrieveTweetsResponse,
     UserRetrieveVerifiedFollowersResponse,
     UserTranslateBioResponse,
     ShadowbanReport,
@@ -478,14 +487,14 @@ Methods
 - <code title="get /x/users/{id}/list-memberships">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_list_memberships</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_list_memberships_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_list_memberships_response.py">UserRetrieveListMembershipsResponse</a></code>
 - <code title="get /x/users/{id}/lists">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_lists</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_lists_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_lists_response.py">UserRetrieveListsResponse</a></code>
 - <code title="get /x/users/{id}/live">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_live</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_live_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_live_response.py">UserRetrieveLiveResponse</a></code>
-- <code title="get /x/users/{id}/media">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_media</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_media_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/users/{id}/media">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_media</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_media_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_media_response.py">UserRetrieveMediaResponse</a></code>
 - <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_mentions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_mentions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
-- <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_replies</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_replies_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_replies</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_replies_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_replies_response.py">UserRetrieveRepliesResponse</a></code>
 - <code title="get /x/users/search">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_search</a>(\*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_search_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/shadowban">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_shadowban</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_shadowban_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/shadowban_report.py">ShadowbanReport</a></code>
 - <code title="get /x/users/{id}/similar">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_similar</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_similar_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/subscriptions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_subscriptions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_subscriptions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
-- <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_tweets</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_tweets</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_tweets_response.py">UserRetrieveTweetsResponse</a></code>
 - <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_verified_followers</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_verified_followers_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_verified_followers_response.py">UserRetrieveVerifiedFollowersResponse</a></code>
 - <code title="get /x/users/{id}/translation">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">translate_bio</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_translate_bio_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_translate_bio_response.py">UserTranslateBioResponse</a></code>
 

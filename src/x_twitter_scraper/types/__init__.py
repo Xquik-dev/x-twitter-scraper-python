@@ -20,10 +20,16 @@ from .shared import (
     CommunityTopic as CommunityTopic,
     PaginatedUsers as PaginatedUsers,
     PaginatedTweets as PaginatedTweets,
+    ImageScoredTweet as ImageScoredTweet,
     LiveEventContext as LiveEventContext,
     SoftIntervention as SoftIntervention,
+    TopicScoredTweet as TopicScoredTweet,
     ContentDisclosure as ContentDisclosure,
     CommunityAnalytics as CommunityAnalytics,
+    ImageFilterSummary as ImageFilterSummary,
+    TopicFilterSummary as TopicFilterSummary,
+    ImageFilteredTweets as ImageFilteredTweets,
+    TopicFilteredTweets as TopicFilteredTweets,
     CommunityAnalyticsMetric as CommunityAnalyticsMetric,
 )
 from .winner import Winner as Winner

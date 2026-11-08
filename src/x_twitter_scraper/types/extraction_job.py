@@ -9,6 +9,8 @@ from typing_extensions import Literal
 from pydantic import Field as FieldInfo
 
 from .._dict_access import ExtractionJobDictAccess
+from .shared.image_filter_summary import ImageFilterSummary
+from .shared.topic_filter_summary import TopicFilterSummary
 
 __all__ = ["ExtractionJob"]
 
@@ -81,5 +83,11 @@ class ExtractionJob(ExtractionJobDictAccess):
     error_message: Optional[str] = FieldInfo(alias="errorMessage", default=None)
     """Safe error code for a failed job."""
 
+    image_filter: Optional[ImageFilterSummary] = FieldInfo(alias="imageFilter", default=None)
+    """What the image filter asked & how many posts it kept."""
+
     results_limit: Optional[int] = FieldInfo(alias="resultsLimit", default=None)
     """Requested result limit."""
+
+    topic_filter: Optional[TopicFilterSummary] = FieldInfo(alias="topicFilter", default=None)
+    """What the topic filter asked & how many posts it kept."""

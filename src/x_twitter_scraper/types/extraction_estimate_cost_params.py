@@ -142,6 +142,16 @@ class ExtractionEstimateCostParams(TypedDict, total=False):
     has_website: Annotated[bool, PropertyInfo(alias="hasWebsite")]
     """Require a profile website."""
 
+    image_shows: Annotated[str, PropertyInfo(alias="imageShows")]
+    """Keep only the posts whose photos show this.
+
+    Use charts, screenshots, product_photos, memes or people, or describe it in your own
+    words. Each post with a safe photo is checked, & each stored post costs 2 credits
+    instead of its read price. Posts without a safe photo aren't checked, billed or
+    stored, & a post the filter drops costs nothing. resultsLimit caps the posts read.
+    Works with tools that return posts. Send topic or imageShows, not both.
+    """
+
     include_original_post: Annotated[bool, PropertyInfo(alias="includeOriginalPost")]
     """Include the source post in reply results."""
 
@@ -379,6 +389,15 @@ class ExtractionEstimateCostParams(TypedDict, total=False):
     its card or a quoted post.
 
     The author's name and username don't count.
+    """
+
+    topic: str
+    """Keep only the posts about this topic, such as "the Rust programming language".
+
+    Each post the job reads is checked, only matching posts are stored, & each stored
+    post costs 2 credits instead of its read price. A post the filter drops costs
+    nothing. resultsLimit caps the posts read & checked. Works with tools that return
+    posts. Send topic or imageShows, not both.
     """
 
     to_user: Annotated[str, PropertyInfo(alias="toUser")]

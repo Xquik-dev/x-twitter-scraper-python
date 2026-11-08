@@ -49,6 +49,7 @@ class MediaResource(SyncAPIResource):
     def download(
         self,
         *,
+        image_shows: str | Omit = omit,
         tweet_id: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
@@ -62,6 +63,13 @@ class MediaResource(SyncAPIResource):
         Downloads images and videos attached to selected tweets.
 
         Args:
+          image_shows: Save only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Each post saved costs 2 credits, the AI analysis price, on top of its save
+              price, & a post the filter drops costs nothing. imageFilter states the cutoff &
+              counts.
+
           tweet_id: Numeric tweet ID alias for tweetInput
 
           tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
@@ -83,6 +91,7 @@ class MediaResource(SyncAPIResource):
             "/x/media/download",
             body=maybe_transform(
                 {
+                    "image_shows": image_shows,
                     "tweet_id": tweet_id,
                     "tweet_ids": tweet_ids,
                     "tweet_input": tweet_input,
@@ -178,6 +187,7 @@ class AsyncMediaResource(AsyncAPIResource):
     async def download(
         self,
         *,
+        image_shows: str | Omit = omit,
         tweet_id: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
@@ -191,6 +201,13 @@ class AsyncMediaResource(AsyncAPIResource):
         Downloads images and videos attached to selected tweets.
 
         Args:
+          image_shows: Save only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Each post saved costs 2 credits, the AI analysis price, on top of its save
+              price, & a post the filter drops costs nothing. imageFilter states the cutoff &
+              counts.
+
           tweet_id: Numeric tweet ID alias for tweetInput
 
           tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
@@ -212,6 +229,7 @@ class AsyncMediaResource(AsyncAPIResource):
             "/x/media/download",
             body=await async_maybe_transform(
                 {
+                    "image_shows": image_shows,
                     "tweet_id": tweet_id,
                     "tweet_ids": tweet_ids,
                     "tweet_input": tweet_input,

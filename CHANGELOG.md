@@ -19,6 +19,10 @@
 - `PostMonitor.author_affiliate` returns the organization badge X shows beside the author's name.
 - `monitors.posts.create` takes `is_active`. Send `False` to create the monitor paused.
 - `q` is optional on `client.x.tweets.search` when `from_user`, `keywords` or another field forms the search.
+- `client.x.tweets.search`, `client.x.users.retrieve_tweets`, `retrieve_replies` & `retrieve_media` take `topic` & `image_shows`. AI-powered analysis keeps only the posts about the topic, or whose photos show what you name.
+- A filtered page returns `TopicFilteredTweets` or `ImageFilteredTweets`, with each post's `topic_score` or `image_score` and a `topic_filter` or `image_filter` that states the cutoff & counts. Both subclass `PaginatedTweets`, so code typed for a plain page keeps working.
+- `extractions.run` & `estimate_cost` take `topic` or `image_shows`, and `ExtractionJob` returns `topic_filter` or `image_filter`.
+- `client.x.media.download` takes `image_shows` to save only the posts whose photos show it, and returns `image_filter`.
 
 ## 0.20.0 (2026-11-04)
 

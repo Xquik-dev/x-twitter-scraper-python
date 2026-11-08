@@ -90,6 +90,16 @@ class UserRetrieveRepliesParams(TypedDict, total=False):
     such as keywords do not apply with it.
     """
 
+    image_shows: Annotated[str, PropertyInfo(alias="imageShows")]
+    """Keep only posts whose photos show this.
+
+    Send charts, screenshots, product_photos, memes or people, or describe it in words,
+    such as a rocket. AI-powered analysis checks posts with photos X doesn't mark
+    sensitive & keeps scores of 0.5 or more. Other posts stay out at no charge. Each
+    kept post costs 2 credits, the AI analysis price, instead of the read price, & a
+    post the filter drops costs nothing. imageFilter states the cutoff & counts.
+    """
+
     in_reply_to_tweet_id: Annotated[str, PropertyInfo(alias="inReplyToTweetId")]
     """Only replies to this tweet ID."""
 
@@ -214,6 +224,16 @@ class UserRetrieveRepliesParams(TypedDict, total=False):
     """X search no longer supports source.
 
     A Tweet search with it answers 424 & charges nothing.
+    """
+
+    topic: str
+    """Keep only posts about this topic.
+
+    AI-powered analysis asks "Is this post about <topic>?" of each post & keeps scores
+    of 0.5 or more. It reads post text & safe photos. Each kept post costs 2 credits,
+    the AI analysis price, instead of the read price, & a post the filter drops costs
+    nothing. limit counts checked posts, & only kept posts come back. topicFilter states
+    the cutoff & counts.
     """
 
     to_user: Annotated[str, PropertyInfo(alias="toUser")]

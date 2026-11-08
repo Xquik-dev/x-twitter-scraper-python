@@ -18,4 +18,8 @@ from .soft_intervention import SoftIntervention as SoftIntervention
 from .content_disclosure import ContentDisclosure as ContentDisclosure
 from .live_event_context import LiveEventContext as LiveEventContext
 from .community_analytics import CommunityAnalytics as CommunityAnalytics
+from .image_filter_summary import ImageFilterSummary as ImageFilterSummary
+from .topic_filter_summary import TopicFilterSummary as TopicFilterSummary
+from .image_filtered_tweets import ImageScoredTweet as ImageScoredTweet, ImageFilteredTweets as ImageFilteredTweets
+from .topic_filtered_tweets import TopicScoredTweet as TopicScoredTweet, TopicFilteredTweets as TopicFilteredTweets
 from .community_analytics_metric import CommunityAnalyticsMetric as CommunityAnalyticsMetric

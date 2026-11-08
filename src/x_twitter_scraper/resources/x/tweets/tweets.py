@@ -2116,6 +2116,7 @@ class TweetsResource(SyncAPIResource):
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -2155,6 +2156,7 @@ class TweetsResource(SyncAPIResource):
         since_time: str | Omit = omit,
         source: str | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -2223,6 +2225,13 @@ class TweetsResource(SyncAPIResource):
               charges nothing.
 
           hashtags: Hashtags separated by spaces, commas, or lines.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -2319,6 +2328,12 @@ class TweetsResource(SyncAPIResource):
               appears outside the author's name and username, such as in its text, a link, its card
               or a quoted post.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date as a UTC day, inclusive, so its own posts count. It takes the same date
@@ -2372,6 +2387,7 @@ class TweetsResource(SyncAPIResource):
                             "from_user": from_user,
                             "geocode": geocode,
                             "hashtags": hashtags,
+                            "image_shows": image_shows,
                             "in_reply_to_tweet_id": in_reply_to_tweet_id,
                             "keywords": keywords,
                             "language": language,
@@ -2410,6 +2426,7 @@ class TweetsResource(SyncAPIResource):
                             "since_time": since_time,
                             "source": source,
                             "text_only_terms": text_only_terms,
+                            "topic": topic,
                             "to_user": to_user,
                             "until_date": until_date,
                             "until_time": until_time,
@@ -4515,6 +4532,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -4554,6 +4572,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         since_time: str | Omit = omit,
         source: str | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -4622,6 +4641,13 @@ class AsyncTweetsResource(AsyncAPIResource):
               charges nothing.
 
           hashtags: Hashtags separated by spaces, commas, or lines.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -4718,6 +4744,12 @@ class AsyncTweetsResource(AsyncAPIResource):
               appears outside the author's name and username, such as in its text, a link, its card
               or a quoted post.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date as a UTC day, inclusive, so its own posts count. It takes the same date
@@ -4771,6 +4803,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                             "from_user": from_user,
                             "geocode": geocode,
                             "hashtags": hashtags,
+                            "image_shows": image_shows,
                             "in_reply_to_tweet_id": in_reply_to_tweet_id,
                             "keywords": keywords,
                             "language": language,
@@ -4809,6 +4842,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                             "since_time": since_time,
                             "source": source,
                             "text_only_terms": text_only_terms,
+                            "topic": topic,
                             "to_user": to_user,
                             "until_date": until_date,
                             "until_time": until_time,
