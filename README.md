@@ -1,8 +1,8 @@
-# X API & Twitter API Python SDK by Xquik
+# X (Twitter) API Python SDK by Xquik
 
-Use this Twitter API Python SDK by Xquik to read tweets as Pydantic models.
+Xquik's X (Twitter) API Python SDK reads tweets as Pydantic models.
 Sync & async clients share every method.
-Public reads need no X developer account.
+Public reads need no X (Twitter) developer account.
 
 Xquik is the world's fastest and cheapest X (Twitter) scraper service with the most complete X (Twitter) data.
 Most other Apify Actors charge before filtering or deduplication.
@@ -15,7 +15,7 @@ The Xquik REST API read 45 tweets per second on 2026-10-15. That cost $0.15 per 
 
 <!-- trust:win:end -->
 
-## Install the Twitter API for Python
+## Install the X (Twitter) API for Python
 
 The SDK requires Python 3.10 or later.
 
@@ -23,7 +23,7 @@ The SDK requires Python 3.10 or later.
 pip install x_twitter_scraper
 ```
 
-## Search tweets with the Python Twitter API
+## Search tweets with the Python X (Twitter) API
 
 Set `X_TWITTER_SCRAPER_API_KEY`, then run this search.
 
@@ -64,7 +64,7 @@ Checked on 2026-11-07. See each number with its date & source on [xquik.com/benc
 ## Move from Tweepy
 
 Tweepy calls the official X API, which needs a developer account & bearer token.
-This SDK reads public X data with an Xquik API key.
+This SDK reads public X (Twitter) data with an Xquik API key.
 This call replaces a Tweepy `search_recent_tweets` call.
 
 ```python
@@ -75,7 +75,7 @@ response = client.x.tweets.search(q="from:NASA", limit=10)
 ## Replace snscrape for Twitter search
 
 Code built on snscrape's `TwitterSearchScraper` maps to 1 SDK call.
-The SDK takes the same X search operators & returns typed tweets.
+The SDK takes the same X (Twitter) search operators & returns typed tweets.
 
 ```python
 # snscrape: TwitterSearchScraper("from:NASA since:2026-10-01").get_items()
@@ -445,7 +445,7 @@ print(x_twitter_scraper.__version__)
 
 ## Questions
 
-### Do I need an X developer account?
+### Do I need an X (Twitter) developer account?
 
 No. Public reads need only an Xquik API key.
 Private reads & X account actions need a connected X account.
@@ -456,16 +456,16 @@ No. Xquik runs its own REST API. This SDK calls that API, not the official X API
 
 ## More Xquik tools
 
-- [X (Twitter) scraper API & Twitter MCP server](https://github.com/Xquik-dev/x-twitter-scraper) with REST, MCP & Skill setup.
-- Twitter API SDKs for [TypeScript](https://github.com/Xquik-dev/x-twitter-scraper-typescript), [Go](https://github.com/Xquik-dev/x-twitter-scraper-go), [Ruby](https://github.com/Xquik-dev/x-twitter-scraper-ruby) & [Java](https://github.com/Xquik-dev/x-twitter-scraper-java).
-- More Twitter API SDKs for [Kotlin](https://github.com/Xquik-dev/x-twitter-scraper-kotlin), [C#](https://github.com/Xquik-dev/x-twitter-scraper-csharp) & [PHP](https://github.com/Xquik-dev/x-twitter-scraper-php).
+- [X (Twitter) scraper API & X (Twitter) MCP server](https://github.com/Xquik-dev/x-twitter-scraper) with REST, MCP & Skill setup.
+- X (Twitter) API SDKs for [TypeScript](https://github.com/Xquik-dev/x-twitter-scraper-typescript), [Go](https://github.com/Xquik-dev/x-twitter-scraper-go), [Ruby](https://github.com/Xquik-dev/x-twitter-scraper-ruby) & [Java](https://github.com/Xquik-dev/x-twitter-scraper-java).
+- More X (Twitter) API SDKs for [Kotlin](https://github.com/Xquik-dev/x-twitter-scraper-kotlin), [C#](https://github.com/Xquik-dev/x-twitter-scraper-csharp) & [PHP](https://github.com/Xquik-dev/x-twitter-scraper-php).
 - [Twitter CLI & X CLI](https://github.com/Xquik-dev/x-twitter-scraper-cli) for terminal workflows.
 - [Twitter advanced search operators](https://github.com/Xquik-dev/x-twitter-advanced-search) with tested examples.
 - Twitter agent plugins for [OpenClaw](https://github.com/Xquik-dev/tweetclaw) & [Hermes Agent](https://github.com/Xquik-dev/hermes-tweet).
 - Twitter integrations for [n8n](https://github.com/Xquik-dev/n8n-nodes-xquik), [Prefect](https://github.com/Xquik-dev/prefect-xquik), [Haystack](https://github.com/Xquik-dev/xquik-haystack) & [Paperclip](https://github.com/Xquik-dev/paperclip-plugin-xquik).
 - More Twitter integrations for [Terraform](https://github.com/Xquik-dev/terraform-provider-x-twitter-scraper), [Convex](https://github.com/Xquik-dev/xquik-convex), [Supabase](https://github.com/Xquik-dev/xquik-supabase) & [Strapi](https://github.com/Xquik-dev/strapi-plugin-xquik).
-- Twitter MCP for [AI agents](https://github.com/Xquik-dev/xquik-mcp), [VS Code](https://github.com/Xquik-dev/xquik-vscode) & [Raycast](https://github.com/Xquik-dev/xquik-raycast).
-- [Xquik X API & Twitter scraper](https://xquik.com), [Twitter API docs](https://docs.xquik.com/api-reference/overview) & [docs source](https://github.com/Xquik-dev/xquik-docs).
+- X (Twitter) MCP for [AI agents](https://github.com/Xquik-dev/xquik-mcp), [VS Code](https://github.com/Xquik-dev/xquik-vscode) & [Raycast](https://github.com/Xquik-dev/xquik-raycast).
+- [Xquik X API & Twitter scraper](https://xquik.com), [X (Twitter) API docs](https://docs.xquik.com/api-reference/overview) & [docs source](https://github.com/Xquik-dev/xquik-docs).
 
 ## Help & contributing
 
