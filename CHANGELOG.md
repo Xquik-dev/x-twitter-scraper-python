@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `sample` on user insights and follower audits returns `read`, the posts the read covered with reposts and the pinned post included. `posts` counts the ones the averages used, so it can be lower.
 - The 25 write methods, such as `client.x.tweets.create` & `client.x.dm.send`, take `prefer`. `wait=50` asks for the answer within 50 seconds, and a write still running then answers 202 with a status link.
 - `Error` returns `required_scope`, the scope an API key needs after `insufficient_scope`, and its code type lists the API's 11 newer error codes, such as `price_changed` & `x_community_creation_closed`.
 - `client.x.users.retrieve_follower_audit` audits an account's newest followers. It gives each one a class, a score & its signals, and grades them A to F. Each follower read costs 1 credit, and the account's engagement adds 1.

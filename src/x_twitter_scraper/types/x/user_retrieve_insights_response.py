@@ -38,16 +38,22 @@ class InsightsAverages(BaseModel):
 
 
 class InsightsSample(BaseModel):
-    """The recent posts the averages read."""
+    """The recent posts the read covered."""
 
     newest_at: Optional[datetime] = FieldInfo(alias="newestAt", default=None)
-    """When the newest of them went up."""
+    """When the newest post the averages used went up."""
 
     oldest_at: Optional[datetime] = FieldInfo(alias="oldestAt", default=None)
-    """When the oldest of them went up."""
+    """When the oldest post the averages used went up."""
 
     posts: float
-    """Posts read."""
+    """Posts the averages used.
+
+    Reposts and the pinned post stay out, so this can be lower than `read`.
+    """
+
+    read: float
+    """Posts read, reposts and the pinned post included."""
 
 
 class Insights(BaseModel):
@@ -93,7 +99,7 @@ class Insights(BaseModel):
     """
 
     sample: InsightsSample
-    """The recent posts the averages read."""
+    """The recent posts the read covered."""
 
     top_post_id: Optional[str] = FieldInfo(alias="topPostId", default=None)
     """The sampled post with the most engagements."""

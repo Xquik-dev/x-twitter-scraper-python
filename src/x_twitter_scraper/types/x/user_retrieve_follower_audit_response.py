@@ -57,16 +57,22 @@ class AuditAccountAverages(BaseModel):
 
 
 class AuditAccountSample(BaseModel):
-    """The recent posts the averages read."""
+    """The recent posts the read covered."""
 
     newest_at: Optional[datetime] = FieldInfo(alias="newestAt")
-    """When the newest of them went up."""
+    """When the newest post the averages used went up."""
 
     oldest_at: Optional[datetime] = FieldInfo(alias="oldestAt")
-    """When the oldest of them went up."""
+    """When the oldest post the averages used went up."""
 
     posts: float
-    """Posts read."""
+    """Posts the averages used.
+
+    Reposts and the pinned post stay out, so this can be lower than `read`.
+    """
+
+    read: float
+    """Posts read, reposts and the pinned post included."""
 
 
 class AuditAccount(BaseModel):
@@ -112,7 +118,7 @@ class AuditAccount(BaseModel):
     """
 
     sample: AuditAccountSample
-    """The recent posts the averages read."""
+    """The recent posts the read covered."""
 
     top_post_id: Optional[str] = FieldInfo(alias="topPostId")
     """The sampled post with the most engagements."""

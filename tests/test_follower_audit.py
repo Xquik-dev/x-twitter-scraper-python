@@ -18,7 +18,7 @@ ACCOUNT: Dict[str, object] = {
     "posts": 73919,
     "accountAgeDays": 6449,
     "postsPrivate": False,
-    "sample": {"posts": 20, "oldestAt": "2026-10-28T13:15:28.000Z", "newestAt": "2026-11-02T22:12:05.000Z"},
+    "sample": {"posts": 20, "read": 22, "oldestAt": "2026-10-28T13:15:28.000Z", "newestAt": "2026-11-02T22:12:05.000Z"},
     "averages": {
         "likes": 3684.2,
         "replies": 142.7,
@@ -95,3 +95,5 @@ async def test_a_follower_audit_reads_its_report_into_typed_fields(asynchronous:
     assert audit.top_followers[0].user_name == "orbit_watcher"
     assert audit.top_followers[0].joined_at_ms == 1561939200000
     assert audit.account.engagement_rate == 0.0047
+    assert audit.account.sample.read == 22
+    assert audit.account.sample.posts == 20
