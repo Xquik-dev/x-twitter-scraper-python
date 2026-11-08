@@ -17,9 +17,11 @@ git() {
   status) [ "$RELEASE_CASE" != dirty ] || echo ' M README.md';;
   symbolic-ref) case "$RELEASE_CASE" in detached) return 1;; branch) echo topic;; *) echo main;; esac;;
   fetch) :;;
+  describe) [ "$RELEASE_CASE" != untagged ] || return 128; echo v0.11.2;;
   rev-parse)
    case "$*" in
     *refs/tags/*) return 1;;
+    *v0.11.2*) echo last-release;;
     *origin/main*) if [ "$RELEASE_CASE" = behind ]; then echo def; else echo abc; fi;;
     *) echo abc;;
    esac;;
@@ -67,7 +69,7 @@ export -f record git uv gh curl security
 runner=$1; shift
 bash "$runner" "$@"
 """
-CHECKED = ["checks", "audit", "build", "metadata"]
+CHECKED = ["checks last-release", "audit", "build", "metadata"]
 RELEASED = ["tag v0.12.0 abc", "push refs/tags/v0.12.0", "release v0.12.0"]
 DRY_RUN_END = "Dry run finished for x-twitter-scraper 0.12.0. Nothing was uploaded, tagged, or released."
 
@@ -80,7 +82,7 @@ def run_release(
         (project / folder).mkdir(parents=True)
     runner = project / "bin/release-local"
     runner.write_bytes((ROOT / "bin/release-local").read_bytes())
-    for name, event in (("bin/check-local", "checks"), ("scripts/audit", "audit"), ("scripts/release", '"$1"')):
+    for name, event in (("bin/check-local", '"checks $*"'), ("scripts/audit", "audit"), ("scripts/release", '"$1"')):
         (project / name).write_text(f"#!/usr/bin/env bash\nprintf '%s\\n' {event} >> \"$RELEASE_EVENTS\"\n")
         (project / name).chmod(0o755)
     (project / "src/x_twitter_scraper/_version.py").write_text('__version__ = "0.12.0"\n')
@@ -135,6 +137,13 @@ def test_dry_run_needs_no_token_and_releases_nothing(tmp_path: Path, case: str, 
         ([], "detached", "404", 1, "release-local: Switch to main, then rerun."),
         (["--dry-run"], "branch", "404", 1, "release-local: Switch to main, then rerun."),
         (["--dry-run"], "behind", "404", 1, "release-local: Make main equal to origin/main, then rerun."),
+        (
+            [],
+            "untagged",
+            "404",
+            1,
+            "release-local: No release tag is reachable from HEAD. Run git fetch --tags, then rerun.",
+        ),
         ([], "tagged", "404", 1, "release-local: Tag v0.12.0 already exists on origin. Bump the version, then rerun."),
         (
             [],

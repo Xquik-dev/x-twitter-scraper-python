@@ -149,6 +149,8 @@ async def send_with_mock_transport(
     payload: object,
     asynchronous: bool,
     method: str = "GET",
+    *,
+    strict_response_validation: bool = True,
 ) -> Tuple[httpx.Request, T]:
     requests: list[httpx.Request] = []
 
@@ -161,14 +163,14 @@ async def send_with_mock_transport(
         async with AsyncXTwitterScraper(
             api_key="isolated-test",
             http_client=httpx.AsyncClient(transport=transport),
-            _strict_response_validation=True,
+            _strict_response_validation=strict_response_validation,
         ) as client:
             result = await async_call(client)
     else:
         with XTwitterScraper(
             api_key="isolated-test",
             http_client=httpx.Client(transport=transport),
-            _strict_response_validation=True,
+            _strict_response_validation=strict_response_validation,
         ) as sync_client:
             result = sync_call(sync_client)
     assert len(requests) == 1
