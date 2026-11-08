@@ -146,6 +146,7 @@ from x_twitter_scraper.types import (
     MonitorCreateResponse,
     MonitorListResponse,
     MonitorDeactivateResponse,
+    MonitorUpsertByUsernameResponse,
 )
 ```
 
@@ -156,6 +157,7 @@ Methods
 - <code title="patch /monitors/{id}">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">update</a>(id, \*\*<a href="src/x_twitter_scraper/types/monitor_update_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitor.py">Monitor</a></code>
 - <code title="get /monitors">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/monitor_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitor_list_response.py">MonitorListResponse</a></code>
 - <code title="delete /monitors/{id}">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">deactivate</a>(id) -> <a href="./src/x_twitter_scraper/types/monitor_deactivate_response.py">MonitorDeactivateResponse</a></code>
+- <code title="put /monitors/username/{username}">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">upsert_by_username</a>(username, \*\*<a href="src/x_twitter_scraper/types/monitor_upsert_by_username_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitor_upsert_by_username_response.py">MonitorUpsertByUsernameResponse</a></code>
 
 ## Keywords
 

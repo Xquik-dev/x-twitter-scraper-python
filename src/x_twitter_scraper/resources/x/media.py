@@ -72,8 +72,9 @@ class MediaResource(SyncAPIResource):
 
           tweet_id: Numeric tweet ID alias for tweetInput
 
-          tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
-              `invalid_tweet_id`, which says which item.
+          tweet_ids: Tweet URLs or IDs. An item that names no post gets 400 `invalid_tweet_id`, which
+              says which item. Posts Xquik had no time to read come back in
+              `unprocessedTweetIds`, with no charge. Send them again.
 
           tweet_input: Tweet URL or ID (single tweet)
 
@@ -220,8 +221,9 @@ class AsyncMediaResource(AsyncAPIResource):
 
           tweet_id: Numeric tweet ID alias for tweetInput
 
-          tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
-              `invalid_tweet_id`, which says which item.
+          tweet_ids: Tweet URLs or IDs. An item that names no post gets 400 `invalid_tweet_id`, which
+              says which item. Posts Xquik had no time to read come back in
+              `unprocessedTweetIds`, with no charge. Send them again.
 
           tweet_input: Tweet URL or ID (single tweet)
 

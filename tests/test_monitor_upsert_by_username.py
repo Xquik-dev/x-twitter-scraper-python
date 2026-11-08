@@ -5,12 +5,13 @@
 from __future__ import annotations
 
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 import pytest
 
 from tests.utils import send_with_mock_transport
 from x_twitter_scraper import XTwitterScraper, AsyncXTwitterScraper
+from x_twitter_scraper.types.shared.event_type import EventType
 
 MONITOR: Dict[str, object] = {
     "created": True,
@@ -23,7 +24,7 @@ MONITOR: Dict[str, object] = {
     "createdAt": "2025-01-15T12:00:00Z",
     "nextBillingAt": "2025-01-15T12:00:00Z",
 }
-EVENT_TYPES = ["tweet.new", "tweet.reply"]
+EVENT_TYPES: List[EventType] = ["tweet.new", "tweet.reply"]
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])

@@ -95,3 +95,6 @@ class MediaDownloadResponse(BaseModel):
     total_tweets: Optional[int] = FieldInfo(alias="totalTweets", default=None)
 
     tweet_id: Optional[str] = FieldInfo(alias="tweetId", default=None)
+
+    unprocessed_tweet_ids: Optional[List[str]] = FieldInfo(alias="unprocessedTweetIds", default=None)
+    """Posts Xquik had no time to read, at no charge. Send them again."""

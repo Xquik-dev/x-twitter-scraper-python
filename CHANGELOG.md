@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- `client.monitors.upsert_by_username` creates the monitor for an account, or updates it if it exists, so the same call twice still leaves 1 monitor. `created` says which one ran.
+- `client.x.media.download` returns `unprocessed_tweet_ids`, the posts Xquik had no time to read, at no charge. Send them again.
 - `sample` on user insights and follower audits returns `read`, the posts the read covered with reposts and the pinned post included. `posts` counts the ones the averages used, so it can be lower.
 - The 25 write methods, such as `client.x.tweets.create` & `client.x.dm.send`, take `prefer`. `wait=50` asks for the answer within 50 seconds, and a write still running then answers 202 with a status link.
 - `Error` returns `required_scope`, the scope an API key needs after `insufficient_scope`, and its code type lists the API's 11 newer error codes, such as `price_changed` & `x_community_creation_closed`.
