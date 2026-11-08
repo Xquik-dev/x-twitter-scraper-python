@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `client.x.users.retrieve_follower_audit` audits an account's newest followers. It gives each one a class, a score & its signals, and grades them A to F. Each follower read costs 1 credit, and the account's engagement adds 1.
 - The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `False` keeps it to the text.
 - `context_availability.media` returns `images` when the AI read the post's images.
 - `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.

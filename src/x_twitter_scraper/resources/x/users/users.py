@@ -62,6 +62,7 @@ from ....types.x import (
     user_retrieve_follower_ids_params,
     user_retrieve_following_ids_params,
     user_retrieve_subscriptions_params,
+    user_retrieve_follower_audit_params,
     user_retrieve_list_memberships_params,
     user_retrieve_followers_you_know_params,
     user_retrieve_verified_followers_params,
@@ -93,6 +94,7 @@ from ....types.x.user_retrieve_following_response import UserRetrieveFollowingRe
 from ....types.x.user_retrieve_batch_tweets_response import UserRetrieveBatchTweetsResponse
 from ....types.x.user_retrieve_follower_ids_response import UserRetrieveFollowerIdsResponse
 from ....types.x.user_retrieve_following_ids_response import UserRetrieveFollowingIdsResponse
+from ....types.x.user_retrieve_follower_audit_response import UserRetrieveFollowerAuditResponse
 from ....types.x.user_retrieve_list_memberships_response import UserRetrieveListMembershipsResponse
 from ....types.x.user_retrieve_verified_followers_response import UserRetrieveVerifiedFollowersResponse
 
@@ -779,6 +781,71 @@ class UsersResource(SyncAPIResource):
                 ),
             ),
             cast_to=UserRetrieveBatchTweetsResponse,
+        )
+
+    def retrieve_follower_audit(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveFollowerAuditResponse:
+        """
+        Reads the newest followers of a public account & returns a follower audit. It
+        gives each follower 1 class with its score & signals, then adds coverage, a
+        quality score, signal counts, arrival bands, join cohorts, countries, top
+        followers & the account's engagement. Each follower read costs 1 credit, and the
+        engagement adds 1 credit. Signals come from public profiles, so a real person
+        can match. Older followers may differ from the newest ones.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Most followers to read, newest first. Left out, a read takes up to 200 and a
+              low balance reads fewer. A very long read returns what it finished, & coverage
+              shows how many. Its aliases are pageSize, count, max_results, maxItems,
+              max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/users/{id}/follower-audit", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                    },
+                    user_retrieve_follower_audit_params.UserRetrieveFollowerAuditParams,
+                ),
+            ),
+            cast_to=UserRetrieveFollowerAuditResponse,
         )
 
     def retrieve_follower_ids(
@@ -4644,6 +4711,71 @@ class AsyncUsersResource(AsyncAPIResource):
             cast_to=UserRetrieveBatchTweetsResponse,
         )
 
+    async def retrieve_follower_audit(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveFollowerAuditResponse:
+        """
+        Reads the newest followers of a public account & returns a follower audit. It
+        gives each follower 1 class with its score & signals, then adds coverage, a
+        quality score, signal counts, arrival bands, join cohorts, countries, top
+        followers & the account's engagement. Each follower read costs 1 credit, and the
+        engagement adds 1 credit. Signals come from public profiles, so a real person
+        can match. Older followers may differ from the newest ones.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Most followers to read, newest first. Left out, a read takes up to 200 and a
+              low balance reads fewer. A very long read returns what it finished, & coverage
+              shows how many. Its aliases are pageSize, count, max_results, maxItems,
+              max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/users/{id}/follower-audit", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                    },
+                    user_retrieve_follower_audit_params.UserRetrieveFollowerAuditParams,
+                ),
+            ),
+            cast_to=UserRetrieveFollowerAuditResponse,
+        )
+
     async def retrieve_follower_ids(
         self,
         id: str,
@@ -7845,6 +7977,9 @@ class UsersResourceWithRawResponse:
         self.retrieve_batch_tweets = to_raw_response_wrapper(
             users.retrieve_batch_tweets,
         )
+        self.retrieve_follower_audit = to_raw_response_wrapper(
+            users.retrieve_follower_audit,
+        )
         self.retrieve_follower_ids = to_raw_response_wrapper(
             users.retrieve_follower_ids,
         )
@@ -7946,6 +8081,9 @@ class AsyncUsersResourceWithRawResponse:
         )
         self.retrieve_batch_tweets = async_to_raw_response_wrapper(
             users.retrieve_batch_tweets,
+        )
+        self.retrieve_follower_audit = async_to_raw_response_wrapper(
+            users.retrieve_follower_audit,
         )
         self.retrieve_follower_ids = async_to_raw_response_wrapper(
             users.retrieve_follower_ids,
@@ -8049,6 +8187,9 @@ class UsersResourceWithStreamingResponse:
         self.retrieve_batch_tweets = to_streamed_response_wrapper(
             users.retrieve_batch_tweets,
         )
+        self.retrieve_follower_audit = to_streamed_response_wrapper(
+            users.retrieve_follower_audit,
+        )
         self.retrieve_follower_ids = to_streamed_response_wrapper(
             users.retrieve_follower_ids,
         )
@@ -8150,6 +8291,9 @@ class AsyncUsersResourceWithStreamingResponse:
         )
         self.retrieve_batch_tweets = async_to_streamed_response_wrapper(
             users.retrieve_batch_tweets,
+        )
+        self.retrieve_follower_audit = async_to_streamed_response_wrapper(
+            users.retrieve_follower_audit,
         )
         self.retrieve_follower_ids = async_to_streamed_response_wrapper(
             users.retrieve_follower_ids,
