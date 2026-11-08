@@ -11,6 +11,7 @@ import httpx
 import pytest
 
 from tests.utils import send_with_mock_transport
+from x_twitter_scraper import XTwitterScraper
 from x_twitter_scraper.types import PaginatedTweets, ImageFilteredTweets, TopicFilteredTweets
 
 POST: Dict[str, object] = {
@@ -162,6 +163,33 @@ async def test_an_unfiltered_page_stays_a_plain_page(
     )
 
     assert type(page) is PaginatedTweets
+
+
+MISTYPED_POST: Dict[str, object] = {**POST, "likeCount": "many"}
+
+
+@pytest.mark.parametrize(("method", "arguments"), PAGE_READS)
+@pytest.mark.parametrize(
+    ("payload", "expected"),
+    [
+        ({**PAGE, "tweets": [MISTYPED_POST]}, (PaginatedTweets, None)),
+        (
+            {**PAGE, "tweets": [{**MISTYPED_POST, "topicScore": 0.91}], "topicFilter": TOPIC_FILTER},
+            (TopicFilteredTweets, 1),
+        ),
+    ],
+)
+def test_a_page_whose_post_fails_validation_keeps_its_shape(
+    method: str, arguments: Dict[str, object], payload: object, expected: object
+) -> None:
+    transport = httpx.MockTransport(lambda _: httpx.Response(200, json=payload))
+    with XTwitterScraper(
+        api_key="isolated-test", http_client=httpx.Client(transport=transport), _strict_response_validation=False
+    ) as client:
+        page = call(client, method, arguments)
+
+    kept = page.topic_filter.kept if isinstance(page, TopicFilteredTweets) else None
+    assert (type(page), kept) == expected
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
