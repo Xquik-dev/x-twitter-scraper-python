@@ -7,7 +7,7 @@ from __future__ import annotations
 import httpx
 
 from ..._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
-from ..._utils import path_template, maybe_transform, async_maybe_transform
+from ..._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import dm_send_params, dm_delete_message_params, dm_retrieve_history_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -51,6 +51,7 @@ class DmResource(SyncAPIResource):
         user_id: str,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -69,6 +70,11 @@ class DmResource(SyncAPIResource):
 
           account: Connected X account (@username or ID) that sees the DM.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -81,7 +87,11 @@ class DmResource(SyncAPIResource):
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
         if not message_id:
             raise ValueError(f"Expected a non-empty value for `message_id` but received {message_id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._delete(
             path_template("/x/dm/{user_id}/messages/{message_id}", user_id=user_id, message_id=message_id),
             options=make_request_options(
@@ -155,6 +165,7 @@ class DmResource(SyncAPIResource):
         text: str,
         idempotency_key: str,
         media_ids: SequenceNotStr[str] | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -171,6 +182,11 @@ class DmResource(SyncAPIResource):
 
           media_ids: Optional array containing exactly 1 uploaded media ID.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -181,7 +197,11 @@ class DmResource(SyncAPIResource):
         """
         if not user_id:
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._post(
             path_template("/x/dm/{user_id}", user_id=user_id),
             body=maybe_transform(
@@ -225,6 +245,7 @@ class AsyncDmResource(AsyncAPIResource):
         user_id: str,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -243,6 +264,11 @@ class AsyncDmResource(AsyncAPIResource):
 
           account: Connected X account (@username or ID) that sees the DM.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -255,7 +281,11 @@ class AsyncDmResource(AsyncAPIResource):
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
         if not message_id:
             raise ValueError(f"Expected a non-empty value for `message_id` but received {message_id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._delete(
             path_template("/x/dm/{user_id}/messages/{message_id}", user_id=user_id, message_id=message_id),
             options=make_request_options(
@@ -329,6 +359,7 @@ class AsyncDmResource(AsyncAPIResource):
         text: str,
         idempotency_key: str,
         media_ids: SequenceNotStr[str] | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -345,6 +376,11 @@ class AsyncDmResource(AsyncAPIResource):
 
           media_ids: Optional array containing exactly 1 uploaded media ID.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -355,7 +391,11 @@ class AsyncDmResource(AsyncAPIResource):
         """
         if not user_id:
             raise ValueError(f"Expected a non-empty value for `user_id` but received {user_id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._post(
             path_template("/x/dm/{user_id}", user_id=user_id),
             body=await async_maybe_transform(

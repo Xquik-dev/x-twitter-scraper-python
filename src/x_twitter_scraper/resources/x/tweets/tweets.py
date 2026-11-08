@@ -35,7 +35,7 @@ from .bookmark import (
     AsyncBookmarkResourceWithStreamingResponse,
 )
 from ...._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
-from ...._utils import path_template, maybe_transform, async_maybe_transform
+from ...._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from ...._compat import cached_property
 from ....types.x import (
     tweet_list_params,
@@ -130,6 +130,7 @@ class TweetsResource(SyncAPIResource):
         media: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -153,6 +154,11 @@ class TweetsResource(SyncAPIResource):
 
           text: Tweet text (optional when media is provided)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -161,7 +167,11 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._post(
             "/x/tweets",
             body=maybe_transform(
@@ -297,6 +307,7 @@ class TweetsResource(SyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -308,6 +319,11 @@ class TweetsResource(SyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -318,7 +334,11 @@ class TweetsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
@@ -2546,6 +2566,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         media: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2569,6 +2590,11 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           text: Tweet text (optional when media is provided)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -2577,7 +2603,11 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._post(
             "/x/tweets",
             body=await async_maybe_transform(
@@ -2713,6 +2743,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2724,6 +2755,11 @@ class AsyncTweetsResource(AsyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -2734,7 +2770,11 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=await async_maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
