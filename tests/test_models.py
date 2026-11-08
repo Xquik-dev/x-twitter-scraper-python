@@ -284,11 +284,10 @@ def test_nested_union_invalid_data() -> None:
     assert cast(object, m.foo) is True
 
     m = Model.construct(foo={"name": 3})
+    assert isinstance(m.foo, NamedModel)
     if PYDANTIC_V1:
-        assert isinstance(m.foo, NamedModel)
         assert m.foo.name == "3"
     else:
-        assert isinstance(m.foo, LevelModel)
         assert cast(ExtraName, m.foo).name == 3
 
 
