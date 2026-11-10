@@ -1,47 +1,45 @@
 # SPDX-FileCopyrightText: 2026 Xquik contributors
-#
 # SPDX-License-Identifier: Apache-2.0
 
 from __future__ import annotations
 
-import httpx
 import pytest
 
-from x_twitter_scraper import ConflictError, XTwitterScraper
-from x_twitter_scraper.types import Error
-from x_twitter_scraper._models import validate_type
-from x_twitter_scraper.types.shared.error import ErrorValueStructuredError
-
-MESSAGE = "A top-up is already running. Check your balance before you try again."
-
-
-def conflict_error(body: object) -> Error:
-    transport = httpx.MockTransport(lambda _request: httpx.Response(409, json=body))
-    http_client = httpx.Client(transport=transport)
-    with XTwitterScraper(api_key="isolated-test", http_client=http_client, max_retries=0) as client:
-        with pytest.raises(ConflictError) as raised:
-            client.credits.topup_balance(dollars=10)
-    return validate_type(type_=Error, value=raised.value.body)
+from x_twitter_scraper._compat import parse_obj
+from x_twitter_scraper.types.shared.error import Error, ErrorValueStructuredError
 
 
 @pytest.mark.parametrize(
     "code",
     [
-        "contributor_not_found",
-        "invalid_contributor_alias",
-        "invalid_news_id",
-        "news_not_found",
-        "session_required",
-        "topup_in_progress",
-        "x_video_too_large",
+        "api_key_expired",
+        "api_key_paused",
+        "api_key_budget_reached",
+        "api_key_revoked",
+        "ip_not_allowed",
+        "insufficient_scope",
+        "media_unavailable",
+        "extraction_terminal",
+        "post_unavailable",
+        "price_changed",
+        "x_community_creation_closed",
     ],
 )
-def test_error_body_reads_each_code_the_api_documents(code: str) -> None:
-    legacy = conflict_error({"error": code, "message": MESSAGE})
-    structured = conflict_error({"error": {"code": code, "message": MESSAGE, "type": "invalid_request_error"}})
+def test_an_error_reads_each_code_the_api_added(code: str) -> None:
+    assert parse_obj(Error, {"error": code}).error == code
 
-    assert legacy.error == code
-    assert legacy.message == MESSAGE
-    assert isinstance(structured.error, ErrorValueStructuredError)
-    assert structured.error.code == code
-    assert structured.error.message == MESSAGE
+    structured = parse_obj(Error, {"error": {"code": code, "message": "m", "type": "api_error"}}).error
+    assert isinstance(structured, ErrorValueStructuredError)
+    assert structured.code == code
+
+
+@pytest.mark.parametrize("scope", ["write", "monitors", "exports", "billing", "full"])
+def test_an_insufficient_scope_error_names_the_scope_it_needs(scope: str) -> None:
+    error = parse_obj(Error, {"error": "insufficient_scope", "requiredScope": scope})
+
+    assert error.required_scope == scope
+
+
+def test_an_error_rejects_a_scope_the_api_does_not_list() -> None:
+    with pytest.raises(ValueError):
+        parse_obj(Error, {"error": "insufficient_scope", "requiredScope": "admin"})

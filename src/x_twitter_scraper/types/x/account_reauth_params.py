@@ -13,6 +13,12 @@ class AccountReauthParams(TypedDict, total=False):
     password: Required[str]
     """Updated account password"""
 
+    connection_attempt_id: str
+    """An ID you generate to read this reconnect's status, even if the response never reaches you.
+
+    Leave it out to get one in a pending response.
+    """
+
     email: str
     """Email for the X account (updates stored email)"""
 

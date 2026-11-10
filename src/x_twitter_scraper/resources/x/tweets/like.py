@@ -6,8 +6,8 @@ from __future__ import annotations
 
 import httpx
 
-from ...._types import Body, Omit, Query, Headers, NotGiven, not_given
-from ...._utils import path_template, maybe_transform, async_maybe_transform
+from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
+from ...._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from ...._compat import cached_property
 from ...._resource import SyncAPIResource, AsyncAPIResource
 from ...._response import (
@@ -51,6 +51,7 @@ class LikeResource(SyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -62,6 +63,11 @@ class LikeResource(SyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -72,7 +78,11 @@ class LikeResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._post(
             path_template("/x/tweets/{id}/like", id=id),
             body=maybe_transform({"account": account}, like_create_params.LikeCreateParams),
@@ -88,6 +98,7 @@ class LikeResource(SyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -99,6 +110,11 @@ class LikeResource(SyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -109,7 +125,11 @@ class LikeResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._delete(
             path_template("/x/tweets/{id}/like", id=id),
             body=maybe_transform({"account": account}, like_delete_params.LikeDeleteParams),
@@ -147,6 +167,7 @@ class AsyncLikeResource(AsyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -158,6 +179,11 @@ class AsyncLikeResource(AsyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -168,7 +194,11 @@ class AsyncLikeResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._post(
             path_template("/x/tweets/{id}/like", id=id),
             body=await async_maybe_transform({"account": account}, like_create_params.LikeCreateParams),
@@ -184,6 +214,7 @@ class AsyncLikeResource(AsyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -195,6 +226,11 @@ class AsyncLikeResource(AsyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -205,7 +241,11 @@ class AsyncLikeResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._delete(
             path_template("/x/tweets/{id}/like", id=id),
             body=await async_maybe_transform({"account": account}, like_delete_params.LikeDeleteParams),

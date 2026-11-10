@@ -10,7 +10,7 @@ import httpx
 
 from ..._files import deepcopy_with_paths
 from ..._types import Body, Omit, Query, Headers, NotGiven, FileTypes, omit, not_given
-from ..._utils import extract_files, required_args, maybe_transform, async_maybe_transform
+from ..._utils import extract_files, required_args, maybe_transform, strip_not_given, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import profile_update_params, profile_update_avatar_params, profile_update_banner_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -58,6 +58,7 @@ class ProfileResource(SyncAPIResource):
         location: str | Omit = omit,
         name: str | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -77,6 +78,11 @@ class ProfileResource(SyncAPIResource):
 
           url: Website URL
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -85,7 +91,11 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._patch(
             "/x/profile",
             body=maybe_transform(
@@ -112,6 +122,7 @@ class ProfileResource(SyncAPIResource):
         idempotency_key: str,
         file: FileTypes | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -127,6 +138,11 @@ class ProfileResource(SyncAPIResource):
 
           url: HTTPS URL to the avatar image to download. Send url or file.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -135,7 +151,11 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -165,6 +185,7 @@ class ProfileResource(SyncAPIResource):
         idempotency_key: str,
         file: FileTypes | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -180,6 +201,11 @@ class ProfileResource(SyncAPIResource):
 
           url: HTTPS URL to the banner image to download. Send url or file.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -188,7 +214,11 @@ class ProfileResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -241,6 +271,7 @@ class AsyncProfileResource(AsyncAPIResource):
         location: str | Omit = omit,
         name: str | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -260,6 +291,11 @@ class AsyncProfileResource(AsyncAPIResource):
 
           url: Website URL
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -268,7 +304,11 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._patch(
             "/x/profile",
             body=await async_maybe_transform(
@@ -295,6 +335,7 @@ class AsyncProfileResource(AsyncAPIResource):
         idempotency_key: str,
         file: FileTypes | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -310,6 +351,11 @@ class AsyncProfileResource(AsyncAPIResource):
 
           url: HTTPS URL to the avatar image to download. Send url or file.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -318,7 +364,11 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -348,6 +398,7 @@ class AsyncProfileResource(AsyncAPIResource):
         idempotency_key: str,
         file: FileTypes | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -363,6 +414,11 @@ class AsyncProfileResource(AsyncAPIResource):
 
           url: HTTPS URL to the banner image to download. Send url or file.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -371,7 +427,11 @@ class AsyncProfileResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "account": account,

@@ -23,7 +23,7 @@ class UserRetrieveShadowbanParams(TypedDict, total=False):
     limit: int
     """Recent posts to read for the timeline, engagement & reply checks.
 
-    The read stops at this count, at the end of the timeline or after about 40
+    The read stops at this count, at the account's oldest post or after about 40
     seconds.
     """
 

@@ -84,6 +84,7 @@ from ._compat import (
     get_model_config,
     get_model_fields,
     field_get_default,
+    field_is_required,
 )
 from ._constants import RAW_RESPONSE_HEADER
 
@@ -558,6 +559,17 @@ def build(
     return cast(_BaseModelT, construct_type(type_=base_model_cls, value=kwargs))
 
 
+def _model_variant_with_required_keys(variants: tuple[object, ...], value: AnyMapping) -> object | None:
+    for variant in variants:
+        model = cast(type, variant)
+        if not is_basemodel_type(model):
+            continue
+        fields = get_model_fields(model)
+        if all((field.alias or name) in value for name, field in fields.items() if field_is_required(field)):
+            return model
+    return None
+
+
 def construct_type_unchecked(*, value: object, type_: type[_T]) -> _T:
     return cast(_T, construct_type(value=value, type_=type_))
 
@@ -595,6 +607,11 @@ def construct_type(*, value: object, type_: object, metadata: Optional[List[Any]
                 variant_type = discriminator.mapping.get(variant_value)
                 if variant_type:
                     return construct_type(type_=variant_type, value=value)
+
+        if is_mapping(value):
+            fitting_variant = _model_variant_with_required_keys(args, value)
+            if fitting_variant is not None:
+                return construct_type(value=value, type_=fitting_variant)
 
         for variant in args:
             try:

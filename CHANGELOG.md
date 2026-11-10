@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- `client.x.users.retrieve_batch_tweets` takes `page_size` up to 300 posts per user.
+- `client.monitors.upsert_by_username` creates the monitor for an account, or updates it if it exists, so the same call twice still leaves 1 monitor. `created` says which one ran.
+- `client.x.media.download` returns `unprocessed_tweet_ids`, the posts Xquik had no time to read, at no charge. Send them again.
+- `sample` on user insights and follower audits returns `read`, the posts the read covered with reposts and the pinned post included. `posts` counts the ones the averages used, so it can be lower.
+- The 25 write methods, such as `client.x.tweets.create` & `client.x.dm.send`, take `prefer`. `wait=50` asks for the answer within 50 seconds, and a write still running then answers 202 with a status link.
+- `Error` returns `required_scope`, the scope an API key needs after `insufficient_scope`, and its code type lists the API's 11 newer error codes, such as `price_changed` & `x_community_creation_closed`.
+- `client.x.users.retrieve_follower_audit` audits an account's newest followers. It gives each one a class, a score & its signals, and grades them A to F. Each follower read costs 1 credit, and the account's engagement adds 1.
 - The 6 `x.analysis` methods take `images` in `analysis`. The AI reads up to 4 images per post at no extra cost, and `False` keeps it to the text.
 - `context_availability.media` returns `images` when the AI read the post's images.
 - `ExtractionJob` and the accepted `extractions.run` response return `url`, the job's dashboard page with every row as a file.
@@ -14,10 +21,20 @@
 - Article reads return `unknown_counts`, the counts X did not send, so each 0 means unknown.
 - Extraction results return `is_deleted` on a post its author deleted after Xquik saw it.
 - `client.x.users.retrieve_insights` and `retrieve_shadowban` take `limit`, the recent posts to read.
+- Extraction tool types gain `user_affiliates`.
 - Extraction results return `quoted_media`, `quoted_post`, `quoted_possibly_sensitive` & `possibly_sensitive` with `outputPreset=flat`.
 - `PostMonitor.author_affiliate` returns the organization badge X shows beside the author's name.
 - `monitors.posts.create` takes `is_active`. Send `False` to create the monitor paused.
 - `q` is optional on `client.x.tweets.search` when `from_user`, `keywords` or another field forms the search.
+- `client.x.tweets.search`, `client.x.users.retrieve_tweets`, `retrieve_replies` & `retrieve_media` take `topic` & `image_shows`. AI-powered analysis keeps only the posts about the topic, or whose photos show what you name.
+- A filtered page returns `TopicFilteredTweets` or `ImageFilteredTweets`, with each post's `topic_score` or `image_score` and a `topic_filter` or `image_filter` that states the cutoff & counts. Both subclass `PaginatedTweets`, so code typed for a plain page keeps working.
+- `extractions.run` & `estimate_cost` take `topic` or `image_shows`, and `ExtractionJob` returns `topic_filter` or `image_filter`.
+- `client.x.media.download` takes `image_shows` to save only the posts whose photos show it, and returns `image_filter`.
+- `client.x.account_connection_links.create` makes a link to a page Xquik hosts, where a person connects an X account with no Xquik signup. `retrieve` reads the link & its status, and `delete` revokes it. Treat `url` as a secret, since it holds the token.
+- `client.x.accounts.create` & `reauth` take `connection_attempt_id`, an ID you generate to read the attempt's status even if the response never reaches you. A finished attempt returns `account_id`.
+- `client.x.accounts.reauth` now returns the same 3 answers as `create`, so `AccountReauthResponse` is that union. A sign-in still running or waiting on an email code no longer reads as an active account, so check `status` before you read `x_username`.
+- `client.x.tweets.create` takes `media_ids`, the IDs that `client.x.media.upload` returns. Send `media` or `media_ids`, not both.
+- `Error.code` gains `media_not_uploaded`.
 
 ## 0.20.0 (2026-11-04)
 

@@ -35,7 +35,7 @@ from .bookmark import (
     AsyncBookmarkResourceWithStreamingResponse,
 )
 from ...._types import Body, Omit, Query, Headers, NotGiven, SequenceNotStr, omit, not_given
-from ...._utils import path_template, maybe_transform, async_maybe_transform
+from ...._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from ...._compat import cached_property
 from ....types.x import (
     tweet_list_params,
@@ -128,8 +128,10 @@ class TweetsResource(SyncAPIResource):
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
+        media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -149,9 +151,17 @@ class TweetsResource(SyncAPIResource):
           media: Publicly reachable URLs of up to 4 images or exactly 1 MP4 video up to 100 MB.
               Media adds 2 credits per started MB across all files.
 
+          media_ids: Media IDs from `client.x.media.upload`, uploaded with this account. IDs last 24 hours.
+              Send up to 4 image IDs or exactly 1 video ID. Send `media` or `media_ids`, not both.
+
           reply_to_tweet_id: The post to reply to. Any X post ID works, from 1 to 19 digits.
 
           text: Tweet text (optional when media is provided)
+
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
 
           extra_headers: Send extra headers
 
@@ -161,7 +171,11 @@ class TweetsResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._post(
             "/x/tweets",
             body=maybe_transform(
@@ -170,6 +184,7 @@ class TweetsResource(SyncAPIResource):
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
+                    "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
                     "text": text,
                 },
@@ -249,7 +264,7 @@ class TweetsResource(SyncAPIResource):
         Returns public tweet records for the requested IDs.
 
         Args:
-          ids: 1 to 100 posts, separated by commas. Each is a tweet ID or a tweet URL, such as
+          ids: Posts, separated by commas. Each is a tweet ID or a tweet URL, such as
               x.com/nasa/status/20. A post named twice is read once. Any other entry is
               skipped & listed under `skipped` with why. A batch without 1 post gets 400
               `invalid_tweet_id`.
@@ -297,6 +312,7 @@ class TweetsResource(SyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -308,6 +324,11 @@ class TweetsResource(SyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -318,7 +339,11 @@ class TweetsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
@@ -2116,6 +2141,7 @@ class TweetsResource(SyncAPIResource):
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -2155,6 +2181,7 @@ class TweetsResource(SyncAPIResource):
         since_time: str | Omit = omit,
         source: str | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -2223,6 +2250,13 @@ class TweetsResource(SyncAPIResource):
               charges nothing.
 
           hashtags: Hashtags separated by spaces, commas, or lines.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -2319,6 +2353,12 @@ class TweetsResource(SyncAPIResource):
               appears outside the author's name and username, such as in its text, a link, its card
               or a quoted post.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date as a UTC day, inclusive, so its own posts count. It takes the same date
@@ -2372,6 +2412,7 @@ class TweetsResource(SyncAPIResource):
                             "from_user": from_user,
                             "geocode": geocode,
                             "hashtags": hashtags,
+                            "image_shows": image_shows,
                             "in_reply_to_tweet_id": in_reply_to_tweet_id,
                             "keywords": keywords,
                             "language": language,
@@ -2410,6 +2451,7 @@ class TweetsResource(SyncAPIResource):
                             "since_time": since_time,
                             "source": source,
                             "text_only_terms": text_only_terms,
+                            "topic": topic,
                             "to_user": to_user,
                             "until_date": until_date,
                             "until_time": until_time,
@@ -2527,8 +2569,10 @@ class AsyncTweetsResource(AsyncAPIResource):
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
+        media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2548,9 +2592,17 @@ class AsyncTweetsResource(AsyncAPIResource):
           media: Publicly reachable URLs of up to 4 images or exactly 1 MP4 video up to 100 MB.
               Media adds 2 credits per started MB across all files.
 
+          media_ids: Media IDs from `client.x.media.upload`, uploaded with this account. IDs last 24 hours.
+              Send up to 4 image IDs or exactly 1 video ID. Send `media` or `media_ids`, not both.
+
           reply_to_tweet_id: The post to reply to. Any X post ID works, from 1 to 19 digits.
 
           text: Tweet text (optional when media is provided)
+
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
 
           extra_headers: Send extra headers
 
@@ -2560,7 +2612,11 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._post(
             "/x/tweets",
             body=await async_maybe_transform(
@@ -2569,6 +2625,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
+                    "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
                     "text": text,
                 },
@@ -2648,7 +2705,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         Returns public tweet records for the requested IDs.
 
         Args:
-          ids: 1 to 100 posts, separated by commas. Each is a tweet ID or a tweet URL, such as
+          ids: Posts, separated by commas. Each is a tweet ID or a tweet URL, such as
               x.com/nasa/status/20. A post named twice is read once. Any other entry is
               skipped & listed under `skipped` with why. A batch without 1 post gets 400
               `invalid_tweet_id`.
@@ -2696,6 +2753,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -2707,6 +2765,11 @@ class AsyncTweetsResource(AsyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -2717,7 +2780,11 @@ class AsyncTweetsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._delete(
             path_template("/x/tweets/{id}", id=id),
             body=await async_maybe_transform({"account": account}, tweet_delete_params.TweetDeleteParams),
@@ -4515,6 +4582,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -4554,6 +4622,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         since_time: str | Omit = omit,
         source: str | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -4622,6 +4691,13 @@ class AsyncTweetsResource(AsyncAPIResource):
               charges nothing.
 
           hashtags: Hashtags separated by spaces, commas, or lines.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -4718,6 +4794,12 @@ class AsyncTweetsResource(AsyncAPIResource):
               appears outside the author's name and username, such as in its text, a link, its card
               or a quoted post.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date as a UTC day, inclusive, so its own posts count. It takes the same date
@@ -4771,6 +4853,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                             "from_user": from_user,
                             "geocode": geocode,
                             "hashtags": hashtags,
+                            "image_shows": image_shows,
                             "in_reply_to_tweet_id": in_reply_to_tweet_id,
                             "keywords": keywords,
                             "language": language,
@@ -4809,6 +4892,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                             "since_time": since_time,
                             "source": source,
                             "text_only_terms": text_only_terms,
+                            "topic": topic,
                             "to_user": to_user,
                             "until_date": until_date,
                             "until_time": until_time,

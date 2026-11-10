@@ -20,10 +20,16 @@ from .shared import (
     CommunityTopic as CommunityTopic,
     PaginatedUsers as PaginatedUsers,
     PaginatedTweets as PaginatedTweets,
+    ImageScoredTweet as ImageScoredTweet,
     LiveEventContext as LiveEventContext,
     SoftIntervention as SoftIntervention,
+    TopicScoredTweet as TopicScoredTweet,
     ContentDisclosure as ContentDisclosure,
     CommunityAnalytics as CommunityAnalytics,
+    ImageFilterSummary as ImageFilterSummary,
+    TopicFilterSummary as TopicFilterSummary,
+    ImageFilteredTweets as ImageFilteredTweets,
+    TopicFilteredTweets as TopicFilteredTweets,
     CommunityAnalyticsMetric as CommunityAnalyticsMetric,
 )
 from .winner import Winner as Winner
@@ -126,8 +132,10 @@ from .extraction_export_results_params import ExtractionExportResultsParams as E
 from .webhook_list_deliveries_response import WebhookListDeliveriesResponse as WebhookListDeliveriesResponse
 from .x_get_news_story_versions_params import XGetNewsStoryVersionsParams as XGetNewsStoryVersionsParams
 from .extraction_estimate_cost_response import ExtractionEstimateCostResponse as ExtractionEstimateCostResponse
+from .monitor_upsert_by_username_params import MonitorUpsertByUsernameParams as MonitorUpsertByUsernameParams
 from .x_get_news_story_versions_response import XGetNewsStoryVersionsResponse as XGetNewsStoryVersionsResponse
 from .credit_retrieve_topup_status_params import CreditRetrieveTopupStatusParams as CreditRetrieveTopupStatusParams
+from .monitor_upsert_by_username_response import MonitorUpsertByUsernameResponse as MonitorUpsertByUsernameResponse
 from .webhook_create_telegram_link_params import WebhookCreateTelegramLinkParams as WebhookCreateTelegramLinkParams
 from .credit_redirect_topup_checkout_params import (
     CreditRedirectTopupCheckoutParams as CreditRedirectTopupCheckoutParams,

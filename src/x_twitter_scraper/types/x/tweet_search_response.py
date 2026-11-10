@@ -7,6 +7,8 @@ from pydantic import Field as FieldInfo
 from ..._models import BaseModel
 from ..shared.search_tweet import SearchTweet
 from ..shared.paginated_tweets import PaginatedTweets
+from ..shared.image_filtered_tweets import ImageFilteredTweets
+from ..shared.topic_filtered_tweets import TopicFilteredTweets
 
 __all__ = [
     "TweetSearchResponse",
@@ -109,4 +111,6 @@ class TweetSearchCoverageResponse(PaginatedTweets):
     next_cursor: Optional[Literal[""]] = None  # type: ignore
 
 
-TweetSearchResponse: TypeAlias = Union[PaginatedTweets, TweetSearchCoverageResponse]
+TweetSearchResponse: TypeAlias = Union[
+    TopicFilteredTweets, ImageFilteredTweets, PaginatedTweets, TweetSearchCoverageResponse
+]

@@ -10,7 +10,7 @@ import httpx
 
 from ..._files import deepcopy_with_paths
 from ..._types import Body, Omit, Query, Headers, NotGiven, FileTypes, SequenceNotStr, omit, not_given
-from ..._utils import extract_files, required_args, maybe_transform, async_maybe_transform
+from ..._utils import extract_files, required_args, maybe_transform, strip_not_given, async_maybe_transform
 from ..._compat import cached_property
 from ...types.x import media_upload_params, media_download_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
@@ -49,6 +49,7 @@ class MediaResource(SyncAPIResource):
     def download(
         self,
         *,
+        image_shows: str | Omit = omit,
         tweet_id: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
@@ -62,10 +63,18 @@ class MediaResource(SyncAPIResource):
         Downloads images and videos attached to selected tweets.
 
         Args:
+          image_shows: Save only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Each post saved costs 2 credits, the AI analysis price, on top of its save
+              price, & a post the filter drops costs nothing. imageFilter states the cutoff &
+              counts.
+
           tweet_id: Numeric tweet ID alias for tweetInput
 
-          tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
-              `invalid_tweet_id`, which says which item.
+          tweet_ids: Tweet URLs or IDs. An item that names no post gets 400 `invalid_tweet_id`, which
+              says which item. Posts Xquik had no time to read come back in
+              `unprocessedTweetIds`, with no charge. Send them again.
 
           tweet_input: Tweet URL or ID (single tweet)
 
@@ -83,6 +92,7 @@ class MediaResource(SyncAPIResource):
             "/x/media/download",
             body=maybe_transform(
                 {
+                    "image_shows": image_shows,
                     "tweet_id": tweet_id,
                     "tweet_ids": tweet_ids,
                     "tweet_input": tweet_input,
@@ -105,6 +115,7 @@ class MediaResource(SyncAPIResource):
         file: FileTypes | Omit = omit,
         is_long_video: bool | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -124,6 +135,11 @@ class MediaResource(SyncAPIResource):
           url: HTTPS URL to download and upload as media, up to 15 MB. Another scheme gets 400
               `invalid_media_url`. Send url or file.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -132,7 +148,11 @@ class MediaResource(SyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "account": account,
@@ -178,6 +198,7 @@ class AsyncMediaResource(AsyncAPIResource):
     async def download(
         self,
         *,
+        image_shows: str | Omit = omit,
         tweet_id: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         tweet_input: str | Omit = omit,
@@ -191,10 +212,18 @@ class AsyncMediaResource(AsyncAPIResource):
         Downloads images and videos attached to selected tweets.
 
         Args:
+          image_shows: Save only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Each post saved costs 2 credits, the AI analysis price, on top of its save
+              price, & a post the filter drops costs nothing. imageFilter states the cutoff &
+              counts.
+
           tweet_id: Numeric tweet ID alias for tweetInput
 
-          tweet_ids: Up to 50 tweet URLs or IDs. An item that names no post gets 400
-              `invalid_tweet_id`, which says which item.
+          tweet_ids: Tweet URLs or IDs. An item that names no post gets 400 `invalid_tweet_id`, which
+              says which item. Posts Xquik had no time to read come back in
+              `unprocessedTweetIds`, with no charge. Send them again.
 
           tweet_input: Tweet URL or ID (single tweet)
 
@@ -212,6 +241,7 @@ class AsyncMediaResource(AsyncAPIResource):
             "/x/media/download",
             body=await async_maybe_transform(
                 {
+                    "image_shows": image_shows,
                     "tweet_id": tweet_id,
                     "tweet_ids": tweet_ids,
                     "tweet_input": tweet_input,
@@ -234,6 +264,7 @@ class AsyncMediaResource(AsyncAPIResource):
         file: FileTypes | Omit = omit,
         is_long_video: bool | Omit = omit,
         url: str | Omit = omit,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -253,6 +284,11 @@ class AsyncMediaResource(AsyncAPIResource):
           url: HTTPS URL to download and upload as media, up to 15 MB. Another scheme gets 400
               `invalid_media_url`. Send url or file.
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -261,7 +297,11 @@ class AsyncMediaResource(AsyncAPIResource):
 
           timeout: Override the client-level default timeout for this request, in seconds
         """
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         body = deepcopy_with_paths(
             {
                 "account": account,

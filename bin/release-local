@@ -77,8 +77,13 @@ if git rev-parse --quiet --verify "refs/tags/$tag" >/dev/null; then
   fail "Local tag $tag is not on origin. Delete it with git tag -d $tag, then rerun."
 fi
 
-step "Running bin/check-local."
-bin/check-local
+step "Finding the last release to compare coverage with."
+last_release="$(git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD)" ||
+  fail "No release tag is reachable from HEAD. Run git fetch --tags, then rerun."
+last_release_commit="$(git rev-parse --verify "$last_release^{commit}")"
+
+step "Running bin/check-local against $last_release."
+bin/check-local "$last_release_commit"
 [[ -z "$(git status --porcelain)" && "$(git rev-parse HEAD)" == "$revision" ]] ||
   fail "The checks changed the tree. Review and commit the changes, then rerun."
 

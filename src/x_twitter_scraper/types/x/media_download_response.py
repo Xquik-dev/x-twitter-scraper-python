@@ -9,6 +9,7 @@ from typing_extensions import Literal
 from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
+from ..shared.image_filter_summary import ImageFilterSummary
 
 __all__ = ["MediaDownloadResponse", "Item", "ItemQuality"]
 
@@ -80,11 +81,20 @@ class MediaDownloadResponse(BaseModel):
 
     gallery_url: Optional[str] = FieldInfo(alias="galleryUrl", default=None)
 
+    image_filter: Optional[ImageFilterSummary] = FieldInfo(alias="imageFilter", default=None)
+    """What the image filter asked & how many posts it kept."""
+
     items: Optional[List[Item]] = None
-    """The post's files saved to your gallery. Single downloads only."""
+    """The post's files saved to your gallery.
+
+    Single downloads only. Empty when imageShows kept no photo.
+    """
 
     total_media: Optional[int] = FieldInfo(alias="totalMedia", default=None)
 
     total_tweets: Optional[int] = FieldInfo(alias="totalTweets", default=None)
 
     tweet_id: Optional[str] = FieldInfo(alias="tweetId", default=None)
+
+    unprocessed_tweet_ids: Optional[List[str]] = FieldInfo(alias="unprocessedTweetIds", default=None)
+    """Posts Xquik had no time to read, at no charge. Send them again."""

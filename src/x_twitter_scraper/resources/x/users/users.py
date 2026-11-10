@@ -35,7 +35,7 @@ from .follow import (
     AsyncFollowResourceWithStreamingResponse,
 )
 from ...._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
-from ...._utils import path_template, maybe_transform, async_maybe_transform
+from ...._utils import path_template, maybe_transform, strip_not_given, async_maybe_transform
 from ...._compat import cached_property
 from ....types.x import (
     user_retrieve_params,
@@ -62,6 +62,7 @@ from ....types.x import (
     user_retrieve_follower_ids_params,
     user_retrieve_following_ids_params,
     user_retrieve_subscriptions_params,
+    user_retrieve_follower_audit_params,
     user_retrieve_list_memberships_params,
     user_retrieve_followers_you_know_params,
     user_retrieve_verified_followers_params,
@@ -83,13 +84,17 @@ from ....types.x.user_retrieve_live_response import UserRetrieveLiveResponse
 from ....types.x.user_translate_bio_response import UserTranslateBioResponse
 from ....types.x.user_retrieve_batch_response import UserRetrieveBatchResponse
 from ....types.x.user_retrieve_lists_response import UserRetrieveListsResponse
+from ....types.x.user_retrieve_media_response import UserRetrieveMediaResponse
 from ....types.x.user_remove_follower_response import UserRemoveFollowerResponse
+from ....types.x.user_retrieve_tweets_response import UserRetrieveTweetsResponse
+from ....types.x.user_retrieve_replies_response import UserRetrieveRepliesResponse
 from ....types.x.user_retrieve_insights_response import UserRetrieveInsightsResponse
 from ....types.x.user_retrieve_followers_response import UserRetrieveFollowersResponse
 from ....types.x.user_retrieve_following_response import UserRetrieveFollowingResponse
 from ....types.x.user_retrieve_batch_tweets_response import UserRetrieveBatchTweetsResponse
 from ....types.x.user_retrieve_follower_ids_response import UserRetrieveFollowerIdsResponse
 from ....types.x.user_retrieve_following_ids_response import UserRetrieveFollowingIdsResponse
+from ....types.x.user_retrieve_follower_audit_response import UserRetrieveFollowerAuditResponse
 from ....types.x.user_retrieve_list_memberships_response import UserRetrieveListMembershipsResponse
 from ....types.x.user_retrieve_verified_followers_response import UserRetrieveVerifiedFollowersResponse
 
@@ -189,6 +194,7 @@ class UsersResource(SyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -200,6 +206,11 @@ class UsersResource(SyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -210,7 +221,11 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return self._post(
             path_template("/x/users/{id}/remove-follower", id=id),
             body=maybe_transform({"account": account}, user_remove_follower_params.UserRemoveFollowerParams),
@@ -603,7 +618,7 @@ class UsersResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchResponse:
-        """Returns public profiles for up to 100 user IDs, usernames or profile links.
+        """Returns public profiles for user IDs, usernames or profile links.
 
         Send
         ids or usernames, not both. Each returned profile costs 1 credit.
@@ -632,7 +647,7 @@ class UsersResource(SyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric user IDs. Duplicate IDs are ignored while
               preserving first-seen order.
 
           location_contains: Match a location substring, ignoring case.
@@ -657,7 +672,7 @@ class UsersResource(SyncAPIResource):
           username_contains: Match a username substring, ignoring case.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-100 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           verified_only: Only return verified profiles.
@@ -724,7 +739,7 @@ class UsersResource(SyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchTweetsResponse:
         """
-        Returns the newest posts of up to 20 users, named by user ID, username or
+        Returns the newest posts of users named by user ID, username or
         profile link, in the order named. Send ids or usernames, not both. Each post
         costs 1 credit. A user in unavailable_ids or unprocessed_ids costs nothing.
 
@@ -736,17 +751,17 @@ class UsersResource(SyncAPIResource):
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
 
-          ids: Comma-separated numeric user IDs (1-20 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric IDs of the users to read posts from. Duplicate IDs are ignored while
               preserving first-seen order.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
-          page_size: Posts per user (1-20, default 20). Credits can return fewer. Aliases: limit,
+          page_size: Posts per user (1-300, default 20). Credits can return fewer. Aliases: limit,
               count, max_results, maxItems, max_items & per_page.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-20 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           extra_headers: Send extra headers
@@ -776,6 +791,71 @@ class UsersResource(SyncAPIResource):
                 ),
             ),
             cast_to=UserRetrieveBatchTweetsResponse,
+        )
+
+    def retrieve_follower_audit(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveFollowerAuditResponse:
+        """
+        Reads the newest followers of a public account & returns a follower audit. It
+        gives each follower 1 class with its score & signals, then adds coverage, a
+        quality score, signal counts, arrival bands, join cohorts, countries, top
+        followers & the account's engagement. Each follower read costs 1 credit, and the
+        engagement adds 1 credit. Signals come from public profiles, so a real person
+        can match. Older followers may differ from the newest ones.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Most followers to read, newest first. Left out, a read takes up to 200 and a
+              low balance reads fewer. A very long read returns what it finished, & coverage
+              shows how many. Its aliases are pageSize, count, max_results, maxItems,
+              max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return self._get(
+            path_template("/x/users/{id}/follower-audit", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                    },
+                    user_retrieve_follower_audit_params.UserRetrieveFollowerAuditParams,
+                ),
+            ),
+            cast_to=UserRetrieveFollowerAuditResponse,
         )
 
     def retrieve_follower_ids(
@@ -1594,8 +1674,8 @@ class UsersResource(SyncAPIResource):
               named fields.
 
           limit: Recent posts to read for the averages and rates. The read stops at this count,
-              at the end of the timeline or after about 40 seconds, and `sample.posts` says how
-              many it read.
+              at the account's oldest post or after about 40 seconds. `sample.read` says how
+              many it read, and `sample.posts` how many of those the averages used.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
@@ -2079,6 +2159,7 @@ class UsersResource(SyncAPIResource):
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
         max_faves: int | Omit = omit,
@@ -2109,6 +2190,7 @@ class UsersResource(SyncAPIResource):
         since_date: Union[str, date] | Omit = omit,
         since_id: str | Omit = omit,
         source: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         url: str | Omit = omit,
@@ -2119,7 +2201,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> UserRetrieveMediaResponse:
         """
         Returns public media posts from the selected user.
 
@@ -2156,6 +2238,13 @@ class UsersResource(SyncAPIResource):
           geocode: Match latitude, longitude, and radius.
 
           hashtags: Hashtags separated by spaces, commas, or lines.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -2220,6 +2309,12 @@ class UsersResource(SyncAPIResource):
 
           source: Match the source application.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
@@ -2243,68 +2338,73 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get(
-            path_template("/x/users/{id}/media", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform(
-                    {
-                        "any_words": any_words,
-                        "blue_verified_only": blue_verified_only,
-                        "card_name": card_name,
-                        "cashtags": cashtags,
-                        "conversation_id": conversation_id,
-                        "cursor": cursor,
-                        "exact_phrase": exact_phrase,
-                        "exclude_source": exclude_source,
-                        "exclude_words": exclude_words,
-                        "fields": fields,
-                        "from_user": from_user,
-                        "geocode": geocode,
-                        "hashtags": hashtags,
-                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                        "language": language,
-                        "max_faves": max_faves,
-                        "max_id": max_id,
-                        "max_quotes": max_quotes,
-                        "max_replies": max_replies,
-                        "max_retweets": max_retweets,
-                        "media_type": media_type,
-                        "mentioning": mentioning,
-                        "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
-                        "min_quotes": min_quotes,
-                        "min_replies": min_replies,
-                        "min_retweets": min_retweets,
-                        "min_views": min_views,
-                        "native_retweets": native_retweets,
-                        "near": near,
-                        "news": news,
-                        "omit": omit,
-                        "page_size": page_size,
-                        "quotes": quotes,
-                        "quotes_of_tweet_id": quotes_of_tweet_id,
-                        "replies": replies,
-                        "retweets": retweets,
-                        "retweets_of_tweet_id": retweets_of_tweet_id,
-                        "safe": safe,
-                        "since_date": since_date,
-                        "since_id": since_id,
-                        "source": source,
-                        "to_user": to_user,
-                        "until_date": until_date,
-                        "url": url,
-                        "verified_only": verified_only,
-                        "within": within,
-                        "within_time": within_time,
-                    },
-                    user_retrieve_media_params.UserRetrieveMediaParams,
+        return cast(
+            UserRetrieveMediaResponse,
+            self._get(
+                path_template("/x/users/{id}/media", id=id),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=maybe_transform(
+                        {
+                            "any_words": any_words,
+                            "blue_verified_only": blue_verified_only,
+                            "card_name": card_name,
+                            "cashtags": cashtags,
+                            "conversation_id": conversation_id,
+                            "cursor": cursor,
+                            "exact_phrase": exact_phrase,
+                            "exclude_source": exclude_source,
+                            "exclude_words": exclude_words,
+                            "fields": fields,
+                            "from_user": from_user,
+                            "geocode": geocode,
+                            "hashtags": hashtags,
+                            "image_shows": image_shows,
+                            "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                            "language": language,
+                            "max_faves": max_faves,
+                            "max_id": max_id,
+                            "max_quotes": max_quotes,
+                            "max_replies": max_replies,
+                            "max_retweets": max_retweets,
+                            "media_type": media_type,
+                            "mentioning": mentioning,
+                            "min_bookmarks": min_bookmarks,
+                            "min_likes": min_likes_or_min_faves(min_likes, min_faves),
+                            "min_quotes": min_quotes,
+                            "min_replies": min_replies,
+                            "min_retweets": min_retweets,
+                            "min_views": min_views,
+                            "native_retweets": native_retweets,
+                            "near": near,
+                            "news": news,
+                            "omit": omit,
+                            "page_size": page_size,
+                            "quotes": quotes,
+                            "quotes_of_tweet_id": quotes_of_tweet_id,
+                            "replies": replies,
+                            "retweets": retweets,
+                            "retweets_of_tweet_id": retweets_of_tweet_id,
+                            "safe": safe,
+                            "since_date": since_date,
+                            "since_id": since_id,
+                            "source": source,
+                            "topic": topic,
+                            "to_user": to_user,
+                            "until_date": until_date,
+                            "url": url,
+                            "verified_only": verified_only,
+                            "within": within,
+                            "within_time": within_time,
+                        },
+                        user_retrieve_media_params.UserRetrieveMediaParams,
+                    ),
                 ),
+                cast_to=cast(Any, UserRetrieveMediaResponse),
             ),
-            cast_to=PaginatedTweets,
         )
 
     def retrieve_mentions(
@@ -2582,6 +2682,7 @@ class UsersResource(SyncAPIResource):
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
         include_parent_tweet: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -2619,6 +2720,7 @@ class UsersResource(SyncAPIResource):
         since_id: str | Omit = omit,
         since_time: str | Omit = omit,
         source: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -2630,7 +2732,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> UserRetrieveRepliesResponse:
         """Returns target-authored posts & replies, without other authors' context.
 
         Omit
@@ -2682,6 +2784,13 @@ class UsersResource(SyncAPIResource):
           include_parent_tweet: Include each reply's parent tweet as parentTweet on the reply. A reply whose
               parent X does not return comes without it. Search-only filters such as keywords
               do not apply with it.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -2763,6 +2872,12 @@ class UsersResource(SyncAPIResource):
           source: X search no longer supports source. A Tweet search with it answers 424 & charges
               nothing.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
@@ -2790,79 +2905,84 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get(
-            path_template("/x/users/{id}/replies", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform(
-                    {
-                        "advanced_query": advanced_query,
-                        "any_words": any_words,
-                        "blue_verified_only": blue_verified_only,
-                        "bounding_box": bounding_box,
-                        "card_name": card_name,
-                        "cashtags": cashtags,
-                        "conversation_id": conversation_id,
-                        "cursor": cursor,
-                        "exact_phrase": exact_phrase,
-                        "exclude_source": exclude_source,
-                        "exclude_words": exclude_words,
-                        "fields": fields,
-                        "from_user": from_user,
-                        "geocode": geocode,
-                        "hashtags": hashtags,
-                        "include_parent_tweet": include_parent_tweet,
-                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                        "keywords": keywords,
-                        "language": language,
-                        "list_id": list_id,
-                        "max_faves": max_faves,
-                        "max_id": max_id,
-                        "max_quotes": max_quotes,
-                        "max_replies": max_replies,
-                        "max_retweets": max_retweets,
-                        "media_type": media_type,
-                        "mentioning": mentioning,
-                        "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
-                        "min_quotes": min_quotes,
-                        "min_replies": min_replies,
-                        "min_retweets": min_retweets,
-                        "min_views": min_views,
-                        "mode": mode,
-                        "native_retweets": native_retweets,
-                        "near": near,
-                        "news": news,
-                        "omit": omit,
-                        "page_size": page_size,
-                        "place": place,
-                        "place_country": place_country,
-                        "point_radius": point_radius,
-                        "quotes": quotes,
-                        "quotes_of_tweet_id": quotes_of_tweet_id,
-                        "replies": replies,
-                        "retweets": retweets,
-                        "retweets_of_tweet_id": retweets_of_tweet_id,
-                        "safe": safe,
-                        "since_date": since_date,
-                        "since_id": since_id,
-                        "since_time": since_time,
-                        "source": source,
-                        "to_user": to_user,
-                        "until_date": until_date,
-                        "until_time": until_time,
-                        "url": url,
-                        "verified_only": verified_only,
-                        "within": within,
-                        "within_time": within_time,
-                    },
-                    user_retrieve_replies_params.UserRetrieveRepliesParams,
+        return cast(
+            UserRetrieveRepliesResponse,
+            self._get(
+                path_template("/x/users/{id}/replies", id=id),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=maybe_transform(
+                        {
+                            "advanced_query": advanced_query,
+                            "any_words": any_words,
+                            "blue_verified_only": blue_verified_only,
+                            "bounding_box": bounding_box,
+                            "card_name": card_name,
+                            "cashtags": cashtags,
+                            "conversation_id": conversation_id,
+                            "cursor": cursor,
+                            "exact_phrase": exact_phrase,
+                            "exclude_source": exclude_source,
+                            "exclude_words": exclude_words,
+                            "fields": fields,
+                            "from_user": from_user,
+                            "geocode": geocode,
+                            "hashtags": hashtags,
+                            "include_parent_tweet": include_parent_tweet,
+                            "image_shows": image_shows,
+                            "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                            "keywords": keywords,
+                            "language": language,
+                            "list_id": list_id,
+                            "max_faves": max_faves,
+                            "max_id": max_id,
+                            "max_quotes": max_quotes,
+                            "max_replies": max_replies,
+                            "max_retweets": max_retweets,
+                            "media_type": media_type,
+                            "mentioning": mentioning,
+                            "min_bookmarks": min_bookmarks,
+                            "min_likes": min_likes_or_min_faves(min_likes, min_faves),
+                            "min_quotes": min_quotes,
+                            "min_replies": min_replies,
+                            "min_retweets": min_retweets,
+                            "min_views": min_views,
+                            "mode": mode,
+                            "native_retweets": native_retweets,
+                            "near": near,
+                            "news": news,
+                            "omit": omit,
+                            "page_size": page_size,
+                            "place": place,
+                            "place_country": place_country,
+                            "point_radius": point_radius,
+                            "quotes": quotes,
+                            "quotes_of_tweet_id": quotes_of_tweet_id,
+                            "replies": replies,
+                            "retweets": retweets,
+                            "retweets_of_tweet_id": retweets_of_tweet_id,
+                            "safe": safe,
+                            "since_date": since_date,
+                            "since_id": since_id,
+                            "since_time": since_time,
+                            "source": source,
+                            "topic": topic,
+                            "to_user": to_user,
+                            "until_date": until_date,
+                            "until_time": until_time,
+                            "url": url,
+                            "verified_only": verified_only,
+                            "within": within,
+                            "within_time": within_time,
+                        },
+                        user_retrieve_replies_params.UserRetrieveRepliesParams,
+                    ),
                 ),
+                cast_to=cast(Any, UserRetrieveRepliesResponse),
             ),
-            cast_to=PaginatedTweets,
         )
 
     def retrieve_search(
@@ -3044,7 +3164,7 @@ class UsersResource(SyncAPIResource):
               named fields.
 
           limit: Recent posts to read for the timeline, engagement & reply checks. The read stops
-              at this count, at the end of the timeline or after about 40 seconds.
+              at this count, at the account's oldest post or after about 40 seconds.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
@@ -3379,6 +3499,7 @@ class UsersResource(SyncAPIResource):
         hashtags: str | Omit = omit,
         include_parent_tweet: bool | Omit = omit,
         include_replies: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -3416,6 +3537,7 @@ class UsersResource(SyncAPIResource):
         since_id: str | Omit = omit,
         since_time: str | Omit = omit,
         source: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -3427,7 +3549,7 @@ class UsersResource(SyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> UserRetrieveTweetsResponse:
         """For the newest posts of 2 to 20 users, use getBatchUserTweets.
 
         For more, use
@@ -3484,6 +3606,13 @@ class UsersResource(SyncAPIResource):
               do not apply with it.
 
           include_replies: Include reply tweets unless replies specifies another mode.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -3565,6 +3694,12 @@ class UsersResource(SyncAPIResource):
           source: X search no longer supports source. A Tweet search with it answers 424 & charges
               nothing.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
@@ -3592,80 +3727,85 @@ class UsersResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._get(
-            path_template("/x/users/{id}/tweets", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=maybe_transform(
-                    {
-                        "advanced_query": advanced_query,
-                        "any_words": any_words,
-                        "blue_verified_only": blue_verified_only,
-                        "bounding_box": bounding_box,
-                        "card_name": card_name,
-                        "cashtags": cashtags,
-                        "conversation_id": conversation_id,
-                        "cursor": cursor,
-                        "exact_phrase": exact_phrase,
-                        "exclude_source": exclude_source,
-                        "exclude_words": exclude_words,
-                        "fields": fields,
-                        "from_user": from_user,
-                        "geocode": geocode,
-                        "hashtags": hashtags,
-                        "include_parent_tweet": include_parent_tweet,
-                        "include_replies": include_replies,
-                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                        "keywords": keywords,
-                        "language": language,
-                        "list_id": list_id,
-                        "max_faves": max_faves,
-                        "max_id": max_id,
-                        "max_quotes": max_quotes,
-                        "max_replies": max_replies,
-                        "max_retweets": max_retweets,
-                        "media_type": media_type,
-                        "mentioning": mentioning,
-                        "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
-                        "min_quotes": min_quotes,
-                        "min_replies": min_replies,
-                        "min_retweets": min_retweets,
-                        "min_views": min_views,
-                        "mode": mode,
-                        "native_retweets": native_retweets,
-                        "near": near,
-                        "news": news,
-                        "omit": omit,
-                        "page_size": page_size,
-                        "place": place,
-                        "place_country": place_country,
-                        "point_radius": point_radius,
-                        "quotes": quotes,
-                        "quotes_of_tweet_id": quotes_of_tweet_id,
-                        "replies": replies,
-                        "retweets": retweets,
-                        "retweets_of_tweet_id": retweets_of_tweet_id,
-                        "safe": safe,
-                        "since_date": since_date,
-                        "since_id": since_id,
-                        "since_time": since_time,
-                        "source": source,
-                        "to_user": to_user,
-                        "until_date": until_date,
-                        "until_time": until_time,
-                        "url": url,
-                        "verified_only": verified_only,
-                        "within": within,
-                        "within_time": within_time,
-                    },
-                    user_retrieve_tweets_params.UserRetrieveTweetsParams,
+        return cast(
+            UserRetrieveTweetsResponse,
+            self._get(
+                path_template("/x/users/{id}/tweets", id=id),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=maybe_transform(
+                        {
+                            "advanced_query": advanced_query,
+                            "any_words": any_words,
+                            "blue_verified_only": blue_verified_only,
+                            "bounding_box": bounding_box,
+                            "card_name": card_name,
+                            "cashtags": cashtags,
+                            "conversation_id": conversation_id,
+                            "cursor": cursor,
+                            "exact_phrase": exact_phrase,
+                            "exclude_source": exclude_source,
+                            "exclude_words": exclude_words,
+                            "fields": fields,
+                            "from_user": from_user,
+                            "geocode": geocode,
+                            "hashtags": hashtags,
+                            "include_parent_tweet": include_parent_tweet,
+                            "include_replies": include_replies,
+                            "image_shows": image_shows,
+                            "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                            "keywords": keywords,
+                            "language": language,
+                            "list_id": list_id,
+                            "max_faves": max_faves,
+                            "max_id": max_id,
+                            "max_quotes": max_quotes,
+                            "max_replies": max_replies,
+                            "max_retweets": max_retweets,
+                            "media_type": media_type,
+                            "mentioning": mentioning,
+                            "min_bookmarks": min_bookmarks,
+                            "min_likes": min_likes_or_min_faves(min_likes, min_faves),
+                            "min_quotes": min_quotes,
+                            "min_replies": min_replies,
+                            "min_retweets": min_retweets,
+                            "min_views": min_views,
+                            "mode": mode,
+                            "native_retweets": native_retweets,
+                            "near": near,
+                            "news": news,
+                            "omit": omit,
+                            "page_size": page_size,
+                            "place": place,
+                            "place_country": place_country,
+                            "point_radius": point_radius,
+                            "quotes": quotes,
+                            "quotes_of_tweet_id": quotes_of_tweet_id,
+                            "replies": replies,
+                            "retweets": retweets,
+                            "retweets_of_tweet_id": retweets_of_tweet_id,
+                            "safe": safe,
+                            "since_date": since_date,
+                            "since_id": since_id,
+                            "since_time": since_time,
+                            "source": source,
+                            "topic": topic,
+                            "to_user": to_user,
+                            "until_date": until_date,
+                            "until_time": until_time,
+                            "url": url,
+                            "verified_only": verified_only,
+                            "within": within,
+                            "within_time": within_time,
+                        },
+                        user_retrieve_tweets_params.UserRetrieveTweetsParams,
+                    ),
                 ),
+                cast_to=cast(Any, UserRetrieveTweetsResponse),
             ),
-            cast_to=PaginatedTweets,
         )
 
     def retrieve_verified_followers(
@@ -3990,6 +4130,7 @@ class AsyncUsersResource(AsyncAPIResource):
         *,
         account: str,
         idempotency_key: str,
+        prefer: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -4001,6 +4142,11 @@ class AsyncUsersResource(AsyncAPIResource):
         Args:
           account: X account identifier (@username or account ID)
 
+          prefer: A long write answers 202 with a status link, then lands on X. `wait=<seconds>`
+              asks for the answer within that many seconds, up to 85. If the write is still
+              running then, the API answers 202 with Location. Poll Location until `terminal`
+              is true, and don't send the write again.
+
           extra_headers: Send extra headers
 
           extra_query: Add additional query parameters to the request
@@ -4011,7 +4157,11 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        extra_headers = {"Idempotency-Key": idempotency_key, **(extra_headers or dict[str, str | Omit]())}
+        extra_headers = {
+            "Idempotency-Key": idempotency_key,
+            **strip_not_given({"Prefer": prefer}),
+            **(extra_headers or dict[str, str | Omit]()),
+        }
         return await self._post(
             path_template("/x/users/{id}/remove-follower", id=id),
             body=await async_maybe_transform(
@@ -4406,7 +4556,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchResponse:
-        """Returns public profiles for up to 100 user IDs, usernames or profile links.
+        """Returns public profiles for user IDs, usernames or profile links.
 
         Send
         ids or usernames, not both. Each returned profile costs 1 credit.
@@ -4435,7 +4585,7 @@ class AsyncUsersResource(AsyncAPIResource):
 
           has_website: Only return profiles with a website.
 
-          ids: Comma-separated numeric user IDs (1-100 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric user IDs. Duplicate IDs are ignored while
               preserving first-seen order.
 
           location_contains: Match a location substring, ignoring case.
@@ -4460,7 +4610,7 @@ class AsyncUsersResource(AsyncAPIResource):
           username_contains: Match a username substring, ignoring case.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-100 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           verified_only: Only return verified profiles.
@@ -4527,7 +4677,7 @@ class AsyncUsersResource(AsyncAPIResource):
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> UserRetrieveBatchTweetsResponse:
         """
-        Returns the newest posts of up to 20 users, named by user ID, username or
+        Returns the newest posts of users named by user ID, username or
         profile link, in the order named. Send ids or usernames, not both. Each post
         costs 1 credit. A user in unavailable_ids or unprocessed_ids costs nothing.
 
@@ -4539,17 +4689,17 @@ class AsyncUsersResource(AsyncAPIResource):
               before any read. The price stays the same. SDK row types then hold only the
               named fields.
 
-          ids: Comma-separated numeric user IDs (1-20 values). Duplicate IDs are ignored while
+          ids: Comma-separated numeric IDs of the users to read posts from. Duplicate IDs are ignored while
               preserving first-seen order.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
 
-          page_size: Posts per user (1-20, default 20). Credits can return fewer. Aliases: limit,
+          page_size: Posts per user (1-300, default 20). Credits can return fewer. Aliases: limit,
               count, max_results, maxItems, max_items & per_page.
 
           usernames: Comma-separated X usernames, with or without @, or profile links such as
-              x.com/nasa (1-20 values), in place of ids. A name in another case is the same
+              x.com/nasa, in place of ids. A name in another case is the same
               account.
 
           extra_headers: Send extra headers
@@ -4579,6 +4729,71 @@ class AsyncUsersResource(AsyncAPIResource):
                 ),
             ),
             cast_to=UserRetrieveBatchTweetsResponse,
+        )
+
+    async def retrieve_follower_audit(
+        self,
+        id: str,
+        *,
+        fields: str | Omit = omit,
+        limit: int | Omit = omit,
+        omit: str | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> UserRetrieveFollowerAuditResponse:
+        """
+        Reads the newest followers of a public account & returns a follower audit. It
+        gives each follower 1 class with its score & signals, then adds coverage, a
+        quality score, signal counts, arrival bands, join cohorts, countries, top
+        followers & the account's engagement. Each follower read costs 1 credit, and the
+        engagement adds 1 credit. Signals come from public profiles, so a real person
+        can match. Older followers may differ from the newest ones.
+
+        Args:
+          fields: Fields to keep in each row, comma-separated. Use dots for nested fields, such as
+              author.username. A list keeps the field in each item. Case & underscores do not
+              matter. A row that lacks a field leaves it out. Cursors, counts & diagnostics
+              always stay. An unknown name answers 400 unknown_field with the valid names,
+              before any read. The price stays the same. SDK row types then hold only the
+              named fields.
+
+          limit: Most followers to read, newest first. Left out, a read takes up to 200 and a
+              low balance reads fewer. A very long read returns what it finished, & coverage
+              shows how many. Its aliases are pageSize, count, max_results, maxItems,
+              max_items & per_page.
+
+          omit: Fields to drop from each row, comma-separated. It takes the same names as
+              fields. With fields, it drops from the kept fields.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not id:
+            raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
+        return await self._get(
+            path_template("/x/users/{id}/follower-audit", id=id),
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "fields": fields,
+                        "limit": limit,
+                        "omit": omit,
+                    },
+                    user_retrieve_follower_audit_params.UserRetrieveFollowerAuditParams,
+                ),
+            ),
+            cast_to=UserRetrieveFollowerAuditResponse,
         )
 
     async def retrieve_follower_ids(
@@ -5397,8 +5612,8 @@ class AsyncUsersResource(AsyncAPIResource):
               named fields.
 
           limit: Recent posts to read for the averages and rates. The read stops at this count,
-              at the end of the timeline or after about 40 seconds, and `sample.posts` says how
-              many it read.
+              at the account's oldest post or after about 40 seconds. `sample.read` says how
+              many it read, and `sample.posts` how many of those the averages used.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
@@ -5882,6 +6097,7 @@ class AsyncUsersResource(AsyncAPIResource):
         from_user: str | Omit = omit,
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         language: str | Omit = omit,
         max_faves: int | Omit = omit,
@@ -5912,6 +6128,7 @@ class AsyncUsersResource(AsyncAPIResource):
         since_date: Union[str, date] | Omit = omit,
         since_id: str | Omit = omit,
         source: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         url: str | Omit = omit,
@@ -5922,7 +6139,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> UserRetrieveMediaResponse:
         """
         Returns public media posts from the selected user.
 
@@ -5959,6 +6176,13 @@ class AsyncUsersResource(AsyncAPIResource):
           geocode: Match latitude, longitude, and radius.
 
           hashtags: Hashtags separated by spaces, commas, or lines.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -6023,6 +6247,12 @@ class AsyncUsersResource(AsyncAPIResource):
 
           source: Match the source application.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
@@ -6046,68 +6276,73 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._get(
-            path_template("/x/users/{id}/media", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {
-                        "any_words": any_words,
-                        "blue_verified_only": blue_verified_only,
-                        "card_name": card_name,
-                        "cashtags": cashtags,
-                        "conversation_id": conversation_id,
-                        "cursor": cursor,
-                        "exact_phrase": exact_phrase,
-                        "exclude_source": exclude_source,
-                        "exclude_words": exclude_words,
-                        "fields": fields,
-                        "from_user": from_user,
-                        "geocode": geocode,
-                        "hashtags": hashtags,
-                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                        "language": language,
-                        "max_faves": max_faves,
-                        "max_id": max_id,
-                        "max_quotes": max_quotes,
-                        "max_replies": max_replies,
-                        "max_retweets": max_retweets,
-                        "media_type": media_type,
-                        "mentioning": mentioning,
-                        "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
-                        "min_quotes": min_quotes,
-                        "min_replies": min_replies,
-                        "min_retweets": min_retweets,
-                        "min_views": min_views,
-                        "native_retweets": native_retweets,
-                        "near": near,
-                        "news": news,
-                        "omit": omit,
-                        "page_size": page_size,
-                        "quotes": quotes,
-                        "quotes_of_tweet_id": quotes_of_tweet_id,
-                        "replies": replies,
-                        "retweets": retweets,
-                        "retweets_of_tweet_id": retweets_of_tweet_id,
-                        "safe": safe,
-                        "since_date": since_date,
-                        "since_id": since_id,
-                        "source": source,
-                        "to_user": to_user,
-                        "until_date": until_date,
-                        "url": url,
-                        "verified_only": verified_only,
-                        "within": within,
-                        "within_time": within_time,
-                    },
-                    user_retrieve_media_params.UserRetrieveMediaParams,
+        return cast(
+            UserRetrieveMediaResponse,
+            await self._get(
+                path_template("/x/users/{id}/media", id=id),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=await async_maybe_transform(
+                        {
+                            "any_words": any_words,
+                            "blue_verified_only": blue_verified_only,
+                            "card_name": card_name,
+                            "cashtags": cashtags,
+                            "conversation_id": conversation_id,
+                            "cursor": cursor,
+                            "exact_phrase": exact_phrase,
+                            "exclude_source": exclude_source,
+                            "exclude_words": exclude_words,
+                            "fields": fields,
+                            "from_user": from_user,
+                            "geocode": geocode,
+                            "hashtags": hashtags,
+                            "image_shows": image_shows,
+                            "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                            "language": language,
+                            "max_faves": max_faves,
+                            "max_id": max_id,
+                            "max_quotes": max_quotes,
+                            "max_replies": max_replies,
+                            "max_retweets": max_retweets,
+                            "media_type": media_type,
+                            "mentioning": mentioning,
+                            "min_bookmarks": min_bookmarks,
+                            "min_likes": min_likes_or_min_faves(min_likes, min_faves),
+                            "min_quotes": min_quotes,
+                            "min_replies": min_replies,
+                            "min_retweets": min_retweets,
+                            "min_views": min_views,
+                            "native_retweets": native_retweets,
+                            "near": near,
+                            "news": news,
+                            "omit": omit,
+                            "page_size": page_size,
+                            "quotes": quotes,
+                            "quotes_of_tweet_id": quotes_of_tweet_id,
+                            "replies": replies,
+                            "retweets": retweets,
+                            "retweets_of_tweet_id": retweets_of_tweet_id,
+                            "safe": safe,
+                            "since_date": since_date,
+                            "since_id": since_id,
+                            "source": source,
+                            "topic": topic,
+                            "to_user": to_user,
+                            "until_date": until_date,
+                            "url": url,
+                            "verified_only": verified_only,
+                            "within": within,
+                            "within_time": within_time,
+                        },
+                        user_retrieve_media_params.UserRetrieveMediaParams,
+                    ),
                 ),
+                cast_to=cast(Any, UserRetrieveMediaResponse),
             ),
-            cast_to=PaginatedTweets,
         )
 
     async def retrieve_mentions(
@@ -6385,6 +6620,7 @@ class AsyncUsersResource(AsyncAPIResource):
         geocode: str | Omit = omit,
         hashtags: str | Omit = omit,
         include_parent_tweet: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -6422,6 +6658,7 @@ class AsyncUsersResource(AsyncAPIResource):
         since_id: str | Omit = omit,
         since_time: str | Omit = omit,
         source: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -6433,7 +6670,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> UserRetrieveRepliesResponse:
         """Returns target-authored posts & replies, without other authors' context.
 
         Omit
@@ -6485,6 +6722,13 @@ class AsyncUsersResource(AsyncAPIResource):
           include_parent_tweet: Include each reply's parent tweet as parentTweet on the reply. A reply whose
               parent X does not return comes without it. Search-only filters such as keywords
               do not apply with it.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -6566,6 +6810,12 @@ class AsyncUsersResource(AsyncAPIResource):
           source: X search no longer supports source. A Tweet search with it answers 424 & charges
               nothing.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
@@ -6593,79 +6843,84 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._get(
-            path_template("/x/users/{id}/replies", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {
-                        "advanced_query": advanced_query,
-                        "any_words": any_words,
-                        "blue_verified_only": blue_verified_only,
-                        "bounding_box": bounding_box,
-                        "card_name": card_name,
-                        "cashtags": cashtags,
-                        "conversation_id": conversation_id,
-                        "cursor": cursor,
-                        "exact_phrase": exact_phrase,
-                        "exclude_source": exclude_source,
-                        "exclude_words": exclude_words,
-                        "fields": fields,
-                        "from_user": from_user,
-                        "geocode": geocode,
-                        "hashtags": hashtags,
-                        "include_parent_tweet": include_parent_tweet,
-                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                        "keywords": keywords,
-                        "language": language,
-                        "list_id": list_id,
-                        "max_faves": max_faves,
-                        "max_id": max_id,
-                        "max_quotes": max_quotes,
-                        "max_replies": max_replies,
-                        "max_retweets": max_retweets,
-                        "media_type": media_type,
-                        "mentioning": mentioning,
-                        "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
-                        "min_quotes": min_quotes,
-                        "min_replies": min_replies,
-                        "min_retweets": min_retweets,
-                        "min_views": min_views,
-                        "mode": mode,
-                        "native_retweets": native_retweets,
-                        "near": near,
-                        "news": news,
-                        "omit": omit,
-                        "page_size": page_size,
-                        "place": place,
-                        "place_country": place_country,
-                        "point_radius": point_radius,
-                        "quotes": quotes,
-                        "quotes_of_tweet_id": quotes_of_tweet_id,
-                        "replies": replies,
-                        "retweets": retweets,
-                        "retweets_of_tweet_id": retweets_of_tweet_id,
-                        "safe": safe,
-                        "since_date": since_date,
-                        "since_id": since_id,
-                        "since_time": since_time,
-                        "source": source,
-                        "to_user": to_user,
-                        "until_date": until_date,
-                        "until_time": until_time,
-                        "url": url,
-                        "verified_only": verified_only,
-                        "within": within,
-                        "within_time": within_time,
-                    },
-                    user_retrieve_replies_params.UserRetrieveRepliesParams,
+        return cast(
+            UserRetrieveRepliesResponse,
+            await self._get(
+                path_template("/x/users/{id}/replies", id=id),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=await async_maybe_transform(
+                        {
+                            "advanced_query": advanced_query,
+                            "any_words": any_words,
+                            "blue_verified_only": blue_verified_only,
+                            "bounding_box": bounding_box,
+                            "card_name": card_name,
+                            "cashtags": cashtags,
+                            "conversation_id": conversation_id,
+                            "cursor": cursor,
+                            "exact_phrase": exact_phrase,
+                            "exclude_source": exclude_source,
+                            "exclude_words": exclude_words,
+                            "fields": fields,
+                            "from_user": from_user,
+                            "geocode": geocode,
+                            "hashtags": hashtags,
+                            "include_parent_tweet": include_parent_tweet,
+                            "image_shows": image_shows,
+                            "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                            "keywords": keywords,
+                            "language": language,
+                            "list_id": list_id,
+                            "max_faves": max_faves,
+                            "max_id": max_id,
+                            "max_quotes": max_quotes,
+                            "max_replies": max_replies,
+                            "max_retweets": max_retweets,
+                            "media_type": media_type,
+                            "mentioning": mentioning,
+                            "min_bookmarks": min_bookmarks,
+                            "min_likes": min_likes_or_min_faves(min_likes, min_faves),
+                            "min_quotes": min_quotes,
+                            "min_replies": min_replies,
+                            "min_retweets": min_retweets,
+                            "min_views": min_views,
+                            "mode": mode,
+                            "native_retweets": native_retweets,
+                            "near": near,
+                            "news": news,
+                            "omit": omit,
+                            "page_size": page_size,
+                            "place": place,
+                            "place_country": place_country,
+                            "point_radius": point_radius,
+                            "quotes": quotes,
+                            "quotes_of_tweet_id": quotes_of_tweet_id,
+                            "replies": replies,
+                            "retweets": retweets,
+                            "retweets_of_tweet_id": retweets_of_tweet_id,
+                            "safe": safe,
+                            "since_date": since_date,
+                            "since_id": since_id,
+                            "since_time": since_time,
+                            "source": source,
+                            "topic": topic,
+                            "to_user": to_user,
+                            "until_date": until_date,
+                            "until_time": until_time,
+                            "url": url,
+                            "verified_only": verified_only,
+                            "within": within,
+                            "within_time": within_time,
+                        },
+                        user_retrieve_replies_params.UserRetrieveRepliesParams,
+                    ),
                 ),
+                cast_to=cast(Any, UserRetrieveRepliesResponse),
             ),
-            cast_to=PaginatedTweets,
         )
 
     async def retrieve_search(
@@ -6847,7 +7102,7 @@ class AsyncUsersResource(AsyncAPIResource):
               named fields.
 
           limit: Recent posts to read for the timeline, engagement & reply checks. The read stops
-              at this count, at the end of the timeline or after about 40 seconds.
+              at this count, at the account's oldest post or after about 40 seconds.
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
@@ -7182,6 +7437,7 @@ class AsyncUsersResource(AsyncAPIResource):
         hashtags: str | Omit = omit,
         include_parent_tweet: bool | Omit = omit,
         include_replies: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         in_reply_to_tweet_id: str | Omit = omit,
         keywords: str | Omit = omit,
         language: str | Omit = omit,
@@ -7219,6 +7475,7 @@ class AsyncUsersResource(AsyncAPIResource):
         since_id: str | Omit = omit,
         since_time: str | Omit = omit,
         source: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: str | Omit = omit,
@@ -7230,7 +7487,7 @@ class AsyncUsersResource(AsyncAPIResource):
         extra_query: Query | None = None,
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
-    ) -> PaginatedTweets:
+    ) -> UserRetrieveTweetsResponse:
         """For the newest posts of 2 to 20 users, use getBatchUserTweets.
 
         For more, use
@@ -7287,6 +7544,13 @@ class AsyncUsersResource(AsyncAPIResource):
               do not apply with it.
 
           include_replies: Include reply tweets unless replies specifies another mode.
+
+          image_shows: Keep only posts whose photos show this. Send charts, screenshots,
+              product_photos, memes or people, or describe it in words, such as a rocket. AI-powered
+              analysis checks posts with photos X doesn't mark sensitive & keeps scores of 0.5 or
+              more. Other posts stay out at no charge. Each kept post costs 2 credits, the AI
+              analysis price, instead of the read price, & a post the filter drops costs nothing.
+              imageFilter states the cutoff & counts.
 
           in_reply_to_tweet_id: Only replies to this tweet ID.
 
@@ -7368,6 +7632,12 @@ class AsyncUsersResource(AsyncAPIResource):
           source: X search no longer supports source. A Tweet search with it answers 424 & charges
               nothing.
 
+          topic: Keep only posts about this topic. AI-powered analysis asks "Is this post about
+              <topic>?" of each post & keeps scores of 0.5 or more. It reads post text & safe
+              photos. Each kept post costs 2 credits, the AI analysis price, instead of the read
+              price, & a post the filter drops costs nothing. limit counts checked posts, & only
+              kept posts come back. topicFilter states the cutoff & counts.
+
           to_user: Filter replies sent to a username.
 
           until_date: End date in YYYY-MM-DD format, as a UTC day, inclusive, so its own posts count.
@@ -7395,80 +7665,85 @@ class AsyncUsersResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._get(
-            path_template("/x/users/{id}/tweets", id=id),
-            options=make_request_options(
-                extra_headers=extra_headers,
-                extra_query=extra_query,
-                extra_body=extra_body,
-                timeout=timeout,
-                query=await async_maybe_transform(
-                    {
-                        "advanced_query": advanced_query,
-                        "any_words": any_words,
-                        "blue_verified_only": blue_verified_only,
-                        "bounding_box": bounding_box,
-                        "card_name": card_name,
-                        "cashtags": cashtags,
-                        "conversation_id": conversation_id,
-                        "cursor": cursor,
-                        "exact_phrase": exact_phrase,
-                        "exclude_source": exclude_source,
-                        "exclude_words": exclude_words,
-                        "fields": fields,
-                        "from_user": from_user,
-                        "geocode": geocode,
-                        "hashtags": hashtags,
-                        "include_parent_tweet": include_parent_tweet,
-                        "include_replies": include_replies,
-                        "in_reply_to_tweet_id": in_reply_to_tweet_id,
-                        "keywords": keywords,
-                        "language": language,
-                        "list_id": list_id,
-                        "max_faves": max_faves,
-                        "max_id": max_id,
-                        "max_quotes": max_quotes,
-                        "max_replies": max_replies,
-                        "max_retweets": max_retweets,
-                        "media_type": media_type,
-                        "mentioning": mentioning,
-                        "min_bookmarks": min_bookmarks,
-                        "min_likes": min_likes_or_min_faves(min_likes, min_faves),
-                        "min_quotes": min_quotes,
-                        "min_replies": min_replies,
-                        "min_retweets": min_retweets,
-                        "min_views": min_views,
-                        "mode": mode,
-                        "native_retweets": native_retweets,
-                        "near": near,
-                        "news": news,
-                        "omit": omit,
-                        "page_size": page_size,
-                        "place": place,
-                        "place_country": place_country,
-                        "point_radius": point_radius,
-                        "quotes": quotes,
-                        "quotes_of_tweet_id": quotes_of_tweet_id,
-                        "replies": replies,
-                        "retweets": retweets,
-                        "retweets_of_tweet_id": retweets_of_tweet_id,
-                        "safe": safe,
-                        "since_date": since_date,
-                        "since_id": since_id,
-                        "since_time": since_time,
-                        "source": source,
-                        "to_user": to_user,
-                        "until_date": until_date,
-                        "until_time": until_time,
-                        "url": url,
-                        "verified_only": verified_only,
-                        "within": within,
-                        "within_time": within_time,
-                    },
-                    user_retrieve_tweets_params.UserRetrieveTweetsParams,
+        return cast(
+            UserRetrieveTweetsResponse,
+            await self._get(
+                path_template("/x/users/{id}/tweets", id=id),
+                options=make_request_options(
+                    extra_headers=extra_headers,
+                    extra_query=extra_query,
+                    extra_body=extra_body,
+                    timeout=timeout,
+                    query=await async_maybe_transform(
+                        {
+                            "advanced_query": advanced_query,
+                            "any_words": any_words,
+                            "blue_verified_only": blue_verified_only,
+                            "bounding_box": bounding_box,
+                            "card_name": card_name,
+                            "cashtags": cashtags,
+                            "conversation_id": conversation_id,
+                            "cursor": cursor,
+                            "exact_phrase": exact_phrase,
+                            "exclude_source": exclude_source,
+                            "exclude_words": exclude_words,
+                            "fields": fields,
+                            "from_user": from_user,
+                            "geocode": geocode,
+                            "hashtags": hashtags,
+                            "include_parent_tweet": include_parent_tweet,
+                            "include_replies": include_replies,
+                            "image_shows": image_shows,
+                            "in_reply_to_tweet_id": in_reply_to_tweet_id,
+                            "keywords": keywords,
+                            "language": language,
+                            "list_id": list_id,
+                            "max_faves": max_faves,
+                            "max_id": max_id,
+                            "max_quotes": max_quotes,
+                            "max_replies": max_replies,
+                            "max_retweets": max_retweets,
+                            "media_type": media_type,
+                            "mentioning": mentioning,
+                            "min_bookmarks": min_bookmarks,
+                            "min_likes": min_likes_or_min_faves(min_likes, min_faves),
+                            "min_quotes": min_quotes,
+                            "min_replies": min_replies,
+                            "min_retweets": min_retweets,
+                            "min_views": min_views,
+                            "mode": mode,
+                            "native_retweets": native_retweets,
+                            "near": near,
+                            "news": news,
+                            "omit": omit,
+                            "page_size": page_size,
+                            "place": place,
+                            "place_country": place_country,
+                            "point_radius": point_radius,
+                            "quotes": quotes,
+                            "quotes_of_tweet_id": quotes_of_tweet_id,
+                            "replies": replies,
+                            "retweets": retweets,
+                            "retweets_of_tweet_id": retweets_of_tweet_id,
+                            "safe": safe,
+                            "since_date": since_date,
+                            "since_id": since_id,
+                            "since_time": since_time,
+                            "source": source,
+                            "topic": topic,
+                            "to_user": to_user,
+                            "until_date": until_date,
+                            "until_time": until_time,
+                            "url": url,
+                            "verified_only": verified_only,
+                            "within": within,
+                            "within_time": within_time,
+                        },
+                        user_retrieve_tweets_params.UserRetrieveTweetsParams,
+                    ),
                 ),
+                cast_to=cast(Any, UserRetrieveTweetsResponse),
             ),
-            cast_to=PaginatedTweets,
         )
 
     async def retrieve_verified_followers(
@@ -7722,6 +7997,9 @@ class UsersResourceWithRawResponse:
         self.retrieve_batch_tweets = to_raw_response_wrapper(
             users.retrieve_batch_tweets,
         )
+        self.retrieve_follower_audit = to_raw_response_wrapper(
+            users.retrieve_follower_audit,
+        )
         self.retrieve_follower_ids = to_raw_response_wrapper(
             users.retrieve_follower_ids,
         )
@@ -7823,6 +8101,9 @@ class AsyncUsersResourceWithRawResponse:
         )
         self.retrieve_batch_tweets = async_to_raw_response_wrapper(
             users.retrieve_batch_tweets,
+        )
+        self.retrieve_follower_audit = async_to_raw_response_wrapper(
+            users.retrieve_follower_audit,
         )
         self.retrieve_follower_ids = async_to_raw_response_wrapper(
             users.retrieve_follower_ids,
@@ -7926,6 +8207,9 @@ class UsersResourceWithStreamingResponse:
         self.retrieve_batch_tweets = to_streamed_response_wrapper(
             users.retrieve_batch_tweets,
         )
+        self.retrieve_follower_audit = to_streamed_response_wrapper(
+            users.retrieve_follower_audit,
+        )
         self.retrieve_follower_ids = to_streamed_response_wrapper(
             users.retrieve_follower_ids,
         )
@@ -8027,6 +8311,9 @@ class AsyncUsersResourceWithStreamingResponse:
         )
         self.retrieve_batch_tweets = async_to_streamed_response_wrapper(
             users.retrieve_batch_tweets,
+        )
+        self.retrieve_follower_audit = async_to_streamed_response_wrapper(
+            users.retrieve_follower_audit,
         )
         self.retrieve_follower_ids = async_to_streamed_response_wrapper(
             users.retrieve_follower_ids,

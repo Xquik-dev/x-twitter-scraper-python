@@ -24,6 +24,7 @@ from x_twitter_scraper.types.x import (
     UserRetrieveBatchTweetsResponse,
     UserRetrieveFollowerIdsResponse,
     UserRetrieveFollowingIdsResponse,
+    UserRetrieveFollowerAuditResponse,
     UserRetrieveListMembershipsResponse,
     UserRetrieveVerifiedFollowersResponse,
 )
@@ -395,6 +396,59 @@ class TestUsers:
             assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_follower_audit(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_follower_audit(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_method_retrieve_follower_audit_with_all_params(self, client: XTwitterScraper) -> None:
+        user = client.x.users.retrieve_follower_audit(
+            id="id",
+            fields="id,text,author.username",
+            limit=50,
+            omit="entities,media",
+        )
+        assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_raw_response_retrieve_follower_audit(self, client: XTwitterScraper) -> None:
+        response = client.x.users.with_raw_response.retrieve_follower_audit(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = response.parse()
+        assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_streaming_response_retrieve_follower_audit(self, client: XTwitterScraper) -> None:
+        with client.x.users.with_streaming_response.retrieve_follower_audit(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = response.parse()
+            assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    def test_path_params_retrieve_follower_audit(self, client: XTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            client.x.users.with_raw_response.retrieve_follower_audit(
+                id="",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize
@@ -2253,6 +2307,59 @@ class TestAsyncUsers:
             assert_matches_type(UserRetrieveBatchTweetsResponse, user, path=["response"])
 
         assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_follower_audit(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_follower_audit(
+            id="id",
+        )
+        assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_method_retrieve_follower_audit_with_all_params(self, async_client: AsyncXTwitterScraper) -> None:
+        user = await async_client.x.users.retrieve_follower_audit(
+            id="id",
+            fields="id,text,author.username",
+            limit=50,
+            omit="entities,media",
+        )
+        assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_raw_response_retrieve_follower_audit(self, async_client: AsyncXTwitterScraper) -> None:
+        response = await async_client.x.users.with_raw_response.retrieve_follower_audit(
+            id="id",
+        )
+
+        assert response.is_closed is True
+        assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+        user = await response.parse()
+        assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_streaming_response_retrieve_follower_audit(self, async_client: AsyncXTwitterScraper) -> None:
+        async with async_client.x.users.with_streaming_response.retrieve_follower_audit(
+            id="id",
+        ) as response:
+            assert not response.is_closed
+            assert response.http_request.headers.get("X-Stainless-Lang") == "python"
+
+            user = await response.parse()
+            assert_matches_type(UserRetrieveFollowerAuditResponse, user, path=["response"])
+
+        assert cast(Any, response.is_closed) is True
+
+    @pytest.mark.skip(reason="Mock server tests are disabled")
+    @parametrize
+    async def test_path_params_retrieve_follower_audit(self, async_client: AsyncXTwitterScraper) -> None:
+        with pytest.raises(ValueError, match=r"Expected a non-empty value for `id` but received ''"):
+            await async_client.x.users.with_raw_response.retrieve_follower_audit(
+                id="",
+            )
 
     @pytest.mark.skip(reason="Mock server tests are disabled")
     @parametrize

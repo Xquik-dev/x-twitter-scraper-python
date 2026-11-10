@@ -16,7 +16,12 @@ from .posts import (
     PostsResourceWithStreamingResponse,
     AsyncPostsResourceWithStreamingResponse,
 )
-from ...types import monitor_list_params, monitor_create_params, monitor_update_params
+from ...types import (
+    monitor_list_params,
+    monitor_create_params,
+    monitor_update_params,
+    monitor_upsert_by_username_params,
+)
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from .keywords import (
@@ -41,6 +46,7 @@ from ...types.shared.event_type import EventType
 from ...types.monitor_list_response import MonitorListResponse
 from ...types.monitor_create_response import MonitorCreateResponse
 from ...types.monitor_deactivate_response import MonitorDeactivateResponse
+from ...types.monitor_upsert_by_username_response import MonitorUpsertByUsernameResponse
 
 __all__ = ["MonitorsResource", "AsyncMonitorsResource"]
 
@@ -280,6 +286,60 @@ class MonitorsResource(SyncAPIResource):
             cast_to=MonitorDeactivateResponse,
         )
 
+    def upsert_by_username(
+        self,
+        username: str,
+        *,
+        event_types: List[EventType],
+        name: Optional[str] | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> MonitorUpsertByUsernameResponse:
+        """Creates the monitor if it does not exist, or updates it if it does.
+
+        Send the same
+        call twice & you still have 1 monitor. A new monitor answers 201 & an update
+        answers 200. Both carry `created`, so you know which one ran. Creating needs the
+        credits of the first hour, then costs 30 credits an hour. A stopped monitor
+        turns back on & counts as created. Updating is free & replaces the event types.
+        It changes the name only when you send one.
+
+        Args:
+          username: The account's X username, with or without @, or its numeric user ID. A number
+              is a user ID, so this call matches the account even after a rename.
+
+          event_types: Array of event types to subscribe to.
+
+          name: Your label for the monitor. Its events carry it as monitorName. Leave it out to
+              keep the current label, or send null to remove it.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not username:
+            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        return self._put(
+            path_template("/monitors/username/{username}", username=username),
+            body=maybe_transform(
+                {
+                    "event_types": event_types,
+                    "name": name,
+                },
+                monitor_upsert_by_username_params.MonitorUpsertByUsernameParams,
+            ),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=MonitorUpsertByUsernameResponse,
+        )
+
 
 class AsyncMonitorsResource(AsyncAPIResource):
     """X account monitoring with 1-second checks"""
@@ -516,6 +576,60 @@ class AsyncMonitorsResource(AsyncAPIResource):
             cast_to=MonitorDeactivateResponse,
         )
 
+    async def upsert_by_username(
+        self,
+        username: str,
+        *,
+        event_types: List[EventType],
+        name: Optional[str] | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> MonitorUpsertByUsernameResponse:
+        """Creates the monitor if it does not exist, or updates it if it does.
+
+        Send the same
+        call twice & you still have 1 monitor. A new monitor answers 201 & an update
+        answers 200. Both carry `created`, so you know which one ran. Creating needs the
+        credits of the first hour, then costs 30 credits an hour. A stopped monitor
+        turns back on & counts as created. Updating is free & replaces the event types.
+        It changes the name only when you send one.
+
+        Args:
+          username: The account's X username, with or without @, or its numeric user ID. A number
+              is a user ID, so this call matches the account even after a rename.
+
+          event_types: Array of event types to subscribe to.
+
+          name: Your label for the monitor. Its events carry it as monitorName. Leave it out to
+              keep the current label, or send null to remove it.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        if not username:
+            raise ValueError(f"Expected a non-empty value for `username` but received {username!r}")
+        return await self._put(
+            path_template("/monitors/username/{username}", username=username),
+            body=await async_maybe_transform(
+                {
+                    "event_types": event_types,
+                    "name": name,
+                },
+                monitor_upsert_by_username_params.MonitorUpsertByUsernameParams,
+            ),
+            options=make_request_options(
+                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+            ),
+            cast_to=MonitorUpsertByUsernameResponse,
+        )
+
 
 class MonitorsResourceWithRawResponse:
     def __init__(self, monitors: MonitorsResource) -> None:
@@ -535,6 +649,9 @@ class MonitorsResourceWithRawResponse:
         )
         self.deactivate = to_raw_response_wrapper(
             monitors.deactivate,
+        )
+        self.upsert_by_username = to_raw_response_wrapper(
+            monitors.upsert_by_username,
         )
 
     @cached_property
@@ -567,6 +684,9 @@ class AsyncMonitorsResourceWithRawResponse:
         self.deactivate = async_to_raw_response_wrapper(
             monitors.deactivate,
         )
+        self.upsert_by_username = async_to_raw_response_wrapper(
+            monitors.upsert_by_username,
+        )
 
     @cached_property
     def keywords(self) -> AsyncKeywordsResourceWithRawResponse:
@@ -598,6 +718,9 @@ class MonitorsResourceWithStreamingResponse:
         self.deactivate = to_streamed_response_wrapper(
             monitors.deactivate,
         )
+        self.upsert_by_username = to_streamed_response_wrapper(
+            monitors.upsert_by_username,
+        )
 
     @cached_property
     def keywords(self) -> KeywordsResourceWithStreamingResponse:
@@ -628,6 +751,9 @@ class AsyncMonitorsResourceWithStreamingResponse:
         )
         self.deactivate = async_to_streamed_response_wrapper(
             monitors.deactivate,
+        )
+        self.upsert_by_username = async_to_streamed_response_wrapper(
+            monitors.upsert_by_username,
         )
 
     @cached_property

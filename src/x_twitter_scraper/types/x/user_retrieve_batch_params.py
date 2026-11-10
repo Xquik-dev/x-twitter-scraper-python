@@ -51,7 +51,7 @@ class UserRetrieveBatchParams(TypedDict, total=False):
     """Only return profiles with a website."""
 
     ids: str
-    """Comma-separated numeric user IDs (1-100 values).
+    """Comma-separated numeric user IDs.
 
     Duplicate IDs are ignored while preserving first-seen order.
     """
@@ -92,7 +92,7 @@ class UserRetrieveBatchParams(TypedDict, total=False):
     usernames: str
     """
     Comma-separated X usernames, with or without @, or profile links such as
-    x.com/nasa (1-100 values), in place of ids. A name in another case is the same
+    x.com/nasa, in place of ids. A name in another case is the same
     account.
     """
 

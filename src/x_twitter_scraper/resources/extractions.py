@@ -163,6 +163,7 @@ class ExtractionsResource(SyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_affiliates",
             "user_likes",
             "user_media",
             "verified_follower_explorer",
@@ -270,6 +271,7 @@ class ExtractionsResource(SyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_affiliates",
             "user_likes",
             "user_media",
             "verified_follower_explorer",
@@ -299,6 +301,7 @@ class ExtractionsResource(SyncAPIResource):
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
         has_website: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         include_original_post: bool | Omit = omit,
         include_search_terms: bool | Omit = omit,
         include_target_metadata: bool | Omit = omit,
@@ -365,6 +368,7 @@ class ExtractionsResource(SyncAPIResource):
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -441,6 +445,13 @@ class ExtractionsResource(SyncAPIResource):
           has_media_only: Return only replies with media.
 
           has_website: Require a profile website.
+
+          image_shows: Keep only the posts whose photos show this. Use charts, screenshots,
+              product_photos, memes or people, or describe it in your own words. Each post with a
+              safe photo is checked, & each stored post costs 2 credits instead of its read price.
+              Posts without a safe photo aren't checked, billed or stored, & a post the filter drops
+              costs nothing. resultsLimit caps the posts read. Works with tools that return posts.
+              Send topic or imageShows, not both.
 
           include_original_post: Include the source post in reply results.
 
@@ -586,6 +597,12 @@ class ExtractionsResource(SyncAPIResource):
           text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
               text, a link, its card or a quoted post. The author's name and username don't count.
 
+          topic: Keep only the posts about this topic, such as "the Rust programming language". Each
+              post the job reads is checked, only matching posts are stored, & each stored post
+              costs 2 credits instead of its read price. A post the filter drops costs nothing.
+              resultsLimit caps the posts read & checked. Works with tools that return posts. Send
+              topic or imageShows, not both.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -643,6 +660,7 @@ class ExtractionsResource(SyncAPIResource):
                     "has_location": has_location,
                     "has_media_only": has_media_only,
                     "has_website": has_website,
+                    "image_shows": image_shows,
                     "include_original_post": include_original_post,
                     "include_search_terms": include_search_terms,
                     "include_target_metadata": include_target_metadata,
@@ -709,6 +727,7 @@ class ExtractionsResource(SyncAPIResource):
                     "target_username": target_username,
                     "target_usernames": target_usernames,
                     "text_only_terms": text_only_terms,
+                    "topic": topic,
                     "to_user": to_user,
                     "until_date": until_date,
                     "until_time": until_time,
@@ -925,6 +944,7 @@ class ExtractionsResource(SyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_affiliates",
             "user_likes",
             "user_media",
             "verified_follower_explorer",
@@ -955,6 +975,7 @@ class ExtractionsResource(SyncAPIResource):
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
         has_website: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         include_original_post: bool | Omit = omit,
         include_search_terms: bool | Omit = omit,
         include_target_metadata: bool | Omit = omit,
@@ -1021,6 +1042,7 @@ class ExtractionsResource(SyncAPIResource):
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -1102,6 +1124,13 @@ class ExtractionsResource(SyncAPIResource):
           has_media_only: Return only replies with media.
 
           has_website: Require a profile website.
+
+          image_shows: Keep only the posts whose photos show this. Use charts, screenshots,
+              product_photos, memes or people, or describe it in your own words. Each post with a
+              safe photo is checked, & each stored post costs 2 credits instead of its read price.
+              Posts without a safe photo aren't checked, billed or stored, & a post the filter drops
+              costs nothing. resultsLimit caps the posts read. Works with tools that return posts.
+              Send topic or imageShows, not both.
 
           include_original_post: Include the source post in reply results.
 
@@ -1247,6 +1276,12 @@ class ExtractionsResource(SyncAPIResource):
           text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
               text, a link, its card or a quoted post. The author's name and username don't count.
 
+          topic: Keep only the posts about this topic, such as "the Rust programming language". Each
+              post the job reads is checked, only matching posts are stored, & each stored post
+              costs 2 credits instead of its read price. A post the filter drops costs nothing.
+              resultsLimit caps the posts read & checked. Works with tools that return posts. Send
+              topic or imageShows, not both.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -1310,6 +1345,7 @@ class ExtractionsResource(SyncAPIResource):
                         "has_location": has_location,
                         "has_media_only": has_media_only,
                         "has_website": has_website,
+                        "image_shows": image_shows,
                         "include_original_post": include_original_post,
                         "include_search_terms": include_search_terms,
                         "include_target_metadata": include_target_metadata,
@@ -1376,6 +1412,7 @@ class ExtractionsResource(SyncAPIResource):
                         "target_username": target_username,
                         "target_usernames": target_usernames,
                         "text_only_terms": text_only_terms,
+                        "topic": topic,
                         "to_user": to_user,
                         "until_date": until_date,
                         "until_time": until_time,
@@ -1518,6 +1555,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_affiliates",
             "user_likes",
             "user_media",
             "verified_follower_explorer",
@@ -1625,6 +1663,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_affiliates",
             "user_likes",
             "user_media",
             "verified_follower_explorer",
@@ -1654,6 +1693,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
         has_website: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         include_original_post: bool | Omit = omit,
         include_search_terms: bool | Omit = omit,
         include_target_metadata: bool | Omit = omit,
@@ -1720,6 +1760,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -1796,6 +1837,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
           has_media_only: Return only replies with media.
 
           has_website: Require a profile website.
+
+          image_shows: Keep only the posts whose photos show this. Use charts, screenshots,
+              product_photos, memes or people, or describe it in your own words. Each post with a
+              safe photo is checked, & each stored post costs 2 credits instead of its read price.
+              Posts without a safe photo aren't checked, billed or stored, & a post the filter drops
+              costs nothing. resultsLimit caps the posts read. Works with tools that return posts.
+              Send topic or imageShows, not both.
 
           include_original_post: Include the source post in reply results.
 
@@ -1941,6 +1989,12 @@ class AsyncExtractionsResource(AsyncAPIResource):
           text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
               text, a link, its card or a quoted post. The author's name and username don't count.
 
+          topic: Keep only the posts about this topic, such as "the Rust programming language". Each
+              post the job reads is checked, only matching posts are stored, & each stored post
+              costs 2 credits instead of its read price. A post the filter drops costs nothing.
+              resultsLimit caps the posts read & checked. Works with tools that return posts. Send
+              topic or imageShows, not both.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -1998,6 +2052,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     "has_location": has_location,
                     "has_media_only": has_media_only,
                     "has_website": has_website,
+                    "image_shows": image_shows,
                     "include_original_post": include_original_post,
                     "include_search_terms": include_search_terms,
                     "include_target_metadata": include_target_metadata,
@@ -2064,6 +2119,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                     "target_username": target_username,
                     "target_usernames": target_usernames,
                     "text_only_terms": text_only_terms,
+                    "topic": topic,
                     "to_user": to_user,
                     "until_date": until_date,
                     "until_time": until_time,
@@ -2280,6 +2336,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
             "space_explorer",
             "thread_extractor",
             "tweet_search_extractor",
+            "user_affiliates",
             "user_likes",
             "user_media",
             "verified_follower_explorer",
@@ -2310,6 +2367,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         has_location: bool | Omit = omit,
         has_media_only: bool | Omit = omit,
         has_website: bool | Omit = omit,
+        image_shows: str | Omit = omit,
         include_original_post: bool | Omit = omit,
         include_search_terms: bool | Omit = omit,
         include_target_metadata: bool | Omit = omit,
@@ -2376,6 +2434,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         target_username: str | Omit = omit,
         target_usernames: SequenceNotStr[str] | Omit = omit,
         text_only_terms: str | Omit = omit,
+        topic: str | Omit = omit,
         to_user: str | Omit = omit,
         until_date: Union[str, date] | Omit = omit,
         until_time: Union[Union[str, datetime], int] | Omit = omit,
@@ -2457,6 +2516,13 @@ class AsyncExtractionsResource(AsyncAPIResource):
           has_media_only: Return only replies with media.
 
           has_website: Require a profile website.
+
+          image_shows: Keep only the posts whose photos show this. Use charts, screenshots,
+              product_photos, memes or people, or describe it in your own words. Each post with a
+              safe photo is checked, & each stored post costs 2 credits instead of its read price.
+              Posts without a safe photo aren't checked, billed or stored, & a post the filter drops
+              costs nothing. resultsLimit caps the posts read. Works with tools that return posts.
+              Send topic or imageShows, not both.
 
           include_original_post: Include the source post in reply results.
 
@@ -2602,6 +2668,12 @@ class AsyncExtractionsResource(AsyncAPIResource):
           text_only_terms: Collects a post only when 1 of these words or quoted phrases is in its
               text, a link, its card or a quoted post. The author's name and username don't count.
 
+          topic: Keep only the posts about this topic, such as "the Rust programming language". Each
+              post the job reads is checked, only matching posts are stored, & each stored post
+              costs 2 credits instead of its read price. A post the filter drops costs nothing.
+              resultsLimit caps the posts read & checked. Works with tools that return posts. Send
+              topic or imageShows, not both.
+
           to_user: Replies to this username (tweet_search_extractor).
 
           until_date: Tweet or Community search end date.
@@ -2665,6 +2737,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                         "has_location": has_location,
                         "has_media_only": has_media_only,
                         "has_website": has_website,
+                        "image_shows": image_shows,
                         "include_original_post": include_original_post,
                         "include_search_terms": include_search_terms,
                         "include_target_metadata": include_target_metadata,
@@ -2731,6 +2804,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
                         "target_username": target_username,
                         "target_usernames": target_usernames,
                         "text_only_terms": text_only_terms,
+                        "topic": topic,
                         "to_user": to_user,
                         "until_date": until_date,
                         "until_time": until_time,
