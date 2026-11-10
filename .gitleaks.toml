@@ -15,3 +15,10 @@ regexes = [
   '''(?i)idempotency.?key''',
   '''(?i)(expectedSecret|\bSecret\s*=)''',
 ]
+
+[[allowlists]]
+description = "openapi_spec_hash in .stats.yml is the hash of the OpenAPI spec the SDK was generated from, not a key."
+condition = "AND"
+paths = ['''^\.stats\.yml$''']
+regexTarget = "match"
+regexes = ['''^openapi_spec_hash: [0-9a-f]{32}$''']
