@@ -50,6 +50,7 @@ class BookmarksResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         folder_id: str | Omit = omit,
+        page_size: int | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -65,6 +66,9 @@ class BookmarksResource(SyncAPIResource):
               pagination_token or continuation_token.
 
           folder_id: Optional bookmark folder ID. Folders need X Premium.
+
+          page_size: Items per page, 1 to 100, default 20. Source, filters or credits can
+              return fewer. Follow next_cursor for more pages.
 
           extra_headers: Send extra headers
 
@@ -85,6 +89,7 @@ class BookmarksResource(SyncAPIResource):
                     {
                         "cursor": cursor,
                         "folder_id": folder_id,
+                        "page_size": page_size,
                     },
                     bookmark_list_params.BookmarkListParams,
                 ),
@@ -159,6 +164,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         folder_id: str | Omit = omit,
+        page_size: int | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -174,6 +180,9 @@ class AsyncBookmarksResource(AsyncAPIResource):
               pagination_token or continuation_token.
 
           folder_id: Optional bookmark folder ID. Folders need X Premium.
+
+          page_size: Items per page, 1 to 100, default 20. Source, filters or credits can
+              return fewer. Follow next_cursor for more pages.
 
           extra_headers: Send extra headers
 
@@ -194,6 +203,7 @@ class AsyncBookmarksResource(AsyncAPIResource):
                     {
                         "cursor": cursor,
                         "folder_id": folder_id,
+                        "page_size": page_size,
                     },
                     bookmark_list_params.BookmarkListParams,
                 ),

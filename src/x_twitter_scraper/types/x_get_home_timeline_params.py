@@ -20,3 +20,9 @@ class XGetHomeTimelineParams(TypedDict, total=False):
 
     seen_tweet_ids: Annotated[str, PropertyInfo(alias="seenTweetIds")]
     """Comma-separated tweet IDs to exclude from results. Empty entries are ignored."""
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Items per page, 1 to 100, default 20.
+
+    Source, filters or credits can return fewer. Follow next_cursor for more pages.
+    """
