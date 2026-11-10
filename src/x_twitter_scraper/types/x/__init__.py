@@ -91,6 +91,7 @@ from .tweet_check_repost_params import TweetCheckRepostParams as TweetCheckRepos
 from .tweet_get_insights_params import TweetGetInsightsParams as TweetGetInsightsParams
 from .user_retrieve_live_params import UserRetrieveLiveParams as UserRetrieveLiveParams
 from .user_translate_bio_params import UserTranslateBioParams as UserTranslateBioParams
+from .x_account_connection_link import XAccountConnectionLink as XAccountConnectionLink
 from .analysis_classify_response import AnalysisClassifyResponse as AnalysisClassifyResponse
 from .dm_delete_message_response import DmDeleteMessageResponse as DmDeleteMessageResponse
 from .dm_retrieve_history_params import DmRetrieveHistoryParams as DmRetrieveHistoryParams
@@ -185,11 +186,20 @@ from .user_retrieve_follower_audit_params import UserRetrieveFollowerAuditParams
 from .user_retrieve_follower_ids_response import UserRetrieveFollowerIdsResponse as UserRetrieveFollowerIdsResponse
 from .community_retrieve_moderators_params import CommunityRetrieveModeratorsParams as CommunityRetrieveModeratorsParams
 from .user_retrieve_following_ids_response import UserRetrieveFollowingIdsResponse as UserRetrieveFollowingIdsResponse
+from .account_connection_link_create_params import (
+    AccountConnectionLinkCreateParams as AccountConnectionLinkCreateParams,
+)
 from .user_retrieve_follower_audit_response import (
     UserRetrieveFollowerAuditResponse as UserRetrieveFollowerAuditResponse,
 )
 from .user_retrieve_list_memberships_params import (
     UserRetrieveListMembershipsParams as UserRetrieveListMembershipsParams,
+)
+from .account_connection_link_create_response import (
+    AccountConnectionLinkCreateResponse as AccountConnectionLinkCreateResponse,
+)
+from .account_connection_link_delete_response import (
+    AccountConnectionLinkDeleteResponse as AccountConnectionLinkDeleteResponse,
 )
 from .user_retrieve_followers_you_know_params import (
     UserRetrieveFollowersYouKnowParams as UserRetrieveFollowersYouKnowParams,

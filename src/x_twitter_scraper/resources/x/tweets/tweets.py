@@ -128,6 +128,7 @@ class TweetsResource(SyncAPIResource):
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
+        media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
         prefer: str | Omit = omit,
@@ -149,6 +150,9 @@ class TweetsResource(SyncAPIResource):
 
           media: Publicly reachable URLs of up to 4 images or exactly 1 MP4 video up to 100 MB.
               Media adds 2 credits per started MB across all files.
+
+          media_ids: Media IDs from `client.x.media.upload`, uploaded with this account. IDs last 24 hours.
+              Send up to 4 image IDs or exactly 1 video ID. Send `media` or `media_ids`, not both.
 
           reply_to_tweet_id: The post to reply to. Any X post ID works, from 1 to 19 digits.
 
@@ -180,6 +184,7 @@ class TweetsResource(SyncAPIResource):
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
+                    "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
                     "text": text,
                 },
@@ -2564,6 +2569,7 @@ class AsyncTweetsResource(AsyncAPIResource):
         community_id: str | Omit = omit,
         is_note_tweet: bool | Omit = omit,
         media: SequenceNotStr[str] | Omit = omit,
+        media_ids: SequenceNotStr[str] | Omit = omit,
         reply_to_tweet_id: str | Omit = omit,
         text: str | Omit = omit,
         prefer: str | Omit = omit,
@@ -2585,6 +2591,9 @@ class AsyncTweetsResource(AsyncAPIResource):
 
           media: Publicly reachable URLs of up to 4 images or exactly 1 MP4 video up to 100 MB.
               Media adds 2 credits per started MB across all files.
+
+          media_ids: Media IDs from `client.x.media.upload`, uploaded with this account. IDs last 24 hours.
+              Send up to 4 image IDs or exactly 1 video ID. Send `media` or `media_ids`, not both.
 
           reply_to_tweet_id: The post to reply to. Any X post ID works, from 1 to 19 digits.
 
@@ -2616,6 +2625,7 @@ class AsyncTweetsResource(AsyncAPIResource):
                     "community_id": community_id,
                     "is_note_tweet": is_note_tweet,
                     "media": media,
+                    "media_ids": media_ids,
                     "reply_to_tweet_id": reply_to_tweet_id,
                     "text": text,
                 },

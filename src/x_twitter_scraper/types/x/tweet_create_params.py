@@ -43,6 +43,13 @@ class TweetCreateParams(TypedDict, total=False):
     Media adds 2 credits per started MB across all files.
     """
 
+    media_ids: SequenceNotStr[str]
+    """Media IDs from `client.x.media.upload`, uploaded with this account.
+
+    IDs last 24 hours. Send up to 4 image IDs or exactly 1 video ID. Send `media` or
+    `media_ids`, not both. Media adds 2 credits per started MB across all files.
+    """
+
     reply_to_tweet_id: str
     """The post to reply to. Any X post ID works, from 1 to 19 digits."""
 

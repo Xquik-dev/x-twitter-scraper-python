@@ -30,6 +30,11 @@
 - A filtered page returns `TopicFilteredTweets` or `ImageFilteredTweets`, with each post's `topic_score` or `image_score` and a `topic_filter` or `image_filter` that states the cutoff & counts. Both subclass `PaginatedTweets`, so code typed for a plain page keeps working.
 - `extractions.run` & `estimate_cost` take `topic` or `image_shows`, and `ExtractionJob` returns `topic_filter` or `image_filter`.
 - `client.x.media.download` takes `image_shows` to save only the posts whose photos show it, and returns `image_filter`.
+- `client.x.account_connection_links.create` makes a link to a page Xquik hosts, where a person connects an X account with no Xquik signup. `retrieve` reads the link & its status, and `delete` revokes it. Treat `url` as a secret, since it holds the token.
+- `client.x.accounts.create` & `reauth` take `connection_attempt_id`, an ID you generate to read the attempt's status even if the response never reaches you. A finished attempt returns `account_id`.
+- `client.x.accounts.reauth` now returns the same 3 answers as `create`, so `AccountReauthResponse` is that union. A sign-in still running or waiting on an email code no longer reads as an active account, so check `status` before you read `x_username`.
+- `client.x.tweets.create` takes `media_ids`, the IDs that `client.x.media.upload` returns. Send `media` or `media_ids`, not both.
+- `Error.code` gains `media_not_uploaded`.
 
 ## 0.20.0 (2026-11-04)
 

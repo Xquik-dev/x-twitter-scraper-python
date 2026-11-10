@@ -37,6 +37,9 @@ class XAccountConnectionAttemptSuccess(BaseModel):
 
     status: Literal["success"]
 
+    account_id: Optional[str] = FieldInfo(alias="accountId", default=None)
+    """The connected account's ID."""
+
 
 class XAccountConnectionAttemptFailed(BaseModel):
     """The connection reached a final failure."""

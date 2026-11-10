@@ -58,6 +58,7 @@ class AccountsResource(SyncAPIResource):
         password: str,
         totp_secret: str,
         username: str,
+        connection_attempt_id: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -74,6 +75,9 @@ class AccountsResource(SyncAPIResource):
           totp_secret: Authenticator App TOTP secret required for durable login
 
           username: X username of the account to connect, with or without @
+
+          connection_attempt_id: An ID you generate to read this attempt's status, even if the response never
+              reaches you. Leave it out to get one in a pending response.
 
           extra_headers: Send extra headers
 
@@ -93,6 +97,7 @@ class AccountsResource(SyncAPIResource):
                         "password": password,
                         "totp_secret": totp_secret,
                         "username": username,
+                        "connection_attempt_id": connection_attempt_id,
                     },
                     account_create_params.AccountCreateParams,
                 ),
@@ -257,6 +262,7 @@ class AccountsResource(SyncAPIResource):
         id: str,
         *,
         password: str,
+        connection_attempt_id: str | Omit = omit,
         email: str | Omit = omit,
         totp_secret: str | Omit = omit,
         extra_headers: Headers | None = None,
@@ -269,6 +275,9 @@ class AccountsResource(SyncAPIResource):
 
         Args:
           password: Updated account password
+
+          connection_attempt_id: An ID you generate to read this reconnect's status, even if the response never
+              reaches you. Leave it out to get one in a pending response.
 
           email: Email for the X account (updates stored email)
 
@@ -284,20 +293,24 @@ class AccountsResource(SyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return self._post(
-            path_template("/x/accounts/{id}/reauth", id=id),
-            body=maybe_transform(
-                {
-                    "password": password,
-                    "email": email,
-                    "totp_secret": totp_secret,
-                },
-                account_reauth_params.AccountReauthParams,
+        return cast(
+            AccountReauthResponse,
+            self._post(
+                path_template("/x/accounts/{id}/reauth", id=id),
+                body=maybe_transform(
+                    {
+                        "password": password,
+                        "connection_attempt_id": connection_attempt_id,
+                        "email": email,
+                        "totp_secret": totp_secret,
+                    },
+                    account_reauth_params.AccountReauthParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(Any, AccountReauthResponse),
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=AccountReauthResponse,
         )
 
 
@@ -329,6 +342,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         password: str,
         totp_secret: str,
         username: str,
+        connection_attempt_id: str | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -345,6 +359,9 @@ class AsyncAccountsResource(AsyncAPIResource):
           totp_secret: Authenticator App TOTP secret required for durable login
 
           username: X username of the account to connect, with or without @
+
+          connection_attempt_id: An ID you generate to read this attempt's status, even if the response never
+              reaches you. Leave it out to get one in a pending response.
 
           extra_headers: Send extra headers
 
@@ -364,6 +381,7 @@ class AsyncAccountsResource(AsyncAPIResource):
                         "password": password,
                         "totp_secret": totp_secret,
                         "username": username,
+                        "connection_attempt_id": connection_attempt_id,
                     },
                     account_create_params.AccountCreateParams,
                 ),
@@ -528,6 +546,7 @@ class AsyncAccountsResource(AsyncAPIResource):
         id: str,
         *,
         password: str,
+        connection_attempt_id: str | Omit = omit,
         email: str | Omit = omit,
         totp_secret: str | Omit = omit,
         extra_headers: Headers | None = None,
@@ -540,6 +559,9 @@ class AsyncAccountsResource(AsyncAPIResource):
 
         Args:
           password: Updated account password
+
+          connection_attempt_id: An ID you generate to read this reconnect's status, even if the response never
+              reaches you. Leave it out to get one in a pending response.
 
           email: Email for the X account (updates stored email)
 
@@ -555,20 +577,24 @@ class AsyncAccountsResource(AsyncAPIResource):
         """
         if not id:
             raise ValueError(f"Expected a non-empty value for `id` but received {id!r}")
-        return await self._post(
-            path_template("/x/accounts/{id}/reauth", id=id),
-            body=await async_maybe_transform(
-                {
-                    "password": password,
-                    "email": email,
-                    "totp_secret": totp_secret,
-                },
-                account_reauth_params.AccountReauthParams,
+        return cast(
+            AccountReauthResponse,
+            await self._post(
+                path_template("/x/accounts/{id}/reauth", id=id),
+                body=await async_maybe_transform(
+                    {
+                        "password": password,
+                        "connection_attempt_id": connection_attempt_id,
+                        "email": email,
+                        "totp_secret": totp_secret,
+                    },
+                    account_reauth_params.AccountReauthParams,
+                ),
+                options=make_request_options(
+                    extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
+                ),
+                cast_to=cast(Any, AccountReauthResponse),
             ),
-            options=make_request_options(
-                extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
-            ),
-            cast_to=AccountReauthResponse,
         )
 
 
