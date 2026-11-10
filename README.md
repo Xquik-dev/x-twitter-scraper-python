@@ -1,5 +1,9 @@
 # X API & Twitter API Python SDK by Xquik
 
+[![Framer builds a tweet ticker with Xquik](https://img.youtube.com/vi/4UOSpoOoC3Y/maxresdefault.jpg)](https://youtu.be/4UOSpoOoC3Y?t=367)\
+[Watch Framer build a tweet ticker with Xquik, from 6:07](https://youtu.be/4UOSpoOoC3Y?t=367).
+This Python SDK calls the Xquik API.
+
 Use this Twitter API Python SDK by Xquik to read tweets as Pydantic models.
 Sync & async clients share every method.
 Public reads need no X developer account.
