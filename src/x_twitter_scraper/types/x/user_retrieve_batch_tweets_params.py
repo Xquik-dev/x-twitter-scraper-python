@@ -23,7 +23,7 @@ class UserRetrieveBatchTweetsParams(TypedDict, total=False):
     """
 
     ids: str
-    """Comma-separated numeric user IDs (1-20 values).
+    """Comma-separated numeric IDs of the users to read posts from.
 
     Duplicate IDs are ignored while preserving first-seen order.
     """
@@ -35,7 +35,7 @@ class UserRetrieveBatchTweetsParams(TypedDict, total=False):
     """
 
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
-    """Posts per user (1-20, default 20).
+    """Posts per user (1-300, default 20).
 
     Credits can return fewer. Aliases: limit, count, max_results, maxItems,
     max_items & per_page.
@@ -44,6 +44,6 @@ class UserRetrieveBatchTweetsParams(TypedDict, total=False):
     usernames: str
     """
     Comma-separated X usernames, with or without @, or profile links such as
-    x.com/nasa (1-20 values), in place of ids. A name in another case is the same
+    x.com/nasa, in place of ids. A name in another case is the same
     account.
     """

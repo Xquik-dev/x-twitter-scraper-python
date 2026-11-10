@@ -13,11 +13,17 @@ from x_twitter_scraper.types import (
     Error,
     ErrorCode,
     EventType,
+    ImageFilterSummary,
+    ImageFilteredTweets,
+    ImageScoredTweet,
     LiveEventContext,
     PaginatedTweets,
     PaginatedUsers,
     SearchTweet,
     SoftIntervention,
+    TopicFilterSummary,
+    TopicFilteredTweets,
+    TopicScoredTweet,
     TweetMedia,
     UserProfile,
 )
@@ -140,6 +146,7 @@ from x_twitter_scraper.types import (
     MonitorCreateResponse,
     MonitorListResponse,
     MonitorDeactivateResponse,
+    MonitorUpsertByUsernameResponse,
 )
 ```
 
@@ -150,6 +157,7 @@ Methods
 - <code title="patch /monitors/{id}">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">update</a>(id, \*\*<a href="src/x_twitter_scraper/types/monitor_update_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitor.py">Monitor</a></code>
 - <code title="get /monitors">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/monitor_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitor_list_response.py">MonitorListResponse</a></code>
 - <code title="delete /monitors/{id}">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">deactivate</a>(id) -> <a href="./src/x_twitter_scraper/types/monitor_deactivate_response.py">MonitorDeactivateResponse</a></code>
+- <code title="put /monitors/username/{username}">client.monitors.<a href="./src/x_twitter_scraper/resources/monitors/monitors.py">upsert_by_username</a>(username, \*\*<a href="src/x_twitter_scraper/types/monitor_upsert_by_username_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/monitor_upsert_by_username_response.py">MonitorUpsertByUsernameResponse</a></code>
 
 ## Keywords
 
@@ -445,6 +453,7 @@ from x_twitter_scraper.types.x import (
     UserRemoveFollowerResponse,
     UserRetrieveBatchResponse,
     UserRetrieveBatchTweetsResponse,
+    UserRetrieveFollowerAuditResponse,
     UserRetrieveFollowerIdsResponse,
     UserRetrieveFollowersResponse,
     UserRetrieveFollowingResponse,
@@ -453,6 +462,9 @@ from x_twitter_scraper.types.x import (
     UserRetrieveListMembershipsResponse,
     UserRetrieveListsResponse,
     UserRetrieveLiveResponse,
+    UserRetrieveMediaResponse,
+    UserRetrieveRepliesResponse,
+    UserRetrieveTweetsResponse,
     UserRetrieveVerifiedFollowersResponse,
     UserTranslateBioResponse,
     ShadowbanReport,
@@ -467,6 +479,7 @@ Methods
 - <code title="get /x/users/{id}/articles">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_articles</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_articles_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
 - <code title="get /x/users/batch">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_batch</a>(\*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_batch_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_batch_response.py">UserRetrieveBatchResponse</a></code>
 - <code title="get /x/users/batch/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_batch_tweets</a>(\*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_batch_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_batch_tweets_response.py">UserRetrieveBatchTweetsResponse</a></code>
+- <code title="get /x/users/{id}/follower-audit">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_follower_audit</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_follower_audit_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_follower_audit_response.py">UserRetrieveFollowerAuditResponse</a></code>
 - <code title="get /x/users/{id}/follower-ids">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_follower_ids</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_follower_ids_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_follower_ids_response.py">UserRetrieveFollowerIdsResponse</a></code>
 - <code title="get /x/users/{id}/followers">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_followers</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_followers_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_followers_response.py">UserRetrieveFollowersResponse</a></code>
 - <code title="get /x/users/{id}/followers-you-know">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_followers_you_know</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_followers_you_know_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
@@ -478,14 +491,14 @@ Methods
 - <code title="get /x/users/{id}/list-memberships">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_list_memberships</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_list_memberships_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_list_memberships_response.py">UserRetrieveListMembershipsResponse</a></code>
 - <code title="get /x/users/{id}/lists">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_lists</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_lists_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_lists_response.py">UserRetrieveListsResponse</a></code>
 - <code title="get /x/users/{id}/live">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_live</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_live_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_live_response.py">UserRetrieveLiveResponse</a></code>
-- <code title="get /x/users/{id}/media">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_media</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_media_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/users/{id}/media">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_media</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_media_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_media_response.py">UserRetrieveMediaResponse</a></code>
 - <code title="get /x/users/{id}/mentions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_mentions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_mentions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
-- <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_replies</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_replies_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/users/{id}/replies">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_replies</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_replies_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_replies_response.py">UserRetrieveRepliesResponse</a></code>
 - <code title="get /x/users/search">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_search</a>(\*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_search_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/shadowban">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_shadowban</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_shadowban_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/shadowban_report.py">ShadowbanReport</a></code>
 - <code title="get /x/users/{id}/similar">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_similar</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_similar_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
 - <code title="get /x/users/{id}/subscriptions">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_subscriptions</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_subscriptions_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_users.py">PaginatedUsers</a></code>
-- <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_tweets</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/shared/paginated_tweets.py">PaginatedTweets</a></code>
+- <code title="get /x/users/{id}/tweets">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_tweets</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_tweets_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_tweets_response.py">UserRetrieveTweetsResponse</a></code>
 - <code title="get /x/users/{id}/verified-followers">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">retrieve_verified_followers</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_retrieve_verified_followers_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_retrieve_verified_followers_response.py">UserRetrieveVerifiedFollowersResponse</a></code>
 - <code title="get /x/users/{id}/translation">client.x.users.<a href="./src/x_twitter_scraper/resources/x/users/users.py">translate_bio</a>(id, \*\*<a href="src/x_twitter_scraper/types/x/user_translate_bio_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/user_translate_bio_response.py">UserTranslateBioResponse</a></code>
 
@@ -702,6 +715,24 @@ from x_twitter_scraper.types.x import AccountConnectionAttemptRetrieveResponse
 Methods
 
 - <code title="get /x/account-connection-attempts/{id}">client.x.account_connection_attempts.<a href="./src/x_twitter_scraper/resources/x/account_connection_attempts.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/account_connection_attempt_retrieve_response.py">AccountConnectionAttemptRetrieveResponse</a></code>
+
+## AccountConnectionLinks
+
+Types
+
+```python
+from x_twitter_scraper.types.x import (
+    XAccountConnectionLink,
+    AccountConnectionLinkCreateResponse,
+    AccountConnectionLinkDeleteResponse,
+)
+```
+
+Methods
+
+- <code title="post /x/account-connection-links">client.x.account_connection_links.<a href="./src/x_twitter_scraper/resources/x/account_connection_links.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/x/account_connection_link_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/account_connection_link_create_response.py">AccountConnectionLinkCreateResponse</a></code>
+- <code title="get /x/account-connection-links/{id}">client.x.account_connection_links.<a href="./src/x_twitter_scraper/resources/x/account_connection_links.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/x_account_connection_link.py">XAccountConnectionLink</a></code>
+- <code title="delete /x/account-connection-links/{id}">client.x.account_connection_links.<a href="./src/x_twitter_scraper/resources/x/account_connection_links.py">delete</a>(id) -> <a href="./src/x_twitter_scraper/types/x/account_connection_link_delete_response.py">AccountConnectionLinkDeleteResponse</a></code>
 
 ## Bookmarks
 

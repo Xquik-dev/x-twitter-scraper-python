@@ -167,6 +167,14 @@ from .communities.communities import (
     CommunitiesResourceWithStreamingResponse,
     AsyncCommunitiesResourceWithStreamingResponse,
 )
+from .account_connection_links import (
+    AccountConnectionLinksResource,
+    AsyncAccountConnectionLinksResource,
+    AccountConnectionLinksResourceWithRawResponse,
+    AsyncAccountConnectionLinksResourceWithRawResponse,
+    AccountConnectionLinksResourceWithStreamingResponse,
+    AsyncAccountConnectionLinksResourceWithStreamingResponse,
+)
 from .account_connection_attempts import (
     AccountConnectionAttemptsResource,
     AsyncAccountConnectionAttemptsResource,
@@ -257,6 +265,11 @@ class XResource(SyncAPIResource):
     def account_connection_attempts(self) -> AccountConnectionAttemptsResource:
         """Connected X account management"""
         return AccountConnectionAttemptsResource(self._client)
+
+    @cached_property
+    def account_connection_links(self) -> AccountConnectionLinksResource:
+        """Connected X account management"""
+        return AccountConnectionLinksResource(self._client)
 
     @cached_property
     def bookmarks(self) -> BookmarksResource:
@@ -1028,6 +1041,11 @@ class AsyncXResource(AsyncAPIResource):
     def account_connection_attempts(self) -> AsyncAccountConnectionAttemptsResource:
         """Connected X account management"""
         return AsyncAccountConnectionAttemptsResource(self._client)
+
+    @cached_property
+    def account_connection_links(self) -> AsyncAccountConnectionLinksResource:
+        """Connected X account management"""
+        return AsyncAccountConnectionLinksResource(self._client)
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResource:
@@ -1835,6 +1853,11 @@ class XResourceWithRawResponse:
         return AccountConnectionAttemptsResourceWithRawResponse(self._x.account_connection_attempts)
 
     @cached_property
+    def account_connection_links(self) -> AccountConnectionLinksResourceWithRawResponse:
+        """Connected X account management"""
+        return AccountConnectionLinksResourceWithRawResponse(self._x.account_connection_links)
+
+    @cached_property
     def bookmarks(self) -> BookmarksResourceWithRawResponse:
         """Look up, search, and analyze individual tweets"""
         return BookmarksResourceWithRawResponse(self._x.bookmarks)
@@ -1959,6 +1982,11 @@ class AsyncXResourceWithRawResponse:
     def account_connection_attempts(self) -> AsyncAccountConnectionAttemptsResourceWithRawResponse:
         """Connected X account management"""
         return AsyncAccountConnectionAttemptsResourceWithRawResponse(self._x.account_connection_attempts)
+
+    @cached_property
+    def account_connection_links(self) -> AsyncAccountConnectionLinksResourceWithRawResponse:
+        """Connected X account management"""
+        return AsyncAccountConnectionLinksResourceWithRawResponse(self._x.account_connection_links)
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResourceWithRawResponse:
@@ -2087,6 +2115,11 @@ class XResourceWithStreamingResponse:
         return AccountConnectionAttemptsResourceWithStreamingResponse(self._x.account_connection_attempts)
 
     @cached_property
+    def account_connection_links(self) -> AccountConnectionLinksResourceWithStreamingResponse:
+        """Connected X account management"""
+        return AccountConnectionLinksResourceWithStreamingResponse(self._x.account_connection_links)
+
+    @cached_property
     def bookmarks(self) -> BookmarksResourceWithStreamingResponse:
         """Look up, search, and analyze individual tweets"""
         return BookmarksResourceWithStreamingResponse(self._x.bookmarks)
@@ -2211,6 +2244,11 @@ class AsyncXResourceWithStreamingResponse:
     def account_connection_attempts(self) -> AsyncAccountConnectionAttemptsResourceWithStreamingResponse:
         """Connected X account management"""
         return AsyncAccountConnectionAttemptsResourceWithStreamingResponse(self._x.account_connection_attempts)
+
+    @cached_property
+    def account_connection_links(self) -> AsyncAccountConnectionLinksResourceWithStreamingResponse:
+        """Connected X account management"""
+        return AsyncAccountConnectionLinksResourceWithStreamingResponse(self._x.account_connection_links)
 
     @cached_property
     def bookmarks(self) -> AsyncBookmarksResourceWithStreamingResponse:

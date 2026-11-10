@@ -18,6 +18,14 @@ class TweetCreateParams(TypedDict, total=False):
 
     idempotency_key: Required[Annotated[str, PropertyInfo(alias="Idempotency-Key")]]
 
+    prefer: Annotated[str, PropertyInfo(alias="Prefer")]
+    """A long write answers 202 with a status link, then lands on X.
+
+    `wait=<seconds>` asks for the answer within that many seconds, up to 85. If the
+    write is still running then, the API answers 202 with Location. Poll Location
+    until `terminal` is true, and don't send the write again.
+    """
+
     community_id: str
     """The Community to post into, from 1 to 19 digits.
 
@@ -33,6 +41,13 @@ class TweetCreateParams(TypedDict, total=False):
     """Publicly reachable URLs of up to 4 images or exactly 1 MP4 video up to 100 MB.
 
     Media adds 2 credits per started MB across all files.
+    """
+
+    media_ids: SequenceNotStr[str]
+    """Media IDs from `client.x.media.upload`, uploaded with this account.
+
+    IDs last 24 hours. Send up to 4 image IDs or exactly 1 video ID. Send `media` or
+    `media_ids`, not both. Media adds 2 credits per started MB across all files.
     """
 
     reply_to_tweet_id: str

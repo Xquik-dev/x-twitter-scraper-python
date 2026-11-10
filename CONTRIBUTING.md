@@ -80,6 +80,7 @@ With a clean tree and a pushed commit, it posts the result as the `xquik-local-c
 Pass `--no-status` to skip that status.
 Coverage compares against `HEAD^` by default.
 For a branch with several commits, pass its base, as in `bin/check-local origin/main`.
+`bin/release-local` passes the commit of the last release tag, so a release compares coverage with the last published state in whatever order its commits landed.
 SDK commits preserve full-source coverage. LOC changes remain advisory.
 The check scripts remove their temporary directories on any exit, including failure or interruption.
 

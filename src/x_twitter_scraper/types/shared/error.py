@@ -18,7 +18,12 @@ ErrorCode: TypeAlias = Literal[
     "account_not_found",
     "account_required",
     "account_restricted",
+    "api_key_expired",
     "api_key_limit_reached",
+    "api_key_paused",
+    "api_key_budget_reached",
+    "api_key_revoked",
+    "ip_not_allowed",
     "article_not_found",
     "closed",
     "dm_not_permitted",
@@ -36,11 +41,14 @@ ErrorCode: TypeAlias = Literal[
     "invalid_username",
     "invalid_json",
     "insufficient_credits",
+    "insufficient_scope",
     "job_not_found",
     "login_cooldown",
     "login_failed",
     "media_download_failed",
+    "media_not_uploaded",
     "media_too_large",
+    "media_unavailable",
     "missing_params",
     "missing_query",
     "monitor_already_exists",
@@ -48,8 +56,11 @@ ErrorCode: TypeAlias = Literal[
     "no_media",
     "no_credits",
     "no_subscription",
+    "extraction_terminal",
     "not_found",
     "payment_failed",
+    "post_unavailable",
+    "price_changed",
     "rate_limit_exceeded",
     "service_unavailable",
     "session_required",
@@ -138,6 +149,7 @@ ErrorCode: TypeAlias = Literal[
     "x_api_unauthorized",
     "x_auth_failure",
     "x_automation_refused",
+    "x_community_creation_closed",
     "x_community_not_joined",
     "x_community_not_selectable",
     "x_community_post_public",
@@ -237,6 +249,11 @@ class Error(BaseModel):
     tweet_not_found answer names why X shows no post, when X said, as deleted,
     author_suspended or protected.
     """
+
+    required_scope: Optional[Literal["write", "monitors", "exports", "billing", "full"]] = FieldInfo(
+        alias="requiredScope", default=None
+    )
+    """With insufficient_scope, the scope the API key needs for this route."""
 
     retry_after: Optional[int] = FieldInfo(alias="retryAfter", default=None)
     """Seconds until the next permitted request."""

@@ -21,3 +21,9 @@ class AccountCreateParams(TypedDict, total=False):
 
     username: Required[str]
     """X username of the account to connect, with or without @"""
+
+    connection_attempt_id: str
+    """An ID you generate to read this attempt's status, even if the response never reaches you.
+
+    Leave it out to get one in a pending response.
+    """

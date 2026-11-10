@@ -674,7 +674,8 @@ REPOSITORY_SPEC: Dict[str, object] = {
         "/x/media": {
             "post": {
                 "parameters": [
-                    {"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string"}}
+                    {"name": "Idempotency-Key", "in": "header", "required": True, "schema": {"type": "string"}},
+                    {"name": "Prefer", "in": "header", "schema": {"type": "string"}},
                 ],
                 "requestBody": {
                     "content": {

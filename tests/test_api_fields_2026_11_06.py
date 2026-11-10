@@ -245,3 +245,13 @@ def test_user_insights_and_shadowban_send_limit() -> None:
 
     assert dict(insights.url.params) == {"limit": "50"}
     assert dict(shadowban.url.params) == {"limit": "50"}
+
+
+def test_extractions_take_the_user_affiliates_tool() -> None:
+    run = captured_request(lambda client: client.extractions.run(tool_type="user_affiliates"), {})
+    estimate = captured_request(lambda client: client.extractions.estimate_cost(tool_type="user_affiliates"), {})
+    listed = captured_request(lambda client: client.extractions.list(tool_type="user_affiliates"), {})
+
+    assert json.loads(run.content)["toolType"] == "user_affiliates"
+    assert json.loads(estimate.content)["toolType"] == "user_affiliates"
+    assert dict(listed.url.params) == {"toolType": "user_affiliates"}
