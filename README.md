@@ -180,14 +180,16 @@ Set `python.analysis.typeCheckingMode` to `basic` in VS Code to catch type error
 Pass uploads as `bytes`, a [`PathLike`](https://docs.python.org/3/library/os.html#os.PathLike), or `(filename, contents, media_type)`.
 
 ```python
-from pathlib import Path
+import httpx
 from x_twitter_scraper import XTwitterScraper
 
 client = XTwitterScraper()
 
+image = httpx.get("https://xquik.com/logo.png").content
+
 client.x.media.upload(
     account="@elonmusk",
-    file=Path("/path/to/file"),
+    file=("logo.png", image, "image/png"),
     idempotency_key="upload-2026-10-15",
 )
 ```
@@ -293,7 +295,7 @@ The SDK uses Python's [`logging`](https://docs.python.org/3/library/logging.html
 Set `X_TWITTER_SCRAPER_LOG` to `info` to enable logs.
 
 ```shell
-$ export X_TWITTER_SCRAPER_LOG=info
+export X_TWITTER_SCRAPER_LOG=info
 ```
 
 Use `debug` for request and response details.
@@ -304,11 +306,14 @@ Both missing and explicit `null` response fields map to `None`.
 Check `.model_fields_set` to distinguish them.
 
 ```py
-if response.my_field is None:
-    if "my_field" not in response.model_fields_set:
-        print('The response omitted "my_field".')
+response = client.x.tweets.search(q="from:NASA", limit=1)
+tweet = response.tweets[0]
+
+if tweet.community_note is None:
+    if "community_note" not in tweet.model_fields_set:
+        print('The response omitted "community_note".')
     else:
-        print('The response set "my_field" to null.')
+        print('The response set "community_note" to null.')
 ```
 
 ### Accessing raw response data
@@ -365,13 +370,13 @@ Client options, including retries, apply to these requests.
 ```py
 import httpx
 
-response = client.post(
-    "/foo",
+response = client.get(
+    "/x/tweets/search",
     cast_to=httpx.Response,
-    body={"my_param": True},
+    options={"params": {"q": "from:NASA", "limit": 1}},
 )
 
-print(response.headers.get("x-foo"))
+print(response.headers.get("content-type"))
 ```
 
 #### Undocumented request parameters
@@ -408,7 +413,12 @@ client = XTwitterScraper(
 Use `with_options()` to replace it for one request.
 
 ```python
-client.with_options(http_client=DefaultHttpxClient(...))
+from x_twitter_scraper import DefaultHttpxClient
+
+client.with_options(http_client=DefaultHttpxClient(timeout=30.0)).x.tweets.search(
+    q="from:NASA",
+    limit=10,
+)
 ```
 
 ### Managing HTTP resources

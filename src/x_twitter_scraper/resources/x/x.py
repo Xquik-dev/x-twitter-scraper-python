@@ -514,6 +514,7 @@ class XResource(SyncAPIResource):
         *,
         cursor: str | Omit = omit,
         seen_tweet_ids: str | Omit = omit,
+        page_size: int | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -529,6 +530,9 @@ class XResource(SyncAPIResource):
               pagination_token or continuation_token.
 
           seen_tweet_ids: Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
+
+          page_size: Items per page, 1 to 100, default 20. Source, filters or credits can
+              return fewer. Follow next_cursor for more pages.
 
           extra_headers: Send extra headers
 
@@ -549,6 +553,7 @@ class XResource(SyncAPIResource):
                     {
                         "cursor": cursor,
                         "seen_tweet_ids": seen_tweet_ids,
+                        "page_size": page_size,
                     },
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),
@@ -1290,6 +1295,7 @@ class AsyncXResource(AsyncAPIResource):
         *,
         cursor: str | Omit = omit,
         seen_tweet_ids: str | Omit = omit,
+        page_size: int | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1305,6 +1311,9 @@ class AsyncXResource(AsyncAPIResource):
               pagination_token or continuation_token.
 
           seen_tweet_ids: Comma-separated tweet IDs to exclude from results. Empty entries are ignored.
+
+          page_size: Items per page, 1 to 100, default 20. Source, filters or credits can
+              return fewer. Follow next_cursor for more pages.
 
           extra_headers: Send extra headers
 
@@ -1325,6 +1334,7 @@ class AsyncXResource(AsyncAPIResource):
                     {
                         "cursor": cursor,
                         "seen_tweet_ids": seen_tweet_ids,
+                        "page_size": page_size,
                     },
                     x_get_home_timeline_params.XGetHomeTimelineParams,
                 ),

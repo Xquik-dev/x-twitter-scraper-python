@@ -98,3 +98,9 @@ class MediaDownloadResponse(BaseModel):
 
     unprocessed_tweet_ids: Optional[List[str]] = FieldInfo(alias="unprocessedTweetIds", default=None)
     """Posts Xquik had no time to read, at no charge. Send them again."""
+
+    failed_tweet_ids: Optional[List[str]] = FieldInfo(alias="failedTweetIds", default=None)
+    """Posts Xquik couldn't read, at no charge. Send them again."""
+
+    no_media_tweet_ids: Optional[List[str]] = FieldInfo(alias="noMediaTweetIds", default=None)
+    """Posts with no media to save, at no charge."""

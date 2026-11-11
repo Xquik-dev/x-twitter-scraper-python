@@ -20,3 +20,9 @@ class BookmarkListParams(TypedDict, total=False):
 
     folder_id: Annotated[str, PropertyInfo(alias="folderId")]
     """Optional bookmark folder ID. Folders need X Premium."""
+
+    page_size: Annotated[int, PropertyInfo(alias="pageSize")]
+    """Items per page, 1 to 100, default 20.
+
+    Source, filters or credits can return fewer. Follow next_cursor for more pages.
+    """
