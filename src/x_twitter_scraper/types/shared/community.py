@@ -16,6 +16,7 @@ __all__ = [
     "BannerColor",
     "BannerFocus",
     "Creator",
+    "CreatorUserProfile",
     "CreatorUnionMember1",
     "MembersFacepile",
     "MembersFacepileCommunityMemberPreview",
@@ -84,7 +85,12 @@ class CreatorUnionMember1(BaseModel):
     """Whether X shows the creator a badge"""
 
 
-Creator: TypeAlias = Union[UserProfile, CreatorUnionMember1]
+class CreatorUserProfile(UserProfile):
+    verified: bool  # pyright: ignore[reportIncompatibleVariableOverride, reportGeneralTypeIssues]
+    """Whether X shows the creator a badge"""
+
+
+Creator: TypeAlias = Union[CreatorUserProfile, CreatorUnionMember1]
 
 
 class MembersFacepileCommunityMemberPreview(BaseModel):
