@@ -86,7 +86,7 @@ class CreatorUnionMember1(BaseModel):
 
 
 class CreatorUserProfile(UserProfile):
-    verified: bool  # pyright: ignore[reportIncompatibleVariableOverride]
+    verified: bool  # pyright: ignore[reportIncompatibleVariableOverride, reportGeneralTypeIssues]
     """Whether X shows the creator a badge"""
 
 
