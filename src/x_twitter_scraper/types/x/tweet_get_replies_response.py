@@ -84,6 +84,7 @@ class TweetGetRepliesResponseDiagnosticStrategiesAttempted(BaseModel):
         "page_cap",
         "partial_view",
         "repeated_cursor",
+        "reported_held",
         "window_covered",
         "window_passed",
     ] = FieldInfo(alias="stopReason")
