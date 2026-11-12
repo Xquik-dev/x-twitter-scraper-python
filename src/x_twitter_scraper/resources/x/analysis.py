@@ -65,6 +65,7 @@ class AnalysisResource(SyncAPIResource):
         analysis: analysis_brand_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_brand_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -73,6 +74,7 @@ class AnalysisResource(SyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -97,6 +99,13 @@ class AnalysisResource(SyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -116,6 +125,12 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -139,6 +154,7 @@ class AnalysisResource(SyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -147,6 +163,7 @@ class AnalysisResource(SyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -165,6 +182,7 @@ class AnalysisResource(SyncAPIResource):
         analysis: analysis_classify_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_classify_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -173,6 +191,7 @@ class AnalysisResource(SyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -199,6 +218,13 @@ class AnalysisResource(SyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -218,6 +244,12 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -241,6 +273,7 @@ class AnalysisResource(SyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -249,6 +282,7 @@ class AnalysisResource(SyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -267,6 +301,7 @@ class AnalysisResource(SyncAPIResource):
         analysis: analysis_market_signals_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_market_signals_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -275,6 +310,7 @@ class AnalysisResource(SyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -299,6 +335,13 @@ class AnalysisResource(SyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -318,6 +361,12 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -341,6 +390,7 @@ class AnalysisResource(SyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -349,6 +399,7 @@ class AnalysisResource(SyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -367,6 +418,7 @@ class AnalysisResource(SyncAPIResource):
         analysis: analysis_news_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_news_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -375,6 +427,7 @@ class AnalysisResource(SyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -399,6 +452,13 @@ class AnalysisResource(SyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -418,6 +478,12 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -441,6 +507,7 @@ class AnalysisResource(SyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -449,6 +516,7 @@ class AnalysisResource(SyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -467,6 +535,7 @@ class AnalysisResource(SyncAPIResource):
         analysis: analysis_sentiment_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_sentiment_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -475,6 +544,7 @@ class AnalysisResource(SyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -501,6 +571,13 @@ class AnalysisResource(SyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -520,6 +597,12 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -543,6 +626,7 @@ class AnalysisResource(SyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -551,6 +635,7 @@ class AnalysisResource(SyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -569,6 +654,7 @@ class AnalysisResource(SyncAPIResource):
         analysis: analysis_viral_score_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_viral_score_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -577,6 +663,7 @@ class AnalysisResource(SyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -602,6 +689,13 @@ class AnalysisResource(SyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -621,6 +715,12 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -644,6 +744,7 @@ class AnalysisResource(SyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -652,6 +753,7 @@ class AnalysisResource(SyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -692,6 +794,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         analysis: analysis_brand_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_brand_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -700,6 +803,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -724,6 +828,13 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -743,6 +854,12 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -766,6 +883,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -774,6 +892,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -792,6 +911,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         analysis: analysis_classify_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_classify_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -800,6 +920,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -826,6 +947,13 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -845,6 +973,12 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -868,6 +1002,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -876,6 +1011,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -894,6 +1030,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         analysis: analysis_market_signals_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_market_signals_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -902,6 +1039,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -926,6 +1064,13 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -945,6 +1090,12 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -968,6 +1119,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -976,6 +1128,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -994,6 +1147,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         analysis: analysis_news_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_news_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -1002,6 +1156,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -1026,6 +1181,13 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -1045,6 +1207,12 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -1068,6 +1236,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -1076,6 +1245,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -1094,6 +1264,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         analysis: analysis_sentiment_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_sentiment_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -1102,6 +1273,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -1128,6 +1300,13 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -1147,6 +1326,12 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -1170,6 +1355,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -1178,6 +1364,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
@@ -1196,6 +1383,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         analysis: analysis_viral_score_params.Analysis | Omit = omit,
         baseline: Iterable[analysis_viral_score_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
+        image_shows: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
         query: str | Omit = omit,
@@ -1204,6 +1392,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
@@ -1229,6 +1418,13 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           cursor: The next_cursor of the page before. Send the same search with it.
 
+          image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
+              input. Send charts, screenshots, product_photos, memes or people, or describe it
+              in words, such as a rocket. AI-powered analysis checks posts with photos X
+              doesn't mark sensitive & keeps scores of 0.5 or more. Only kept posts are
+              analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
+              topic or imageShows, not both.
+
           limit: Maximum posts to analyze from the search. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
@@ -1248,6 +1444,12 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          topic: Keep only posts about this topic, the same as the Actors' topic input.
+              AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+              scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+              post the filter drops costs nothing. topicFilter states the cutoff & counts.
+              Send topic or imageShows, not both.
 
           tweet_ids: Post IDs or post URLs to analyze, up to 100.
 
@@ -1271,6 +1473,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "analysis": analysis,
                     "baseline": baseline,
                     "cursor": cursor,
+                    "image_shows": image_shows,
                     "limit": limit,
                     "list_id": list_id,
                     "query": query,
@@ -1279,6 +1482,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,

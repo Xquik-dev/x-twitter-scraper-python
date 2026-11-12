@@ -9,6 +9,8 @@ from pydantic import Field as FieldInfo
 
 from ..._models import BaseModel
 from ..shared.search_tweet import SearchTweet
+from ..shared.image_filter_summary import ImageFilterSummary
+from ..shared.topic_filter_summary import TopicFilterSummary
 
 __all__ = [
     "AnalysisClassifyResponse",
@@ -370,3 +372,9 @@ class AnalysisClassifyResponse(BaseModel):
 
     unanalyzed: List[Unanalyzed]
     """Each post without an analysis, by ID & reason. These cost nothing."""
+
+    image_filter: Optional[ImageFilterSummary] = FieldInfo(alias="imageFilter", default=None)
+    """What the photo filter asked & how many posts it kept."""
+
+    topic_filter: Optional[TopicFilterSummary] = FieldInfo(alias="topicFilter", default=None)
+    """What the topic filter asked & how many posts it kept."""
