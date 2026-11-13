@@ -52,6 +52,12 @@ class PaginatedTweets(BaseModel):
     filtered_count: Optional[int] = None
     """Whole number from 0."""
 
+    hidden_timeline: Optional[Literal[True]] = FieldInfo(alias="hiddenTimeline", default=None)
+    """Present on an empty last page when X shows this account's timeline to nobody.
+
+    The page is empty because of that, so it doesn't mean the account posted nothing. A retry returns the same page.
+    """
+
     read_back_to: Optional[datetime] = FieldInfo(alias="readBackTo", default=None)
     """How far back a filtered Latest search has read, in UTC.
 
