@@ -128,6 +128,12 @@ class UserRetrieveMentionsParams(TypedDict, total=False):
     It takes the same names as fields. With fields, it drops from the kept fields.
     """
 
+    own_threads: Annotated[Literal["exclude"], PropertyInfo(alias="ownThreads")]
+    """With replies=exclude, also leaves out replies to the author's own posts.
+
+    The search then skips every reply.
+    """
+
     page_size: Annotated[int, PropertyInfo(alias="pageSize")]
     """Items per page (1-100, default 20).
 
