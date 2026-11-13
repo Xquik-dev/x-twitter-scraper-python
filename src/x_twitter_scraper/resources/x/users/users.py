@@ -2444,6 +2444,7 @@ class UsersResource(SyncAPIResource):
         near: str | Omit = omit,
         news: bool | Omit = omit,
         omit: str | Omit = omit,
+        own_threads: Literal["exclude"] | Omit = omit,
         page_size: int | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
@@ -2544,6 +2545,8 @@ class UsersResource(SyncAPIResource):
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
+          own_threads: With replies=exclude, also leaves out replies to the author's own posts. The
+              search then skips every reply.
 
           page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
               Follow next_cursor for more pages. Aliases: limit, count, max_results, maxItems,
@@ -2637,6 +2640,7 @@ class UsersResource(SyncAPIResource):
                         "near": near,
                         "news": news,
                         "omit": omit,
+                        "own_threads": own_threads,
                         "page_size": page_size,
                         "quotes": quotes,
                         "quotes_of_tweet_id": quotes_of_tweet_id,
@@ -6382,6 +6386,7 @@ class AsyncUsersResource(AsyncAPIResource):
         near: str | Omit = omit,
         news: bool | Omit = omit,
         omit: str | Omit = omit,
+        own_threads: Literal["exclude"] | Omit = omit,
         page_size: int | Omit = omit,
         quotes: Literal["include", "exclude", "only"] | Omit = omit,
         quotes_of_tweet_id: str | Omit = omit,
@@ -6482,6 +6487,8 @@ class AsyncUsersResource(AsyncAPIResource):
 
           omit: Fields to drop from each row, comma-separated. It takes the same names as
               fields. With fields, it drops from the kept fields.
+          own_threads: With replies=exclude, also leaves out replies to the author's own posts. The
+              search then skips every reply.
 
           page_size: Items per page (1-100, default 20). Source, filters or credits can return fewer.
               Follow next_cursor for more pages. Aliases: limit, count, max_results, maxItems,
@@ -6575,6 +6582,7 @@ class AsyncUsersResource(AsyncAPIResource):
                         "near": near,
                         "news": news,
                         "omit": omit,
+                        "own_threads": own_threads,
                         "page_size": page_size,
                         "quotes": quotes,
                         "quotes_of_tweet_id": quotes_of_tweet_id,
