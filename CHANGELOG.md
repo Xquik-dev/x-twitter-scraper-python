@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- The mentions read adds `own_threads="exclude"`, which with `replies="exclude"` also leaves out replies to the author's own posts, so the search skips every reply.
+- A tweets page adds `hidden_timeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
 - Replies diagnostics add the `reported_held` stop reason, which a strategy returns once the read holds every reply X reports.
 - `client.x.users.retrieve_batch_tweets` takes `page_size` up to 300 posts per user.
 - `client.monitors.upsert_by_username` creates the monitor for an account, or updates it if it exists, so the same call twice still leaves 1 monitor. `created` says which one ran.

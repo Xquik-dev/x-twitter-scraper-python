@@ -48,6 +48,9 @@ class UserListPage(PaginatedUsers):
     last.
     """
 
+    window_complete: Optional[Literal[True]] = FieldInfo(alias="windowComplete", default=None)
+    """Present on the last page of an empty list whose profile counts 0 accounts in it."""
+
 
 class UserListCoverageResponseDiagnosticStrategy(BaseModel):
     """Result counts and stop reason for one relationship strategy."""
