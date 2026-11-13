@@ -40,6 +40,16 @@ class AnalysisMarketSignalsParams(TypedDict, total=False):
     cursor: str
     """The next_cursor of the page before. Send the same search with it."""
 
+    image_shows: Annotated[str, PropertyInfo(alias="imageShows")]
+    """Keep only posts whose photos show this, the same as the Actors' imageShows input.
+
+    Send charts, screenshots, product_photos, memes or people, or describe it in
+    words, such as a rocket. AI-powered analysis checks posts with photos X doesn't
+    mark sensitive & keeps scores of 0.5 or more. Only kept posts are analyzed &
+    cost 2 credits each. imageFilter states the cutoff & counts. Send topic or
+    imageShows, not both.
+    """
+
     limit: int
     """Maximum posts to analyze from the search. Credits can return fewer."""
 
@@ -72,6 +82,15 @@ class AnalysisMarketSignalsParams(TypedDict, total=False):
     """Your own texts to analyze, such as drafts.
 
     Reads nothing from X. Each text costs the same as 1 analyzed post.
+    """
+
+    topic: str
+    """Keep only posts about this topic, the same as the Actors' topic input.
+
+    AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
+    scores of 0.5 or more. Only kept posts are analyzed & cost 2 credits each, & a
+    post the filter drops costs nothing. topicFilter states the cutoff & counts.
+    Send topic or imageShows, not both.
     """
 
     tweet_ids: Annotated[SequenceNotStr[str], PropertyInfo(alias="tweetIds")]
