@@ -66,18 +66,25 @@ class AnalysisResource(SyncAPIResource):
         baseline: Iterable[analysis_brand_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -97,7 +104,7 @@ class AnalysisResource(SyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -106,9 +113,24 @@ class AnalysisResource(SyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -118,6 +140,10 @@ class AnalysisResource(SyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -125,6 +151,9 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -138,6 +167,9 @@ class AnalysisResource(SyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -155,18 +187,25 @@ class AnalysisResource(SyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_brand_params.AnalysisBrandParams,
             ),
@@ -183,18 +222,25 @@ class AnalysisResource(SyncAPIResource):
         baseline: Iterable[analysis_classify_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -216,7 +262,7 @@ class AnalysisResource(SyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -225,9 +271,24 @@ class AnalysisResource(SyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -237,6 +298,10 @@ class AnalysisResource(SyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -244,6 +309,9 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -257,6 +325,9 @@ class AnalysisResource(SyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -274,18 +345,25 @@ class AnalysisResource(SyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_classify_params.AnalysisClassifyParams,
             ),
@@ -302,18 +380,25 @@ class AnalysisResource(SyncAPIResource):
         baseline: Iterable[analysis_market_signals_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -333,7 +418,7 @@ class AnalysisResource(SyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -342,9 +427,24 @@ class AnalysisResource(SyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -354,6 +454,10 @@ class AnalysisResource(SyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -361,6 +465,9 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -374,6 +481,9 @@ class AnalysisResource(SyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -391,18 +501,25 @@ class AnalysisResource(SyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_market_signals_params.AnalysisMarketSignalsParams,
             ),
@@ -419,18 +536,25 @@ class AnalysisResource(SyncAPIResource):
         baseline: Iterable[analysis_news_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -450,7 +574,7 @@ class AnalysisResource(SyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -459,9 +583,24 @@ class AnalysisResource(SyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -471,6 +610,10 @@ class AnalysisResource(SyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -478,6 +621,9 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -491,6 +637,9 @@ class AnalysisResource(SyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -508,18 +657,25 @@ class AnalysisResource(SyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_news_params.AnalysisNewsParams,
             ),
@@ -536,18 +692,25 @@ class AnalysisResource(SyncAPIResource):
         baseline: Iterable[analysis_sentiment_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -569,7 +732,7 @@ class AnalysisResource(SyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -578,9 +741,24 @@ class AnalysisResource(SyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -590,6 +768,10 @@ class AnalysisResource(SyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -597,6 +779,9 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -610,6 +795,9 @@ class AnalysisResource(SyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -627,18 +815,25 @@ class AnalysisResource(SyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_sentiment_params.AnalysisSentimentParams,
             ),
@@ -655,18 +850,25 @@ class AnalysisResource(SyncAPIResource):
         baseline: Iterable[analysis_viral_score_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -687,7 +889,7 @@ class AnalysisResource(SyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -696,9 +898,24 @@ class AnalysisResource(SyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -708,6 +925,10 @@ class AnalysisResource(SyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -715,6 +936,9 @@ class AnalysisResource(SyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -728,6 +952,9 @@ class AnalysisResource(SyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -745,18 +972,25 @@ class AnalysisResource(SyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_viral_score_params.AnalysisViralScoreParams,
             ),
@@ -795,18 +1029,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
         baseline: Iterable[analysis_brand_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -826,7 +1067,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -835,9 +1076,24 @@ class AsyncAnalysisResource(AsyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -847,6 +1103,10 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -854,6 +1114,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -867,6 +1130,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -884,18 +1150,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_brand_params.AnalysisBrandParams,
             ),
@@ -912,18 +1185,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
         baseline: Iterable[analysis_classify_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -945,7 +1225,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -954,9 +1234,24 @@ class AsyncAnalysisResource(AsyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -966,6 +1261,10 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -973,6 +1272,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -986,6 +1288,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -1003,18 +1308,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_classify_params.AnalysisClassifyParams,
             ),
@@ -1031,18 +1343,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
         baseline: Iterable[analysis_market_signals_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1062,7 +1381,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -1071,9 +1390,24 @@ class AsyncAnalysisResource(AsyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -1083,6 +1417,10 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -1090,6 +1428,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -1103,6 +1444,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -1120,18 +1464,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_market_signals_params.AnalysisMarketSignalsParams,
             ),
@@ -1148,18 +1499,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
         baseline: Iterable[analysis_news_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1179,7 +1537,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -1188,9 +1546,24 @@ class AsyncAnalysisResource(AsyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -1200,6 +1573,10 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -1207,6 +1584,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -1220,6 +1600,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -1237,18 +1620,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_news_params.AnalysisNewsParams,
             ),
@@ -1265,18 +1655,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
         baseline: Iterable[analysis_sentiment_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1298,7 +1695,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -1307,9 +1704,24 @@ class AsyncAnalysisResource(AsyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -1319,6 +1731,10 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -1326,6 +1742,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -1339,6 +1758,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -1356,18 +1778,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_sentiment_params.AnalysisSentimentParams,
             ),
@@ -1384,18 +1813,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
         baseline: Iterable[analysis_viral_score_params.Baseline] | Omit = omit,
         cursor: str | Omit = omit,
         image_shows: str | Omit = omit,
+        liked_by: str | Omit = omit,
         limit: int | Omit = omit,
         list_id: str | Omit = omit,
+        list_ids: SequenceNotStr[str] | Omit = omit,
+        media_by: str | Omit = omit,
+        queries: SequenceNotStr[str] | Omit = omit,
         query: str | Omit = omit,
         query_type: Literal["Latest", "Top"] | Omit = omit,
         quotes_of: str | Omit = omit,
+        replies_by: str | Omit = omit,
         replies_to: str | Omit = omit,
         since_time: Union[str, int] | Omit = omit,
         texts: SequenceNotStr[str] | Omit = omit,
+        thread_of: str | Omit = omit,
         topic: str | Omit = omit,
         tweet_ids: SequenceNotStr[str] | Omit = omit,
         until_time: Union[str, int] | Omit = omit,
         username: str | Omit = omit,
+        usernames: SequenceNotStr[str] | Omit = omit,
         extra_headers: Headers | None = None,
         extra_query: Query | None = None,
         extra_body: Body | None = None,
@@ -1416,7 +1852,7 @@ class AsyncAnalysisResource(AsyncAPIResource):
               as not_comparable. Each result's monitor says whether the post is new, changed
               or unchanged. The comparison costs nothing extra.
 
-          cursor: The next_cursor of the page before. Send the same search with it.
+          cursor: The next_cursor of the page before. Send the same search or page with it.
 
           image_shows: Keep only posts whose photos show this, the same as the Actors' imageShows
               input. Send charts, screenshots, product_photos, memes or people, or describe it
@@ -1425,9 +1861,24 @@ class AsyncAnalysisResource(AsyncAPIResource):
               analyzed & cost 2 credits each. imageFilter states the cutoff & counts. Send
               topic or imageShows, not both.
 
-          limit: Maximum posts to analyze from the search. Credits can return fewer.
+          liked_by: Analyze the posts 1 account liked, as /x/users/{id}/likes reads them. Send a
+              handle, with or without @, a user ID or a profile URL. Send no other posts or
+              search with it.
+
+          limit: Maximum posts to analyze from the search or page. Credits can return fewer.
 
           list_id: Analyze a public List's posts. Send its ID or URL.
+
+          list_ids: Analyze the posts of several public Lists in 1 search. Send their IDs or
+              URLs. listId, when sent, joins them.
+
+          media_by: Analyze 1 account's posts with photos or videos, as its Media tab shows
+              them. /x/users/{id}/media reads the same posts. Send a handle, with or without @,
+              a user ID or a profile URL. Send no other posts or search with it.
+
+          queries: X searches to analyze as 1 search. A post matching any of them counts. Each
+              takes the operators of query. query, when sent, joins them. X searches up to 512
+              characters, counted with the other search fields.
 
           query: X search to analyze, with the operators of /x/tweets/search, such as from:nasa
               or lang:en. X searches up to 512 characters, counted with the other search
@@ -1437,6 +1888,10 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           quotes_of: Analyze the quotes of 1 post. Send its ID or URL.
 
+          replies_by: Analyze 1 account's posts & replies, as its Replies tab shows them.
+              /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+              user ID or a profile URL. Send no other posts or search with it.
+
           replies_to: Analyze the replies in 1 post's conversation. Send its ID or URL.
 
           since_time: Inclusive start of the search, such as 2026-09-25T00:00:00Z. Unix seconds also
@@ -1444,6 +1899,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
 
           texts: Your own texts to analyze, such as drafts. Reads nothing from X. Each text costs
               the same as 1 analyzed post.
+
+          thread_of: Analyze 1 post's thread, as /x/tweets/{id}/thread reads it. Send the post's
+              ID or URL. Send no other posts or search with it.
 
           topic: Keep only posts about this topic, the same as the Actors' topic input.
               AI-powered analysis asks "Is this post about <topic>?" of each post & keeps
@@ -1457,6 +1915,9 @@ class AsyncAnalysisResource(AsyncAPIResource):
               work. A time without an offset is UTC.
 
           username: Analyze 1 account's posts. Send a handle, with or without @, or a profile URL.
+
+          usernames: Analyze the posts of several accounts in 1 search. Send handles, with or
+              without @, or profile URLs. username, when sent, joins them.
 
           extra_headers: Send extra headers
 
@@ -1474,18 +1935,25 @@ class AsyncAnalysisResource(AsyncAPIResource):
                     "baseline": baseline,
                     "cursor": cursor,
                     "image_shows": image_shows,
+                    "liked_by": liked_by,
                     "limit": limit,
                     "list_id": list_id,
+                    "list_ids": list_ids,
+                    "media_by": media_by,
+                    "queries": queries,
                     "query": query,
                     "query_type": query_type,
                     "quotes_of": quotes_of,
+                    "replies_by": replies_by,
                     "replies_to": replies_to,
                     "since_time": since_time,
                     "texts": texts,
+                    "thread_of": thread_of,
                     "topic": topic,
                     "tweet_ids": tweet_ids,
                     "until_time": until_time,
                     "username": username,
+                    "usernames": usernames,
                 },
                 analysis_viral_score_params.AnalysisViralScoreParams,
             ),

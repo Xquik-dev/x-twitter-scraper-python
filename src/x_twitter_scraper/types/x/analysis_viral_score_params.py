@@ -38,7 +38,7 @@ class AnalysisViralScoreParams(TypedDict, total=False):
     """
 
     cursor: str
-    """The next_cursor of the page before. Send the same search with it."""
+    """The next_cursor of the page before. Send the same search or page with it."""
 
     image_shows: Annotated[str, PropertyInfo(alias="imageShows")]
     """Keep only posts whose photos show this, the same as the Actors' imageShows input.
@@ -50,11 +50,39 @@ class AnalysisViralScoreParams(TypedDict, total=False):
     imageShows, not both.
     """
 
+    liked_by: Annotated[str, PropertyInfo(alias="likedBy")]
+    """Analyze the posts 1 account liked, as /x/users/{id}/likes reads them.
+
+    Send a handle, with or without @, a user ID or a profile URL. Send no other
+    posts or search with it.
+    """
+
     limit: int
-    """Maximum posts to analyze from the search. Credits can return fewer."""
+    """Maximum posts to analyze from the search or page. Credits can return fewer."""
 
     list_id: Annotated[str, PropertyInfo(alias="listId")]
     """Analyze a public List's posts. Send its ID or URL."""
+
+    list_ids: Annotated[SequenceNotStr[str], PropertyInfo(alias="listIds")]
+    """Analyze the posts of several public Lists in 1 search.
+
+    Send their IDs or URLs. listId, when sent, joins them.
+    """
+
+    media_by: Annotated[str, PropertyInfo(alias="mediaBy")]
+    """Analyze 1 account's posts with photos or videos, as its Media tab shows them.
+
+    /x/users/{id}/media reads the same posts. Send a handle, with or without @, a
+    user ID or a profile URL. Send no other posts or search with it.
+    """
+
+    queries: SequenceNotStr[str]
+    """X searches to analyze as 1 search.
+
+    A post matching any of them counts. Each takes the operators of query. query,
+    when sent, joins them. X searches up to 512 characters, counted with the other
+    search fields.
+    """
 
     query: str
     """
@@ -69,6 +97,13 @@ class AnalysisViralScoreParams(TypedDict, total=False):
     quotes_of: Annotated[str, PropertyInfo(alias="quotesOf")]
     """Analyze the quotes of 1 post. Send its ID or URL."""
 
+    replies_by: Annotated[str, PropertyInfo(alias="repliesBy")]
+    """Analyze 1 account's posts & replies, as its Replies tab shows them.
+
+    /x/users/{id}/replies reads the same posts. Send a handle, with or without @, a
+    user ID or a profile URL. Send no other posts or search with it.
+    """
+
     replies_to: Annotated[str, PropertyInfo(alias="repliesTo")]
     """Analyze the replies in 1 post's conversation. Send its ID or URL."""
 
@@ -82,6 +117,12 @@ class AnalysisViralScoreParams(TypedDict, total=False):
     """Your own texts to analyze, such as drafts.
 
     Reads nothing from X. Each text costs the same as 1 analyzed post.
+    """
+
+    thread_of: Annotated[str, PropertyInfo(alias="threadOf")]
+    """Analyze 1 post's thread, as /x/tweets/{id}/thread reads it.
+
+    Send the post's ID or URL. Send no other posts or search with it.
     """
 
     topic: str
@@ -104,6 +145,13 @@ class AnalysisViralScoreParams(TypedDict, total=False):
 
     username: str
     """Analyze 1 account's posts. Send a handle, with or without @, or a profile URL."""
+
+    usernames: SequenceNotStr[str]
+    """Analyze the posts of several accounts in 1 search.
+
+    Send handles, with or without @, or profile URLs. username, when sent, joins
+    them.
+    """
 
 
 class AnalysisQuestionCriteria(TypedDict, total=False):
