@@ -373,6 +373,12 @@ class AnalysisNewsResponse(BaseModel):
     unanalyzed: List[Unanalyzed]
     """Each post without an analysis, by ID & reason. These cost nothing."""
 
+    unprocessed_ids: List[str]
+    """IDs of the posts or texts the time ran out for.
+
+    Send them again in tweetIds, or those texts in texts. They cost nothing.
+    """
+
     image_filter: Optional[ImageFilterSummary] = FieldInfo(alias="imageFilter", default=None)
     """What the photo filter asked & how many posts it kept."""
 
