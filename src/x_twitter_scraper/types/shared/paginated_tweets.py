@@ -49,6 +49,12 @@ class PaginatedTweets(BaseModel):
 
     tweets: List[SearchTweet]
 
+    end_reason: Optional[Literal["stalled"]] = FieldInfo(alias="endReason", default=None)
+    """Present on a last page that X cut short.
+
+    `stalled` means X returned no new results 2 times in a row, so the list may hold more.
+    """
+
     filtered_count: Optional[int] = None
     """Whole number from 0."""
 
