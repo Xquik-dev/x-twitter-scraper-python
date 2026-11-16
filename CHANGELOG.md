@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
 - The mentions read adds `own_threads="exclude"`, which with `replies="exclude"` also leaves out replies to the author's own posts, so the search skips every reply.
 - A tweets page adds `hidden_timeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
 - Replies diagnostics add the `reported_held` stop reason, which a strategy returns once the read holds every reply X reports.
