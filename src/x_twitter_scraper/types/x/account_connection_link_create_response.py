@@ -20,6 +20,9 @@ class AccountConnectionLinkCreateResponse(BaseModel):
 
     account_id: Optional[str] = FieldInfo(alias="accountId")
 
+    api_key_id: Optional[str] = FieldInfo(alias="apiKeyId", default=None)
+    """The API key that made the link, or None when a dashboard session made it."""
+
     completed_at: Optional[datetime] = FieldInfo(alias="completedAt")
 
     created_at: datetime = FieldInfo(alias="createdAt")

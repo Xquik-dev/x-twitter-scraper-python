@@ -22,6 +22,7 @@ LINK: Dict[str, object] = {
     "status": "pending",
     "reference": "user-42",
     "returnUrl": RETURN_URL,
+    "apiKeyId": "17",
     "accountId": None,
     "xUserId": None,
     "xUsername": None,
@@ -57,6 +58,7 @@ async def test_create_posts_the_options_and_reads_the_url(asynchronous: bool) ->
     assert request.url.path.endswith("/x/account-connection-links")
     assert json.loads(request.content) == {"accountId": "42", "reference": "user-42", "returnUrl": RETURN_URL}
     assert link.url == "https://example.com/connect#token"
+    assert link.api_key_id == "17"
     assert link.status == "pending"
 
 
@@ -72,6 +74,7 @@ async def test_retrieve_reads_the_link_by_its_id(asynchronous: bool) -> None:
     assert request.method == "GET"
     assert request.url.path.endswith(f"/x/account-connection-links/{LINK_ID}")
     assert link.reference == "user-42"
+    assert link.api_key_id == "17"
     assert link.url is None
 
 
