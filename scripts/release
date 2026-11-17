@@ -37,7 +37,7 @@ if [[ "$mode" == publish ]]; then
   )
 fi
 if [[ "$mode" != prepare ]]; then
-  uv run --locked --all-extras python scripts/verify_release.py "$version" "$artifacts"
+  uv run --no-project python scripts/verify_release.py "$version" "$artifacts"
   uv run --no-project --isolated --refresh-package x-twitter-scraper --default-index https://pypi.org/simple/ --with "x-twitter-scraper==$version" python -c \
     'import sys, importlib.metadata, x_twitter_scraper; assert importlib.metadata.version("x-twitter-scraper") == sys.argv[1]; assert x_twitter_scraper.__version__ == sys.argv[1]; assert callable(x_twitter_scraper.XTwitterScraper); assert callable(x_twitter_scraper.AsyncXTwitterScraper)' "$version" >&2
 fi
