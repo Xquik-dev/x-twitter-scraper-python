@@ -9,7 +9,7 @@ import httpx
 from ..._types import Body, Omit, Query, Headers, NotGiven, omit, not_given
 from ..._utils import path_template, maybe_transform, async_maybe_transform
 from ..._compat import cached_property
-from ...types.x import account_connection_link_create_params
+from ...types.x import account_connection_link_list_params, account_connection_link_create_params
 from ..._resource import SyncAPIResource, AsyncAPIResource
 from ..._response import (
     to_raw_response_wrapper,
@@ -19,6 +19,7 @@ from ..._response import (
 )
 from ..._base_client import make_request_options
 from ...types.x.x_account_connection_link import XAccountConnectionLink
+from ...types.x.account_connection_link_list_response import AccountConnectionLinkListResponse
 from ...types.x.account_connection_link_create_response import AccountConnectionLinkCreateResponse
 from ...types.x.account_connection_link_delete_response import AccountConnectionLinkDeleteResponse
 
@@ -126,6 +127,54 @@ class AccountConnectionLinksResource(SyncAPIResource):
                 extra_headers=extra_headers, extra_query=extra_query, extra_body=extra_body, timeout=timeout
             ),
             cast_to=XAccountConnectionLink,
+        )
+
+    def list(
+        self,
+        *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> AccountConnectionLinkListResponse:
+        """
+        Lists your connect links, newest first, with `api_key_id` naming the API key
+        that made each one, or None for a dashboard session. Use it to find and revoke
+        the links a leaked key made. It never holds a token.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page, from 1 to 10,000. Default 200. Pass nextCursor as
+              cursor for the next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return self._get(
+            "/x/account-connection-links",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    account_connection_link_list_params.AccountConnectionLinkListParams,
+                ),
+            ),
+            cast_to=AccountConnectionLinkListResponse,
         )
 
     def delete(
@@ -263,6 +312,54 @@ class AsyncAccountConnectionLinksResource(AsyncAPIResource):
             cast_to=XAccountConnectionLink,
         )
 
+    async def list(
+        self,
+        *,
+        cursor: str | Omit = omit,
+        limit: int | Omit = omit,
+        extra_headers: Headers | None = None,
+        extra_query: Query | None = None,
+        extra_body: Body | None = None,
+        timeout: float | httpx.Timeout | None | NotGiven = not_given,
+    ) -> AccountConnectionLinkListResponse:
+        """
+        Lists your connect links, newest first, with `api_key_id` naming the API key
+        that made each one, or None for a dashboard session. Use it to find and revoke
+        the links a leaked key made. It never holds a token.
+
+        Args:
+          cursor: Previous nextCursor. The after alias also works. Offset pagination is not
+              supported.
+
+          limit: Maximum items per page, from 1 to 10,000. Default 200. Pass nextCursor as
+              cursor for the next page.
+
+          extra_headers: Send extra headers
+
+          extra_query: Add additional query parameters to the request
+
+          extra_body: Add additional JSON properties to the request
+
+          timeout: Override the client-level default timeout for this request, in seconds
+        """
+        return await self._get(
+            "/x/account-connection-links",
+            options=make_request_options(
+                extra_headers=extra_headers,
+                extra_query=extra_query,
+                extra_body=extra_body,
+                timeout=timeout,
+                query=await async_maybe_transform(
+                    {
+                        "cursor": cursor,
+                        "limit": limit,
+                    },
+                    account_connection_link_list_params.AccountConnectionLinkListParams,
+                ),
+            ),
+            cast_to=AccountConnectionLinkListResponse,
+        )
+
     async def delete(
         self,
         id: str,
@@ -305,6 +402,9 @@ class AccountConnectionLinksResourceWithRawResponse:
         self.retrieve = to_raw_response_wrapper(
             account_connection_links.retrieve,
         )
+        self.list = to_raw_response_wrapper(
+            account_connection_links.list,
+        )
         self.delete = to_raw_response_wrapper(
             account_connection_links.delete,
         )
@@ -319,6 +419,9 @@ class AsyncAccountConnectionLinksResourceWithRawResponse:
         )
         self.retrieve = async_to_raw_response_wrapper(
             account_connection_links.retrieve,
+        )
+        self.list = async_to_raw_response_wrapper(
+            account_connection_links.list,
         )
         self.delete = async_to_raw_response_wrapper(
             account_connection_links.delete,
@@ -335,6 +438,9 @@ class AccountConnectionLinksResourceWithStreamingResponse:
         self.retrieve = to_streamed_response_wrapper(
             account_connection_links.retrieve,
         )
+        self.list = to_streamed_response_wrapper(
+            account_connection_links.list,
+        )
         self.delete = to_streamed_response_wrapper(
             account_connection_links.delete,
         )
@@ -349,6 +455,9 @@ class AsyncAccountConnectionLinksResourceWithStreamingResponse:
         )
         self.retrieve = async_to_streamed_response_wrapper(
             account_connection_links.retrieve,
+        )
+        self.list = async_to_streamed_response_wrapper(
+            account_connection_links.list,
         )
         self.delete = async_to_streamed_response_wrapper(
             account_connection_links.delete,

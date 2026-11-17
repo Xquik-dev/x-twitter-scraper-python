@@ -723,6 +723,7 @@ Types
 ```python
 from x_twitter_scraper.types.x import (
     XAccountConnectionLink,
+    AccountConnectionLinkListResponse,
     AccountConnectionLinkCreateResponse,
     AccountConnectionLinkDeleteResponse,
 )
@@ -732,6 +733,7 @@ Methods
 
 - <code title="post /x/account-connection-links">client.x.account_connection_links.<a href="./src/x_twitter_scraper/resources/x/account_connection_links.py">create</a>(\*\*<a href="src/x_twitter_scraper/types/x/account_connection_link_create_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/account_connection_link_create_response.py">AccountConnectionLinkCreateResponse</a></code>
 - <code title="get /x/account-connection-links/{id}">client.x.account_connection_links.<a href="./src/x_twitter_scraper/resources/x/account_connection_links.py">retrieve</a>(id) -> <a href="./src/x_twitter_scraper/types/x/x_account_connection_link.py">XAccountConnectionLink</a></code>
+- <code title="get /x/account-connection-links">client.x.account_connection_links.<a href="./src/x_twitter_scraper/resources/x/account_connection_links.py">list</a>(\*\*<a href="src/x_twitter_scraper/types/x/account_connection_link_list_params.py">params</a>) -> <a href="./src/x_twitter_scraper/types/x/account_connection_link_list_response.py">AccountConnectionLinkListResponse</a></code>
 - <code title="delete /x/account-connection-links/{id}">client.x.account_connection_links.<a href="./src/x_twitter_scraper/resources/x/account_connection_links.py">delete</a>(id) -> <a href="./src/x_twitter_scraper/types/x/account_connection_link_delete_response.py">AccountConnectionLinkDeleteResponse</a></code>
 
 ## Bookmarks
