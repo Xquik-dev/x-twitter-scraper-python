@@ -79,6 +79,38 @@ async def test_retrieve_reads_the_link_by_its_id(asynchronous: bool) -> None:
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])
+async def test_list_sends_the_cursor_and_reads_each_link_with_its_key(asynchronous: bool) -> None:
+    dashboard_link = {**LINK, "id": "xlink_BBBBBBBBBBBBBBBB", "apiKeyId": None}
+    request, page = await send_with_mock_transport(
+        lambda client: client.x.account_connection_links.list(cursor="abc123", limit=20),
+        lambda client: client.x.account_connection_links.list(cursor="abc123", limit=20),
+        {"links": [LINK, dashboard_link], "hasMore": True, "nextCursor": "def456"},
+        asynchronous,
+    )
+
+    assert request.url.path.endswith("/x/account-connection-links")
+    assert dict(request.url.params) == {"cursor": "abc123", "limit": "20"}
+    assert [(link.id, link.api_key_id) for link in page.links] == [(LINK_ID, "17"), ("xlink_BBBBBBBBBBBBBBBB", None)]
+    assert page.has_more is True
+    assert page.next_cursor == "def456"
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
+async def test_list_with_no_options_reads_the_last_page(asynchronous: bool) -> None:
+    request, page = await send_with_mock_transport(
+        lambda client: client.x.account_connection_links.list(),
+        lambda client: client.x.account_connection_links.list(),
+        {"links": [], "hasMore": False},
+        asynchronous,
+    )
+
+    assert dict(request.url.params) == {}
+    assert page.links == []
+    assert page.has_more is False
+    assert page.next_cursor is None
+
+
+@pytest.mark.parametrize("asynchronous", [False, True])
 async def test_delete_revokes_the_link_by_its_id(asynchronous: bool) -> None:
     request, result = await send_with_mock_transport(
         lambda client: client.x.account_connection_links.delete(LINK_ID),
@@ -124,6 +156,7 @@ def test_the_raw_and_streaming_wrappers_expose_the_links() -> None:
     ):
         assert callable(links.create)
         assert callable(links.retrieve)
+        assert callable(links.list)
         assert callable(links.delete)
 
 
