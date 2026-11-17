@@ -2,7 +2,7 @@
 
 ## 0.21.0 (2026-11-17)
 
-This release lists your X connect links with the API key that made each one, and adds the analysis sources, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. `AccountReauthResponse` is now the same union `client.x.accounts.create` returns, so check `status` before you read `x_username`. Several `Literal` types gain values, such as write records' `action`, `context_availability.media`, the replies stop reasons and the extraction tool types, so a `match` that lists every value needs a case for each. Code that builds response objects by hand must set the new required fields. `ExtractionJob` and the accepted `extractions.run` response gain `url`. A community `creator` always carries `verified`. The analysis answers gain `unprocessed_ids`. Media download items gain `qualities`, and user insights samples gain `read`. The other changes add methods, parameters and optional fields.
+This release lists your X connect links with the API key that made each one, and adds the analysis sources, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. `AccountReauthResponse` is now the same union `client.x.accounts.create` returns, so check `status` before you read `x_username`. Several `Literal` types gain values, such as write records' `action`, `context_availability.media`, the replies stop reasons and the extraction tool types, so a `match` that lists every value needs a case for each. Code that builds response objects by hand must set the new required fields. `ExtractionJob` and the accepted `extractions.run` response gain `url`. A community `creator` always carries `verified`. The analysis answers gain `unprocessed_ids`. Media download items gain `poster_url` and `qualities`, and user insights samples gain `read`. `client.x.tweets.search` and the 3 user tweet reads can return a filtered page, which subclasses `PaginatedTweets`, so code typed for a plain page keeps working. The other changes add methods, parameters and optional fields.
 
 - `client.x.account_connection_links.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `next_cursor` back as `cursor` while `has_more` is true. Each link's `api_key_id` shows which key made it, so you can find and revoke the links a leaked key made.
 - `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
@@ -11,6 +11,7 @@ This release lists your X connect links with the API key that made each one, and
 - A tweets or users page adds `end_reason`, present on a last page that X cut short. `stalled` means X returned no new results 2 times in a row, so the list may hold more.
 - The mentions read adds `own_threads="exclude"`, which with `replies="exclude"` also leaves out replies to the author's own posts, so the search skips every reply.
 - A tweets page adds `hidden_timeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
+- A community's `creator` always carries `verified`, also when it is a full profile.
 - Replies diagnostics add the `reported_held` stop reason, which a strategy returns once the read holds every reply X reports.
 - `client.x.users.retrieve_batch_tweets` takes `page_size` up to 300 posts per user.
 - `client.monitors.upsert_by_username` creates the monitor for an account, or updates it if it exists, so the same call twice still leaves 1 monitor. `created` says which one ran.
@@ -44,7 +45,7 @@ This release lists your X connect links with the API key that made each one, and
 - `client.x.accounts.create` & `reauth` take `connection_attempt_id`, an ID you generate to read the attempt's status even if the response never reaches you. A finished attempt returns `account_id`.
 - `client.x.accounts.reauth` now returns the same 3 answers as `create`, so `AccountReauthResponse` is that union. A sign-in still running or waiting on an email code no longer reads as an active account, so check `status` before you read `x_username`.
 - `client.x.tweets.create` takes `media_ids`, the IDs that `client.x.media.upload` returns. Send `media` or `media_ids`, not both.
-- `Error.code` gains `media_not_uploaded`.
+- `ErrorCode` gains `media_not_uploaded`.
 
 ## 0.20.0 (2026-11-04)
 
