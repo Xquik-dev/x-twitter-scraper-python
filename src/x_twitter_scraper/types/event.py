@@ -1358,9 +1358,16 @@ class DataMonitorFollow(EventDataDictAccess):
     reason: Optional[Literal["unavailable", "unfollowed"]] = None
     """Why the account left the list, on following.removed & follower.removed.
 
-    unavailable means X no longer serves the account. unfollowed means X's follow
-    check says the follow ended. It is missing when X fails the check. Xquik sends
-    no removal while X still confirms the follow.
+    unavailable means X shows no account for it, and unavailable_reason says why.
+    unfollowed means X's follow check says the follow ended. It is missing when X
+    fails the check. Xquik sends no removal while X still confirms the follow.
+    """
+
+    unavailable_reason: Optional[Literal["not_found", "suspended"]] = FieldInfo(alias="unavailableReason", default=None)
+    """Why X shows no account, when reason is unavailable.
+
+    not_found means the account no longer exists, as X answers for a deactivated or
+    deleted account. suspended means X suspended it.
     """
 
     if TYPE_CHECKING:

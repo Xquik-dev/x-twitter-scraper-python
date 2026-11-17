@@ -29,6 +29,12 @@ class UserRetrieveBatchResponse(BaseModel):
     next_cursor: str
     """Empty because batch lookups never paginate."""
 
+    not_found_ids: List[str]
+    """
+    The unavailable IDs no account holds, as X answers for an account that was
+    deactivated or deleted, in first-seen request order.
+    """
+
     processed_count: int
     """Number of requested IDs included in the lookup."""
 
@@ -38,8 +44,14 @@ class UserRetrieveBatchResponse(BaseModel):
     returned_count: int
     """Number of user profiles returned and charged."""
 
+    suspended_ids: List[str]
+    """The unavailable IDs of accounts X suspended, in first-seen request order."""
+
     unavailable_ids: List[str]
-    """Processed IDs with no profile on X, in first-seen request order."""
+    """Processed IDs with no profile on X, in first-seen request order.
+
+    not_found_ids and suspended_ids split them by X's answer.
+    """
 
     unprocessed_ids: List[str]
     """Requested IDs skipped because available credits limited processing.

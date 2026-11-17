@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
+- `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
 - `client.x.account_connection_links.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `next_cursor` back as `cursor` while `has_more` is true. Each link's `api_key_id` shows which key made it, so you can find and revoke the links a leaked key made.
 - `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
 - The 6 analysis methods take `thread_of`, `replies_by`, `media_by` & `liked_by`, which read 1 post's thread or 1 account's Replies tab, Media tab or likes, and `usernames`, `list_ids` & `queries`, which read several accounts, Lists or searches as 1 search.
