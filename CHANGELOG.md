@@ -2,7 +2,7 @@
 
 ## 0.21.0 (2026-11-17)
 
-This release lists your X connect links with the API key that made each one, and adds the analysis sources, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. `AccountReauthResponse` is now the same union `client.x.accounts.create` returns, so check `status` before you read `x_username`. The other changes add methods, parameters, fields and enum values.
+This release lists your X connect links with the API key that made each one, and adds the analysis sources, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. Some changes need your attention. `AccountReauthResponse` is now the same union `client.x.accounts.create` returns, so check `status` before you read `x_username`. Write records' `action` gains 6 values, so a `match` that lists every action needs a case for each. Media download items gain `poster_url` and `qualities`, so code that builds an item by hand must set both. The other changes add methods, parameters and optional fields.
 
 - `client.x.account_connection_links.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `next_cursor` back as `cursor` while `has_more` is true. Each link's `api_key_id` shows which key made it, so you can find and revoke the links a leaked key made.
 - `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
