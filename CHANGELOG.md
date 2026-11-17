@@ -9,6 +9,10 @@ This release lists your X connect links with the API key that made each one, and
 - The 6 analysis methods take `thread_of`, `replies_by`, `media_by` & `liked_by`, which read 1 post's thread or 1 account's Replies tab, Media tab or likes, and `usernames`, `list_ids` & `queries`, which read several accounts, Lists or searches as 1 search.
 - The 6 analysis answers add `unprocessed_ids`, the posts or texts the time ran out for. Send them again, and they cost nothing.
 - A tweets or users page adds `end_reason`, present on a last page that X cut short. `stalled` means X returned no new results 2 times in a row, so the list may hold more.
+- The 6 analysis methods take `topic` & `image_shows`. An AI check keeps only the posts about the topic, or whose photos show what you name, and the answer returns `topic_filter` or `image_filter` with the cutoff & counts.
+- Follower, following, verified follower, list member and list follower pages add `window_complete`, present on the last page of an empty list whose profile counts 0 accounts in it.
+- `client.x.bookmarks.list` & `client.x.get_home_timeline` take `page_size`, 1 to 100 items per page.
+- `client.x.media.download` returns `no_media_tweet_ids`, the posts with no media to save, & `failed_tweet_ids`, the posts Xquik couldn't read. Neither is charged.
 - The mentions read adds `own_threads="exclude"`, which with `replies="exclude"` also leaves out replies to the author's own posts, so the search skips every reply.
 - A tweets page adds `hidden_timeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
 - A community's `creator` always carries `verified`, also when it is a full profile.
