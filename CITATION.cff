@@ -8,8 +8,8 @@ abstract: >-
   with typed sync & async clients.
 authors:
   - name: Xquik
-version: 0.20.0
-date-released: 2026-11-04
+version: 0.21.0
+date-released: 2026-11-17
 url: https://github.com/Xquik-dev/x-twitter-scraper-python
 repository-code: https://github.com/Xquik-dev/x-twitter-scraper-python
 license: Apache-2.0
