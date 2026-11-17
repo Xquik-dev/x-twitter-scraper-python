@@ -4,6 +4,8 @@
 
 - `client.x.account_connection_links.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `next_cursor` back as `cursor` while `has_more` is true. Each link's `api_key_id` shows which key made it, so you can find and revoke the links a leaked key made.
 - `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
+- The 6 analysis methods take `thread_of`, `replies_by`, `media_by` & `liked_by`, which read 1 post's thread or 1 account's Replies tab, Media tab or likes, and `usernames`, `list_ids` & `queries`, which read several accounts, Lists or searches as 1 search.
+- The 6 analysis answers add `unprocessed_ids`, the posts or texts the time ran out for. Send them again, and they cost nothing.
 - A tweets or users page adds `end_reason`, present on a last page that X cut short. `stalled` means X returned no new results 2 times in a row, so the list may hold more.
 - The mentions read adds `own_threads="exclude"`, which with `replies="exclude"` also leaves out replies to the author's own posts, so the search skips every reply.
 - A tweets page adds `hidden_timeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
