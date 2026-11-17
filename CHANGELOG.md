@@ -13,6 +13,8 @@ This release lists your X connect links with the API key that made each one, and
 - Follower, following, verified follower, list member and list follower pages add `window_complete`, present on the last page of an empty list whose profile counts 0 accounts in it.
 - `client.x.bookmarks.list` & `client.x.get_home_timeline` take `page_size`, 1 to 100 items per page.
 - `client.x.media.download` returns `no_media_tweet_ids`, the posts with no media to save, & `failed_tweet_ids`, the posts Xquik couldn't read. Neither is charged.
+- A union response now reads as the first variant whose required fields it carries, before the looser match it used alone in 0.20.0. A `client.x.accounts.create` answer with a `status` the SDK doesn't know read as `SanitizedXAccount` in 0.20.0 and now reads as the variant its fields fit.
+- `client.x.media.download`, `client.x.tweets.list`, `client.x.users.retrieve_batch` and `client.x.users.retrieve_batch_tweets` no longer document a per-call limit, as the API sets none.
 - The mentions read adds `own_threads="exclude"`, which with `replies="exclude"` also leaves out replies to the author's own posts, so the search skips every reply.
 - A tweets page adds `hidden_timeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
 - A community's `creator` always carries `verified`, also when it is a full profile.
@@ -34,10 +36,10 @@ This release lists your X connect links with the API key that made each one, and
 - Monitor follow events return `follow_kind`, which says why a removed account is back, as `refollow` or `return`.
 - Media download items return `poster_url`, a video's cover image, & `qualities`, its MP4 sizes. Code that builds an item by hand must set both.
 - Article reads return `unknown_counts`, the counts X did not send, so each 0 means unknown.
-- Extraction results return `is_deleted` on a post its author deleted after Xquik saw it.
+- Extraction results return `is_deleted` with `output_preset="flat"` on a post its author deleted after Xquik saw it.
 - `client.x.users.retrieve_insights` and `retrieve_shadowban` take `limit`, the recent posts to read.
 - Extraction tool types gain `user_affiliates`.
-- Extraction results return `quoted_media`, `quoted_post`, `quoted_possibly_sensitive` & `possibly_sensitive` with `outputPreset=flat`.
+- Extraction results return `quoted_media`, `quoted_post`, `quoted_possibly_sensitive` & `possibly_sensitive` with `output_preset="flat"`.
 - `PostMonitor.author_affiliate` returns the organization badge X shows beside the author's name.
 - `monitors.posts.create` takes `is_active`. Send `False` to create the monitor paused.
 - `q` is optional on `client.x.tweets.search` when `from_user`, `keywords` or another field forms the search.
