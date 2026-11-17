@@ -113,6 +113,7 @@ def scan(tmp_path: Path, sarif: str) -> subprocess.CompletedProcess[str]:
             "XQUIK_CODEQL_BIN": str(codeql),
             "FAKE_REPORT": str(tmp_path / "report.sarif"),
             "TMPDIR": str(tmp_path),
+            "UV_PROJECT_ENVIRONMENT": str(tmp_path / "project-environment"),
         },
         capture_output=True,
         text=True,
@@ -123,6 +124,12 @@ def scan(tmp_path: Path, sarif: str) -> subprocess.CompletedProcess[str]:
 def test_a_scan_that_read_every_file_passes(tmp_path: Path) -> None:
     result = scan(tmp_path, report([EXTRACTED], ["py/diagnostics/extraction-warnings"]))
     assert result.returncode == 0, result.stderr
+
+
+def test_a_scan_leaves_the_project_environment_alone(tmp_path: Path) -> None:
+    result = scan(tmp_path, report([EXTRACTED], ["py/diagnostics/extraction-warnings"]))
+    assert result.returncode == 0, result.stderr
+    assert not (tmp_path / "project-environment").exists()
     assert result.stdout.endswith("CodeQL completed without findings and extracted 1 Python entries.\n")
 
 
