@@ -1,16 +1,25 @@
 # Changelog
 
-## Unreleased
+## 0.21.0 (2026-11-17)
+
+This release lists your X connect links with the API key that made each one, and adds the analysis sources, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. `AccountReauthResponse` is now the same union `client.x.accounts.create` returns, so check `status` before you read `x_username`. Several `Literal` types gain values, such as write records' `action`, `context_availability.media`, the replies stop reasons and the extraction tool types, so a `match` that lists every value needs a case for each. Code that builds response objects by hand must set the new required fields. `ExtractionJob` and the accepted `extractions.run` response gain `url`. A community `creator` always carries `verified`. The analysis answers gain `unprocessed_ids`. Media download items gain `poster_url` and `qualities`, and user insights samples gain `read`. `client.x.tweets.search` and the 3 user tweet reads can return a filtered page, which subclasses `PaginatedTweets`, so code typed for a plain page keeps working. When an answer fits no union variant exactly, it now parses into the first variant whose required fields it carries, so such an answer can read as a different class than in 0.20.0. A community's `creator` is now `CreatorUserProfile` or `CreatorUnionMember1`, so code that builds a community by hand with a plain `UserProfile` creator must switch. Each entry below names its change.
 
 - A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
 - `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
 - `client.x.account_connection_links.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `next_cursor` back as `cursor` while `has_more` is true. Each link's `api_key_id` shows which key made it, so you can find and revoke the links a leaked key made.
-- `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` add `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
+- `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` carry `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
 - The 6 analysis methods take `thread_of`, `replies_by`, `media_by` & `liked_by`, which read 1 post's thread or 1 account's Replies tab, Media tab or likes, and `usernames`, `list_ids` & `queries`, which read several accounts, Lists or searches as 1 search.
 - The 6 analysis answers add `unprocessed_ids`, the posts or texts the time ran out for. Send them again, and they cost nothing.
 - A tweets or users page adds `end_reason`, present on a last page that X cut short. `stalled` means X returned no new results 2 times in a row, so the list may hold more.
+- The 6 analysis methods take `topic` & `image_shows`. An AI check keeps only the posts about the topic, or whose photos show what you name, and the answer returns `topic_filter` or `image_filter` with the cutoff & counts.
+- Follower, following, verified follower, list member and list follower pages add `window_complete`, present on the last page of an empty list whose profile counts 0 accounts in it.
+- `client.x.bookmarks.list` & `client.x.get_home_timeline` take `page_size`, 1 to 100 items per page.
+- `client.x.media.download` returns `no_media_tweet_ids`, the posts with no media to save, & `failed_tweet_ids`, the posts Xquik couldn't read. Neither is charged.
+- When an answer fits no union variant exactly, it now reads as the first variant whose required fields it carries, before the looser match 0.20.0 used alone. A `client.x.accounts.create` answer with a `status` the SDK doesn't know read as `SanitizedXAccount` in 0.20.0 and now reads as the variant its fields fit.
+- `client.x.media.download`, `client.x.tweets.list`, `client.x.users.retrieve_batch` and `client.x.users.retrieve_batch_tweets` no longer document a per-call limit, as the API sets none.
 - The mentions read adds `own_threads="exclude"`, which with `replies="exclude"` also leaves out replies to the author's own posts, so the search skips every reply.
 - A tweets page adds `hidden_timeline`, present on an empty last page when X shows the account's timeline to nobody, so the page doesn't mean the account posted nothing.
+- A community's `creator` always carries `verified`, also when it is a full profile. The full profile is `CreatorUserProfile`, a `UserProfile` whose `verified` is required, so code that builds a community by hand must use it in place of `UserProfile`.
 - Replies diagnostics add the `reported_held` stop reason, which a strategy returns once the read holds every reply X reports.
 - `client.x.users.retrieve_batch_tweets` takes `page_size` up to 300 posts per user.
 - `client.monitors.upsert_by_username` creates the monitor for an account, or updates it if it exists, so the same call twice still leaves 1 monitor. `created` says which one ran.
@@ -29,14 +38,14 @@
 - Monitor follow events return `follow_kind`, which says why a removed account is back, as `refollow` or `return`.
 - Media download items return `poster_url`, a video's cover image, & `qualities`, its MP4 sizes. Code that builds an item by hand must set both.
 - Article reads return `unknown_counts`, the counts X did not send, so each 0 means unknown.
-- Extraction results return `is_deleted` on a post its author deleted after Xquik saw it.
+- Extraction results return `is_deleted` with `output_preset="flat"` on a post its author deleted after Xquik saw it.
 - `client.x.users.retrieve_insights` and `retrieve_shadowban` take `limit`, the recent posts to read.
 - Extraction tool types gain `user_affiliates`.
-- Extraction results return `quoted_media`, `quoted_post`, `quoted_possibly_sensitive` & `possibly_sensitive` with `outputPreset=flat`.
+- Extraction results return `quoted_media`, `quoted_post`, `quoted_possibly_sensitive` & `possibly_sensitive` with `output_preset="flat"`.
 - `PostMonitor.author_affiliate` returns the organization badge X shows beside the author's name.
 - `monitors.posts.create` takes `is_active`. Send `False` to create the monitor paused.
 - `q` is optional on `client.x.tweets.search` when `from_user`, `keywords` or another field forms the search.
-- `client.x.tweets.search`, `client.x.users.retrieve_tweets`, `retrieve_replies` & `retrieve_media` take `topic` & `image_shows`. AI-powered analysis keeps only the posts about the topic, or whose photos show what you name.
+- `client.x.tweets.search`, `client.x.users.retrieve_tweets`, `retrieve_replies` & `retrieve_media` take `topic` & `image_shows`. An AI check keeps only the posts about the topic, or whose photos show what you name.
 - A filtered page returns `TopicFilteredTweets` or `ImageFilteredTweets`, with each post's `topic_score` or `image_score` and a `topic_filter` or `image_filter` that states the cutoff & counts. Both subclass `PaginatedTweets`, so code typed for a plain page keeps working.
 - `extractions.run` & `estimate_cost` take `topic` or `image_shows`, and `ExtractionJob` returns `topic_filter` or `image_filter`.
 - `client.x.media.download` takes `image_shows` to save only the posts whose photos show it, and returns `image_filter`.
@@ -44,7 +53,7 @@
 - `client.x.accounts.create` & `reauth` take `connection_attempt_id`, an ID you generate to read the attempt's status even if the response never reaches you. A finished attempt returns `account_id`.
 - `client.x.accounts.reauth` now returns the same 3 answers as `create`, so `AccountReauthResponse` is that union. A sign-in still running or waiting on an email code no longer reads as an active account, so check `status` before you read `x_username`.
 - `client.x.tweets.create` takes `media_ids`, the IDs that `client.x.media.upload` returns. Send `media` or `media_ids`, not both.
-- `Error.code` gains `media_not_uploaded`.
+- `ErrorCode` gains `media_not_uploaded`.
 
 ## 0.20.0 (2026-11-04)
 
