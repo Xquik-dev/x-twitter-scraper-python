@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
+- `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
+
 ## 0.21.0 (2026-11-17)
 
 This release lists your X connect links with the API key that made each one, and adds the analysis sources, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. `AccountReauthResponse` is now the same union `client.x.accounts.create` returns, so check `status` before you read `x_username`. Several `Literal` types gain values, such as write records' `action`, `context_availability.media`, the replies stop reasons and the extraction tool types, so a `match` that lists every value needs a case for each. Code that builds response objects by hand must set the new required fields. `ExtractionJob` and the accepted `extractions.run` response gain `url`. A community `creator` always carries `verified`. The analysis answers gain `unprocessed_ids`. Media download items gain `poster_url` and `qualities`, and user insights samples gain `read`. `client.x.tweets.search` and the 3 user tweet reads can return a filtered page, which subclasses `PaginatedTweets`, so code typed for a plain page keeps working. When an answer fits no union variant exactly, it now parses into the first variant whose required fields it carries, so such an answer can read as a different class than in 0.20.0. A community's `creator` is now `CreatorUserProfile` or `CreatorUnionMember1`, so code that builds a community by hand with a plain `UserProfile` creator must switch. Each entry below names its change.
