@@ -17,6 +17,7 @@ from ..shared.embedded_tweet import EmbeddedTweet
 from ..shared.soft_intervention import SoftIntervention
 from ..shared.content_disclosure import ContentDisclosure
 from ..shared.live_event_context import LiveEventContext
+from ..shared.community_unavailable import CommunityUnavailable
 
 __all__ = [
     "TweetDetail",
@@ -1017,6 +1018,9 @@ class TweetDetail(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
     """Community name. Present when X sends it with the post."""
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[CommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
