@@ -28,6 +28,7 @@ from .shared import (
     CommunityAnalytics as CommunityAnalytics,
     ImageFilterSummary as ImageFilterSummary,
     TopicFilterSummary as TopicFilterSummary,
+    CommunityUnavailable as CommunityUnavailable,
     ImageFilteredTweets as ImageFilteredTweets,
     TopicFilteredTweets as TopicFilteredTweets,
     CommunityAnalyticsMetric as CommunityAnalyticsMetric,

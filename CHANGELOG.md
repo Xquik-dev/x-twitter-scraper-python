@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- A post adds `community_unavailable` when X shows no Community for it. Its `reason` is X's reason, as X writes it. Embedded posts carry it too.
 - A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
 - `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
 
