@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- The docs of the extraction results call say a page holds up to 10,000 results, as the API serves. They said 1,000.
 - A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
 - `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
 
