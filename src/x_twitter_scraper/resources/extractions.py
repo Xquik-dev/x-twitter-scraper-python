@@ -82,7 +82,7 @@ class ExtractionsResource(SyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionRetrieveResponse:
-        """Returns status and up to 1,000 results.
+        """Returns status and up to 10,000 results.
 
         Follow nextCursor when hasMore is true.
 
@@ -94,7 +94,7 @@ class ExtractionsResource(SyncAPIResource):
 
           include_raw: Use outputMode=raw instead.
 
-          limit: Maximum results per page (1-1000, default 100).
+          limit: Maximum results per page (1-10000, default 100).
 
           output_mode: Use compact for core fields and tweet counts, full for nested enrichment, or raw
               for a source copy.
@@ -1474,7 +1474,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
         extra_body: Body | None = None,
         timeout: float | httpx.Timeout | None | NotGiven = not_given,
     ) -> ExtractionRetrieveResponse:
-        """Returns status and up to 1,000 results.
+        """Returns status and up to 10,000 results.
 
         Follow nextCursor when hasMore is true.
 
@@ -1486,7 +1486,7 @@ class AsyncExtractionsResource(AsyncAPIResource):
 
           include_raw: Use outputMode=raw instead.
 
-          limit: Maximum results per page (1-1000, default 100).
+          limit: Maximum results per page (1-10000, default 100).
 
           output_mode: Use compact for core fields and tweet counts, full for nested enrichment, or raw
               for a source copy.

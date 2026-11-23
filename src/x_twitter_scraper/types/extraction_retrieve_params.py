@@ -25,7 +25,7 @@ class ExtractionRetrieveParams(TypedDict, total=False):
     """Use outputMode=raw instead."""
 
     limit: int
-    """Maximum results per page (1-1000, default 100)."""
+    """Maximum results per page (1-10000, default 100)."""
 
     output_mode: Annotated[Literal["compact", "full", "raw"], PropertyInfo(alias="outputMode")]
     """
