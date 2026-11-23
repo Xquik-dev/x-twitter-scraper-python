@@ -57,11 +57,11 @@ Next, read the [Python SDK guide](https://docs.xquik.com/sdks/python), [API map]
 [![X (Twitter) API p99 server read time](https://img.shields.io/endpoint?url=https%3A%2F%2Fxquik.com%2Fbadges%2Frest-p99.json)](https://xquik.com/benchmarks#speed)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/13738/badge)](https://www.bestpractices.dev/projects/13738)
 
-- 4,500+ downloads of x-twitter-scraper on PyPI ([source](https://pypistats.org/packages/x-twitter-scraper)) <!-- trust:pypi-x-twitter-scraper 4524 -->
-- 8.6 s p99 REST server read time over 7 days, failures included ([source](https://xquik.com/benchmarks#speed)) <!-- trust:rest-p99 8555 -->
+- 4,200+ downloads of x-twitter-scraper on PyPI ([source](https://pypistats.org/packages/x-twitter-scraper)) <!-- trust:pypi-x-twitter-scraper 4225 -->
+- 25.3 s p99 REST server read time over 7 days, failures included ([source](https://xquik.com/benchmarks#speed)) <!-- trust:rest-p99 25268 -->
 - This repo meets the OpenSSF Best Practices passing criteria ([source](https://www.bestpractices.dev/projects/13738)) <!-- trust:openssf-x-twitter-scraper-python 1 -->
 
-Checked on 2026-11-13. See each number with its date & source on [xquik.com/benchmarks](https://xquik.com/benchmarks) or as [JSON](https://xquik.com/trust.json).
+Checked on 2026-11-23. See each number with its date & source on [xquik.com/benchmarks](https://xquik.com/benchmarks) or as [JSON](https://xquik.com/trust.json).
 
 <!-- trust:end -->
 
