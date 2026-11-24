@@ -65,6 +65,7 @@ EMBEDDED = {
     "article": {"id": "article-1", "title": "Launch"},
     "authorUnavailable": {"reason": "Suspended", "message": "Account suspended"},
     "unavailableAuthorId": "9876543210",
+    "communityUnavailable": {"reason": "Suspended"},
     "card": {"name": "summary", "userReferences": [AUTHOR]},
     "cashtagAttachments": [
         {
@@ -191,6 +192,8 @@ def test_replies_read_fully_populated_embedded_posts(parse: Callable[..., Any], 
     assert embedded.cashtag_attachments[0].cashtag == "$TSLA"
     assert embedded.cashtag_attachments[0].start_time == datetime(2026, 10, 9, 13, 30, tzinfo=timezone.utc)
     assert embedded.community_name == "Build in Public"
+    assert embedded.community_unavailable is not None
+    assert embedded.community_unavailable.reason == "Suspended"
     assert embedded.coordinates is not None
     assert embedded.coordinates.coordinates == [28.97, 41.01]
     assert embedded.geo is not None
@@ -254,6 +257,7 @@ def test_nested_posts_keep_typed_fields_at_every_depth(parse: Callable[..., Any]
     assert embedded.author_unavailable.reason == "Suspended"
     assert embedded.cashtag_attachments[0].cashtag == "$TSLA"
     assert embedded.community_name == "Build in Public"
+    assert embedded.community_unavailable.reason == "Suspended"
     assert embedded.coordinates.coordinates == [28.97, 41.01]
     assert embedded.exclusive_content.creator_user_name == "NASA"
     assert embedded.geo.coordinates == [41.01, 28.97]
@@ -298,6 +302,7 @@ def test_embedded_posts_parse_without_added_fields(parse: Callable[..., Any], pa
     assert embedded.author_unavailable is None
     assert embedded.cashtag_attachments is None
     assert embedded.community_name is None
+    assert embedded.community_unavailable is None
     assert embedded.coordinates is None
     assert embedded.exclusive_content is None
     assert embedded.geo is None

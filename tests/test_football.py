@@ -51,6 +51,7 @@ SCHEDULE = {
                 "home": {"moneyLine": "text", "spread": "text", "total": "text"},
                 "away": {"moneyLine": "text", "spread": "text", "total": "text"},
             },
+            "rankings": [{"teamId": "689566294702555136", "rank": 5}],
         }
     ],
     "teams": {
@@ -673,6 +674,7 @@ async def test_list_games_sends_the_league_and_window(asynchronous: bool) -> Non
     assert game.starts_at == datetime(2026, 10, 20, 0, 15, tzinfo=timezone.utc)
     assert game.team_ids == ["689566294702555136", "689566304366292992"]
     assert game.odds is not None and game.odds.away.spread == "text"
+    assert [(ranking.team_id, ranking.rank) for ranking in game.rankings] == [("689566294702555136", 5)]
     team = schedule.teams["689566294702555136"]
     assert team.abbreviation == "SF"
     assert team.colors[0].r == 170

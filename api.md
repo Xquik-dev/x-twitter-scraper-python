@@ -7,6 +7,7 @@ from x_twitter_scraper.types import (
     CommunityAnalyticsMetric,
     CommunityPage,
     CommunityTopic,
+    CommunityUnavailable,
     ContentDisclosure,
     Currency,
     EmbeddedTweet,

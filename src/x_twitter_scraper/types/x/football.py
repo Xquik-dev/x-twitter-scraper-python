@@ -17,6 +17,7 @@ __all__ = [
     "FootballSchedulePeriod",
     "FootballOdds",
     "FootballScheduleGameOdds",
+    "FootballPollRanking",
     "FootballScheduleGame",
     "SportsTeamColor",
     "SportsTeamLogos",
@@ -115,6 +116,16 @@ class FootballScheduleGameOdds(BaseModel):
     """Betting odds titles for 1 team, as X shows them."""
 
 
+class FootballPollRanking(BaseModel):
+    """A team's rank in X's college football poll."""
+
+    team_id: Optional[str] = FieldInfo(alias="teamId")
+    """The ranked team, a key of teams."""
+
+    rank: Optional[int]
+    """The team's rank, where 1 is the top."""
+
+
 class FootballScheduleGame(BaseModel):
     """A listed game, with its teams & score."""
 
@@ -153,6 +164,12 @@ class FootballScheduleGame(BaseModel):
 
     odds: Optional[FootballScheduleGameOdds]
     """Betting odds for each team, or null when X has none."""
+
+    rankings: List[FootballPollRanking]
+    """Each team X ranks in its college football poll, with its rank.
+
+    Empty when X ranks neither team, & for the NFL.
+    """
 
 
 class SportsTeamColor(BaseModel):
