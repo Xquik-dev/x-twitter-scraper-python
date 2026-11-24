@@ -15,6 +15,7 @@ from ..._dict_access import TweetEntitiesDictAccess
 from .soft_intervention import SoftIntervention
 from .content_disclosure import ContentDisclosure
 from .live_event_context import LiveEventContext
+from .community_unavailable import CommunityUnavailable
 
 __all__ = [
     "EmbeddedTweet",
@@ -3144,6 +3145,9 @@ class QuotedTweetQuotedTweetQuotedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[QuotedTweetQuotedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -3933,6 +3937,9 @@ class QuotedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[QuotedTweetQuotedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -4216,6 +4223,9 @@ class QuotedTweetQuotedTweet(BaseModel):
     """Community ID."""
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[QuotedTweetQuotedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -5477,6 +5487,9 @@ class QuotedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[QuotedTweetRetweetedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -6266,6 +6279,9 @@ class QuotedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[QuotedTweetRetweetedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -6549,6 +6565,9 @@ class QuotedTweetRetweetedTweet(BaseModel):
     """Community ID."""
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[QuotedTweetRetweetedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -6835,6 +6854,9 @@ class QuotedTweet(BaseModel):
     """Community ID."""
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[QuotedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -8561,6 +8583,9 @@ class RetweetedTweetQuotedTweetQuotedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[RetweetedTweetQuotedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -9350,6 +9375,9 @@ class RetweetedTweetQuotedTweetRetweetedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[RetweetedTweetQuotedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -9633,6 +9661,9 @@ class RetweetedTweetQuotedTweet(BaseModel):
     """Community ID."""
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[RetweetedTweetQuotedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -10896,6 +10927,9 @@ class RetweetedTweetRetweetedTweetQuotedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[RetweetedTweetRetweetedTweetQuotedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -11685,6 +11719,9 @@ class RetweetedTweetRetweetedTweetRetweetedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
 
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
+
     community_note: Optional[RetweetedTweetRetweetedTweetRetweetedTweetCommunityNote] = FieldInfo(
         alias="communityNote", default=None
     )
@@ -11970,6 +12007,9 @@ class RetweetedTweetRetweetedTweet(BaseModel):
     """Community ID."""
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[RetweetedTweetRetweetedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -12258,6 +12298,9 @@ class RetweetedTweet(BaseModel):
     """Community ID."""
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[RetweetedTweetCommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
@@ -12559,6 +12602,9 @@ class EmbeddedTweet(BaseModel):
 
     community_name: Optional[str] = FieldInfo(alias="communityName", default=None)
     """Community name. Present when X sends it with the post."""
+
+    community_unavailable: Optional[CommunityUnavailable] = FieldInfo(alias="communityUnavailable", default=None)
+    """Why X shows no Community for the post. Omitted when X names no reason."""
 
     community_note: Optional[CommunityNote] = FieldInfo(alias="communityNote", default=None)
     """Community Note presentation metadata returned by X."""
