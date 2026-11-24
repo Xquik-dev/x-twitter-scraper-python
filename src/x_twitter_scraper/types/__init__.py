@@ -28,9 +28,9 @@ from .shared import (
     CommunityAnalytics as CommunityAnalytics,
     ImageFilterSummary as ImageFilterSummary,
     TopicFilterSummary as TopicFilterSummary,
-    CommunityUnavailable as CommunityUnavailable,
     ImageFilteredTweets as ImageFilteredTweets,
     TopicFilteredTweets as TopicFilteredTweets,
+    CommunityUnavailable as CommunityUnavailable,
     CommunityAnalyticsMetric as CommunityAnalyticsMetric,
 )
 from .winner import Winner as Winner
