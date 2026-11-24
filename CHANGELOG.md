@@ -1,17 +1,19 @@
 # Changelog
 
-## Unreleased
+## 0.22.0 (2026-11-24)
+
+This release raises the default request timeout to 80 seconds and adds the fields the API added since 0.21.0. A football game's `rankings` is required, so code that builds a game by hand must set it.
 
 - Requests now time out after 80 seconds by default, up from 60, since some API reads take longer than a minute to answer. Connections still time out after 5 seconds, and a `timeout` you pass works as before.
 - A post adds `community_unavailable` when X shows no Community for it. Its `reason` is X's reason, as X writes it. Embedded posts carry it too.
 - `client.x.sports.list_games` adds `rankings` to each game, the teams X ranks in its college football poll with their `rank`. It is empty when X ranks neither team, & for the NFL.
-- A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
-- `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
 
 ## 0.21.0 (2026-11-17)
 
 This release lists your X connect links with the API key that made each one, and adds the analysis sources, the follower audit, the bookmark, block & mute writes, the monitor upsert and the fields the API added since 0.20.0. `AccountReauthResponse` is now the same union `client.x.accounts.create` returns, so check `status` before you read `x_username`. Several `Literal` types gain values, such as write records' `action`, `context_availability.media`, the replies stop reasons and the extraction tool types, so a `match` that lists every value needs a case for each. Code that builds response objects by hand must set the new required fields. `ExtractionJob` and the accepted `extractions.run` response gain `url`. A community `creator` always carries `verified`. The analysis answers gain `unprocessed_ids`. Media download items gain `poster_url` and `qualities`, and user insights samples gain `read`. `client.x.tweets.search` and the 3 user tweet reads can return a filtered page, which subclasses `PaginatedTweets`, so code typed for a plain page keeps working. When an answer fits no union variant exactly, it now parses into the first variant whose required fields it carries, so such an answer can read as a different class than in 0.20.0. A community's `creator` is now `CreatorUserProfile` or `CreatorUnionMember1`, so code that builds a community by hand with a plain `UserProfile` creator must switch. Each entry below names its change.
 
+- A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
+- `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
 - `client.x.account_connection_links.list` pages through your connect links, newest first, as `AccountConnectionLinkListResponse`. Pass `next_cursor` back as `cursor` while `has_more` is true. Each link's `api_key_id` shows which key made it, so you can find and revoke the links a leaked key made.
 - `XAccountConnectionLink` & `AccountConnectionLinkCreateResponse` carry `api_key_id`, the API key that made the link, or `None` when a dashboard session made it. A link stops while that key is paused and ends once it's revoked.
 - The 6 analysis methods take `thread_of`, `replies_by`, `media_by` & `liked_by`, which read 1 post's thread or 1 account's Replies tab, Media tab or likes, and `usernames`, `list_ids` & `queries`, which read several accounts, Lists or searches as 1 search.
