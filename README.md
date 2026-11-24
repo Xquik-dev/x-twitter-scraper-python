@@ -261,7 +261,7 @@ client.with_options(max_retries=5).x.tweets.search(
 
 ### Timeouts
 
-Requests time out after 1 minute, and connections after 5 seconds.
+Requests time out after 80 seconds, and connections after 5 seconds.
 Set a float or [`httpx.Timeout`](https://www.python-httpx.org/advanced/timeouts/#fine-tuning-the-configuration) through `timeout`.
 Set it on the client, or on 1 request through `with_options`.
 

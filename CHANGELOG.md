@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Requests now time out after 80 seconds by default, up from 60, since some API reads take longer than a minute to answer. Connections still time out after 5 seconds, and a `timeout` you pass works as before.
 - A follow removal whose `reason` is `unavailable` adds `unavailable_reason`. `not_found` means the account no longer exists, and `suspended` means X suspended it.
 - `client.x.users.retrieve_batch` adds `not_found_ids` & `suspended_ids`, and `client.x.users.retrieve_batch_tweets` adds those & `protected_ids`. They split `unavailable_ids` by X's answer.
 
