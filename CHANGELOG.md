@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Replies diagnostics no longer return the `reported_held` stop reason, since a read now ends only when its sources end, never on the reply count X reports. `stop_reason` still lists the value, so code that checks for it keeps working.
+
 ## 0.22.0 (2026-11-24)
 
 This release raises the default request timeout to 80 seconds and adds the fields the API added since 0.21.0. A football game's `rankings` is required, so code that builds a game by hand must set it.

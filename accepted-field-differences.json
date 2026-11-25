@@ -66,6 +66,12 @@
     ]
   },
   {
+    "reason": "The API no longer returns the reported_held stop reason. The SDK keeps it in stop_reason, so code that checks for it keeps working.",
+    "differences": [
+      "GET /api/v1/x/tweets/{id}/replies response enum diagnostic.strategiesAttempted[].stopReason"
+    ]
+  },
+  {
     "reason": "The spec requires these response fields, and the SDK types them as optional with a None default, as the generator does for nullable fields. Making them required would break code that builds these models without them.",
     "differences": [
       "DELETE /api/v1/x/communities/{id} response required account",
