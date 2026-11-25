@@ -177,6 +177,7 @@ reportPrivateUsage = false
 
 [tool.mypy]
 pretty = true
+mypy_path = "typings"
 show_error_codes = true
 
 # Pyright checks `_files.py` and tests where mypy cannot infer types accurately.

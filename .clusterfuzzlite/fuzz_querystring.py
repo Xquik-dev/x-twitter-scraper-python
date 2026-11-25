@@ -5,21 +5,8 @@
 from __future__ import annotations
 
 import sys
-from typing import NoReturn, Protocol, cast
-from importlib import import_module
-from contextlib import AbstractContextManager
-from collections.abc import Callable, Sequence
 
-
-class _Atheris(Protocol):
-    def instrument_imports(self) -> AbstractContextManager[None]: ...
-
-    def Setup(self, argv: Sequence[str], callback: Callable[[bytes], None]) -> None: ...
-
-    def Fuzz(self) -> NoReturn: ...
-
-
-atheris = cast(_Atheris, import_module("atheris"))
+import atheris
 
 with atheris.instrument_imports():
     from x_twitter_scraper._qs import Querystring
