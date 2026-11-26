@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- `UserProfile` adds `work_experience`, listing public work history entries shown on an X profile with role details, dates, `company_image`, and `company_user`.
+
 ## 0.22.0 (2026-11-24)
 
 This release raises the default request timeout to 80 seconds and adds the fields the API added since 0.21.0. A football game's `rankings` is required, so code that builds a game by hand must set it.
