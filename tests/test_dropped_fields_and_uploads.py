@@ -62,6 +62,32 @@ async def test_user_profiles_keep_the_fields_the_sdk_dropped(asynchronous: bool)
         "profilePictureOriginal": AVATAR,
         "redirectsToUsername": "spacexsi",
         "identityVerification": {"overrideVerifiedYear": 2009},
+        "workExperience": [
+            {
+                "id": "work-1",
+                "title": "Engineer",
+                "companyName": "NASA",
+                "employmentType": "Full-time",
+                "location": "Washington, DC",
+                "description": "Flight software.",
+                "startMonth": 3,
+                "startYear": 2021,
+                "endMonth": 11,
+                "endYear": 2024,
+                "companyImage": {
+                    "mediaId": "2001002003004005006",
+                    "url": "https://pbs.twimg.com/media/company.png",
+                },
+                "companyUser": {
+                    "id": "11348282",
+                    "username": "NASA",
+                    "name": "NASA",
+                    "profilePicture": "https://pbs.twimg.com/profile_images/nasa_normal.jpg",
+                    "profilePictureOriginal": "https://pbs.twimg.com/profile_images/nasa.jpg",
+                    "verifiedType": "Government",
+                },
+            }
+        ],
     }
     _, profile = await send_with_mock_transport(
         lambda client: client.x.users.retrieve("44196397"),
@@ -74,6 +100,16 @@ async def test_user_profiles_keep_the_fields_the_sdk_dropped(asynchronous: bool)
     assert profile.redirects_to_username == "spacexsi"
     assert profile.identity_verification is not None
     assert profile.identity_verification.override_verified_year == 2009
+    assert profile.work_experience is not None
+    assert len(profile.work_experience) == 1
+    entry = profile.work_experience[0]
+    assert entry.company_name == "NASA"
+    assert entry.start_month == 3
+    assert entry.start_year == 2021
+    assert entry.company_image is not None
+    assert entry.company_image.media_id == "2001002003004005006"
+    assert entry.company_user is not None
+    assert entry.company_user.username == "NASA"
 
 
 @pytest.mark.parametrize("asynchronous", [False, True])

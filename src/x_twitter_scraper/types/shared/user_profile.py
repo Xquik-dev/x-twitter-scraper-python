@@ -26,6 +26,9 @@ __all__ = [
     "UsernameChanges",
     "VerificationReason",
     "VerificationReasonEntity",
+    "WorkExperienceCompanyImage",
+    "WorkExperienceCompanyUser",
+    "WorkExperienceEntry",
 ]
 
 
@@ -218,6 +221,74 @@ class VerificationReason(BaseModel):
     """Links inside the text, by character range."""
 
     text: Optional[str] = None
+
+
+class WorkExperienceCompanyImage(BaseModel):
+    """Company logo image attached to a work experience entry."""
+
+    media_id: Optional[str] = FieldInfo(alias="mediaId", default=None)
+    """X media ID of the company image."""
+
+    url: Optional[str] = None
+    """Full-size company image URL."""
+
+
+class WorkExperienceCompanyUser(BaseModel):
+    """X account linked to a work experience entry."""
+
+    id: Optional[str] = None
+
+    name: Optional[str] = None
+    """Display name of the linked company account."""
+
+    profile_picture: Optional[str] = FieldInfo(alias="profilePicture", default=None)
+    """Profile picture URL at 48 px."""
+
+    profile_picture_original: Optional[str] = FieldInfo(alias="profilePictureOriginal", default=None)
+    """Full-size profile picture URL."""
+
+    username: Optional[str] = None
+
+    verified_type: Optional[str] = FieldInfo(alias="verifiedType", default=None)
+    """Verification category, such as Business."""
+
+
+class WorkExperienceEntry(BaseModel):
+    """Public work experience entry shown on an X profile."""
+
+    company_image: Optional[WorkExperienceCompanyImage] = FieldInfo(alias="companyImage", default=None)
+
+    company_name: Optional[str] = FieldInfo(alias="companyName", default=None)
+    """Employer or organization name."""
+
+    company_user: Optional[WorkExperienceCompanyUser] = FieldInfo(alias="companyUser", default=None)
+
+    description: Optional[str] = None
+    """Role summary text."""
+
+    employment_type: Optional[str] = FieldInfo(alias="employmentType", default=None)
+    """Employment type reported by X."""
+
+    end_month: Optional[int] = FieldInfo(alias="endMonth", default=None)
+    """End month from 1 to 12. Omitted for current roles."""
+
+    end_year: Optional[int] = FieldInfo(alias="endYear", default=None)
+    """End year. Omitted for current roles."""
+
+    id: Optional[str] = None
+    """Entry ID assigned by X."""
+
+    location: Optional[str] = None
+    """Job location text."""
+
+    start_month: Optional[int] = FieldInfo(alias="startMonth", default=None)
+    """Start month from 1 to 12."""
+
+    start_year: Optional[int] = FieldInfo(alias="startYear", default=None)
+    """Start year."""
+
+    title: Optional[str] = None
+    """Job title or role."""
 
 
 class UserProfile(BaseModel):
@@ -464,3 +535,6 @@ class UserProfile(BaseModel):
 
     withheld_scope: Optional[str] = FieldInfo(alias="withheldScope", default=None)
     """Whether X withholds a post or user"""
+
+    work_experience: Optional[List[WorkExperienceEntry]] = FieldInfo(alias="workExperience", default=None)
+    """Public work history entries shown on the profile."""
